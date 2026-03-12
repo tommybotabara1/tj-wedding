@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tommy &amp; Jeyan — Wedding Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --burgundy: #8B1A35;
+      --gold:     #B5924C;
+      --cream:    #FAF7F2;
+    }
+    body { background-color: var(--cream); font-family: 'Inter', sans-serif; }
+    .serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .section-card { background: white; border: 1px solid #E8E0D5; border-radius: 16px; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeup { animation: fadeUp 0.6s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+    .delay-6 { animation-delay: 0.6s; }
+    .stat-pill {
+      background: white;
+      border: 1px solid #E8E0D5;
+      border-radius: 12px;
+      padding: 16px 24px;
+    }
+    .divider-ornament {
+      display: flex; align-items: center; gap: 12px; margin: 0 auto;
+    }
+    .divider-ornament::before, .divider-ornament::after {
+      content: ''; flex: 1; height: 1px; background: #D4C5B0;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ── HERO HEADER ─────────────────────────────────────────────────────── -->
+  <header class="relative overflow-hidden" style="background: linear-gradient(160deg, #2D0A16 0%, #5A1525 50%, #8B1A35 100%);">
+    <div class="absolute inset-0 opacity-10" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(181,146,76,0.3) 30px, rgba(181,146,76,0.3) 31px);"></div>
+    <div class="relative max-w-6xl mx-auto px-6 py-16 text-center">
+      <p class="text-[#B5924C] text-xs tracking-[0.4em] uppercase mb-4 animate-fadeup">The Wedding of</p>
+      <h1 class="serif text-6xl md:text-7xl text-white font-light italic mb-2 animate-fadeup delay-1">Tommy &amp; Jeyan</h1>
+      <div class="divider-ornament w-48 mx-auto my-5 animate-fadeup delay-2">
+        <span class="text-[#B5924C] text-lg">&#10022;</span>
+      </div>
+      <p class="serif text-2xl text-[#E8D5B5] font-light animate-fadeup delay-2">December 27, 2026 &nbsp;&bull;&nbsp; St. Therese Parish, BGC</p>
+      <div id="countdown" class="mt-8 flex justify-center gap-6 animate-fadeup delay-3">
+        <div class="text-center">
+          <div id="cnt-days" class="serif text-5xl text-white font-light">—</div>
+          <div class="text-[#B5924C] text-xs tracking-widest uppercase mt-1">Days</div>
+        </div>
+        <div class="serif text-4xl text-[#B5924C] font-light self-start mt-1">:</div>
+        <div class="text-center">
+          <div id="cnt-hours" class="serif text-5xl text-white font-light">—</div>
+          <div class="text-[#B5924C] text-xs tracking-widest uppercase mt-1">Hours</div>
+        </div>
+        <div class="serif text-4xl text-[#B5924C] font-light self-start mt-1">:</div>
+        <div class="text-center">
+          <div id="cnt-mins" class="serif text-5xl text-white font-light">—</div>
+          <div class="text-[#B5924C] text-xs tracking-widest uppercase mt-1">Minutes</div>
+        </div>
+      </div>
+      <p class="text-stone-400 text-xs mt-8 animate-fadeup delay-4">Last updated: March 13, 2026 at 12:24 AM</p>
+    </div>
+  </header>
+
+  <!-- ── QUICK STATS ─────────────────────────────────────────────────────── -->
+  <section class="max-w-6xl mx-auto px-6 py-8 animate-fadeup delay-2">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="stat-pill text-center">
+        <div class="serif text-3xl font-light" style="color: var(--burgundy);">289</div>
+        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Days to Go</div>
+      </div>
+      <div class="stat-pill text-center">
+        <div class="serif text-3xl font-light" style="color: var(--burgundy);">2<span class="text-stone-300 text-xl">/19</span></div>
+        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Vendors Booked</div>
+      </div>
+      <div class="stat-pill text-center">
+        <div class="serif text-3xl font-light" style="color: var(--burgundy);">₱76,500</div>
+        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Budget Spent</div>
+      </div>
+      <div class="stat-pill text-center">
+        <div class="serif text-3xl font-light text-stone-300">TBD</div>
+        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Guests</div>
+      </div>
+    </div>
+  </section>
+
+  
+    <div class="max-w-6xl mx-auto px-6 mb-4">
+      <div class="bg-rose-50 border border-rose-200 rounded-xl px-5 py-3 flex items-center gap-3">
+        <span class="text-rose-600 text-lg">&#9888;</span>
+        <span class="text-rose-700 text-sm font-medium">6 tasks overdue — review the timeline below.</span>
+      </div>
+    </div>
+
+  <main class="max-w-6xl mx-auto px-6 pb-16 space-y-8">
+
+    <!-- ── TIMELINE & TASKS ───────────────────────────────────────────────── -->
+    <section class="section-card overflow-hidden animate-fadeup delay-3">
+      <div class="px-6 py-5 border-b border-stone-100">
+        <h2 class="serif text-2xl font-light text-stone-800">Planning Timeline</h2>
+        <p class="text-stone-400 text-sm mt-0.5">24 milestones &mdash; 2 completed</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-stone-50 border-b border-stone-100">
+              <th class="px-4 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Task</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-wider">Owner</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-wider">Status</th>
+              <th class="px-4 py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-wider">Deadline</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-50">
+            
+        <tr class="bg-rose-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Finalize wedding vision & theme</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-300">Overdue</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Aug 31, 2025</td>
+        </tr>
+        <tr class="bg-rose-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Draft guest list</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-300">Overdue</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Sep 30, 2025</td>
+        </tr>
+        <tr class="bg-rose-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Research & shortlist churches near BGC/Taguig</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-300">Overdue</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Oct 31, 2025</td>
+        </tr>
+        <tr class="bg-rose-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Research reception venues & catering options</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-300">Overdue</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Nov 30, 2025</td>
+        </tr>
+        <tr class="bg-rose-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Confirm budget range</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-300">Overdue</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Dec 31, 2025</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Book church</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300">Booked</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Jan 31, 2026</td>
+        </tr>
+        <tr class="bg-rose-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Book reception venue</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-300">Overdue</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Feb 28, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Secure caterer</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Mar 31, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Book photographer & videographer</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Apr 30, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Book makeup artist & hair stylist</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300">Booked</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Jan 23, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Book on-the-day coordinator</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Jun 30, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Finalize entourage lineup</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Jul 31, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Start gown & suit fittings</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Aug 31, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Print & send invitations</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Sep 01, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Decide on florist/stylist</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Sep 30, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Finalize menu with caterer (food tasting)</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Oct 15, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Confirm AVP & program flow</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Nov 15, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Confirm giveaways, photo booth, cake design</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Nov 30, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Final gown & suit fitting</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Dec 01, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Submit final guest count</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Dec 05, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Final coordination meeting with vendors</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Dec 10, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Prenup shoot complete</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Dec 20, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Rehearsal at church & program check</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Dec 24, 2026</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Wedding Day 🎉</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Tommy & Jeyan</td>
+          <td class="px-4 py-3 text-center">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-500 border border-stone-300">Not Started</span>
+          </td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-center">Dec 27, 2026</td>
+        </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── BUDGET ─────────────────────────────────────────────────────────── -->
+    <section class="section-card overflow-hidden animate-fadeup delay-4">
+      <div class="px-6 py-5 border-b border-stone-100">
+        <h2 class="serif text-2xl font-light text-stone-800">Budget Overview</h2>
+        <p class="text-stone-400 text-sm mt-0.5">Total committed: <span class="text-emerald-700 font-semibold">₱76,500</span></p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-stone-50 border-b border-stone-100">
+              <th class="px-4 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider w-2/5">Category</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Low</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Mid</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">High</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Actual</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-stone-50">
+            
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Church Fee + Requirements</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱13,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱30,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱80,000</td>
+          <td class="px-4 py-3 text-sm text-right text-emerald-700 font-semibold">₱47,000</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Reception Venue Rental</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱50,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱200,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱500,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Catering</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱49,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱127,500</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱250,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Photography & Videography</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱40,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱70,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱150,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Attire (Bride + Groom)</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱30,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱80,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱200,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Hair & Makeup</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱8,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱15,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱25,000</td>
+          <td class="px-4 py-3 text-sm text-right text-emerald-700 font-semibold">₱14,500</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Flowers & Styling</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱20,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱50,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱150,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Entertainment (Music)</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱0</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱10,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱30,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Host (MC)</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">—</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">—</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">—</td>
+          <td class="px-4 py-3 text-sm text-right text-emerald-700 font-semibold">₱15,000</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Prenup Shoot</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱10,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱25,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱60,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Invitations & Stationery</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱5,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱15,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱30,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Wedding Planner/Coordinator (OTD)</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱15,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱40,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱100,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Florist (Bouquets, Entourage)</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱10,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱25,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱60,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Lights & Sounds</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱10,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱30,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱70,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Transportation (Bridal Car, Shuttle)</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱5,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱20,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱50,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Cake Designer</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱8,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱20,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱60,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Souvenirs/Giveaways</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱10,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱25,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱50,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Photo Booth</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱5,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱15,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱25,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Accommodation (Hotel Rooms)</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱15,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱40,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱100,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+        <tr class="hover:bg-stone-50 transition-colors">
+          <td class="px-4 py-3 text-sm text-stone-800">Miscellaneous & Contingency (10%)</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱25,000</td>
+          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">₱50,000</td>
+          <td class="px-4 py-3 text-sm text-stone-500 text-right">₱100,000</td>
+          <td class="px-4 py-3 text-sm text-right text-stone-300">—</td>
+        </tr>
+          </tbody>
+          <tfoot>
+            <tr class="bg-stone-50 border-t border-stone-200">
+              <td class="px-4 py-3 text-sm font-semibold text-stone-700" colspan="4">Total Actual Spent</td>
+              <td class="px-4 py-3 text-right text-sm font-bold text-emerald-700">₱76,500</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="px-6 py-5 border-t border-stone-100">
+        <h3 class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">Mid-Range vs Actual</h3>
+        <div class="h-64">
+          <canvas id="budgetChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── VENDOR TRACKER ─────────────────────────────────────────────────── -->
+    <section class="section-card overflow-hidden animate-fadeup delay-5">
+      <div class="px-6 py-5 border-b border-stone-100">
+        <h2 class="serif text-2xl font-light text-stone-800">Vendor Tracker</h2>
+        <p class="text-stone-400 text-sm mt-0.5">2 of 19 vendors confirmed</p>
+      </div>
+      <div class="p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50/30 p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Church</div>
+          <div class="text-sm font-medium text-stone-800">St Therese</div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300">Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Reception Venue</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Photographer</div>
+          <div class="text-sm font-medium text-stone-800">Paulo and Kiara</div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Caterer</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50/30 p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Makeup Artist</div>
+          <div class="text-sm font-medium text-stone-800">Hershey</div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-300">Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Decor & Styling</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Videographer</div>
+          <div class="text-sm font-medium text-stone-800">Uncle AJ</div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Wedding Planner / Coordinator</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Bridal Attire & Alterations</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Florist</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Entertainment / Music</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Emcee</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Transportation</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Cake</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Stationery & Printing (invitations, cards, etc.)</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Souvenirs/ Giveaways</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Photo Booth</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Bridal Accessories</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+        <div class="rounded-xl border border-stone-200 bg-white p-4 flex flex-col gap-2 hover:shadow-md transition-shadow">
+          <div class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Accommodation</div>
+          <div class="text-sm font-medium text-stone-800"><span class="text-stone-300 italic">TBD</span></div>
+          <span class="self-start px-2 py-0.5 rounded-full text-xs font-medium bg-stone-100 text-stone-400 border border-stone-300">Not Booked</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DAY-OF SCHEDULE ────────────────────────────────────────────────── -->
+    <section class="section-card overflow-hidden animate-fadeup delay-6">
+      <div class="px-6 py-5 border-b border-stone-100">
+        <h2 class="serif text-2xl font-light text-stone-800">Day-of Schedule</h2>
+        <p class="text-stone-400 text-sm mt-0.5">December 27, 2026</p>
+      </div>
+      <div class="p-6">
+        
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-[#8B1A35] mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">7:00 AM  9:00 AM</div>
+            <div class="text-sm text-stone-700">Bride & Groom light breakfast and relax. Hair & makeup for bride/entourage. Photographer arrives.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">9:00 AM  11:00 AM</div>
+            <div class="text-sm text-stone-700">Bride hair & makeup continues. Groom and groomsmen prep. Pre-wedding detail shots.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">11:00 AM  12:30 PM</div>
+            <div class="text-sm text-stone-700">Bride gets dressed. First look (optional). Group photos with entourage.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">12:30 PM  1:30 PM</div>
+            <div class="text-sm text-stone-700">Lunch for couple & entourage. Final makeup/attire touches.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">1:30 PM  2:15 PM</div>
+            <div class="text-sm text-stone-700">Travel to church (allow traffic buffer).</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">2:15 PM  2:45 PM</div>
+            <div class="text-sm text-stone-700">Guests arrive at church. Ushers seat them. Pre-ceremony music.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">3:00 PM  4:30 PM</div>
+            <div class="text-sm text-stone-700">Catholic Wedding Ceremony (Mass + rites).</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">4:30 PM  5:00 PM</div>
+            <div class="text-sm text-stone-700">Post-ceremony family & group photos. Guests head to reception.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">5:00 PM  6:00 PM</div>
+            <div class="text-sm text-stone-700">Reception cocktail hour. Guests arrive. Couple retouches/change.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">6:00 PM  6:30 PM</div>
+            <div class="text-sm text-stone-700">Grand entrance. Prayer, welcome, dinner begins.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">6:30 PM  8:00 PM</div>
+            <div class="text-sm text-stone-700">Dinner with speeches, AVP, first dance, parent dances.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">8:00 PM  9:00 PM</div>
+            <div class="text-sm text-stone-700">Cake cutting, games, performances, toasts.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">9:00 PM  9:30 PM</div>
+            <div class="text-sm text-stone-700">Bouquet & garter toss (optional). Couple thank-you speech.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            <div class="w-px flex-1 bg-stone-200 mt-1"></div>
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">9:30 PM  10:00 PM</div>
+            <div class="text-sm text-stone-700">Open dance floor/live music. Closing remarks, guest send-off.</div>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex flex-col items-center">
+            <div class="w-3 h-3 rounded-full bg-stone-300 mt-1 flex-shrink-0"></div>
+            
+          </div>
+          <div class="pb-6">
+            <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">10:00 PM onwards</div>
+            <div class="text-sm text-stone-700">Guests depart. Couple transfers to hotel suite/after-party.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="text-center py-8 text-stone-300 text-xs tracking-wider">
+    <span class="serif italic text-stone-400">Tommy &amp; Jeyan &bull; December 27, 2026</span>
+  </footer>
+
+  <script>
+    // Countdown timer
+    function updateCountdown() {
+      const wedding = new Date('2026-12-27T15:00:00+08:00');
+      const now     = new Date();
+      const diff    = wedding - now;
+      if (diff <= 0) {
+        document.getElementById('cnt-days').textContent  = '0';
+        document.getElementById('cnt-hours').textContent = '0';
+        document.getElementById('cnt-mins').textContent  = '0';
+        return;
+      }
+      const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      document.getElementById('cnt-days').textContent  = days;
+      document.getElementById('cnt-hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('cnt-mins').textContent  = String(mins).padStart(2, '0');
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 30000);
+
+    // Budget chart
+    const ctx = document.getElementById('budgetChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [\'Church Fee + Requireme…\', \'Reception Venue Rental\', \'Catering\', \'Photography & Videogra…\', \'Attire (Bride + Groom)\', \'Hair & Makeup\', \'Flowers & Styling\', \'Entertainment (Music)\', \'Host (MC)\', \'Prenup Shoot\', \'Invitations & Statione…\', \'Wedding Planner/Coordi…\', \'Florist (Bouquets, Ent…\', \'Lights & Sounds\', \'Transportation (Bridal…\', \'Cake Designer\', \'Souvenirs/Giveaways\', \'Photo Booth\', \'Accommodation (Hotel R…\', \'Miscellaneous & Contin…\'],
+        datasets: [
+          {
+            label: 'Mid Range',
+            data: [30000.0, 200000.0, 127500.0, 70000.0, 80000.0, 15000.0, 50000.0, 10000.0, 0, 25000.0, 15000.0, 40000.0, 25000.0, 30000.0, 20000.0, 20000.0, 25000.0, 15000.0, 40000.0, 50000.0],
+            backgroundColor: 'rgba(181,146,76,0.2)',
+            borderColor: 'rgba(181,146,76,0.6)',
+            borderWidth: 1,
+            borderRadius: 4,
+          },
+          {
+            label: 'Actual',
+            data: [47000.0, 0, 0, 0, 0, 14500.0, 0, 0, 15000.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            backgroundColor: 'rgba(16,185,129,0.3)',
+            borderColor: 'rgba(16,185,129,0.7)',
+            borderWidth: 1,
+            borderRadius: 4,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { font: { family: 'Inter', size: 11 }, color: '#78716c' }
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              font: { family: 'Inter', size: 9 },
+              color: '#a8a29e',
+              maxRotation: 45,
+            },
+            grid: { color: '#f5f0eb' }
+          },
+          y: {
+            ticks: {
+              font: { family: 'Inter', size: 10 },
+              color: '#a8a29e',
+              callback: v => '₱' + (v >= 1000 ? (v/1000).toFixed(0) + 'k' : v)
+            },
+            grid: { color: '#f5f0eb' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
