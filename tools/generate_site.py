@@ -46,34 +46,55 @@ def read_timeline(wb):
 
 
 def read_budget(wb):
-    ws = wb["Budget"]
+    ws = wb["Budget + Vendor Tracker"]
+    # Columns: Category, Vendor, Status, Actual, Balance, Notes, Low, Mid, High
+    SKIP = {"Total", "Total + buffer", "Miscellaneous & Contingency (10%)"}
     rows = []
     for row in ws.iter_rows(min_row=2, values_only=True):
-        if not row[0]:
+        if not row[0] or row[0] in SKIP:
             continue
         rows.append({
             "category": row[0],
-            "low":      row[1],
-            "mid":      row[2],
-            "high":     row[3],
-            "actual":   row[4],
+            "low":      row[6],
+            "mid":      row[7],
+            "high":     row[8],
+            "actual":   row[3],
+            "balance":  row[4],
             "notes":    row[5] or "",
         })
     return rows
 
 
 def read_vendors(wb):
-    ws = wb["Vendor Tracker"]
+    ws = wb["Budget + Vendor Tracker"]
+    # Columns: Category, Vendor, Status, Actual, Balance, Notes, Low, Mid, High
+    SKIP = {"Total", "Total + buffer", "Miscellaneous & Contingency (10%)"}
     vendors = []
     for row in ws.iter_rows(min_row=2, values_only=True):
-        if not row[0]:
+        if not row[0] or row[0] in SKIP:
             continue
         vendors.append({
             "type":   row[0],
             "name":   row[1] or "",
-            "status": row[4] or "Not Booked",
+            "status": row[2] or "Pending",
         })
     return vendors
+
+
+def read_guests(wb):
+    ws = wb["Guest List"]
+    total_pax = 0
+    confirmed = 0
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        # Skip rows without a numeric guest # in col 0
+        if not row[0] or not isinstance(row[0], (int, float)):
+            continue
+        pax = row[6] if isinstance(row[6], (int, float)) else 1
+        total_pax += pax
+        status = (row[7] or "").strip().upper()
+        if status not in ("TBC", "OPTIONAL", ""):
+            confirmed += pax
+    return {"total": int(total_pax), "confirmed": int(confirmed)}
 
 
 def read_schedule(wb):
@@ -102,6 +123,9 @@ STATUS_BADGE = {
 
 VENDOR_STATUS_BADGE = {
     "Booked":     ("bg-emerald-100 text-emerald-800 border border-emerald-300", "Booked"),
+    "Finalizing": ("bg-blue-100 text-blue-800 border border-blue-300",          "Finalizing"),
+    "Looking":    ("bg-amber-100 text-amber-800 border border-amber-300",       "Looking"),
+    "Pending":    ("bg-stone-100 text-stone-500 border border-stone-300",       "Pending"),
     "Not Booked": ("bg-stone-100 text-stone-400 border border-stone-300",       "Not Booked"),
 }
 
@@ -118,7 +142,7 @@ def fmt_date(d):
     return d.strftime("%b %d, %Y")
 
 
-def build_html(tasks, budget, vendors, schedule):
+def build_html(tasks, budget, vendors, schedule, guests):
     today          = date.today()
     days_to_go     = (WEDDING_DATE - today).days
     booked_count   = sum(1 for v in vendors if v["status"] == "Booked")
@@ -154,7 +178,9 @@ def build_html(tasks, budget, vendors, schedule):
     # Budget rows
     budget_rows = ""
     for r in budget:
-        actual_cls = "text-emerald-700 font-semibold" if r["actual"] else "text-stone-300"
+        actual_cls  = "text-emerald-700 font-semibold" if r["actual"] else "text-stone-300"
+        balance_cls = "text-rose-600 font-semibold" if (r["balance"] or 0) > 0 else "text-stone-300"
+        vendor_display = f'<span class="text-stone-400 text-xs">{r.get("vendor","")}</span>' if r.get("vendor") else ""
         budget_rows += f"""
         <tr class="hover:bg-stone-50 transition-colors">
           <td class="px-4 py-3 text-sm text-stone-800">{r['category']}</td>
@@ -162,6 +188,7 @@ def build_html(tasks, budget, vendors, schedule):
           <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">{fmt_php(r['mid'])}</td>
           <td class="px-4 py-3 text-sm text-stone-500 text-right">{fmt_php(r['high'])}</td>
           <td class="px-4 py-3 text-sm text-right {actual_cls}">{fmt_php(r['actual'])}</td>
+          <td class="px-4 py-3 text-sm text-right {balance_cls}">{fmt_php(r['balance'])}</td>
         </tr>"""
 
     # Vendor cards
@@ -297,8 +324,8 @@ def build_html(tasks, budget, vendors, schedule):
         <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Budget Spent</div>
       </div>
       <div class="stat-pill text-center">
-        <div class="serif text-3xl font-light text-stone-300">TBD</div>
-        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Guests</div>
+        <div class="serif text-3xl font-light" style="color: var(--burgundy);">{guests['total']}</div>
+        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Guests (est.)</div>
       </div>
     </div>
   </section>
@@ -345,6 +372,7 @@ def build_html(tasks, budget, vendors, schedule):
               <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Mid</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">High</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Actual</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Balance</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-stone-50">
@@ -354,6 +382,7 @@ def build_html(tasks, budget, vendors, schedule):
             <tr class="bg-stone-50 border-t border-stone-200">
               <td class="px-4 py-3 text-sm font-semibold text-stone-700" colspan="4">Total Actual Spent</td>
               <td class="px-4 py-3 text-right text-sm font-bold text-emerald-700">₱{total_actual:,.0f}</td>
+              <td></td>
             </tr>
           </tfoot>
         </table>
@@ -487,14 +516,16 @@ def main():
     budget   = read_budget(wb)
     vendors  = read_vendors(wb)
     schedule = read_schedule(wb)
+    guests   = read_guests(wb)
 
     print(f"  Timeline : {len(tasks)} tasks")
     print(f"  Budget   : {len(budget)} categories")
     print(f"  Vendors  : {len(vendors)} vendors")
     print(f"  Schedule : {len(schedule)} items")
+    print(f"  Guests   : {guests['total']} total pax")
 
     print("Generating HTML...")
-    html = build_html(tasks, budget, vendors, schedule)
+    html = build_html(tasks, budget, vendors, schedule, guests)
 
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
