@@ -9,6 +9,7 @@ Output:
     docs/index.html
 """
 
+import json
 import os
 import sys
 from datetime import date, datetime
@@ -28,6 +29,9 @@ def read_timeline(wb):
     today = date.today()
     for row in ws.iter_rows(min_row=2, values_only=True):
         if not row[0]:
+            continue
+        # Skip stray URL rows (e.g. ChatGPT share links)
+        if str(row[0]).startswith("http"):
             continue
         task, owner, status, deadline = row[0], row[1], row[2], row[3]
         if isinstance(deadline, datetime):
@@ -171,30 +175,32 @@ def build_html(tasks, budget, vendors, schedule, guests):
     total_actual   = sum(r["actual"] for r in budget if r["actual"])
     overdue_count  = sum(1 for t in tasks if t["status"] == "Overdue")
 
-    # Guest list rows
+    # Guest list rows + filter options
+    guest_groups = sorted(set(g["group"] for g in guests["rows"] if g["group"]))
+    group_options = "".join(f'<option value="{grp}">{grp}</option>' for grp in guest_groups)
+
     guest_rows = ""
     for g in guests["rows"]:
-        side_cls   = "bg-rose-50" if g["side"] == "Jeyan" else "bg-blue-50"
+        side_cls   = "bg-rose-50 text-rose-700" if g["side"] == "Jeyan" else "bg-blue-50 text-blue-700"
         role_info  = ROLE_BADGE.get(g["role"])
         role_badge = f'<span class="px-1.5 py-0.5 rounded text-xs font-medium {role_info[0]}">{role_info[1]}</span>' if role_info else ""
         table_str  = f"Table {g['table']}" if g["table"] else '<span class="text-stone-300">—</span>'
-        plus1_str  = "✓" if g["plus1"] == "Yes" else ""
         guest_rows += f"""
-        <tr class="hover:bg-stone-50 transition-colors">
+        <tr class="hover:bg-stone-50 transition-colors" data-side="{g['side']}" data-group="{g['group']}">
           <td class="px-3 py-2 text-sm font-medium text-stone-800">{g['name']}</td>
           <td class="px-3 py-2 text-xs text-stone-500">{g['group']}</td>
           <td class="px-3 py-2 text-xs">{role_badge}</td>
-          <td class="px-3 py-2 text-center"><span class="text-xs font-semibold px-1.5 py-0.5 rounded {side_cls} text-stone-600">{g['side']}</span></td>
+          <td class="px-3 py-2 text-center"><span class="text-xs font-semibold px-1.5 py-0.5 rounded {side_cls}">{g['side']}</span></td>
           <td class="px-3 py-2 text-xs text-center text-stone-500">{g['pax']}{'<span class="text-emerald-600 font-bold"> +1</span>' if g["plus1"] == "Yes" else ''}</td>
           <td class="px-3 py-2 text-xs text-stone-500 text-center">{table_str}</td>
         </tr>"""
 
     # Budget chart data
-    chart_labels  = [r["category"][:22] + "…" if len(r["category"]) > 22 else r["category"] for r in budget]
-    chart_actual  = [r["actual"] or 0 for r in budget]
+    chart_labels = [r["category"][:22] + "…" if len(r["category"]) > 22 else r["category"] for r in budget]
+    chart_actual = [r["actual"] or 0 for r in budget]
 
-    chart_labels_js  = str(chart_labels).replace("'", "\\'").replace('"', "'")
-    chart_actual_js  = str(chart_actual)
+    chart_labels_js = json.dumps(chart_labels)
+    chart_actual_js = json.dumps(chart_actual)
 
     # Timeline rows
     timeline_rows = ""
@@ -421,7 +427,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
         </table>
       </div>
       <div class="px-6 py-5 border-t border-stone-100">
-        <h3 class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">Mid-Range vs Actual</h3>
+        <h3 class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">Actual Spend by Category</h3>
         <div class="h-64">
           <canvas id="budgetChart"></canvas>
         </div>
@@ -455,31 +461,52 @@ def build_html(tasks, budget, vendors, schedule, guests):
       <div class="px-6 py-5 border-b border-stone-100 flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 class="serif text-2xl font-light text-stone-800">Guest List</h2>
-          <p class="text-stone-400 text-sm mt-0.5">{guests['total']} pax &mdash; {len(guests['rows'])} names</p>
+          <p class="text-stone-400 text-sm mt-0.5">
+            <span id="guest-count">{len(guests['rows'])}</span> of {len(guests['rows'])} guests &mdash; {guests['total']} pax
+          </p>
         </div>
         <a href="reception.html" class="text-xs font-medium px-4 py-2 rounded-full border border-stone-200 text-stone-500 hover:bg-stone-50 transition-colors">
           View Seating Chart →
         </a>
       </div>
-      <div class="px-4 py-3 border-b border-stone-100 bg-stone-50">
-        <input type="text" id="guest-search" placeholder="Search guests…" class="w-full px-3 py-1.5 text-sm border border-stone-200 rounded-lg outline-none focus:border-stone-400 bg-white" oninput="filterGuests(this.value)" />
+      <div class="px-4 py-3 border-b border-stone-100 bg-stone-50 flex flex-wrap gap-2">
+        <input type="text" id="guest-search" placeholder="Search by name…"
+          class="flex-1 min-w-48 px-3 py-1.5 text-sm border border-stone-200 rounded-lg outline-none focus:border-stone-400 bg-white"
+          oninput="applyGuestFilters()" />
+        <select id="guest-side" onchange="applyGuestFilters()"
+          class="px-3 py-1.5 text-sm border border-stone-200 rounded-lg outline-none focus:border-stone-400 bg-white text-stone-600">
+          <option value="">All sides</option>
+          <option value="Tommy">Tommy</option>
+          <option value="Jeyan">Jeyan</option>
+        </select>
+        <select id="guest-group" onchange="applyGuestFilters()"
+          class="px-3 py-1.5 text-sm border border-stone-200 rounded-lg outline-none focus:border-stone-400 bg-white text-stone-600">
+          <option value="">All groups</option>
+          {group_options}
+        </select>
+        <button onclick="clearGuestFilters()"
+          class="px-3 py-1.5 text-xs text-stone-400 border border-stone-200 rounded-lg hover:bg-stone-100 bg-white">
+          Clear
+        </button>
       </div>
       <div class="overflow-x-auto">
-        <table class="w-full" id="guest-table">
-          <thead>
-            <tr class="bg-stone-50 border-b border-stone-100">
-              <th class="px-3 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Name</th>
-              <th class="px-3 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Group</th>
-              <th class="px-3 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Role</th>
-              <th class="px-3 py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-wider">Side</th>
-              <th class="px-3 py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-wider">Pax</th>
-              <th class="px-3 py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-wider">Table</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-stone-50" id="guest-tbody">
-            {guest_rows}
-          </tbody>
-        </table>
+        <div style="max-height:520px; overflow-y:auto;">
+          <table class="w-full">
+            <thead class="sticky top-0 z-10">
+              <tr class="bg-stone-50 border-b border-stone-100">
+                <th class="px-3 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Name</th>
+                <th class="px-3 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Group</th>
+                <th class="px-3 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Role</th>
+                <th class="px-3 py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-wider">Side</th>
+                <th class="px-3 py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-wider">Pax</th>
+                <th class="px-3 py-3 text-center text-xs font-semibold text-stone-400 uppercase tracking-wider">Table</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-stone-50" id="guest-tbody">
+              {guest_rows}
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -511,13 +538,28 @@ def build_html(tasks, budget, vendors, schedule, guests):
     updateCountdown();
     setInterval(updateCountdown, 30000);
 
-    // Guest search
-    function filterGuests(q) {{
-      const rows = document.querySelectorAll('#guest-tbody tr');
-      const lq = q.toLowerCase();
+    // Guest search + filter
+    function applyGuestFilters() {{
+      const q     = document.getElementById('guest-search').value.toLowerCase();
+      const side  = document.getElementById('guest-side').value;
+      const group = document.getElementById('guest-group').value;
+      const rows  = document.querySelectorAll('#guest-tbody tr');
+      let visible = 0;
       rows.forEach(r => {{
-        r.style.display = r.textContent.toLowerCase().includes(lq) ? '' : 'none';
+        const matchQ = !q     || r.textContent.toLowerCase().includes(q);
+        const matchS = !side  || r.dataset.side  === side;
+        const matchG = !group || r.dataset.group === group;
+        const show   = matchQ && matchS && matchG;
+        r.style.display = show ? '' : 'none';
+        if (show) visible++;
       }});
+      document.getElementById('guest-count').textContent = visible;
+    }}
+    function clearGuestFilters() {{
+      document.getElementById('guest-search').value = '';
+      document.getElementById('guest-side').value   = '';
+      document.getElementById('guest-group').value  = '';
+      applyGuestFilters();
     }}
 
     // Budget chart
