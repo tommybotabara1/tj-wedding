@@ -55,9 +55,7 @@ def read_budget(wb):
             continue
         rows.append({
             "category": row[0],
-            "low":      row[6],
-            "mid":      row[7],
-            "high":     row[8],
+            "vendor":   row[1] or "",
             "actual":   row[3],
             "balance":  row[4],
             "notes":    row[5] or "",
@@ -152,11 +150,9 @@ def build_html(tasks, budget, vendors, schedule, guests):
 
     # Budget chart data
     chart_labels  = [r["category"][:22] + "…" if len(r["category"]) > 22 else r["category"] for r in budget]
-    chart_mid     = [r["mid"] or 0 for r in budget]
     chart_actual  = [r["actual"] or 0 for r in budget]
 
     chart_labels_js  = str(chart_labels).replace("'", "\\'").replace('"', "'")
-    chart_mid_js     = str(chart_mid)
     chart_actual_js  = str(chart_actual)
 
     # Timeline rows
@@ -180,13 +176,11 @@ def build_html(tasks, budget, vendors, schedule, guests):
     for r in budget:
         actual_cls  = "text-emerald-700 font-semibold" if r["actual"] else "text-stone-300"
         balance_cls = "text-rose-600 font-semibold" if (r["balance"] or 0) > 0 else "text-stone-300"
-        vendor_display = f'<span class="text-stone-400 text-xs">{r.get("vendor","")}</span>' if r.get("vendor") else ""
+        vendor_display = r["vendor"] if r["vendor"] else '<span class="italic text-stone-300">TBD</span>'
         budget_rows += f"""
         <tr class="hover:bg-stone-50 transition-colors">
           <td class="px-4 py-3 text-sm text-stone-800">{r['category']}</td>
-          <td class="px-4 py-3 text-sm text-stone-500 text-right">{fmt_php(r['low'])}</td>
-          <td class="px-4 py-3 text-sm text-stone-600 text-right font-medium">{fmt_php(r['mid'])}</td>
-          <td class="px-4 py-3 text-sm text-stone-500 text-right">{fmt_php(r['high'])}</td>
+          <td class="px-4 py-3 text-sm text-stone-500">{vendor_display}</td>
           <td class="px-4 py-3 text-sm text-right {actual_cls}">{fmt_php(r['actual'])}</td>
           <td class="px-4 py-3 text-sm text-right {balance_cls}">{fmt_php(r['balance'])}</td>
         </tr>"""
@@ -367,10 +361,8 @@ def build_html(tasks, budget, vendors, schedule, guests):
         <table class="w-full">
           <thead>
             <tr class="bg-stone-50 border-b border-stone-100">
-              <th class="px-4 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider w-2/5">Category</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Low</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Mid</th>
-              <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">High</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Category</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Vendor</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Actual</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Balance</th>
             </tr>
@@ -380,7 +372,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
           </tbody>
           <tfoot>
             <tr class="bg-stone-50 border-t border-stone-200">
-              <td class="px-4 py-3 text-sm font-semibold text-stone-700" colspan="4">Total Actual Spent</td>
+              <td class="px-4 py-3 text-sm font-semibold text-stone-700" colspan="2">Total Actual Spent</td>
               <td class="px-4 py-3 text-right text-sm font-bold text-emerald-700">₱{total_actual:,.0f}</td>
               <td></td>
             </tr>
@@ -453,18 +445,10 @@ def build_html(tasks, budget, vendors, schedule, guests):
         labels: {chart_labels_js},
         datasets: [
           {{
-            label: 'Mid Range',
-            data: {chart_mid_js},
-            backgroundColor: 'rgba(181,146,76,0.2)',
-            borderColor: 'rgba(181,146,76,0.6)',
-            borderWidth: 1,
-            borderRadius: 4,
-          }},
-          {{
-            label: 'Actual',
+            label: 'Actual Spend',
             data: {chart_actual_js},
-            backgroundColor: 'rgba(16,185,129,0.3)',
-            borderColor: 'rgba(16,185,129,0.7)',
+            backgroundColor: 'rgba(139,26,53,0.25)',
+            borderColor: 'rgba(139,26,53,0.7)',
             borderWidth: 1,
             borderRadius: 4,
           }}
