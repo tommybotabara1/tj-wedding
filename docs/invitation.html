@@ -103,7 +103,7 @@
       justify-content: center;
       text-align: center;
       padding: 4rem 1.5rem;
-      background: linear-gradient(160deg, var(--beige) 0%, var(--rose-light) 50%, #E8C8B8 100%);
+      background: var(--beige);
       position: relative;
       overflow: hidden;
     }
@@ -682,13 +682,296 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* ═══════════════════════════════
+       PASSWORD GATE
+    ═══════════════════════════════ */
+    #password-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: linear-gradient(160deg, var(--beige) 0%, var(--rose-light) 50%, #E8C8B8 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      text-align: center;
+      transition: opacity 0.6s ease;
+    }
+    #password-gate.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .gate-names {
+      font-family: var(--font-script);
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      color: var(--mauve);
+      margin-bottom: 1.5rem;
+      text-shadow: 0 2px 16px rgba(184,131,122,0.25);
+    }
+    .gate-prompt {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+      color: var(--charcoal);
+      max-width: 360px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      opacity: 0.8;
+    }
+    .gate-input-row {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    #gate-input {
+      padding: 0.7rem 1.25rem;
+      border: 1.5px solid var(--blush);
+      border-radius: 50px;
+      background: rgba(255,255,255,0.6);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--charcoal);
+      outline: none;
+      width: 220px;
+      text-align: center;
+      letter-spacing: 0.1em;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #gate-input:focus {
+      border-color: var(--mauve);
+      box-shadow: 0 0 0 3px rgba(184,131,122,0.18);
+    }
+    #gate-input.shake {
+      animation: gateShake 0.45s ease;
+    }
+    @keyframes gateShake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-8px); }
+      40%       { transform: translateX(8px); }
+      60%       { transform: translateX(-6px); }
+      80%       { transform: translateX(6px); }
+    }
+    #gate-btn {
+      padding: 0.7rem 1.75rem;
+      background: var(--blush);
+      border: none;
+      border-radius: 50px;
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    #gate-btn:hover {
+      background: var(--mauve);
+      transform: translateY(-1px);
+    }
+    #gate-error {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      color: #C0392B;
+      margin-top: 1rem;
+      min-height: 1.2em;
+    }
+    .gate-ornament { margin-top: 2rem; }
+
+    /* ═══════════════════════════════
+       HERO BACKGROUND (PARALLAX)
+    ═══════════════════════════════ */
+    .hero-bg {
+      position: absolute;
+      inset: -30% 0;
+      background: linear-gradient(160deg, var(--beige) 0%, var(--rose-light) 50%, #E8C8B8 100%);
+      z-index: 0;
+      will-change: transform;
+      pointer-events: none;
+    }
+    .hero > *:not(.hero-bg) {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ═══════════════════════════════
+       ROSE PETALS
+    ═══════════════════════════════ */
+    .petal {
+      position: absolute;
+      border-radius: 50% 30% 50% 30%;
+      pointer-events: none;
+      z-index: 1;
+      animation: petalFall linear infinite;
+    }
+    @keyframes petalFall {
+      0%   { transform: translateY(-10px) translateX(0) rotate(0deg);       opacity: var(--petal-opacity); }
+      50%  { transform: translateY(55vh)  translateX(30px) rotate(360deg);  opacity: var(--petal-opacity); }
+      100% { transform: translateY(110vh) translateX(-20px) rotate(720deg); opacity: 0; }
+    }
+
+    /* ═══════════════════════════════
+       COUNTDOWN TIMER
+    ═══════════════════════════════ */
+    .countdown-wrapper {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.3s forwards;
+    }
+    .countdown-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(250,247,242,0.55);
+      border: 1px solid var(--blush);
+      border-radius: 10px;
+      padding: 0.75rem 1.1rem 0.6rem;
+      min-width: 64px;
+      backdrop-filter: blur(4px);
+    }
+    .countdown-digit {
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      font-weight: 400;
+      color: var(--mauve);
+      line-height: 1;
+    }
+    .countdown-digit.flip {
+      animation: countFlip 0.35s ease;
+    }
+    @keyframes countFlip {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+    .countdown-label {
+      font-family: var(--font-body);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-top: 0.35rem;
+    }
+    .countdown-complete {
+      display: none;
+      font-family: var(--font-script);
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      color: var(--mauve);
+      margin-top: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.3s forwards;
+    }
+
+    /* ═══════════════════════════════
+       CALENDAR BUTTONS
+    ═══════════════════════════════ */
+    .cal-btns {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .cal-btn {
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      border: 1.5px solid var(--blush);
+      border-radius: 50px;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mauve);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .cal-btn:hover { background: var(--rose-pale); }
+
+    /* ═══════════════════════════════
+       MAP EMBED
+    ═══════════════════════════════ */
+    .map-embed {
+      margin-top: 1.25rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--blush);
+      box-shadow: var(--shadow);
+    }
+    .map-embed iframe {
+      display: block;
+      width: 100%;
+      height: 200px;
+      border: none;
+    }
+
+    /* ═══════════════════════════════
+       PHOTO LIGHTBOX
+    ═══════════════════════════════ */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: rgba(30,15,15,0.88);
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+    }
+    #lightbox.active  { display: flex; }
+    #lightbox.visible { opacity: 1; }
+    #lightbox-img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: var(--radius);
+      box-shadow: 0 12px 48px rgba(0,0,0,0.5);
+    }
+    #lightbox-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+      font-size: 2.5rem;
+      color: rgba(255,255,255,0.85);
+      cursor: pointer;
+      line-height: 1;
+      background: none;
+      border: none;
+      padding: 0;
+      transition: color 0.2s, transform 0.2s;
+    }
+    #lightbox-close:hover {
+      color: white;
+      transform: scale(1.1);
+    }
   </style>
 </head>
 
 <body>
 
+  <!-- ═══════ PASSWORD GATE ═══════ -->
+  <div id="password-gate" role="dialog" aria-modal="true" aria-label="Enter invitation password">
+    <p class="gate-names">Tommy &amp; Jeyan</p>
+    <p class="gate-prompt">This invitation is private. Please enter your password to continue.</p>
+    <div class="gate-input-row">
+      <input type="password" id="gate-input" placeholder="Password" autocomplete="off" />
+      <button id="gate-btn">Enter</button>
+    </div>
+    <p id="gate-error" aria-live="polite"></p>
+    <div class="ornament gate-ornament" aria-hidden="true"><span>❧</span></div>
+  </div>
+
   <!-- ═══════ 1. HERO ═══════ -->
   <section class="hero" aria-label="Wedding invitation hero">
+    <div class="hero-bg" aria-hidden="true"></div>
     <span class="hero-corner-br" aria-hidden="true">❧</span>
 
     <p class="hero-eyebrow">You are cordially invited to the wedding of</p>
@@ -707,6 +990,27 @@
     <div class="ornament hero-ornament" aria-hidden="true">
       <span>❧</span>
     </div>
+
+    <!-- Countdown to wedding day -->
+    <div class="countdown-wrapper" id="countdown-wrapper" aria-label="Countdown to the wedding">
+      <div class="countdown-box">
+        <span class="countdown-digit" id="cd-days">--</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <div class="countdown-box">
+        <span class="countdown-digit" id="cd-hours">--</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <div class="countdown-box">
+        <span class="countdown-digit" id="cd-minutes">--</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+      <div class="countdown-box">
+        <span class="countdown-digit" id="cd-seconds">--</span>
+        <span class="countdown-label">Seconds</span>
+      </div>
+    </div>
+    <p class="countdown-complete" id="countdown-complete">Today is the day! ✦</p>
   </section>
 
   <!-- ═══════ 2. PHOTO GALLERY ═══════ -->
@@ -750,6 +1054,18 @@
           <p class="event-card-venue">St. Therese Parish</p>
           <p class="event-card-address">Bonifacio Global City, Taguig, Metro Manila</p>
           <p class="event-card-time">3:00 PM · December 27, 2026</p>
+          <div class="cal-btns">
+            <a class="cal-btn" id="gcal-btn" href="#" target="_blank" rel="noopener">Google Calendar</a>
+            <button class="cal-btn" id="ical-btn">Add to iCal</button>
+          </div>
+          <div class="map-embed">
+            <iframe
+              src="https://maps.google.com/maps?q=St+Therese+Parish+McKinley+Hill+BGC&output=embed"
+              loading="lazy"
+              title="St. Therese Parish location"
+              allowfullscreen
+            ></iframe>
+          </div>
         </div>
 
         <div class="event-card reveal">
@@ -937,11 +1253,226 @@
     <a class="footer-link" href="index.html">Planning Dashboard ↗</a>
   </footer>
 
+  <!-- ═══════ LIGHTBOX ═══════ -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Photo lightbox">
+    <button id="lightbox-close" aria-label="Close lightbox">&times;</button>
+    <img id="lightbox-img" src="" alt="Tommy and Jeyan" />
+  </div>
+
   <script>
     // ─── CONFIG ───────────────────────────────────────────────────────────────
     // After deploying the Apps Script web app, paste the URL below.
     const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxvLRW-_JejderjHjt4DnY0JaJpihphEjzHOK9ViY-84bz2HZpqcpJFFQYCc-Kgrnx1/exec';
+    const INVITE_PASSWORD = 'dec272024';
     // ──────────────────────────────────────────────────────────────────────────
+
+    // ── Password Gate ──────────────────────────────────────────────────────────
+    (function initGate() {
+      const gate    = document.getElementById('password-gate');
+      const input   = document.getElementById('gate-input');
+      const btn     = document.getElementById('gate-btn');
+      const errorEl = document.getElementById('gate-error');
+
+      if (sessionStorage.getItem('tj_unlocked') === '1') {
+        gate.style.display = 'none';
+        initFeatures();
+        return;
+      }
+
+      function tryUnlock() {
+        if (input.value.trim().toLowerCase() === INVITE_PASSWORD.toLowerCase()) {
+          sessionStorage.setItem('tj_unlocked', '1');
+          gate.classList.add('fade-out');
+          setTimeout(() => { gate.style.display = 'none'; }, 650);
+          window.scrollTo(0, 0);
+          initFeatures();
+        } else {
+          errorEl.textContent = 'Incorrect password. Please try again.';
+          input.classList.remove('shake');
+          void input.offsetWidth; // force reflow to restart animation
+          input.classList.add('shake');
+          input.select();
+        }
+      }
+
+      btn.addEventListener('click', tryUnlock);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+      // Auto-focus for desktop
+      setTimeout(() => input.focus(), 100);
+    }());
+
+    function initFeatures() {
+      initPetals();
+      initParallax();
+      initCountdown();
+      initCalendarLinks();
+      initGalleryLightbox();
+    }
+
+    // ── Rose Petals ────────────────────────────────────────────────────────────
+    function initPetals() {
+      const hero = document.querySelector('.hero');
+      if (!hero) return;
+      const colors = ['#D4A5A0','#C9A96E','#EDD5C8','#B8837A','#F5EDE4'];
+      for (let i = 0; i < 15; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal';
+        const size    = 8 + Math.random() * 10;
+        const opacity = 0.4 + Math.random() * 0.4;
+        petal.style.cssText = [
+          `left: ${5 + Math.random() * 90}%`,
+          `top: -20px`,
+          `width: ${size}px`,
+          `height: ${size * 1.3}px`,
+          `background: ${colors[Math.floor(Math.random() * colors.length)]}`,
+          `animation-duration: ${8 + Math.random() * 8}s`,
+          `animation-delay: ${Math.random() * 10}s`,
+          `--petal-opacity: ${opacity}`,
+          `opacity: ${opacity}`
+        ].join(';');
+        hero.appendChild(petal);
+      }
+    }
+
+    // ── Parallax Hero ──────────────────────────────────────────────────────────
+    function initParallax() {
+      const heroBg = document.querySelector('.hero-bg');
+      if (!heroBg) return;
+      window.addEventListener('scroll', () => {
+        if (window.innerWidth < 768) { heroBg.style.transform = ''; return; }
+        heroBg.style.transform = 'translateY(' + window.scrollY * 0.4 + 'px)';
+      }, { passive: true });
+    }
+
+    // ── Countdown Timer ────────────────────────────────────────────────────────
+    function initCountdown() {
+      const target  = new Date('2026-12-27T07:00:00Z'); // 3 PM PHT (UTC+8)
+      const wrapper  = document.getElementById('countdown-wrapper');
+      const complete = document.getElementById('countdown-complete');
+      const dEl = document.getElementById('cd-days');
+      const hEl = document.getElementById('cd-hours');
+      const mEl = document.getElementById('cd-minutes');
+      const sEl = document.getElementById('cd-seconds');
+      const prev = { d: null, h: null, m: null, s: null };
+
+      function setDigit(el, val, key) {
+        const str = String(val).padStart(2, '0');
+        if (str !== prev[key]) {
+          el.textContent = str;
+          el.classList.remove('flip');
+          void el.offsetWidth;
+          el.classList.add('flip');
+          prev[key] = str;
+        }
+      }
+
+      function tick() {
+        const diff = target - new Date();
+        if (diff <= 0) {
+          wrapper.style.display = 'none';
+          complete.style.display = 'block';
+          clearInterval(timer);
+          return;
+        }
+        setDigit(dEl, Math.floor(diff / 86400000),           'd');
+        setDigit(hEl, Math.floor((diff % 86400000) / 3600000), 'h');
+        setDigit(mEl, Math.floor((diff % 3600000) / 60000),    'm');
+        setDigit(sEl, Math.floor((diff % 60000) / 1000),       's');
+      }
+
+      tick();
+      const timer = setInterval(tick, 1000);
+    }
+
+    // ── Calendar Links ─────────────────────────────────────────────────────────
+    function initCalendarLinks() {
+      const gcalBtn = document.getElementById('gcal-btn');
+      const icalBtn = document.getElementById('ical-btn');
+      if (!gcalBtn || !icalBtn) return;
+
+      const title    = "Tommy & Jeyan's Wedding";
+      const startUTC = '20261227T070000Z'; // 3 PM PHT
+      const endUTC   = '20261227T110000Z'; // ~7 PM PHT
+      const location = 'St. Therese Parish, Bonifacio Global City, Taguig, Metro Manila';
+      const desc     = "Wedding Ceremony of Tommy & Jeyan";
+
+      gcalBtn.href =
+        'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+        '&text=' + encodeURIComponent(title) +
+        '&dates=' + startUTC + '/' + endUTC +
+        '&details=' + encodeURIComponent(desc) +
+        '&location=' + encodeURIComponent(location);
+
+      icalBtn.addEventListener('click', () => {
+        const ics = [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//TJ Wedding//EN',
+          'BEGIN:VEVENT',
+          'UID:tj-wedding-ceremony@tjwedding',
+          'DTSTAMP:' + new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15) + 'Z',
+          'DTSTART:' + startUTC,
+          'DTEND:'   + endUTC,
+          'SUMMARY:' + title,
+          'DESCRIPTION:' + desc,
+          'LOCATION:' + location,
+          'END:VEVENT',
+          'END:VCALENDAR'
+        ].join('\r\n');
+
+        const blob = new Blob([ics], { type: 'text/calendar' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url;
+        a.download = 'tj-wedding.ics';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    // ── Photo Lightbox ─────────────────────────────────────────────────────────
+    function initGalleryLightbox() {
+      const lightbox = document.getElementById('lightbox');
+      const lbImg    = document.getElementById('lightbox-img');
+      const lbClose  = document.getElementById('lightbox-close');
+
+      function openLightbox(src) {
+        lbImg.src = src;
+        lightbox.classList.add('active');
+        requestAnimationFrame(() => lightbox.classList.add('visible'));
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove('visible');
+        setTimeout(() => {
+          lightbox.classList.remove('active');
+          document.body.style.overflow = '';
+          lbImg.src = '';
+        }, 300);
+      }
+
+      lbClose.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+      function attachCardListeners() {
+        document.querySelectorAll('.gallery-card img').forEach(img => {
+          if (img.dataset.lbBound) return;
+          img.dataset.lbBound = '1';
+          img.style.cursor = 'pointer';
+          img.parentElement.style.cursor = 'pointer';
+          img.parentElement.addEventListener('click', () => openLightbox(img.src));
+        });
+      }
+
+      // Re-check after gallery images load (they're swapped in asynchronously)
+      const strip = document.querySelector('.gallery-strip');
+      if (strip) {
+        new MutationObserver(attachCardListeners).observe(strip, { childList: true, subtree: true });
+      }
+      attachCardListeners();
+    }
 
     // ── Scroll-reveal ──────────────────────────────────────────────────────────
     const revealObserver = new IntersectionObserver(
