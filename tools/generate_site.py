@@ -625,39 +625,46 @@ TABLE_META = {
     14: ("Tommy Friends", "#8B1A35"), 15: ("Tommy Friends", "#8B1A35"), 16: ("Tommy Friends", "#8B1A35"),
 }
 
-# Talisay floor plan: ~9.8m wide × 33m long (300 sqm)
-# SVG viewBox: 420 × 1150. Scale: ~30.6px/m
-# Kitchen is a SEPARATE ROOM (external, top of building, not inside hall).
-# Hall polygon starts at y=120.  Left table col x=125, right col x=285. Row spacing 92px.
+# Talisay floor plan: 9.8m wide × 33m long (300 sqm)
+# SVG viewBox: 420 × 1300.  Scale: 32px/m
+# Kitchen: separate external room above hall (not part of 300sqm).
+# Hall: x=54–366 (312px = 9.75m), y=132–1160 (1028px = 32.1m), stair notch bottom-right.
+# Layout top→bottom: Stage/Backdrop → Sweetheart table → Dance floor → 8 rows of guest tables.
+# Buffet strip on RIGHT WALL alongside rows 4–8 (matches seating mockup).
+# Left col x=130, right col x=290, row spacing 90px from y=400.
 TABLE_POS = {
-    1:  (125, 320),   # Row 1 left  — Sponsors
-    2:  (285, 320),   # Row 1 right — Sponsors
-    3:  (125, 412),   # Row 2 left  — Sponsors
-    4:  (285, 412),
-    5:  (125, 504),
-    6:  (285, 504),
-    7:  (125, 596),
-    8:  (285, 596),
-    9:  (125, 688),
-    10: (285, 688),
-    11: (125, 780),
-    12: (285, 780),
-    13: (125, 872),
-    14: (285, 872),
-    15: (125, 964),
-    16: (285, 964),
+    1:  (130, 400),   # Row 1 left  — Sponsors
+    2:  (290, 400),   # Row 1 right — Sponsors
+    3:  (130, 490),   # Row 2 left  — Sponsors
+    4:  (290, 490),
+    5:  (130, 580),
+    6:  (290, 580),
+    7:  (130, 670),
+    8:  (290, 670),
+    9:  (130, 760),
+    10: (290, 760),
+    11: (130, 850),
+    12: (290, 850),
+    13: (130, 940),
+    14: (290, 940),
+    15: (130, 1030),
+    16: (290, 1030),
 }
 
 def make_floor_plan_svg(option, by_table):
     """Return an SVG string for the Talisay floor plan.
     option='a' → all round tables; option='b' → tables 1-3 as sponsor rectangles.
 
-    Layout (viewBox 420 × 1150, scale ~30.6px/m):
-      - Kitchen is a SEPARATE EXTERNAL room above the hall (y=10–118), not part of main hall.
-      - Main hall polygon starts at y=120.  Stair notch at bottom-right.
-      - Catering/buffet area is INSIDE the hall, left wall, top section (accessible to guests).
-      - Stage + dance floor at top of main hall (center/right of catering strip).
-      - 16 tables in 2 columns, left x=125 right x=285, rows spaced 92px from y=320.
+    Scale: 32px/m.  ViewBox: 0 0 420 1300
+    Hall: x=54–366 (312px = 9.75m), y=132–1160 (1028px = 32.1m)
+    Top→bottom inside hall:
+      Stage/Backdrop (full-width, 2.3m deep)
+      Sweetheart table — T&J circle (separate, below stage)
+      Dance floor (8.5m × 2.7m, dashed)
+      Guest tables T01–T16 (8 rows × 2 cols, r=26, 90px row spacing)
+      Buffet strip RIGHT WALL, rows 4–8 (y=665–1057, matches seating mockup)
+      Mobile bar + Entrance at bottom
+      Stair notch bottom-right
     """
     SPONSOR_TABLES = {1, 2, 3}
 
@@ -669,82 +676,84 @@ def make_floor_plan_svg(option, by_table):
         warn      = " ⚠" if total_pax > 10 else ""
 
         if option == "b" and tnum in SPONSOR_TABLES:
-            rw, rh   = 120, 42
+            rw, rh   = 120, 44
             rx_pos   = cx - rw // 2
             ry_pos   = cy - rh // 2
             table_svgs += f'\n  <rect x="{rx_pos}" y="{ry_pos}" width="{rw}" height="{rh}" rx="5" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.5"/>'
             table_svgs += f'\n  <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="11" font-weight="bold" fill="{color}">{tnum} · {int(total_pax)}pax{warn}</text>'
             table_svgs += f'\n  <text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="9" fill="{color}" font-style="italic">Sponsors</text>'
         else:
-            table_svgs += f'\n  <circle cx="{cx}" cy="{cy}" r="30" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.5"/>'
-            table_svgs += f'\n  <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="12" font-weight="bold" fill="{color}">{tnum}</text>'
-            table_svgs += f'\n  <text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="10" fill="#5A4040">{int(total_pax)}pax{warn}</text>'
+            table_svgs += f'\n  <circle cx="{cx}" cy="{cy}" r="26" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.5"/>'
+            table_svgs += f'\n  <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="11" font-weight="bold" fill="{color}">{tnum}</text>'
+            table_svgs += f'\n  <text x="{cx}" y="{cy + 9}" text-anchor="middle" font-size="9" fill="#5A4040">{int(total_pax)}pax{warn}</text>'
 
-    return f"""<svg viewBox="0 0 420 1150" width="380" height="1035" xmlns="http://www.w3.org/2000/svg" class="block">
+    return f"""<svg viewBox="0 0 420 1300" width="380" height="1176" xmlns="http://www.w3.org/2000/svg" class="block">
 
-  <!-- ═══ EXTERNAL KITCHEN (separate room, above main hall) ═══ -->
-  <rect x="60" y="10" width="130" height="110" rx="3" fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
-  <text x="125" y="48" text-anchor="middle" font-size="10" fill="#6B4820" font-weight="700" letter-spacing="0.5">KITCHEN</text>
-  <text x="125" y="63" text-anchor="middle" font-size="8" fill="#9B7A52">separate room</text>
-  <text x="125" y="76" text-anchor="middle" font-size="7" fill="#B09070">access via service door</text>
-  <!-- Service door symbol on kitchen bottom wall -->
-  <line x1="60"  y1="120" x2="88"  y2="120" stroke="#9B7A52" stroke-width="2.5"/>
-  <line x1="112" y1="120" x2="360" y2="120" stroke="#9B7A52" stroke-width="2.5"/>
-  <path d="M 88,120 A 24,24 0 0 1 112,96" fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="3,2"/>
-  <text x="100" y="115" text-anchor="middle" font-size="7" fill="#9B7A52">&#x25BE; door</text>
+  <!-- ═══ EXTERNAL KITCHEN — separate room, NOT part of 300sqm hall ═══ -->
+  <rect x="54" y="14" width="135" height="118" rx="3" fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
+  <text x="121" y="56" text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700" letter-spacing="0.5">KITCHEN</text>
+  <text x="121" y="72" text-anchor="middle" font-size="9" fill="#9B7A52">separate room</text>
+  <text x="121" y="86" text-anchor="middle" font-size="8" fill="#B09070">(not part of main hall)</text>
+  <!-- Service door: gap in top wall with swing arc -->
+  <line x1="54"  y1="132" x2="76"  y2="132" stroke="#C4B49A" stroke-width="2.5"/>
+  <line x1="100" y1="132" x2="366" y2="132" stroke="#C4B49A" stroke-width="2.5"/>
+  <path d="M 76,132 A 24,24 0 0 1 100,108" fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="88" y="127" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
 
-  <!-- ═══ MAIN HALL (polygon with stair notch bottom-right) ═══ -->
-  <polygon points="60,120 360,120 360,1060 310,1110 60,1110" fill="#F9F6F2" stroke="#D4C5B0" stroke-width="2"/>
+  <!-- ═══ MAIN HALL — 9.75m × 32.1m, stair notch bottom-right ═══ -->
+  <polygon points="54,132 366,132 366,1108 316,1160 54,1160" fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
 
-  <!-- ── Catering / Buffet — LEFT WALL inside hall, near service door ── -->
-  <rect x="60" y="128" width="58" height="160" rx="3" fill="#fdf3e7" stroke="#C4A882" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="89" y="192" text-anchor="middle" font-size="8" fill="#8B6340" font-weight="600" transform="rotate(-90,89,192)">BUFFET / CATERING</text>
+  <!-- ── STAGE / BACKDROP — full-width, top of hall, ~2.3m deep ── -->
+  <rect x="62" y="144" width="296" height="74" rx="6"
+        fill="#EAD8EC" fill-opacity="0.65" stroke="#A484A8" stroke-width="1.5"/>
+  <text x="210" y="176" text-anchor="middle" font-size="12" font-weight="bold" fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
+  <text x="210" y="193" text-anchor="middle" font-size="8" fill="#9070A0">9.25m &#215; 2.3m</text>
 
-  <!-- ── Stage / Couple&#39;s Table — centered, top of hall ── -->
-  <rect x="128" y="140" width="220" height="48" rx="7" fill="#8B1A35" fill-opacity="0.14" stroke="#8B1A35" stroke-width="1.5"/>
-  <text x="238" y="160" text-anchor="middle" font-size="10" font-weight="bold" fill="#8B1A35">Tommy &amp; Jeyan</text>
-  <text x="238" y="176" text-anchor="middle" font-size="8" fill="#8B1A35">Stage &middot; Couple&#39;s Table</text>
+  <!-- ── SWEETHEART TABLE — T&amp;J, small circle below stage ── -->
+  <circle cx="210" cy="248" r="22" fill="#8B1A35" fill-opacity="0.15" stroke="#8B1A35" stroke-width="1.8"/>
+  <text x="210" y="244" text-anchor="middle" font-size="9" font-weight="bold" fill="#8B1A35">T &amp; J</text>
+  <text x="210" y="257" text-anchor="middle" font-size="7" fill="#8B1A35">sweetheart</text>
 
-  <!-- ── Dance Floor — below stage ── -->
-  <rect x="70" y="200" width="265" height="95" rx="7" fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="202" y="244" text-anchor="middle" font-size="11" fill="#B0A090" letter-spacing="2">DANCE FLOOR</text>
-  <text x="202" y="260" text-anchor="middle" font-size="8" fill="#C8B8A0">8.7m &#215; 3.1m</text>
+  <!-- ── DANCE FLOOR — below sweetheart table, ~8.5m × 2.7m ── -->
+  <rect x="72" y="278" width="272" height="86" rx="6"
+        fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="208" y="318" text-anchor="middle" font-size="11" fill="#B0A090" letter-spacing="2">&#43; DANCE FLOOR</text>
+  <text x="208" y="335" text-anchor="middle" font-size="8" fill="#C8B8A0">8.5m &#215; 2.7m</text>
 
-  <!-- ── DJ Booth — right of dance floor ── -->
-  <rect x="338" y="208" width="20" height="44" rx="3" fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5"/>
-  <text x="348" y="226" text-anchor="middle" font-size="7" fill="#8B6340" font-weight="600" transform="rotate(90,348,226)">DJ</text>
+  <!-- ── DJ BOOTH — right corner beside stage ── -->
+  <rect x="346" y="144" width="18" height="52" rx="3" fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5"/>
+  <text x="355" y="168" text-anchor="middle" font-size="8" fill="#8B6340" font-weight="700" transform="rotate(90,355,168)">DJ</text>
 
-  <!-- ── Utility rooms — right wall mid-section ── -->
-  <rect x="334" y="530" width="26" height="60" rx="2" fill="#EEE8E0" stroke="#C4B89A" stroke-width="1.2"/>
-  <text x="347" y="558" text-anchor="middle" font-size="7" fill="#8B7355" transform="rotate(90,347,558)">UTIL 1</text>
-  <rect x="334" y="598" width="26" height="60" rx="2" fill="#EEE8E0" stroke="#C4B89A" stroke-width="1.2"/>
-  <text x="347" y="626" text-anchor="middle" font-size="7" fill="#8B7355" transform="rotate(90,347,626)">UTIL 2</text>
+  <!-- ── BUFFET STRIP — RIGHT WALL, rows T04–T16 (y=665–1057) ── -->
+  <rect x="346" y="665" width="20" height="392" rx="3"
+        fill="#FEFAE8" fill-opacity="0.9" stroke="#C4A840" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="356" y="860" text-anchor="middle" font-size="9" fill="#7A6010" font-weight="600" transform="rotate(90,356,860)">BUFFET</text>
 
-  <!-- ── Aisle center line ── -->
-  <line x1="205" y1="305" x2="205" y2="990" stroke="#E8E0D5" stroke-width="1" stroke-dasharray="5,5"/>
+  <!-- ── CENTER AISLE ── -->
+  <line x1="210" y1="374" x2="210" y2="1062" stroke="#E0D8D0" stroke-width="1" stroke-dasharray="5,5"/>
 
-  <!-- ── Guest tables ── -->
+  <!-- ── GUEST TABLES T01–T16 ── -->
   {table_svgs}
 
-  <!-- ── Mobile bar — bottom-left near entrance ── -->
-  <rect x="63" y="1010" width="72" height="38" rx="5" fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5"/>
-  <text x="99" y="1025" text-anchor="middle" font-size="8" fill="#8B6340" font-weight="600">MOBILE</text>
-  <text x="99" y="1038" text-anchor="middle" font-size="8" fill="#8B6340">BAR</text>
+  <!-- ── MOBILE BAR — bottom-left ── -->
+  <rect x="57" y="1082" width="74" height="40" rx="5" fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5"/>
+  <text x="94" y="1098" text-anchor="middle" font-size="9" fill="#8B6340" font-weight="600">MOBILE</text>
+  <text x="94" y="1112" text-anchor="middle" font-size="9" fill="#8B6340">BAR</text>
 
-  <!-- ── Entrance doors — bottom-center ── -->
-  <rect x="148" y="1022" width="60" height="28" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1"/>
-  <rect x="222" y="1022" width="60" height="28" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1"/>
-  <text x="178" y="1040" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-  <text x="252" y="1040" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-  <text x="205" y="1068" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1">ENTRANCE</text>
+  <!-- ── ENTRANCE DOORS — bottom-center ── -->
+  <rect x="152" y="1098" width="52" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+  <rect x="218" y="1098" width="52" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+  <text x="178" y="1118" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+  <text x="244" y="1118" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+  <text x="210" y="1148" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
 
-  <!-- ── Stairs notch — bottom-right ── -->
-  <polygon points="310,1110 360,1060 360,1110" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1"/>
-  <text x="337" y="1098" text-anchor="middle" font-size="7" fill="#8B7355" transform="rotate(-45,337,1098)">STAIRS</text>
+  <!-- ── STAIR NOTCH — bottom-right ── -->
+  <polygon points="316,1160 366,1108 366,1160" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
+  <text x="343" y="1148" text-anchor="middle" font-size="7" fill="#8B7355" transform="rotate(-45,343,1148)">STAIRS</text>
 
-  <!-- ── Dimension labels ── -->
-  <text x="210" y="14" text-anchor="middle" font-size="8" fill="#B0A090">9.8 m wide</text>
-  <text x="20" y="620" text-anchor="middle" font-size="8" fill="#B0A090" transform="rotate(-90,20,620)">33 m</text>
+  <!-- ── DIMENSION LABELS ── -->
+  <text x="210" y="11" text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
+  <text x="22" y="650" text-anchor="middle" font-size="8" fill="#B0A090" transform="rotate(-90,22,650)">33 m</text>
 </svg>"""
 
 
