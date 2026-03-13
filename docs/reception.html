@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tommy &amp; Jeyan — Reception Seating</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --burgundy: #8B1A35; --gold: #B5924C; --cream: #FAF7F2; }
+    body { background-color: var(--cream); font-family: 'Inter', sans-serif; }
+    .serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .section-card { background: white; border: 1px solid #E8E0D5; border-radius: 16px; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <header style="background: linear-gradient(160deg, #2D0A16 0%, #5A1525 50%, #8B1A35 100%);">
+    <div class="max-w-7xl mx-auto px-6 py-10 flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <p class="text-[#B5924C] text-xs tracking-[0.4em] uppercase mb-1">Reception · Talisay Events Hall</p>
+        <h1 class="serif text-4xl md:text-5xl text-white font-light italic">Seating Chart</h1>
+        <p class="text-stone-400 text-xs mt-2">Tommy &amp; Jeyan &bull; December 27, 2026 &bull; Updated March 13, 2026 at 02:19 PM</p>
+      </div>
+      <a href="index.html" class="text-xs text-[#B5924C] border border-[#B5924C] px-4 py-2 rounded-full hover:bg-[#B5924C] hover:text-white transition-colors">← Dashboard</a>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-10">
+
+    <!-- Venue info + legend -->
+    <div class="flex flex-wrap gap-4 mb-8 items-start">
+      <div class="section-card px-6 py-4 flex-1 min-w-60">
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Venue</p>
+        <p class="serif text-xl font-light text-stone-800">Gallio Events Hall — Talisay</p>
+        <p class="text-stone-400 text-sm">±300 sqm · 9.8m × 33m · 151 est. pax</p>
+      </div>
+      <div class="section-card px-6 py-4">
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">Legend</p>
+        <div class="flex flex-wrap gap-3 text-xs">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#B5924C"></span>VIP / Sponsors</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#D4A5A0"></span>Jeyan's Family</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#B8837A"></span>Tommy's Family</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#7A9E7E"></span>Jeyan's Friends</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#8B1A35"></span>Tommy's Friends</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+
+      <!-- Floor plan SVG -->
+      <div class="section-card p-6 flex-shrink-0">
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">Floor Plan — Talisay (300 sqm)</p>
+        <svg viewBox="0 0 310 1010" width="310" height="1010" xmlns="http://www.w3.org/2000/svg" class="block">
+          <!-- Hall outline -->
+          <rect x="1" y="1" width="308" height="1008" rx="4" fill="#F9F6F2" stroke="#D4C5B0" stroke-width="2"/>
+
+          <!-- Kitchen label top -->
+          <rect x="100" y="4" width="110" height="38" rx="3" fill="#E8E0D5"/>
+          <text x="155" y="16" text-anchor="middle" font-size="8" fill="#8B7355" font-weight="600" letter-spacing="1">KITCHEN</text>
+          <text x="155" y="28" text-anchor="middle" font-size="7" fill="#A89070">9.80 m</text>
+          <line x1="100" y1="42" x2="210" y2="42" stroke="#D4C5B0" stroke-width="1" stroke-dasharray="3,3"/>
+
+          <!-- Dimension label -->
+          <text x="4" y="520" text-anchor="middle" font-size="8" fill="#B0A090" transform="rotate(-90, 4, 520)">33.00 m</text>
+          <text x="155" y="1008" text-anchor="middle" font-size="8" fill="#B0A090">9.80 m</text>
+
+          <!-- Sweetheart table -->
+          <rect x="105" y="60" width="100" height="38" rx="6" fill="#8B1A35" fill-opacity="0.15" stroke="#8B1A35" stroke-width="1.5"/>
+          <text x="155" y="76" text-anchor="middle" font-size="9" font-weight="bold" fill="#8B1A35">Tommy &amp; Jeyan</text>
+          <text x="155" y="90" text-anchor="middle" font-size="8" fill="#8B1A35">Sweetheart Table</text>
+
+          <!-- Aisle line (center) -->
+          <line x1="155" y1="110" x2="155" y2="840" stroke="#E8E0D5" stroke-width="1" stroke-dasharray="4,4"/>
+
+          <!-- Guest tables -->
+          
+    <circle cx="80" cy="170" r="26" fill="#B5924C" fill-opacity="0.25" stroke="#B5924C" stroke-width="1.5"/>
+    <text x="80" y="164" text-anchor="middle" font-size="11" font-weight="bold" fill="#B5924C">1</text>
+    <text x="80" y="178" text-anchor="middle" font-size="9" fill="#5A4040">8pax</text>
+    <circle cx="230" cy="170" r="26" fill="#B5924C" fill-opacity="0.25" stroke="#B5924C" stroke-width="1.5"/>
+    <text x="230" y="164" text-anchor="middle" font-size="11" font-weight="bold" fill="#B5924C">2</text>
+    <text x="230" y="178" text-anchor="middle" font-size="9" fill="#5A4040">8pax</text>
+    <circle cx="80" cy="255" r="26" fill="#B5924C" fill-opacity="0.25" stroke="#B5924C" stroke-width="1.5"/>
+    <text x="80" y="249" text-anchor="middle" font-size="11" font-weight="bold" fill="#B5924C">3</text>
+    <text x="80" y="263" text-anchor="middle" font-size="9" fill="#5A4040">8pax</text>
+    <circle cx="230" cy="255" r="26" fill="#D4A5A0" fill-opacity="0.25" stroke="#D4A5A0" stroke-width="1.5"/>
+    <text x="230" y="249" text-anchor="middle" font-size="11" font-weight="bold" fill="#D4A5A0">4</text>
+    <text x="230" y="263" text-anchor="middle" font-size="9" fill="#5A4040">8pax</text>
+    <circle cx="80" cy="340" r="26" fill="#D4A5A0" fill-opacity="0.25" stroke="#D4A5A0" stroke-width="1.5"/>
+    <text x="80" y="334" text-anchor="middle" font-size="11" font-weight="bold" fill="#D4A5A0">5</text>
+    <text x="80" y="348" text-anchor="middle" font-size="9" fill="#5A4040">8pax</text>
+    <circle cx="230" cy="340" r="26" fill="#D4A5A0" fill-opacity="0.25" stroke="#D4A5A0" stroke-width="1.5"/>
+    <text x="230" y="334" text-anchor="middle" font-size="11" font-weight="bold" fill="#D4A5A0">6</text>
+    <text x="230" y="348" text-anchor="middle" font-size="9" fill="#5A4040">7pax</text>
+    <circle cx="80" cy="425" r="26" fill="#B8837A" fill-opacity="0.25" stroke="#B8837A" stroke-width="1.5"/>
+    <text x="80" y="419" text-anchor="middle" font-size="11" font-weight="bold" fill="#B8837A">7</text>
+    <text x="80" y="433" text-anchor="middle" font-size="9" fill="#5A4040">9pax</text>
+    <circle cx="230" cy="425" r="26" fill="#B8837A" fill-opacity="0.25" stroke="#B8837A" stroke-width="1.5"/>
+    <text x="230" y="419" text-anchor="middle" font-size="11" font-weight="bold" fill="#B8837A">8</text>
+    <text x="230" y="433" text-anchor="middle" font-size="9" fill="#5A4040">9pax</text>
+    <circle cx="80" cy="510" r="26" fill="#B8837A" fill-opacity="0.25" stroke="#B8837A" stroke-width="1.5"/>
+    <text x="80" y="504" text-anchor="middle" font-size="11" font-weight="bold" fill="#B8837A">9</text>
+    <text x="80" y="518" text-anchor="middle" font-size="9" fill="#5A4040">8pax</text>
+    <circle cx="230" cy="510" r="26" fill="#7A9E7E" fill-opacity="0.25" stroke="#7A9E7E" stroke-width="1.5"/>
+    <text x="230" y="504" text-anchor="middle" font-size="11" font-weight="bold" fill="#7A9E7E">10</text>
+    <text x="230" y="518" text-anchor="middle" font-size="9" fill="#5A4040">7pax</text>
+    <circle cx="80" cy="595" r="26" fill="#7A9E7E" fill-opacity="0.25" stroke="#7A9E7E" stroke-width="1.5"/>
+    <text x="80" y="589" text-anchor="middle" font-size="11" font-weight="bold" fill="#7A9E7E">11</text>
+    <text x="80" y="603" text-anchor="middle" font-size="9" fill="#5A4040">7pax</text>
+    <circle cx="230" cy="595" r="26" fill="#7A9E7E" fill-opacity="0.25" stroke="#7A9E7E" stroke-width="1.5"/>
+    <text x="230" y="589" text-anchor="middle" font-size="11" font-weight="bold" fill="#7A9E7E">12</text>
+    <text x="230" y="603" text-anchor="middle" font-size="9" fill="#5A4040">12pax ⚠</text>
+    <circle cx="80" cy="680" r="26" fill="#7A9E7E" fill-opacity="0.25" stroke="#7A9E7E" stroke-width="1.5"/>
+    <text x="80" y="674" text-anchor="middle" font-size="11" font-weight="bold" fill="#7A9E7E">13</text>
+    <text x="80" y="688" text-anchor="middle" font-size="9" fill="#5A4040">11pax ⚠</text>
+    <circle cx="230" cy="680" r="26" fill="#8B1A35" fill-opacity="0.25" stroke="#8B1A35" stroke-width="1.5"/>
+    <text x="230" y="674" text-anchor="middle" font-size="11" font-weight="bold" fill="#8B1A35">14</text>
+    <text x="230" y="688" text-anchor="middle" font-size="9" fill="#5A4040">7pax</text>
+    <circle cx="80" cy="765" r="26" fill="#8B1A35" fill-opacity="0.25" stroke="#8B1A35" stroke-width="1.5"/>
+    <text x="80" y="759" text-anchor="middle" font-size="11" font-weight="bold" fill="#8B1A35">15</text>
+    <text x="80" y="773" text-anchor="middle" font-size="9" fill="#5A4040">6pax</text>
+    <circle cx="230" cy="765" r="26" fill="#8B1A35" fill-opacity="0.25" stroke="#8B1A35" stroke-width="1.5"/>
+    <text x="230" y="759" text-anchor="middle" font-size="11" font-weight="bold" fill="#8B1A35">16</text>
+    <text x="230" y="773" text-anchor="middle" font-size="9" fill="#5A4040">9pax</text>
+
+          <!-- Dance floor -->
+          <rect x="30" y="830" width="250" height="65" rx="6" fill="#F0EBE3" stroke="#D4C5B0" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="155" y="858" text-anchor="middle" font-size="10" fill="#B0A090" letter-spacing="2">DANCE FLOOR</text>
+          <text x="155" y="875" text-anchor="middle" font-size="8" fill="#C8B8A0">± 7.5m × 2m</text>
+
+          <!-- Entrance -->
+          <rect x="80" y="918" width="70" height="28" rx="4" fill="#E8E0D5"/>
+          <rect x="160" y="918" width="70" height="28" rx="4" fill="#E8E0D5"/>
+          <text x="115" y="936" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="195" y="936" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="155" y="998" text-anchor="middle" font-size="8" fill="#B0A090" letter-spacing="1">ENTRANCE</text>
+        </svg>
+      </div>
+
+      <!-- Table cards -->
+      <div class="flex-1">
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">Tables &amp; Guests</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B5924C22; border-bottom: 1px solid #B5924C44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 1</span>
+              <span class="ml-2 text-xs" style="color:#B5924C;">VIP</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">8 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Dean Joan<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ms. Emma<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Tita jen<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Shiela <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jaime<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Grace Fondevilla<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Rene Muller<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B5924C22; border-bottom: 1px solid #B5924C44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 2</span>
+              <span class="ml-2 text-xs" style="color:#B5924C;">VIP</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">8 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Chairperson Christian<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Sir Joliber <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Cheryl <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ana<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Alvin<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Denley Mirabueno<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B5924C22; border-bottom: 1px solid #B5924C44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 3</span>
+              <span class="ml-2 text-xs" style="color:#B5924C;">VIP</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">8 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Prof Avila<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Tito ysh<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Karen<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Pat <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">William<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Chi<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Rachel Muller<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #D4A5A022; border-bottom: 1px solid #D4A5A044;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 4</span>
+              <span class="ml-2 text-xs" style="color:#D4A5A0;">Jeyan Family</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">8 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Papa</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Joval</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Tito pong</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Aj</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jillian</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Tito willie</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mama amor</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mommy</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #D4A5A022; border-bottom: 1px solid #D4A5A044;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 5</span>
+              <span class="ml-2 text-xs" style="color:#D4A5A0;">Jeyan Family</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">8 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mama</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Kuya rom</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Maica<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Hannah</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Katrina<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">Flower Girl</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Tita cora</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Papa von</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Josiah</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #D4A5A022; border-bottom: 1px solid #D4A5A044;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 6</span>
+              <span class="ml-2 text-xs" style="color:#D4A5A0;">Jeyan Family</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">7 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ate<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-700 border border-rose-200">MOH</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Tito itoy</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Poleen<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-stone-100 text-stone-500 border border-stone-200">Veil</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Pierre<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-stone-100 text-stone-500 border border-stone-200">Ring</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Lola ana</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ninang maura</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Kuya VIC</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B8837A22; border-bottom: 1px solid #B8837A44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 7</span>
+              <span class="ml-2 text-xs" style="color:#B8837A;">Tommy Family</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">9 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Elaine Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Sheryl De Dios</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jackie Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Emil De Dios <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Nina Botabara<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">Flower Girl</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Dennis Mirabueno</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Salvacion Ribano</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Merlyn Remolacio</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B8837A22; border-bottom: 1px solid #B8837A44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 8</span>
+              <span class="ml-2 text-xs" style="color:#B8837A;">Tommy Family</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">9 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Sherwin Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Dong De Dios</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mae Aspra</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Luis De Dios</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Bea Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Seansean Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Axl John Mirabueno<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-stone-100 text-stone-500 border border-stone-200">Veil</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Djalma Ribano</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Grace Mirabueno</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B8837A22; border-bottom: 1px solid #B8837A44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 9</span>
+              <span class="ml-2 text-xs" style="color:#B8837A;">Tommy Family</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">8 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Teddy Botabara<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-700 border border-rose-200">Best Man</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jun Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Kervy Aspra</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Alvin Botabara <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Asuncion Mirabueno</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">George Suarez</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Antonio Remolacio</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #7A9E7E22; border-bottom: 1px solid #7A9E7E44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 10</span>
+              <span class="ml-2 text-xs" style="color:#7A9E7E;">Jeyan Friends</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">7 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">DIMPLES <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Josett</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">GEM<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">CEIJAS<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Julia</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Paolo</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #7A9E7E22; border-bottom: 1px solid #7A9E7E44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 11</span>
+              <span class="ml-2 text-xs" style="color:#7A9E7E;">Jeyan Friends</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">7 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">PAULO<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-stone-100 text-stone-500 border border-stone-200">Cord</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">DONNA</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">HAIDEE</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">JAIMINI</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mica<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Abby<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mikay</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #7A9E7E22; border-bottom: 1px solid #7A9E7E44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 12</span>
+              <span class="ml-2 text-xs" style="color:#7A9E7E;">Jeyan Friends</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Juls<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-stone-100 text-stone-500 border border-stone-200">Candle</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mich <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-stone-100 text-stone-500 border border-stone-200">Candle</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Aldrine</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Micca</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Carl</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Zynel</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Troy</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">VAN<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">MAYE<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">JEAN</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">LOI</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #7A9E7E22; border-bottom: 1px solid #7A9E7E44;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 13</span>
+              <span class="ml-2 text-xs" style="color:#7A9E7E;">Jeyan Friends</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">11 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Chairperson Mark</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Kat</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Andrew</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Honey</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Denise</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Andrew<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Godo</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Rom/voltaire</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">JC</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">EVP Jeng</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Bernadeth/giron</li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #8B1A3522; border-bottom: 1px solid #8B1A3544;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 14</span>
+              <span class="ml-2 text-xs" style="color:#8B1A35;">Tommy Friends</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">7 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Traviz Keinn Climacosa <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">John Goloya<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Michael Somosot <span class="text-xs text-emerald-600">+1</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ellwin Serge Panaglima <span class="text-xs text-emerald-600">+1</span></li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #8B1A3522; border-bottom: 1px solid #8B1A3544;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 15</span>
+              <span class="ml-2 text-xs" style="color:#8B1A35;">Tommy Friends</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">6 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Vaunn Maribao <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jade Calera</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Gabriel Ventura</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Patrick Soriano <span class="text-xs text-emerald-600">+1</span></li></ul>
+        </div>
+        <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #8B1A3522; border-bottom: 1px solid #8B1A3544;">
+            <div>
+              <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 16</span>
+              <span class="ml-2 text-xs" style="color:#8B1A35;">Tommy Friends</span>
+            </div>
+            <span class="text-sm font-semibold text-stone-600">9 pax</span>
+          </div>
+          <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Betlee Barraquias <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jason Deichmann<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Nikole Chan <span class="text-xs text-emerald-600">+1</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Piolo Barletta <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jan Carlo Ponce</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Louise Litonjua<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-stone-100 text-stone-500 border border-stone-200">Cord</span></li></ul>
+        </div>
+        </div>
+        
+        <div class="section-card overflow-hidden mt-8">
+          <div class="px-6 py-4 border-b border-stone-100 bg-amber-50">
+            <h3 class="serif text-xl font-light text-amber-800">Unassigned (19 guests)</h3>
+            <p class="text-amber-600 text-xs mt-0.5">These guests have not yet been assigned to a table.</p>
+          </div>
+          <ul class="px-6 py-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6"><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Kath <span class="text-xs text-stone-400">(PAL)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Lance <span class="text-xs text-stone-400">(PAL)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Ian <span class="text-xs text-stone-400">(PAL)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Bing <span class="text-xs text-stone-400">(PAL)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Guia <span class="text-xs text-stone-400">(PAL)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Justin <span class="text-xs text-stone-400">(PAL)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Amy <span class="text-xs text-stone-400">(PAL)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">ruel <span class="text-xs text-stone-400">(PAL)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Jeffrey <span class="text-xs text-stone-400">(PAL)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Tricia Ong <span class="text-xs text-stone-400">(Deloitte)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Francis Valencia <span class="text-xs text-stone-400">(Deloitte)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Didi Rico <span class="text-xs text-stone-400">(Deloitte)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Juan Gabriel Cuenco (Jiggy) <span class="text-xs text-stone-400">(Deloitte)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Enzo Papa <span class="text-xs text-stone-400">(Deloitte)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Juan Ambrocio Britanico (JA) <span class="text-xs text-stone-400">(Deloitte)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Sharm Lee <span class="text-xs text-stone-400">(Deloitte)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Bryle Raviz <span class="text-xs text-stone-400">(Deloitte)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Rahim Damanwala <span class="text-xs text-stone-400">(Deloitte)</span></li><li class="py-0.5 border-b border-stone-50 last:border-0 text-sm text-stone-600">Chito Ramos <span class="text-xs text-stone-400">(Deloitte)</span></li></ul>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="text-center py-8 text-stone-300 text-xs tracking-wider">
+    <span class="serif italic text-stone-400">Tommy &amp; Jeyan &bull; December 27, 2026</span>
+  </footer>
+
+</body>
+</html>
