@@ -927,9 +927,9 @@ def build_reception_html(guests):
 def build_floorplan_html(guests):
     """
     Interactive drag-and-drop floor plan editor.
-    Scale: 40px/m  →  Hall 9.8m×33m = 392×1320px  (x=30–422, y=150–1470)
-    All movable fixtures + tables are SVG <g transform="translate(cx,cy)"> elements.
-    Guest assignments saved to localStorage; positions saved to localStorage.
+    Scale: 40px/m  →  Hall 9.8m × 33m = 392 × 1320 px  (x=30–422, y=150–1470)
+    Layout: hall SVG centered at top; two panels (table list | detail) below.
+    Add table / Delete table supported via JS with localStorage persistence.
     """
 
     # ── Embed data ───────────────────────────────────────────────────────────
@@ -945,8 +945,9 @@ def build_floorplan_html(guests):
     })
 
     # Initial table positions at 40px/m
-    # Left col x=130 (2.5m from left wall), right col x=322 (2.5m from right wall)
-    # Row 1 starts at y=520 (after stage 2m + sweetheart ~1m + dance floor 3m + gap ~2m = ~8m = 320px from hall top y=150 → y=470, round to 520)
+    # Hall: left x=30, right x=422 (9.8m), top y=150, bottom y=1470 (33m)
+    # Left col x=130 (2.5m from left), right col x=322 (2.5m from right)
+    # Rows start at y=520, spacing 100px (2.5m between centers)
     fp_pos = {
         1: (130, 520), 2: (322, 520),
         3: (130, 620), 4: (322, 620),
@@ -957,7 +958,13 @@ def build_floorplan_html(guests):
        13: (130,1120), 14: (322,1120),
        15: (130,1220), 16: (322,1220),
     }
-    table_pos_json = json.dumps({str(t): {"x": x, "y": y} for t, (x, y) in fp_pos.items()})
+    table_pos_json = json.dumps(
+        {str(t): {"x": x, "y": y} for t, (x, y) in fp_pos.items()}
+    )
+    table_meta_with_pos_json = json.dumps({
+        str(t): {"cat": cat, "color": col, "x": fp_pos[t][0], "y": fp_pos[t][1]}
+        for t, (cat, col) in TABLE_META.items()
+    })
 
     comp_defaults_json = json.dumps({
         "comp-sweetheart": {"x": 226, "y": 290},
@@ -967,28 +974,12 @@ def build_floorplan_html(guests):
         "comp-mobilebar":  {"x": 83,  "y": 1320},
     })
 
-    # ── Grid lines (1m = 40px) ───────────────────────────────────────────────
+    # ── Grid lines (1 m = 40 px, inside hall bounds) ─────────────────────────
     grid_svg = ""
-    for gx in range(70, 422, 40):   # vertical lines at 1m marks
+    for gx in range(70, 422, 40):
         grid_svg += f'<line x1="{gx}" y1="150" x2="{gx}" y2="1470"/>'
-    for gy in range(190, 1470, 40): # horizontal lines at 1m marks
+    for gy in range(190, 1470, 40):
         grid_svg += f'<line x1="30" y1="{gy}" x2="422" y2="{gy}"/>'
-
-    # ── Table SVG elements ───────────────────────────────────────────────────
-    tables_svg = ""
-    for tnum, (cx, cy) in fp_pos.items():
-        _, color = TABLE_META.get(tnum, ("Guest", "#A0A0A0"))
-        tables_svg += (
-            f'<g class="fp-comp fp-table" id="fp-t{tnum}" '
-            f'transform="translate({cx},{cy})" data-table="{tnum}">'
-            f'<circle r="30" fill="{color}" fill-opacity="0.20" '
-            f'stroke="{color}" stroke-width="1.5" class="fp-body"/>'
-            f'<text text-anchor="middle" y="-5" font-size="12" '
-            f'font-weight="bold" fill="{color}">{tnum}</text>'
-            f'<text id="fp-px{tnum}" text-anchor="middle" y="9" '
-            f'font-size="9" fill="#5A4040">–pax</text>'
-            f'</g>'
-        )
 
     now_str = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
@@ -1008,27 +999,37 @@ def build_floorplan_html(guests):
     .serif {{ font-family:'Cormorant Garamond',Georgia,serif; }}
     .sc {{ background:white; border:1px solid #E8E0D5; border-radius:16px; }}
 
-    /* Draggable components */
     .fp-comp {{ cursor:grab; user-select:none; }}
     .fp-comp:hover .fp-body {{ opacity:.82; }}
-    .fp-comp.dragging {{ cursor:grabbing; }}
-    .fp-comp.dragging .fp-body {{ opacity:.65; }}
-
-    /* Selected table highlight */
+    .fp-comp.dragging {{ cursor:grabbing; opacity:.7; }}
     .fp-table.sel circle {{
       stroke-width:3 !important;
-      filter:drop-shadow(0 0 5px rgba(139,26,53,.55));
+      filter:drop-shadow(0 0 5px rgba(139,26,53,.6));
     }}
-
-    /* Grid */
     #fp-grid line {{ stroke:#ddd5cc; stroke-width:.6; pointer-events:none; }}
 
-    /* Sidebar rows */
-    .g-row {{ display:flex; align-items:center; gap:6px; padding:5px 4px;
-              border-bottom:1px solid #f5f0eb; font-size:13px; }}
+    .g-row {{ display:flex; align-items:center; gap:6px; padding:5px 2px;
+              border-bottom:1px solid #f5f0eb; font-size:12px; }}
     .g-row:last-child {{ border:none; }}
-    .g-row select {{ font-size:11px; border:1px solid #ddd; border-radius:6px;
-                     padding:1px 4px; background:white; color:#555; cursor:pointer; }}
+    .g-row select {{ font-size:11px; border:1px solid #e0d8d0; border-radius:6px;
+                     padding:2px 4px; background:white; color:#555; cursor:pointer;
+                     max-width:140px; }}
+    .trow {{ display:flex; align-items:center; gap:6px; padding:5px 4px;
+             border-bottom:1px solid #f5f0eb; cursor:pointer; border-radius:6px; }}
+    .trow:last-child {{ border:none; }}
+    .trow:hover {{ background:#f9f6f2; }}
+    .trow.sel {{ background:#fdf2f4; }}
+    .btn {{
+      display:inline-flex; align-items:center; gap:5px;
+      padding:6px 14px; border-radius:999px; font-size:12px;
+      border:1px solid #e0d8d0; background:white; color:#555;
+      cursor:pointer; transition:background .15s;
+    }}
+    .btn:hover {{ background:#f5f0eb; }}
+    .btn-primary {{ background:#8B1A35; color:white; border-color:#8B1A35; }}
+    .btn-primary:hover {{ opacity:.9; background:#8B1A35; }}
+    .btn-danger  {{ color:#dc2626; border-color:#fca5a5; }}
+    .btn-danger:hover {{ background:#fef2f2; }}
   </style>
 </head>
 <body class="min-h-screen">
@@ -1039,7 +1040,7 @@ def build_floorplan_html(guests):
     <div>
       <p class="text-[#B5924C] text-xs tracking-[.4em] uppercase mb-1">Interactive Editor</p>
       <h1 class="serif text-4xl text-white font-light italic">Floor Plan</h1>
-      <p class="text-stone-400 text-xs mt-1">Tommy &amp; Jeyan · Dec 27 2026 · Talisay Events Hall · ±300 sqm · Scale 40px/m</p>
+      <p class="text-stone-400 text-xs mt-1">Tommy &amp; Jeyan · Dec 27 2026 · Talisay Events Hall · 9.8 m × 33 m · 40 px/m</p>
     </div>
     <div class="flex gap-3 flex-wrap">
       <a href="reception.html" class="text-xs text-[#B5924C] border border-[#B5924C] px-4 py-2 rounded-full hover:bg-[#B5924C] hover:text-white transition-colors">Seating Chart</a>
@@ -1051,225 +1052,257 @@ def build_floorplan_html(guests):
 <!-- ── TOOLBAR ────────────────────────────────────────────────────────────── -->
 <div class="bg-white border-b border-stone-200 sticky top-0 z-20 shadow-sm">
   <div class="max-w-screen-xl mx-auto px-6 py-2.5 flex flex-wrap gap-4 items-center text-xs">
-    <!-- Scale bar -->
     <div class="flex items-center gap-1.5 text-stone-500 select-none">
-      <svg width="42" height="12"><line x1="1" y1="6" x2="41" y2="6" stroke="#999" stroke-width="1.5"/>
-        <line x1="1" y1="2" x2="1" y2="10" stroke="#999" stroke-width="1.5"/>
+      <svg width="42" height="12">
+        <line x1="1" y1="6" x2="41" y2="6" stroke="#999" stroke-width="1.5"/>
+        <line x1="1" y1="2" x2="1"  y2="10" stroke="#999" stroke-width="1.5"/>
         <line x1="41" y1="2" x2="41" y2="10" stroke="#999" stroke-width="1.5"/>
       </svg>
-      <span class="font-medium">1 m</span>
-      <span class="text-stone-300 ml-1">| 40 px/m</span>
+      <span class="font-medium">1 m = 40 px</span>
     </div>
     <div class="h-4 w-px bg-stone-200"></div>
     <label class="flex items-center gap-1.5 text-stone-600 cursor-pointer select-none">
       <input type="checkbox" id="snap-cb" checked class="accent-[#8B1A35]"> Snap 50 cm
     </label>
     <label class="flex items-center gap-1.5 text-stone-600 cursor-pointer select-none">
-      <input type="checkbox" id="grid-cb" class="accent-[#8B1A35]"> Grid (1 m)
+      <input type="checkbox" id="grid-cb" class="accent-[#8B1A35]"> Grid 1 m
     </label>
     <div class="h-4 w-px bg-stone-200"></div>
-    <button onclick="resetAll()"   class="px-3 py-1.5 rounded-full border border-stone-300 text-stone-600 hover:bg-stone-50">Reset layout</button>
-    <button onclick="resetGuests()" class="px-3 py-1.5 rounded-full border border-stone-300 text-stone-600 hover:bg-stone-50">Reset seating</button>
-    <button onclick="doSave()" id="save-btn" class="px-3 py-1.5 rounded-full bg-[#8B1A35] text-white hover:opacity-90">Save</button>
+    <button class="btn" onclick="resetPositions()">Reset positions</button>
+    <button class="btn" onclick="resetGuests()">Reset seating</button>
+    <button class="btn btn-primary" onclick="doSave()" id="save-btn">Save</button>
     <div class="ml-auto text-stone-400">
-      <span id="stat-a">–</span> / {guests['total']} pax seated &nbsp;·&nbsp; updated {now_str}
+      <span id="stat-a">–</span> / {guests['total']} pax seated &nbsp;·&nbsp; {now_str}
     </div>
   </div>
 </div>
 
 <!-- ── MAIN ───────────────────────────────────────────────────────────────── -->
-<div class="max-w-screen-xl mx-auto px-6 py-6 flex gap-6 items-start">
+<div class="max-w-screen-xl mx-auto px-6 py-6">
 
-  <!-- Floor plan (scrollable) -->
-  <div class="sc p-5 flex-shrink-0" style="width:480px">
-    <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">
-      Talisay Events Hall · 9.8 m × 33 m · drag any component to reposition
-    </p>
-    <div style="overflow-y:auto; max-height:84vh; overflow-x:hidden;">
-      <svg id="fp-svg" viewBox="0 0 460 1570" width="440"
-           xmlns="http://www.w3.org/2000/svg" style="display:block;touch-action:none;">
+  <!-- Floor plan — centered -->
+  <div class="flex justify-center mb-6">
+    <div class="sc p-5">
+      <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3 text-center">
+        Talisay Events Hall · 9.8 m × 33 m · drag any item to reposition
+      </p>
+      <div style="overflow-y:auto; max-height:78vh; overflow-x:hidden;">
+        <svg id="fp-svg" viewBox="0 0 460 1570" width="460"
+             xmlns="http://www.w3.org/2000/svg" style="display:block; touch-action:none;">
 
-        <!-- ── Grid (1 m = 40 px) ── -->
-        <g id="fp-grid" style="display:none">{grid_svg}</g>
+          <!-- Grid (1 m = 40 px) -->
+          <g id="fp-grid" style="display:none">{grid_svg}</g>
 
-        <!-- ── HALL BACKGROUND (fixed) ── -->
+          <!-- ── FIXED: Hall background ── -->
 
-        <!-- Kitchen — external, separate room -->
-        <rect x="30" y="10" width="160" height="120" rx="3"
-              fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
-        <text x="110" y="52"  text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700">KITCHEN</text>
-        <text x="110" y="67"  text-anchor="middle" font-size="9"  fill="#9B7A52">separate room</text>
-        <text x="110" y="80"  text-anchor="middle" font-size="8"  fill="#B09070">not part of 300 sqm</text>
+          <!-- Kitchen: external separate room -->
+          <rect x="30" y="10" width="160" height="120" rx="3"
+                fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
+          <text x="110" y="52"  text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700">KITCHEN</text>
+          <text x="110" y="67"  text-anchor="middle" font-size="9"  fill="#9B7A52">separate room</text>
+          <text x="110" y="80"  text-anchor="middle" font-size="8"  fill="#B09070">not part of 300 sqm</text>
 
-        <!-- Service door: gap in top wall with swing arc -->
-        <line x1="30" y1="150" x2="62" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
-        <line x1="94" y1="150" x2="422" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
-        <path d="M 62,150 A 32,32 0 0 1 94,118"
-              fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="4,2"/>
-        <text x="78" y="145" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
+          <!-- Service door gap + swing arc -->
+          <line x1="30"  y1="150" x2="62"  y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <line x1="94"  y1="150" x2="422" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <path d="M 62,150 A 32,32 0 0 1 94,118"
+                fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="78" y="145" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
 
-        <!-- Main hall: 9.8 m × 33 m (392 px × 1320 px) -->
-        <polygon points="30,150 422,150 422,1430 382,1470 30,1470"
-                 fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
+          <!-- Main hall: 9.8 m × 33 m -->
+          <polygon points="30,150 422,150 422,1430 382,1470 30,1470"
+                   fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
 
-        <!-- Stage / Backdrop — fixed to venue, full width, 2 m deep -->
-        <rect x="38" y="162" width="376" height="80" rx="6"
-              fill="#EAD8EC" fill-opacity=".65" stroke="#A484A8" stroke-width="1.5"/>
-        <text x="226" y="198" text-anchor="middle" font-size="12" font-weight="bold"
-              fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
-        <text x="226" y="214" text-anchor="middle" font-size="8" fill="#9070A0">9.4 m × 2.0 m · fixed</text>
+          <!-- Stage / Backdrop: 9.4 m × 2.0 m, fixed -->
+          <rect x="38" y="162" width="376" height="80" rx="6"
+                fill="#EAD8EC" fill-opacity=".65" stroke="#A484A8" stroke-width="1.5"/>
+          <text x="226" y="198" text-anchor="middle" font-size="12" font-weight="bold"
+                fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
+          <text x="226" y="214" text-anchor="middle" font-size="8" fill="#9070A0">9.4 m × 2.0 m · fixed</text>
 
-        <!-- Stair notch label -->
-        <polygon points="382,1470 422,1430 422,1470" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
-        <text x="408" y="1462" text-anchor="middle" font-size="7" fill="#8B7355"
-              transform="rotate(-45,408,1462)">STAIRS</text>
+          <!-- Stair notch -->
+          <polygon points="382,1470 422,1430 422,1470" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="408" y="1462" text-anchor="middle" font-size="7" fill="#8B7355"
+                transform="rotate(-45,408,1462)">STAIRS</text>
 
-        <!-- Entrance doors -->
-        <rect x="152" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
-        <rect x="234" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
-        <text x="184" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-        <text x="266" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-        <text x="226" y="1500" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
+          <!-- Entrance doors -->
+          <rect x="152" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <rect x="234" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="184" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="266" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="226" y="1500" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
 
-        <!-- Dimension labels -->
-        <text x="226" y="7"  text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
-        <text x="16"  y="810" text-anchor="middle" font-size="8" fill="#B0A090"
-              transform="rotate(-90,16,810)">33 m</text>
+          <!-- Dimension labels -->
+          <text x="226" y="7"   text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
+          <text x="16"  y="810" text-anchor="middle" font-size="8" fill="#B0A090"
+                transform="rotate(-90,16,810)">33 m</text>
 
-        <!-- Scale bar (1 m = 40 px) -->
-        <line x1="38" y1="1540" x2="78" y2="1540" stroke="#B0A090" stroke-width="2"/>
-        <line x1="38" y1="1534" x2="38" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
-        <line x1="78" y1="1534" x2="78" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
-        <text x="58"  y="1558" text-anchor="middle" font-size="9" fill="#B0A090">1 m</text>
+          <!-- Scale bar (1 m = 40 px) -->
+          <line x1="38" y1="1540" x2="78" y2="1540" stroke="#B0A090" stroke-width="2"/>
+          <line x1="38" y1="1534" x2="38" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <line x1="78" y1="1534" x2="78" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <text x="58" y="1558" text-anchor="middle" font-size="9" fill="#B0A090">1 m</text>
 
-        <!-- ── DRAGGABLE FIXTURES ── -->
+          <!-- ── DRAGGABLE FIXTURES ── -->
 
-        <!-- Sweetheart table -->
-        <g class="fp-comp" id="comp-sweetheart" transform="translate(226,290)" data-type="sweetheart">
-          <circle r="22" fill="#8B1A35" fill-opacity=".18" stroke="#8B1A35" stroke-width="2" class="fp-body"/>
-          <text text-anchor="middle" y="-3" font-size="8" font-weight="bold" fill="#8B1A35">T&amp;J</text>
-          <text text-anchor="middle" y="9"  font-size="6" fill="#8B1A35">sweet&#8203;heart</text>
-        </g>
+          <g class="fp-comp" id="comp-sweetheart" transform="translate(226,290)" data-type="sweetheart">
+            <circle r="22" fill="#8B1A35" fill-opacity=".18" stroke="#8B1A35" stroke-width="2" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="8" font-weight="bold" fill="#8B1A35">T&amp;J</text>
+            <text text-anchor="middle" y="9"  font-size="6" fill="#8B1A35">sweetheart</text>
+          </g>
 
-        <!-- Dance floor (8.5 m × 3.0 m = 340 × 120 px) -->
-        <g class="fp-comp" id="comp-dancefloor" transform="translate(226,400)" data-type="dancefloor">
-          <rect x="-170" y="-60" width="340" height="120" rx="6"
-                fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5"
-                stroke-dasharray="6,3" class="fp-body"/>
-          <text text-anchor="middle" y="-10" font-size="11" fill="#B0A090" letter-spacing="2">+ DANCE FLOOR</text>
-          <text text-anchor="middle" y="7"   font-size="8"  fill="#C8B8A0">8.5 m × 3.0 m</text>
-          <text text-anchor="middle" y="22"  font-size="7"  fill="#D0C8C0">drag to reposition</text>
-        </g>
+          <g class="fp-comp" id="comp-dancefloor" transform="translate(226,400)" data-type="dancefloor">
+            <rect x="-170" y="-60" width="340" height="120" rx="6"
+                  fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5"
+                  stroke-dasharray="6,3" class="fp-body"/>
+            <text text-anchor="middle" y="-10" font-size="11" fill="#B0A090" letter-spacing="2">+ DANCE FLOOR</text>
+            <text text-anchor="middle" y="7"   font-size="8"  fill="#C8B8A0">8.5 m × 3.0 m</text>
+            <text text-anchor="middle" y="22"  font-size="7"  fill="#D0C8C0">drag to reposition</text>
+          </g>
 
-        <!-- DJ booth (0.6 m × 1.6 m = 24 × 64 px) -->
-        <g class="fp-comp" id="comp-dj" transform="translate(410,218)" data-type="dj">
-          <rect x="-12" y="-32" width="24" height="64" rx="3"
-                fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
-          <text text-anchor="middle" y="-6" font-size="8" font-weight="700" fill="#8B6340">DJ</text>
-          <text text-anchor="middle" y="6"  font-size="6"                   fill="#A88050">booth</text>
-        </g>
+          <g class="fp-comp" id="comp-dj" transform="translate(410,218)" data-type="dj">
+            <rect x="-12" y="-32" width="24" height="64" rx="3"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-6" font-size="8" font-weight="700" fill="#8B6340">DJ</text>
+            <text text-anchor="middle" y="6"  font-size="6"                   fill="#A88050">booth</text>
+          </g>
 
-        <!-- Buffet / Catering (0.75 m × 6 m = 30 × 240 px) -->
-        <g class="fp-comp" id="comp-buffet" transform="translate(413,960)" data-type="buffet">
-          <rect x="-15" y="-120" width="30" height="240" rx="3"
-                fill="#FEFAE8" fill-opacity=".92" stroke="#C4A840"
-                stroke-width="1.5" stroke-dasharray="5,3" class="fp-body"/>
-          <text text-anchor="middle" y="5" font-size="9" fill="#7A6010" font-weight="600"
-                transform="rotate(-90,0,5)">BUFFET</text>
-        </g>
+          <g class="fp-comp" id="comp-buffet" transform="translate(413,960)" data-type="buffet">
+            <rect x="-15" y="-120" width="30" height="240" rx="3"
+                  fill="#FEFAE8" fill-opacity=".92" stroke="#C4A840"
+                  stroke-width="1.5" stroke-dasharray="5,3" class="fp-body"/>
+            <text text-anchor="middle" y="5" font-size="9" fill="#7A6010" font-weight="600"
+                  transform="rotate(-90,0,5)">BUFFET</text>
+          </g>
 
-        <!-- Mobile bar (2.3 m × 1.0 m = 92 × 40 px) -->
-        <g class="fp-comp" id="comp-mobilebar" transform="translate(83,1320)" data-type="mobilebar">
-          <rect x="-46" y="-20" width="92" height="40" rx="5"
-                fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
-          <text text-anchor="middle" y="-3" font-size="9"  font-weight="600" fill="#8B6340">MOBILE BAR</text>
-          <text text-anchor="middle" y="10" font-size="7"                    fill="#B09070">2.3 m × 1.0 m</text>
-        </g>
+          <g class="fp-comp" id="comp-mobilebar" transform="translate(83,1320)" data-type="mobilebar">
+            <rect x="-46" y="-20" width="92" height="40" rx="5"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="9"  font-weight="600" fill="#8B6340">MOBILE BAR</text>
+            <text text-anchor="middle" y="10" font-size="7"                    fill="#B09070">2.3 m × 1.0 m</text>
+          </g>
 
-        <!-- ── TABLES T01–T16 ── -->
-        {tables_svg}
+          <!-- ── TABLES (rendered by JS on init) ── -->
+          <g id="fp-tables"></g>
 
-      </svg>
+        </svg>
+      </div>
     </div>
   </div><!-- /floor plan -->
 
-  <!-- ── RIGHT PANEL ─────────────────────────────────────────────────────── -->
-  <div class="flex-1 space-y-4" style="min-width:300px; max-width:460px;">
+  <!-- ── TWO PANELS BELOW ────────────────────────────────────────────────── -->
+  <div class="grid grid-cols-2 gap-6" style="max-width:920px; margin:0 auto;">
 
-    <!-- Table detail (shown on click) -->
-    <div id="detail-card" class="sc p-5" style="display:none">
-      <div class="flex items-start justify-between mb-3">
-        <div>
-          <p id="d-title" class="text-xs font-semibold text-stone-400 uppercase tracking-widest"></p>
-          <p id="d-cat"   class="text-sm text-stone-600 mt-0.5"></p>
-        </div>
-        <div id="d-pax" class="serif text-2xl font-light" style="color:var(--burgundy)"></div>
-      </div>
-      <ul id="d-guests" class="text-sm divide-y divide-stone-50"></ul>
-      <p class="text-xs text-stone-300 mt-3 italic">
-        Use the dropdowns to move guests · changes auto-save
-      </p>
-    </div>
-
-    <!-- Seating summary -->
+    <!-- LEFT: Table list -->
     <div class="sc p-5">
-      <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">Table Summary</p>
-      <div id="summary-list"></div>
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Tables</p>
+        <button class="btn btn-primary" onclick="addTable()">+ Add table</button>
+      </div>
+      <div class="text-xs text-stone-400 mb-3">
+        <span id="stat-a2">–</span> / {guests['total']} pax seated
+      </div>
+      <div id="table-list"></div>
     </div>
 
-    <!-- Unassigned -->
-    <div id="unassigned-card" class="sc p-5" style="display:none">
-      <p class="text-xs font-semibold text-amber-500 uppercase tracking-widest mb-2">Unassigned</p>
-      <ul id="unassigned-list" class="text-sm text-stone-600 space-y-0.5"></ul>
+    <!-- RIGHT: Selected table detail -->
+    <div class="sc p-5">
+      <div id="detail-empty" class="text-stone-300 italic text-sm py-8 text-center">
+        Click a table on the floor plan<br>or in the list to see its guests
+      </div>
+      <div id="detail-content" style="display:none">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <p id="d-title" class="text-xs font-semibold text-stone-400 uppercase tracking-widest"></p>
+            <p id="d-cat"   class="text-sm text-stone-600 mt-0.5"></p>
+          </div>
+          <div id="d-pax" class="serif text-2xl font-light" style="color:var(--burgundy)"></div>
+        </div>
+        <ul id="d-guests" class="mb-4 divide-y divide-stone-50"></ul>
+        <div class="flex gap-2 flex-wrap pt-2 border-t border-stone-100">
+          <p class="text-xs text-stone-300 flex-1 self-center">Changes auto-save to browser</p>
+          <button class="btn btn-danger" onclick="deleteTable()">&#128465; Delete table</button>
+        </div>
+      </div>
     </div>
 
-  </div>
+  </div><!-- /panels -->
 
 </div><!-- /main -->
 
-<footer class="text-center py-6 text-stone-300 text-xs tracking-wider">
+<footer class="text-center py-6 text-stone-300 text-xs tracking-wider mt-6">
   <span class="serif italic text-stone-400">Tommy &amp; Jeyan &bull; December 27, 2026</span>
 </footer>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────────
-const GUESTS     = {guest_json};
-const TABLE_META = {table_meta_json};
-const DEFAULT_TABLE_POS = {table_pos_json};
-const DEFAULT_COMP_POS  = {comp_defaults_json};
+// ── EMBEDDED DATA ─────────────────────────────────────────────────────────────
+const GUESTS          = {guest_json};
+const DEFAULT_META    = {table_meta_with_pos_json};
+const DEFAULT_COMPS   = {comp_defaults_json};
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
+// ── MUTABLE STATE ─────────────────────────────────────────────────────────────
+let tables      = {{}};   // tableNum → {{cat, color, x, y}}
 let assignments = {{}};   // guestNum → tableNum | null
-let snapOn = true;
-let selTable = null;
+let selTable    = null;
+let snapOn      = true;
 const SNAP = 20;          // 20 px = 50 cm
-const LS_POS  = 'tjwed_fp_pos';
-const LS_ASN  = 'tjwed_asn';
+const LS_T  = 'tjwed_tables';
+const LS_A  = 'tjwed_asn';
+const LS_FX = 'tjwed_fixtures';
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 function init() {{
-  // Build default assignments from server data
+  // Default assignments from server data
   GUESTS.forEach(g => {{ assignments[g.num] = g.table || null; }});
-  // Override with any saved assignments
-  const sa = localStorage.getItem(LS_ASN);
-  if (sa) {{ try {{ Object.assign(assignments, JSON.parse(sa)); }} catch(_) {{}} }}
-  // Restore saved positions
-  const sp = localStorage.getItem(LS_POS);
-  if (sp) {{
-    try {{
-      const pos = JSON.parse(sp);
-      Object.entries(pos).forEach(([id, {{x, y}}]) => {{
+
+  // Load saved assignments
+  try {{ const a = localStorage.getItem(LS_A); if (a) Object.assign(assignments, JSON.parse(a)); }} catch(_) {{}}
+
+  // Load tables (or use defaults)
+  const savedT = localStorage.getItem(LS_T);
+  if (savedT) {{
+    try {{ tables = JSON.parse(savedT); }} catch(_) {{ tables = {{...DEFAULT_META}}; }}
+  }} else {{
+    tables = {{...DEFAULT_META}};
+  }}
+
+  // Render all table SVG elements
+  Object.entries(tables).forEach(([t, meta]) => createTableSVG(+t, meta.x, meta.y, meta.color));
+
+  // Restore fixture positions
+  try {{
+    const fx = localStorage.getItem(LS_FX);
+    if (fx) {{
+      const pos = JSON.parse(fx);
+      Object.entries(pos).forEach(([id, {{x,y}}]) => {{
         const el = document.getElementById(id);
         if (el) el.setAttribute('transform', `translate(${{x}},${{y}})`);
       }});
-    }} catch(_) {{}}
-  }}
-  renderAll();
+    }}
+  }} catch(_) {{}}
+
   setupDrag();
-  document.getElementById('snap-cb').addEventListener('change', e => snapOn = e.target.checked);
-  document.getElementById('grid-cb').addEventListener('change', e => {{
-    document.getElementById('fp-grid').style.display = e.target.checked ? '' : 'none';
-  }});
+  setupToggles();
+  renderAll();
+}}
+
+// ── SVG TABLE CREATION ────────────────────────────────────────────────────────
+function createTableSVG(tNum, cx, cy, color) {{
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('class', 'fp-comp fp-table');
+  g.setAttribute('id', `fp-t${{tNum}}`);
+  g.setAttribute('transform', `translate(${{cx}},${{cy}})`);
+  g.dataset.table = tNum;
+
+  g.innerHTML = `
+    <circle r="30" fill="${{color}}" fill-opacity=".20"
+            stroke="${{color}}" stroke-width="1.5" class="fp-body"/>
+    <text text-anchor="middle" y="-5" font-size="12"
+          font-weight="bold" fill="${{color}}">${{tNum}}</text>
+    <text id="fp-px${{tNum}}" text-anchor="middle" y="9"
+          font-size="9" fill="#5A4040">–pax</text>`;
+
+  document.getElementById('fp-tables').appendChild(g);
 }}
 
 // ── DRAG & DROP ───────────────────────────────────────────────────────────────
@@ -1284,221 +1317,288 @@ function svgPt(e) {{
 function getTr(el) {{
   const m = (el.getAttribute('transform') || 'translate(0,0)')
               .match(/translate\(([^,]+),([^)]+)\)/);
-  return m ? {{x: +m[1], y: +m[2]}} : {{x:0, y:0}};
+  return m ? {{x:+m[1], y:+m[2]}} : {{x:0,y:0}};
 }}
+
+function snapV(v) {{ return snapOn ? Math.round(v/SNAP)*SNAP : v; }}
 
 function setupDrag() {{
   const svg = document.getElementById('fp-svg');
-  let drag = null, off = {{x:0,y:0}}, moved = false;
+  let drag=null, off={{x:0,y:0}}, moved=false;
 
   svg.addEventListener('mousedown', e => {{
     const comp = e.target.closest('.fp-comp');
     if (!comp) return;
     e.preventDefault();
-    drag = comp; moved = false;
+    drag=comp; moved=false;
     comp.classList.add('dragging');
-    comp.parentNode.appendChild(comp); // bring to front
-    const pt = svgPt(e), tr = getTr(comp);
-    off = {{x: pt.x - tr.x, y: pt.y - tr.y}};
+    comp.parentNode.appendChild(comp);
+    const pt=svgPt(e), tr=getTr(comp);
+    off={{x:pt.x-tr.x, y:pt.y-tr.y}};
   }});
 
   svg.addEventListener('mousemove', e => {{
     if (!drag) return;
-    moved = true;
-    const pt = svgPt(e);
-    let x = pt.x - off.x, y = pt.y - off.y;
-    if (snapOn) {{ x = Math.round(x/SNAP)*SNAP; y = Math.round(y/SNAP)*SNAP; }}
-    drag.setAttribute('transform', `translate(${{x}},${{y}})`);
+    moved=true;
+    const pt=svgPt(e);
+    drag.setAttribute('transform',
+      `translate(${{snapV(pt.x-off.x)}},${{snapV(pt.y-off.y)}})`);
   }});
 
-  function onEnd() {{
+  function end() {{
     if (!drag) return;
     drag.classList.remove('dragging');
-    if (!moved && drag.classList.contains('fp-table')) {{
+    if (!moved && drag.classList.contains('fp-table'))
       selectTable(+drag.dataset.table);
-    }}
-    savePositions();
-    drag = null;
+    saveAll();
+    drag=null;
   }}
-  svg.addEventListener('mouseup',    onEnd);
-  svg.addEventListener('mouseleave', onEnd);
+  svg.addEventListener('mouseup', end);
+  svg.addEventListener('mouseleave', end);
 }}
 
 // ── SAVE / RESET ──────────────────────────────────────────────────────────────
-function savePositions() {{
-  const pos = {{}};
-  document.querySelectorAll('#fp-svg .fp-comp').forEach(el => {{
-    const tr = getTr(el);
-    pos[el.id] = {{x: tr.x, y: tr.y}};
+function saveAll() {{
+  // Save fixture positions
+  const fx={{}};
+  document.querySelectorAll('#fp-svg .fp-comp:not(.fp-table)').forEach(el => {{
+    const tr=getTr(el); fx[el.id]={{x:tr.x,y:tr.y}};
   }});
-  localStorage.setItem(LS_POS, JSON.stringify(pos));
-}}
+  localStorage.setItem(LS_FX, JSON.stringify(fx));
 
-function saveAssignments() {{
-  localStorage.setItem(LS_ASN, JSON.stringify(assignments));
+  // Save table state (position + meta)
+  const ts={{}};
+  Object.keys(tables).forEach(t => {{
+    const el=document.getElementById(`fp-t${{t}}`);
+    const tr=el?getTr(el):{{x:tables[t].x,y:tables[t].y}};
+    ts[t]={{...tables[t], x:tr.x, y:tr.y}};
+  }});
+  localStorage.setItem(LS_T, JSON.stringify(ts));
+
+  // Save assignments
+  localStorage.setItem(LS_A, JSON.stringify(assignments));
 }}
 
 function doSave() {{
-  savePositions();
-  saveAssignments();
-  const btn = document.getElementById('save-btn');
-  btn.textContent = 'Saved ✓';
-  setTimeout(() => btn.textContent = 'Save', 1800);
+  saveAll();
+  const btn=document.getElementById('save-btn');
+  btn.textContent='Saved ✓';
+  setTimeout(()=>btn.textContent='Save', 1800);
 }}
 
-function resetAll() {{
-  localStorage.removeItem(LS_POS);
-  Object.entries(DEFAULT_TABLE_POS).forEach(([t, {{x, y}}]) => {{
-    const el = document.getElementById(`fp-t${{t}}`);
-    if (el) el.setAttribute('transform', `translate(${{x}},${{y}})`);
+function resetPositions() {{
+  if (!confirm('Reset all positions to defaults?')) return;
+  localStorage.removeItem(LS_FX);
+  localStorage.removeItem(LS_T);
+
+  // Remove current tables, re-create from defaults
+  document.getElementById('fp-tables').innerHTML='';
+  tables={{...DEFAULT_META}};
+  Object.entries(tables).forEach(([t,m])=>createTableSVG(+t,m.x,m.y,m.color));
+
+  // Reset fixture positions
+  Object.entries(DEFAULT_COMPS).forEach(([id,{{x,y}}])=>{{
+    const el=document.getElementById(id);
+    if(el) el.setAttribute('transform',`translate(${{x}},${{y}})`);
   }});
-  Object.entries(DEFAULT_COMP_POS).forEach(([id, {{x, y}}]) => {{
-    const el = document.getElementById(id);
-    if (el) el.setAttribute('transform', `translate(${{x}},${{y}})`);
-  }});
+  renderAll();
 }}
 
 function resetGuests() {{
-  if (!confirm('Reset all seating to the Google Sheets data?')) return;
-  localStorage.removeItem(LS_ASN);
-  GUESTS.forEach(g => {{ assignments[g.num] = g.table || null; }});
+  if (!confirm('Reset all seating to Google Sheets data?')) return;
+  localStorage.removeItem(LS_A);
+  GUESTS.forEach(g=>{{ assignments[g.num]=g.table||null; }});
   renderAll();
   if (selTable) renderDetail(selTable);
 }}
 
-// ── GUEST ASSIGNMENT ──────────────────────────────────────────────────────────
-function moveGuest(gNum, newTable) {{
-  assignments[gNum] = newTable ? +newTable : null;
-  saveAssignments();
+// ── ADD / DELETE TABLE ────────────────────────────────────────────────────────
+function addTable() {{
+  const nums = Object.keys(tables).map(Number);
+  const newNum = nums.length ? Math.max(...nums)+1 : 1;
+  const color = '#9CA3AF';
+  // Place at center of hall
+  const cx=226, cy=810;
+  tables[newNum] = {{cat:'Custom', color, x:cx, y:cy}};
+  createTableSVG(newNum, cx, cy, color);
+  saveAll();
   renderAll();
-  if (selTable) renderDetail(selTable);
+  selectTable(newNum);
 }}
 
-// ── SELECT TABLE ──────────────────────────────────────────────────────────────
+function deleteTable() {{
+  if (!selTable) return;
+  if (!confirm(`Delete Table ${{selTable}} and unassign all its guests?`)) return;
+  // Unassign guests
+  GUESTS.forEach(g=>{{ if(assignments[g.num]===selTable) assignments[g.num]=null; }});
+  // Remove SVG
+  const el=document.getElementById(`fp-t${{selTable}}`);
+  if (el) el.remove();
+  // Remove from state
+  delete tables[selTable];
+  selTable=null;
+  saveAll();
+  document.getElementById('detail-content').style.display='none';
+  document.getElementById('detail-empty').style.display='';
+  renderAll();
+}}
+
+// ── TABLE SELECTION ───────────────────────────────────────────────────────────
 function selectTable(tNum) {{
-  document.querySelectorAll('.fp-table.sel').forEach(el => el.classList.remove('sel'));
-  if (selTable === tNum) {{
-    selTable = null;
-    document.getElementById('detail-card').style.display = 'none';
+  document.querySelectorAll('.fp-table.sel').forEach(el=>el.classList.remove('sel'));
+  document.querySelectorAll('.trow.sel').forEach(el=>el.classList.remove('sel'));
+
+  if (selTable===tNum) {{
+    selTable=null;
+    document.getElementById('detail-content').style.display='none';
+    document.getElementById('detail-empty').style.display='';
     return;
   }}
-  selTable = tNum;
-  const el = document.getElementById(`fp-t${{tNum}}`);
-  if (el) el.classList.add('sel');
+  selTable=tNum;
+  const svgEl=document.getElementById(`fp-t${{tNum}}`);
+  if (svgEl) {{ svgEl.classList.add('sel'); svgEl.parentNode.appendChild(svgEl); }}
+  const rowEl=document.getElementById(`trow-${{tNum}}`);
+  if (rowEl) rowEl.classList.add('sel');
+
   renderDetail(tNum);
-  document.getElementById('detail-card').scrollIntoView({{behavior:'smooth', block:'nearest'}});
 }}
 
 function renderDetail(tNum) {{
-  document.getElementById('detail-card').style.display = '';
-  const meta = TABLE_META[String(tNum)] || {{cat:'Guest', color:'#A0A0A0'}};
-  const gs   = GUESTS.filter(g => assignments[g.num] === tNum);
-  const pax  = gs.reduce((s,g) => s+g.pax, 0);
+  document.getElementById('detail-empty').style.display='none';
+  document.getElementById('detail-content').style.display='';
 
-  document.getElementById('d-title').textContent = `Table ${{tNum}}`;
-  document.getElementById('d-cat').innerHTML =
+  const meta  = tables[String(tNum)] || tables[tNum] || {{cat:'Guest',color:'#A0A0A0'}};
+  const gs    = GUESTS.filter(g=>assignments[g.num]===tNum);
+  const pax   = gs.reduce((s,g)=>s+g.pax,0);
+  const overLimit = pax>10;
+
+  document.getElementById('d-title').textContent=`Table ${{tNum}}`;
+  document.getElementById('d-cat').innerHTML=
     `<span style="color:${{meta.color}};font-size:16px">&#9679;</span> ${{meta.cat}}`;
-  document.getElementById('d-pax').textContent = pax + ' pax';
-  document.getElementById('d-pax').style.color = pax > 10 ? '#dc2626' : '#8B1A35';
+  document.getElementById('d-pax').textContent=pax+' pax';
+  document.getElementById('d-pax').style.color=overLimit?'#dc2626':'#8B1A35';
 
-  // Build table options for move dropdowns
-  const tOpts = Object.keys(TABLE_META).map(t =>
-    `<option value="${{t}}"${{+t===tNum?' selected':''}}>Table ${{t}} — ${{TABLE_META[t].cat}}</option>`
+  // Table options for move dropdown
+  const tOpts=Object.keys(tables).map(t=>
+    `<option value="${{t}}"${{+t===tNum?' selected':''}}>T${{t}} — ${{(tables[t]||{{}}).cat||'?'}}</option>`
   ).join('');
-  const noneOpt = `<option value="">— unassigned —</option>`;
+  const noneOpt=`<option value="">— unassign —</option>`;
 
-  const ul = document.getElementById('d-guests');
-  if (gs.length === 0) {{
-    ul.innerHTML = '<li class="g-row text-stone-300 italic">No guests assigned</li>';
+  const ul=document.getElementById('d-guests');
+  if (!gs.length) {{
+    ul.innerHTML='<li class="g-row text-stone-300 italic">No guests assigned</li>';
   }} else {{
-    ul.innerHTML = gs.map(g => `
+    ul.innerHTML=gs.map(g=>`
       <li class="g-row">
-        <span class="flex-1 text-stone-700">${{g.name}}${{g.pax>1 ? `<span class="text-stone-400 text-xs ml-1">+${{g.pax-1}}</span>`:''}} </span>
-        <span class="text-stone-400 text-xs mr-1">${{g.side}}</span>
-        <select onchange="moveGuest(${{g.num}}, this.value)" title="Move guest">
+        <span class="flex-1 text-stone-700">
+          ${{g.name}}${{g.pax>1?`<span class="text-stone-400 text-xs ml-1">+${{g.pax-1}}</span>`:''}}
+        </span>
+        <span class="text-stone-400 text-xs">${{g.side}}</span>
+        <select onchange="moveGuest(${{g.num}},this.value)">
           ${{noneOpt}}${{tOpts}}
         </select>
       </li>`).join('');
-    // Set correct selected value
-    gs.forEach(g => {{
-      const sel = ul.querySelector(`li:nth-child(${{gs.indexOf(g)+1}}) select`);
-      if (sel) sel.value = String(tNum);
+    // Set correct selected option
+    gs.forEach((g,i)=>{{
+      const sel=ul.querySelectorAll('select')[i];
+      if(sel) sel.value=String(tNum);
     }});
+  }}
+
+  if(overLimit) {{
+    ul.insertAdjacentHTML('beforeend',
+      `<li class="g-row" style="color:#dc2626;font-size:11px">
+         ⚠ Over 10 pax — consider splitting this table
+       </li>`);
   }}
 }}
 
-// ── RENDER SUMMARY ────────────────────────────────────────────────────────────
+// ── GUEST ASSIGNMENT ──────────────────────────────────────────────────────────
+function moveGuest(gNum,newTable) {{
+  assignments[gNum]=newTable?+newTable:null;
+  saveAll();
+  renderAll();
+  if(selTable) renderDetail(selTable);
+}}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function renderAll() {{
   updatePaxLabels();
-  renderSummary();
-  renderUnassigned();
+  renderTableList();
   updateStats();
 }}
 
 function updatePaxLabels() {{
-  const byTable = {{}};
-  GUESTS.forEach(g => {{
-    if (assignments[g.num]) {{
-      byTable[assignments[g.num]] = (byTable[assignments[g.num]] || 0) + g.pax;
-    }}
+  const byT={{}};
+  GUESTS.forEach(g=>{{
+    if(assignments[g.num]) byT[assignments[g.num]]=(byT[assignments[g.num]]||0)+g.pax;
   }});
-  Object.keys(TABLE_META).forEach(t => {{
-    const el = document.getElementById(`fp-px${{t}}`);
-    if (!el) return;
-    const p = byTable[t] || 0;
-    el.textContent = p + 'pax' + (p > 10 ? ' ⚠' : '');
-    el.setAttribute('fill', p > 10 ? '#dc2626' : '#5A4040');
+  Object.keys(tables).forEach(t=>{{
+    const el=document.getElementById(`fp-px${{t}}`);
+    if(!el) return;
+    const p=byT[t]||0;
+    el.textContent=p+'pax'+(p>10?' ⚠':'');
+    el.setAttribute('fill',p>10?'#dc2626':'#5A4040');
   }});
 }}
 
-function renderSummary() {{
-  const byTable = {{}};
-  GUESTS.forEach(g => {{
-    if (assignments[g.num]) {{
-      byTable[assignments[g.num]] = byTable[assignments[g.num]] || [];
-      byTable[assignments[g.num]].push(g);
+function renderTableList() {{
+  const byT={{}};
+  GUESTS.forEach(g=>{{
+    if(assignments[g.num]){{
+      byT[assignments[g.num]]=byT[assignments[g.num]]||[];
+      byT[assignments[g.num]].push(g);
     }}
   }});
-  document.getElementById('summary-list').innerHTML =
-    Object.keys(TABLE_META).map(t => {{
-      const meta = TABLE_META[t];
-      const gs   = byTable[t] || [];
-      const pax  = gs.reduce((s,g) => s+g.pax, 0);
-      const warn = pax > 10 ? ' <span class="text-rose-500">⚠</span>' : '';
-      return `<div class="flex items-center gap-2 py-1.5 border-b border-stone-50 last:border-0
-                           cursor-pointer hover:bg-stone-50 rounded px-1 -mx-1"
-                   onclick="selectTable(${{t}})">
-        <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:${{meta.color}}"></span>
-        <span class="text-xs text-stone-500 w-14">Table ${{t}}</span>
-        <span class="text-xs text-stone-400 flex-1 truncate">${{meta.cat}}</span>
-        <span class="text-xs font-semibold text-stone-600">${{pax}} pax${{warn}}</span>
-      </div>`;
-    }}).join('');
-}}
 
-function renderUnassigned() {{
-  const ua = GUESTS.filter(g => !assignments[g.num]);
-  const card = document.getElementById('unassigned-card');
-  if (!ua.length) {{ card.style.display = 'none'; return; }}
-  card.style.display = '';
+  // Unassigned guests at bottom
+  const ua=GUESTS.filter(g=>!assignments[g.num]);
 
-  // Build table options
-  const tOpts = Object.keys(TABLE_META).map(t =>
-    `<option value="${{t}}">Table ${{t}} — ${{TABLE_META[t].cat}}</option>`).join('');
+  const nums=Object.keys(tables).map(Number).sort((a,b)=>a-b);
+  let html=nums.map(t=>{{
+    const meta=tables[t]||{{}};
+    const pax=(byT[t]||[]).reduce((s,g)=>s+g.pax,0);
+    const warn=pax>10?'<span style="color:#dc2626"> ⚠</span>':'';
+    const selCls=selTable===t?' sel':'';
+    return `<div class="trow${{selCls}}" id="trow-${{t}}" onclick="selectTable(${{t}})">
+      <span class="w-3 h-3 rounded-full flex-shrink-0"
+            style="background:${{meta.color||'#ccc'}}"></span>
+      <span style="font-size:12px;color:#78716c;width:52px">T${{t}}</span>
+      <span style="font-size:12px;color:#a8a29e;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${{meta.cat||''}}</span>
+      <span style="font-size:12px;font-weight:600;color:#57534e">${{pax}}p${{warn}}</span>
+    </div>`;
+  }}).join('');
 
-  document.getElementById('unassigned-list').innerHTML = ua.map(g => `
-    <li class="g-row">
-      <span class="flex-1">${{g.name}}${{g.pax>1?`<span class="text-stone-400 text-xs ml-1">+${{g.pax-1}}</span>`:''}}</span>
-      <select onchange="moveGuest(${{g.num}}, this.value)" class="ml-auto">
-        <option value="">Assign to...</option>
-        ${{tOpts}}
-      </select>
-    </li>`).join('');
+  if(ua.length) {{
+    html+=`<div style="margin-top:10px;padding-top:8px;border-top:1px solid #f0ebe4">
+      <p style="font-size:11px;color:#f59e0b;font-weight:600;margin-bottom:4px">
+        Unassigned (${{ua.length}} guests)
+      </p>
+      ${{ua.map(g=>`<div class="trow" style="opacity:.7">
+        <span style="font-size:12px;color:#78716c;flex:1">${{g.name}}</span>
+        <select onchange="moveGuest(${{g.num}},this.value)" style="font-size:11px">
+          <option value="">Assign to…</option>
+          ${{nums.map(t=>`<option value="${{t}}">T${{t}}</option>`).join('')}}
+        </select>
+      </div>`).join('')}}
+    </div>`;
+  }}
+
+  document.getElementById('table-list').innerHTML=html;
 }}
 
 function updateStats() {{
-  const assigned = GUESTS.filter(g => assignments[g.num]).reduce((s,g) => s+g.pax, 0);
-  document.getElementById('stat-a').textContent = assigned;
+  const a=GUESTS.filter(g=>assignments[g.num]).reduce((s,g)=>s+g.pax,0);
+  document.getElementById('stat-a').textContent=a;
+  document.getElementById('stat-a2').textContent=a;
+}}
+
+// ── TOGGLES ───────────────────────────────────────────────────────────────────
+function setupToggles() {{
+  document.getElementById('snap-cb').addEventListener('change',e=>snapOn=e.target.checked);
+  document.getElementById('grid-cb').addEventListener('change',e=>{{
+    document.getElementById('fp-grid').style.display=e.target.checked?'':'none';
+  }});
 }}
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────

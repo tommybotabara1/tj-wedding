@@ -14,27 +14,37 @@
     .serif { font-family:'Cormorant Garamond',Georgia,serif; }
     .sc { background:white; border:1px solid #E8E0D5; border-radius:16px; }
 
-    /* Draggable components */
     .fp-comp { cursor:grab; user-select:none; }
     .fp-comp:hover .fp-body { opacity:.82; }
-    .fp-comp.dragging { cursor:grabbing; }
-    .fp-comp.dragging .fp-body { opacity:.65; }
-
-    /* Selected table highlight */
+    .fp-comp.dragging { cursor:grabbing; opacity:.7; }
     .fp-table.sel circle {
       stroke-width:3 !important;
-      filter:drop-shadow(0 0 5px rgba(139,26,53,.55));
+      filter:drop-shadow(0 0 5px rgba(139,26,53,.6));
     }
-
-    /* Grid */
     #fp-grid line { stroke:#ddd5cc; stroke-width:.6; pointer-events:none; }
 
-    /* Sidebar rows */
-    .g-row { display:flex; align-items:center; gap:6px; padding:5px 4px;
-              border-bottom:1px solid #f5f0eb; font-size:13px; }
+    .g-row { display:flex; align-items:center; gap:6px; padding:5px 2px;
+              border-bottom:1px solid #f5f0eb; font-size:12px; }
     .g-row:last-child { border:none; }
-    .g-row select { font-size:11px; border:1px solid #ddd; border-radius:6px;
-                     padding:1px 4px; background:white; color:#555; cursor:pointer; }
+    .g-row select { font-size:11px; border:1px solid #e0d8d0; border-radius:6px;
+                     padding:2px 4px; background:white; color:#555; cursor:pointer;
+                     max-width:140px; }
+    .trow { display:flex; align-items:center; gap:6px; padding:5px 4px;
+             border-bottom:1px solid #f5f0eb; cursor:pointer; border-radius:6px; }
+    .trow:last-child { border:none; }
+    .trow:hover { background:#f9f6f2; }
+    .trow.sel { background:#fdf2f4; }
+    .btn {
+      display:inline-flex; align-items:center; gap:5px;
+      padding:6px 14px; border-radius:999px; font-size:12px;
+      border:1px solid #e0d8d0; background:white; color:#555;
+      cursor:pointer; transition:background .15s;
+    }
+    .btn:hover { background:#f5f0eb; }
+    .btn-primary { background:#8B1A35; color:white; border-color:#8B1A35; }
+    .btn-primary:hover { opacity:.9; background:#8B1A35; }
+    .btn-danger  { color:#dc2626; border-color:#fca5a5; }
+    .btn-danger:hover { background:#fef2f2; }
   </style>
 </head>
 <body class="min-h-screen">
@@ -45,7 +55,7 @@
     <div>
       <p class="text-[#B5924C] text-xs tracking-[.4em] uppercase mb-1">Interactive Editor</p>
       <h1 class="serif text-4xl text-white font-light italic">Floor Plan</h1>
-      <p class="text-stone-400 text-xs mt-1">Tommy &amp; Jeyan · Dec 27 2026 · Talisay Events Hall · ±300 sqm · Scale 40px/m</p>
+      <p class="text-stone-400 text-xs mt-1">Tommy &amp; Jeyan · Dec 27 2026 · Talisay Events Hall · 9.8 m × 33 m · 40 px/m</p>
     </div>
     <div class="flex gap-3 flex-wrap">
       <a href="reception.html" class="text-xs text-[#B5924C] border border-[#B5924C] px-4 py-2 rounded-full hover:bg-[#B5924C] hover:text-white transition-colors">Seating Chart</a>
@@ -57,225 +67,257 @@
 <!-- ── TOOLBAR ────────────────────────────────────────────────────────────── -->
 <div class="bg-white border-b border-stone-200 sticky top-0 z-20 shadow-sm">
   <div class="max-w-screen-xl mx-auto px-6 py-2.5 flex flex-wrap gap-4 items-center text-xs">
-    <!-- Scale bar -->
     <div class="flex items-center gap-1.5 text-stone-500 select-none">
-      <svg width="42" height="12"><line x1="1" y1="6" x2="41" y2="6" stroke="#999" stroke-width="1.5"/>
-        <line x1="1" y1="2" x2="1" y2="10" stroke="#999" stroke-width="1.5"/>
+      <svg width="42" height="12">
+        <line x1="1" y1="6" x2="41" y2="6" stroke="#999" stroke-width="1.5"/>
+        <line x1="1" y1="2" x2="1"  y2="10" stroke="#999" stroke-width="1.5"/>
         <line x1="41" y1="2" x2="41" y2="10" stroke="#999" stroke-width="1.5"/>
       </svg>
-      <span class="font-medium">1 m</span>
-      <span class="text-stone-300 ml-1">| 40 px/m</span>
+      <span class="font-medium">1 m = 40 px</span>
     </div>
     <div class="h-4 w-px bg-stone-200"></div>
     <label class="flex items-center gap-1.5 text-stone-600 cursor-pointer select-none">
       <input type="checkbox" id="snap-cb" checked class="accent-[#8B1A35]"> Snap 50 cm
     </label>
     <label class="flex items-center gap-1.5 text-stone-600 cursor-pointer select-none">
-      <input type="checkbox" id="grid-cb" class="accent-[#8B1A35]"> Grid (1 m)
+      <input type="checkbox" id="grid-cb" class="accent-[#8B1A35]"> Grid 1 m
     </label>
     <div class="h-4 w-px bg-stone-200"></div>
-    <button onclick="resetAll()"   class="px-3 py-1.5 rounded-full border border-stone-300 text-stone-600 hover:bg-stone-50">Reset layout</button>
-    <button onclick="resetGuests()" class="px-3 py-1.5 rounded-full border border-stone-300 text-stone-600 hover:bg-stone-50">Reset seating</button>
-    <button onclick="doSave()" id="save-btn" class="px-3 py-1.5 rounded-full bg-[#8B1A35] text-white hover:opacity-90">Save</button>
+    <button class="btn" onclick="resetPositions()">Reset positions</button>
+    <button class="btn" onclick="resetGuests()">Reset seating</button>
+    <button class="btn btn-primary" onclick="doSave()" id="save-btn">Save</button>
     <div class="ml-auto text-stone-400">
-      <span id="stat-a">–</span> / 151 pax seated &nbsp;·&nbsp; updated March 13, 2026 at 04:26 PM
+      <span id="stat-a">–</span> / 151 pax seated &nbsp;·&nbsp; March 13, 2026 at 07:08 PM
     </div>
   </div>
 </div>
 
 <!-- ── MAIN ───────────────────────────────────────────────────────────────── -->
-<div class="max-w-screen-xl mx-auto px-6 py-6 flex gap-6 items-start">
+<div class="max-w-screen-xl mx-auto px-6 py-6">
 
-  <!-- Floor plan (scrollable) -->
-  <div class="sc p-5 flex-shrink-0" style="width:480px">
-    <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">
-      Talisay Events Hall · 9.8 m × 33 m · drag any component to reposition
-    </p>
-    <div style="overflow-y:auto; max-height:84vh; overflow-x:hidden;">
-      <svg id="fp-svg" viewBox="0 0 460 1570" width="440"
-           xmlns="http://www.w3.org/2000/svg" style="display:block;touch-action:none;">
+  <!-- Floor plan — centered -->
+  <div class="flex justify-center mb-6">
+    <div class="sc p-5">
+      <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3 text-center">
+        Talisay Events Hall · 9.8 m × 33 m · drag any item to reposition
+      </p>
+      <div style="overflow-y:auto; max-height:78vh; overflow-x:hidden;">
+        <svg id="fp-svg" viewBox="0 0 460 1570" width="460"
+             xmlns="http://www.w3.org/2000/svg" style="display:block; touch-action:none;">
 
-        <!-- ── Grid (1 m = 40 px) ── -->
-        <g id="fp-grid" style="display:none"><line x1="70" y1="150" x2="70" y2="1470"/><line x1="110" y1="150" x2="110" y2="1470"/><line x1="150" y1="150" x2="150" y2="1470"/><line x1="190" y1="150" x2="190" y2="1470"/><line x1="230" y1="150" x2="230" y2="1470"/><line x1="270" y1="150" x2="270" y2="1470"/><line x1="310" y1="150" x2="310" y2="1470"/><line x1="350" y1="150" x2="350" y2="1470"/><line x1="390" y1="150" x2="390" y2="1470"/><line x1="30" y1="190" x2="422" y2="190"/><line x1="30" y1="230" x2="422" y2="230"/><line x1="30" y1="270" x2="422" y2="270"/><line x1="30" y1="310" x2="422" y2="310"/><line x1="30" y1="350" x2="422" y2="350"/><line x1="30" y1="390" x2="422" y2="390"/><line x1="30" y1="430" x2="422" y2="430"/><line x1="30" y1="470" x2="422" y2="470"/><line x1="30" y1="510" x2="422" y2="510"/><line x1="30" y1="550" x2="422" y2="550"/><line x1="30" y1="590" x2="422" y2="590"/><line x1="30" y1="630" x2="422" y2="630"/><line x1="30" y1="670" x2="422" y2="670"/><line x1="30" y1="710" x2="422" y2="710"/><line x1="30" y1="750" x2="422" y2="750"/><line x1="30" y1="790" x2="422" y2="790"/><line x1="30" y1="830" x2="422" y2="830"/><line x1="30" y1="870" x2="422" y2="870"/><line x1="30" y1="910" x2="422" y2="910"/><line x1="30" y1="950" x2="422" y2="950"/><line x1="30" y1="990" x2="422" y2="990"/><line x1="30" y1="1030" x2="422" y2="1030"/><line x1="30" y1="1070" x2="422" y2="1070"/><line x1="30" y1="1110" x2="422" y2="1110"/><line x1="30" y1="1150" x2="422" y2="1150"/><line x1="30" y1="1190" x2="422" y2="1190"/><line x1="30" y1="1230" x2="422" y2="1230"/><line x1="30" y1="1270" x2="422" y2="1270"/><line x1="30" y1="1310" x2="422" y2="1310"/><line x1="30" y1="1350" x2="422" y2="1350"/><line x1="30" y1="1390" x2="422" y2="1390"/><line x1="30" y1="1430" x2="422" y2="1430"/></g>
+          <!-- Grid (1 m = 40 px) -->
+          <g id="fp-grid" style="display:none"><line x1="70" y1="150" x2="70" y2="1470"/><line x1="110" y1="150" x2="110" y2="1470"/><line x1="150" y1="150" x2="150" y2="1470"/><line x1="190" y1="150" x2="190" y2="1470"/><line x1="230" y1="150" x2="230" y2="1470"/><line x1="270" y1="150" x2="270" y2="1470"/><line x1="310" y1="150" x2="310" y2="1470"/><line x1="350" y1="150" x2="350" y2="1470"/><line x1="390" y1="150" x2="390" y2="1470"/><line x1="30" y1="190" x2="422" y2="190"/><line x1="30" y1="230" x2="422" y2="230"/><line x1="30" y1="270" x2="422" y2="270"/><line x1="30" y1="310" x2="422" y2="310"/><line x1="30" y1="350" x2="422" y2="350"/><line x1="30" y1="390" x2="422" y2="390"/><line x1="30" y1="430" x2="422" y2="430"/><line x1="30" y1="470" x2="422" y2="470"/><line x1="30" y1="510" x2="422" y2="510"/><line x1="30" y1="550" x2="422" y2="550"/><line x1="30" y1="590" x2="422" y2="590"/><line x1="30" y1="630" x2="422" y2="630"/><line x1="30" y1="670" x2="422" y2="670"/><line x1="30" y1="710" x2="422" y2="710"/><line x1="30" y1="750" x2="422" y2="750"/><line x1="30" y1="790" x2="422" y2="790"/><line x1="30" y1="830" x2="422" y2="830"/><line x1="30" y1="870" x2="422" y2="870"/><line x1="30" y1="910" x2="422" y2="910"/><line x1="30" y1="950" x2="422" y2="950"/><line x1="30" y1="990" x2="422" y2="990"/><line x1="30" y1="1030" x2="422" y2="1030"/><line x1="30" y1="1070" x2="422" y2="1070"/><line x1="30" y1="1110" x2="422" y2="1110"/><line x1="30" y1="1150" x2="422" y2="1150"/><line x1="30" y1="1190" x2="422" y2="1190"/><line x1="30" y1="1230" x2="422" y2="1230"/><line x1="30" y1="1270" x2="422" y2="1270"/><line x1="30" y1="1310" x2="422" y2="1310"/><line x1="30" y1="1350" x2="422" y2="1350"/><line x1="30" y1="1390" x2="422" y2="1390"/><line x1="30" y1="1430" x2="422" y2="1430"/></g>
 
-        <!-- ── HALL BACKGROUND (fixed) ── -->
+          <!-- ── FIXED: Hall background ── -->
 
-        <!-- Kitchen — external, separate room -->
-        <rect x="30" y="10" width="160" height="120" rx="3"
-              fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
-        <text x="110" y="52"  text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700">KITCHEN</text>
-        <text x="110" y="67"  text-anchor="middle" font-size="9"  fill="#9B7A52">separate room</text>
-        <text x="110" y="80"  text-anchor="middle" font-size="8"  fill="#B09070">not part of 300 sqm</text>
+          <!-- Kitchen: external separate room -->
+          <rect x="30" y="10" width="160" height="120" rx="3"
+                fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
+          <text x="110" y="52"  text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700">KITCHEN</text>
+          <text x="110" y="67"  text-anchor="middle" font-size="9"  fill="#9B7A52">separate room</text>
+          <text x="110" y="80"  text-anchor="middle" font-size="8"  fill="#B09070">not part of 300 sqm</text>
 
-        <!-- Service door: gap in top wall with swing arc -->
-        <line x1="30" y1="150" x2="62" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
-        <line x1="94" y1="150" x2="422" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
-        <path d="M 62,150 A 32,32 0 0 1 94,118"
-              fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="4,2"/>
-        <text x="78" y="145" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
+          <!-- Service door gap + swing arc -->
+          <line x1="30"  y1="150" x2="62"  y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <line x1="94"  y1="150" x2="422" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <path d="M 62,150 A 32,32 0 0 1 94,118"
+                fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="78" y="145" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
 
-        <!-- Main hall: 9.8 m × 33 m (392 px × 1320 px) -->
-        <polygon points="30,150 422,150 422,1430 382,1470 30,1470"
-                 fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
+          <!-- Main hall: 9.8 m × 33 m -->
+          <polygon points="30,150 422,150 422,1430 382,1470 30,1470"
+                   fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
 
-        <!-- Stage / Backdrop — fixed to venue, full width, 2 m deep -->
-        <rect x="38" y="162" width="376" height="80" rx="6"
-              fill="#EAD8EC" fill-opacity=".65" stroke="#A484A8" stroke-width="1.5"/>
-        <text x="226" y="198" text-anchor="middle" font-size="12" font-weight="bold"
-              fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
-        <text x="226" y="214" text-anchor="middle" font-size="8" fill="#9070A0">9.4 m × 2.0 m · fixed</text>
+          <!-- Stage / Backdrop: 9.4 m × 2.0 m, fixed -->
+          <rect x="38" y="162" width="376" height="80" rx="6"
+                fill="#EAD8EC" fill-opacity=".65" stroke="#A484A8" stroke-width="1.5"/>
+          <text x="226" y="198" text-anchor="middle" font-size="12" font-weight="bold"
+                fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
+          <text x="226" y="214" text-anchor="middle" font-size="8" fill="#9070A0">9.4 m × 2.0 m · fixed</text>
 
-        <!-- Stair notch label -->
-        <polygon points="382,1470 422,1430 422,1470" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
-        <text x="408" y="1462" text-anchor="middle" font-size="7" fill="#8B7355"
-              transform="rotate(-45,408,1462)">STAIRS</text>
+          <!-- Stair notch -->
+          <polygon points="382,1470 422,1430 422,1470" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="408" y="1462" text-anchor="middle" font-size="7" fill="#8B7355"
+                transform="rotate(-45,408,1462)">STAIRS</text>
 
-        <!-- Entrance doors -->
-        <rect x="152" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
-        <rect x="234" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
-        <text x="184" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-        <text x="266" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-        <text x="226" y="1500" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
+          <!-- Entrance doors -->
+          <rect x="152" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <rect x="234" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="184" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="266" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="226" y="1500" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
 
-        <!-- Dimension labels -->
-        <text x="226" y="7"  text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
-        <text x="16"  y="810" text-anchor="middle" font-size="8" fill="#B0A090"
-              transform="rotate(-90,16,810)">33 m</text>
+          <!-- Dimension labels -->
+          <text x="226" y="7"   text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
+          <text x="16"  y="810" text-anchor="middle" font-size="8" fill="#B0A090"
+                transform="rotate(-90,16,810)">33 m</text>
 
-        <!-- Scale bar (1 m = 40 px) -->
-        <line x1="38" y1="1540" x2="78" y2="1540" stroke="#B0A090" stroke-width="2"/>
-        <line x1="38" y1="1534" x2="38" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
-        <line x1="78" y1="1534" x2="78" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
-        <text x="58"  y="1558" text-anchor="middle" font-size="9" fill="#B0A090">1 m</text>
+          <!-- Scale bar (1 m = 40 px) -->
+          <line x1="38" y1="1540" x2="78" y2="1540" stroke="#B0A090" stroke-width="2"/>
+          <line x1="38" y1="1534" x2="38" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <line x1="78" y1="1534" x2="78" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <text x="58" y="1558" text-anchor="middle" font-size="9" fill="#B0A090">1 m</text>
 
-        <!-- ── DRAGGABLE FIXTURES ── -->
+          <!-- ── DRAGGABLE FIXTURES ── -->
 
-        <!-- Sweetheart table -->
-        <g class="fp-comp" id="comp-sweetheart" transform="translate(226,290)" data-type="sweetheart">
-          <circle r="22" fill="#8B1A35" fill-opacity=".18" stroke="#8B1A35" stroke-width="2" class="fp-body"/>
-          <text text-anchor="middle" y="-3" font-size="8" font-weight="bold" fill="#8B1A35">T&amp;J</text>
-          <text text-anchor="middle" y="9"  font-size="6" fill="#8B1A35">sweet&#8203;heart</text>
-        </g>
+          <g class="fp-comp" id="comp-sweetheart" transform="translate(226,290)" data-type="sweetheart">
+            <circle r="22" fill="#8B1A35" fill-opacity=".18" stroke="#8B1A35" stroke-width="2" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="8" font-weight="bold" fill="#8B1A35">T&amp;J</text>
+            <text text-anchor="middle" y="9"  font-size="6" fill="#8B1A35">sweetheart</text>
+          </g>
 
-        <!-- Dance floor (8.5 m × 3.0 m = 340 × 120 px) -->
-        <g class="fp-comp" id="comp-dancefloor" transform="translate(226,400)" data-type="dancefloor">
-          <rect x="-170" y="-60" width="340" height="120" rx="6"
-                fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5"
-                stroke-dasharray="6,3" class="fp-body"/>
-          <text text-anchor="middle" y="-10" font-size="11" fill="#B0A090" letter-spacing="2">+ DANCE FLOOR</text>
-          <text text-anchor="middle" y="7"   font-size="8"  fill="#C8B8A0">8.5 m × 3.0 m</text>
-          <text text-anchor="middle" y="22"  font-size="7"  fill="#D0C8C0">drag to reposition</text>
-        </g>
+          <g class="fp-comp" id="comp-dancefloor" transform="translate(226,400)" data-type="dancefloor">
+            <rect x="-170" y="-60" width="340" height="120" rx="6"
+                  fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5"
+                  stroke-dasharray="6,3" class="fp-body"/>
+            <text text-anchor="middle" y="-10" font-size="11" fill="#B0A090" letter-spacing="2">+ DANCE FLOOR</text>
+            <text text-anchor="middle" y="7"   font-size="8"  fill="#C8B8A0">8.5 m × 3.0 m</text>
+            <text text-anchor="middle" y="22"  font-size="7"  fill="#D0C8C0">drag to reposition</text>
+          </g>
 
-        <!-- DJ booth (0.6 m × 1.6 m = 24 × 64 px) -->
-        <g class="fp-comp" id="comp-dj" transform="translate(410,218)" data-type="dj">
-          <rect x="-12" y="-32" width="24" height="64" rx="3"
-                fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
-          <text text-anchor="middle" y="-6" font-size="8" font-weight="700" fill="#8B6340">DJ</text>
-          <text text-anchor="middle" y="6"  font-size="6"                   fill="#A88050">booth</text>
-        </g>
+          <g class="fp-comp" id="comp-dj" transform="translate(410,218)" data-type="dj">
+            <rect x="-12" y="-32" width="24" height="64" rx="3"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-6" font-size="8" font-weight="700" fill="#8B6340">DJ</text>
+            <text text-anchor="middle" y="6"  font-size="6"                   fill="#A88050">booth</text>
+          </g>
 
-        <!-- Buffet / Catering (0.75 m × 6 m = 30 × 240 px) -->
-        <g class="fp-comp" id="comp-buffet" transform="translate(413,960)" data-type="buffet">
-          <rect x="-15" y="-120" width="30" height="240" rx="3"
-                fill="#FEFAE8" fill-opacity=".92" stroke="#C4A840"
-                stroke-width="1.5" stroke-dasharray="5,3" class="fp-body"/>
-          <text text-anchor="middle" y="5" font-size="9" fill="#7A6010" font-weight="600"
-                transform="rotate(-90,0,5)">BUFFET</text>
-        </g>
+          <g class="fp-comp" id="comp-buffet" transform="translate(413,960)" data-type="buffet">
+            <rect x="-15" y="-120" width="30" height="240" rx="3"
+                  fill="#FEFAE8" fill-opacity=".92" stroke="#C4A840"
+                  stroke-width="1.5" stroke-dasharray="5,3" class="fp-body"/>
+            <text text-anchor="middle" y="5" font-size="9" fill="#7A6010" font-weight="600"
+                  transform="rotate(-90,0,5)">BUFFET</text>
+          </g>
 
-        <!-- Mobile bar (2.3 m × 1.0 m = 92 × 40 px) -->
-        <g class="fp-comp" id="comp-mobilebar" transform="translate(83,1320)" data-type="mobilebar">
-          <rect x="-46" y="-20" width="92" height="40" rx="5"
-                fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
-          <text text-anchor="middle" y="-3" font-size="9"  font-weight="600" fill="#8B6340">MOBILE BAR</text>
-          <text text-anchor="middle" y="10" font-size="7"                    fill="#B09070">2.3 m × 1.0 m</text>
-        </g>
+          <g class="fp-comp" id="comp-mobilebar" transform="translate(83,1320)" data-type="mobilebar">
+            <rect x="-46" y="-20" width="92" height="40" rx="5"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="9"  font-weight="600" fill="#8B6340">MOBILE BAR</text>
+            <text text-anchor="middle" y="10" font-size="7"                    fill="#B09070">2.3 m × 1.0 m</text>
+          </g>
 
-        <!-- ── TABLES T01–T16 ── -->
-        <g class="fp-comp fp-table" id="fp-t1" transform="translate(130,520)" data-table="1"><circle r="30" fill="#B5924C" fill-opacity="0.20" stroke="#B5924C" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#B5924C">1</text><text id="fp-px1" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t2" transform="translate(322,520)" data-table="2"><circle r="30" fill="#B5924C" fill-opacity="0.20" stroke="#B5924C" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#B5924C">2</text><text id="fp-px2" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t3" transform="translate(130,620)" data-table="3"><circle r="30" fill="#B5924C" fill-opacity="0.20" stroke="#B5924C" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#B5924C">3</text><text id="fp-px3" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t4" transform="translate(322,620)" data-table="4"><circle r="30" fill="#D4A5A0" fill-opacity="0.20" stroke="#D4A5A0" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#D4A5A0">4</text><text id="fp-px4" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t5" transform="translate(130,720)" data-table="5"><circle r="30" fill="#D4A5A0" fill-opacity="0.20" stroke="#D4A5A0" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#D4A5A0">5</text><text id="fp-px5" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t6" transform="translate(322,720)" data-table="6"><circle r="30" fill="#D4A5A0" fill-opacity="0.20" stroke="#D4A5A0" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#D4A5A0">6</text><text id="fp-px6" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t7" transform="translate(130,820)" data-table="7"><circle r="30" fill="#B8837A" fill-opacity="0.20" stroke="#B8837A" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#B8837A">7</text><text id="fp-px7" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t8" transform="translate(322,820)" data-table="8"><circle r="30" fill="#B8837A" fill-opacity="0.20" stroke="#B8837A" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#B8837A">8</text><text id="fp-px8" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t9" transform="translate(130,920)" data-table="9"><circle r="30" fill="#B8837A" fill-opacity="0.20" stroke="#B8837A" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#B8837A">9</text><text id="fp-px9" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t10" transform="translate(322,920)" data-table="10"><circle r="30" fill="#7A9E7E" fill-opacity="0.20" stroke="#7A9E7E" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#7A9E7E">10</text><text id="fp-px10" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t11" transform="translate(130,1020)" data-table="11"><circle r="30" fill="#7A9E7E" fill-opacity="0.20" stroke="#7A9E7E" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#7A9E7E">11</text><text id="fp-px11" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t12" transform="translate(322,1020)" data-table="12"><circle r="30" fill="#7A9E7E" fill-opacity="0.20" stroke="#7A9E7E" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#7A9E7E">12</text><text id="fp-px12" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t13" transform="translate(130,1120)" data-table="13"><circle r="30" fill="#7A9E7E" fill-opacity="0.20" stroke="#7A9E7E" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#7A9E7E">13</text><text id="fp-px13" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t14" transform="translate(322,1120)" data-table="14"><circle r="30" fill="#8B1A35" fill-opacity="0.20" stroke="#8B1A35" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#8B1A35">14</text><text id="fp-px14" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t15" transform="translate(130,1220)" data-table="15"><circle r="30" fill="#8B1A35" fill-opacity="0.20" stroke="#8B1A35" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#8B1A35">15</text><text id="fp-px15" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g><g class="fp-comp fp-table" id="fp-t16" transform="translate(322,1220)" data-table="16"><circle r="30" fill="#8B1A35" fill-opacity="0.20" stroke="#8B1A35" stroke-width="1.5" class="fp-body"/><text text-anchor="middle" y="-5" font-size="12" font-weight="bold" fill="#8B1A35">16</text><text id="fp-px16" text-anchor="middle" y="9" font-size="9" fill="#5A4040">–pax</text></g>
+          <!-- ── TABLES (rendered by JS on init) ── -->
+          <g id="fp-tables"></g>
 
-      </svg>
+        </svg>
+      </div>
     </div>
   </div><!-- /floor plan -->
 
-  <!-- ── RIGHT PANEL ─────────────────────────────────────────────────────── -->
-  <div class="flex-1 space-y-4" style="min-width:300px; max-width:460px;">
+  <!-- ── TWO PANELS BELOW ────────────────────────────────────────────────── -->
+  <div class="grid grid-cols-2 gap-6" style="max-width:920px; margin:0 auto;">
 
-    <!-- Table detail (shown on click) -->
-    <div id="detail-card" class="sc p-5" style="display:none">
-      <div class="flex items-start justify-between mb-3">
-        <div>
-          <p id="d-title" class="text-xs font-semibold text-stone-400 uppercase tracking-widest"></p>
-          <p id="d-cat"   class="text-sm text-stone-600 mt-0.5"></p>
-        </div>
-        <div id="d-pax" class="serif text-2xl font-light" style="color:var(--burgundy)"></div>
-      </div>
-      <ul id="d-guests" class="text-sm divide-y divide-stone-50"></ul>
-      <p class="text-xs text-stone-300 mt-3 italic">
-        Use the dropdowns to move guests · changes auto-save
-      </p>
-    </div>
-
-    <!-- Seating summary -->
+    <!-- LEFT: Table list -->
     <div class="sc p-5">
-      <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">Table Summary</p>
-      <div id="summary-list"></div>
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest">Tables</p>
+        <button class="btn btn-primary" onclick="addTable()">+ Add table</button>
+      </div>
+      <div class="text-xs text-stone-400 mb-3">
+        <span id="stat-a2">–</span> / 151 pax seated
+      </div>
+      <div id="table-list"></div>
     </div>
 
-    <!-- Unassigned -->
-    <div id="unassigned-card" class="sc p-5" style="display:none">
-      <p class="text-xs font-semibold text-amber-500 uppercase tracking-widest mb-2">Unassigned</p>
-      <ul id="unassigned-list" class="text-sm text-stone-600 space-y-0.5"></ul>
+    <!-- RIGHT: Selected table detail -->
+    <div class="sc p-5">
+      <div id="detail-empty" class="text-stone-300 italic text-sm py-8 text-center">
+        Click a table on the floor plan<br>or in the list to see its guests
+      </div>
+      <div id="detail-content" style="display:none">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <p id="d-title" class="text-xs font-semibold text-stone-400 uppercase tracking-widest"></p>
+            <p id="d-cat"   class="text-sm text-stone-600 mt-0.5"></p>
+          </div>
+          <div id="d-pax" class="serif text-2xl font-light" style="color:var(--burgundy)"></div>
+        </div>
+        <ul id="d-guests" class="mb-4 divide-y divide-stone-50"></ul>
+        <div class="flex gap-2 flex-wrap pt-2 border-t border-stone-100">
+          <p class="text-xs text-stone-300 flex-1 self-center">Changes auto-save to browser</p>
+          <button class="btn btn-danger" onclick="deleteTable()">&#128465; Delete table</button>
+        </div>
+      </div>
     </div>
 
-  </div>
+  </div><!-- /panels -->
 
 </div><!-- /main -->
 
-<footer class="text-center py-6 text-stone-300 text-xs tracking-wider">
+<footer class="text-center py-6 text-stone-300 text-xs tracking-wider mt-6">
   <span class="serif italic text-stone-400">Tommy &amp; Jeyan &bull; December 27, 2026</span>
 </footer>
 
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────────
-const GUESTS     = [{"num": 1, "name": "Dean Joan", "pax": 1, "table": 1, "side": "Jeyan", "group": "Benilde"}, {"num": 2, "name": "Chairperson Christian", "pax": 1, "table": 2, "side": "Jeyan", "group": "Benilde"}, {"num": 3, "name": "Chairperson Mark", "pax": 1, "table": 13, "side": "Jeyan", "group": "Benilde"}, {"num": 4, "name": "Juls", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 5, "name": "Mich", "pax": 2, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 6, "name": "Aldrine", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 7, "name": "Micca", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 8, "name": "Carl", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 9, "name": "Prof Avila", "pax": 1, "table": 3, "side": "Jeyan", "group": "College"}, {"num": 10, "name": "Ms. Emma", "pax": 1, "table": 1, "side": "Jeyan", "group": "College"}, {"num": 11, "name": "Sir Joliber", "pax": 2, "table": 2, "side": "Jeyan", "group": "College"}, {"num": 12, "name": "Zynel", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 13, "name": "Troy", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 14, "name": "Papa", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 15, "name": "Mama", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 16, "name": "Ate", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 17, "name": "Joval", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 18, "name": "Kuya rom", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 19, "name": "Tito itoy", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 20, "name": "Tito pong", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 21, "name": "Maica", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 22, "name": "Poleen", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 23, "name": "Aj", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 24, "name": "Hannah", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 25, "name": "Pierre", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 26, "name": "Jillian", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 27, "name": "Katrina", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 28, "name": "Lola ana", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 29, "name": "Tito willie", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 30, "name": "Tita cora", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 31, "name": "Ninang maura", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 32, "name": "Mama amor", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 33, "name": "Papa von", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 34, "name": "Kuya VIC", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 35, "name": "Mommy", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 36, "name": "Tito ysh", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 37, "name": "Tita jen", "pax": 1, "table": 1, "side": "Jeyan", "group": "Family"}, {"num": 38, "name": "Josiah", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 39, "name": "DIMPLES", "pax": 2, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 40, "name": "PAULO", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 41, "name": "DONNA", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 42, "name": "Josett", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 43, "name": "HAIDEE", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 44, "name": "GEM", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 45, "name": "JAIMINI", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 46, "name": "CEIJAS", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 47, "name": "Mica", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 48, "name": "Julia", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 49, "name": "Abby", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 50, "name": "Paolo", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 51, "name": "Mikay", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 53, "name": "Karen", "pax": 1, "table": 3, "side": "Jeyan", "group": "Manulife"}, {"num": 54, "name": "Shiela", "pax": 2, "table": 1, "side": "Jeyan", "group": "Manulife"}, {"num": 55, "name": "Kat", "pax": 1, "table": 13, "side": "Jeyan", "group": "Manulife"}, {"num": 56, "name": "Andrew", "pax": 1, "table": 13, "side": "Jeyan", "group": "Manulife"}, {"num": 57, "name": "Cheryl", "pax": 2, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 58, "name": "Pat", "pax": 2, "table": 3, "side": "Jeyan", "group": "PAL"}, {"num": 59, "name": "Honey", "pax": 1, "table": 13, "side": "Jeyan", "group": "PAL"}, {"num": 60, "name": "Denise", "pax": 1, "table": 13, "side": "Jeyan", "group": "PAL"}, {"num": 61, "name": "Andrew", "pax": 1, "table": 13, "side": "Jeyan", "group": "PAL"}, {"num": 62, "name": "Ana", "pax": 1, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 63, "name": "William", "pax": 1, "table": 3, "side": "Jeyan", "group": "PAL"}, {"num": 65, "name": "Jaime", "pax": 1, "table": 1, "side": "Jeyan", "group": "PAL"}, {"num": 66, "name": "Alvin", "pax": 1, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 67, "name": "Chi", "pax": 1, "table": 3, "side": "Jeyan", "group": "PAL"}, {"num": 68, "name": "Kath", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 69, "name": "Lance", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 70, "name": "Ian", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 71, "name": "Bing", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 72, "name": "Guia", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 73, "name": "Justin", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 76, "name": "Amy", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 77, "name": "ruel", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 78, "name": "Jeffrey", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 79, "name": "Godo", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 80, "name": "Rom/voltaire", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 81, "name": "JC", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 82, "name": "EVP Jeng", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 83, "name": "Bernadeth/giron", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 84, "name": "VAN", "pax": 1, "table": 12, "side": "Jeyan", "group": "SHS"}, {"num": 85, "name": "MAYE", "pax": 1, "table": 12, "side": "Jeyan", "group": "SHS"}, {"num": 86, "name": "JEAN", "pax": 1, "table": 12, "side": "Jeyan", "group": "SHS"}, {"num": 87, "name": "LOI", "pax": 1, "table": 12, "side": "Jeyan", "group": "SHS"}, {"num": 92, "name": "Betlee Barraquias", "pax": 2, "table": 16, "side": "Tommy", "group": "College"}, {"num": 93, "name": "Jason Deichmann", "pax": 1, "table": 16, "side": "Tommy", "group": "College"}, {"num": 94, "name": "Nikole Chan", "pax": 2, "table": 16, "side": "Tommy", "group": "College"}, {"num": 95, "name": "Piolo Barletta", "pax": 2, "table": 16, "side": "Tommy", "group": "College"}, {"num": 96, "name": "Jan Carlo Ponce", "pax": 1, "table": 16, "side": "Tommy", "group": "Deloitte"}, {"num": 97, "name": "Louise Litonjua", "pax": 1, "table": 16, "side": "Tommy", "group": "Deloitte"}, {"num": 98, "name": "Elaine Botabara", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 99, "name": "Sherwin Botabara", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 100, "name": "Teddy Botabara", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 101, "name": "Sheryl De Dios", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 102, "name": "Dong De Dios", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 103, "name": "Jun Botabara", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 104, "name": "Jackie Botabara", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 105, "name": "Mae Aspra", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 106, "name": "Kervy Aspra", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 107, "name": "Emil De Dios", "pax": 2, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 108, "name": "Luis De Dios", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 109, "name": "Alvin Botabara", "pax": 2, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 110, "name": "Bea Botabara", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 111, "name": "Nina Botabara", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 112, "name": "Seansean Botabara", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 113, "name": "Asuncion Mirabueno", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 114, "name": "Dennis Mirabueno", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 115, "name": "Grace Fondevilla", "pax": 1, "table": 1, "side": "Tommy", "group": "Family"}, {"num": 116, "name": "Axl John Mirabueno", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 117, "name": "George Suarez", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 118, "name": "Salvacion Ribano", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 119, "name": "Djalma Ribano", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 120, "name": "Antonio Remolacio", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 121, "name": "Merlyn Remolacio", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 122, "name": "Denley Mirabueno", "pax": 1, "table": 2, "side": "Tommy", "group": "Family"}, {"num": 123, "name": "Grace Mirabueno", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 124, "name": "Rachel Muller", "pax": 1, "table": 3, "side": "Tommy", "group": "Family Friends"}, {"num": 125, "name": "Rene Muller", "pax": 1, "table": 1, "side": "Tommy", "group": "Family Friends"}, {"num": 126, "name": "Traviz Keinn Climacosa", "pax": 2, "table": 14, "side": "Tommy", "group": "HS / Elem"}, {"num": 127, "name": "Vaunn Maribao", "pax": 2, "table": 15, "side": "Tommy", "group": "HS / Elem"}, {"num": 128, "name": "John Goloya", "pax": 1, "table": 14, "side": "Tommy", "group": "HS / Elem"}, {"num": 129, "name": "Jade Calera", "pax": 1, "table": 15, "side": "Tommy", "group": "HS / Elem"}, {"num": 130, "name": "Michael Somosot", "pax": 2, "table": 14, "side": "Tommy", "group": "HS / Elem"}, {"num": 131, "name": "Gabriel Ventura", "pax": 1, "table": 15, "side": "Tommy", "group": "HS / Elem"}, {"num": 132, "name": "Patrick Soriano", "pax": 2, "table": 15, "side": "Tommy", "group": "HS / Elem"}, {"num": 133, "name": "Ellwin Serge Panaglima", "pax": 2, "table": 14, "side": "Tommy", "group": "HS / Elem"}, {"num": 134, "name": "Tricia Ong", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 135, "name": "Francis Valencia", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 136, "name": "Didi Rico", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 137, "name": "Juan Gabriel Cuenco (Jiggy)", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 138, "name": "Enzo Papa", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 139, "name": "Juan Ambrocio Britanico (JA)", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 140, "name": "Sharm Lee", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 141, "name": "Bryle Raviz", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 142, "name": "Rahim Damanwala", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 143, "name": "Chito Ramos", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}];
-const TABLE_META = {"1": {"cat": "VIP", "color": "#B5924C"}, "2": {"cat": "VIP", "color": "#B5924C"}, "3": {"cat": "VIP", "color": "#B5924C"}, "4": {"cat": "Jeyan Family", "color": "#D4A5A0"}, "5": {"cat": "Jeyan Family", "color": "#D4A5A0"}, "6": {"cat": "Jeyan Family", "color": "#D4A5A0"}, "7": {"cat": "Tommy Family", "color": "#B8837A"}, "8": {"cat": "Tommy Family", "color": "#B8837A"}, "9": {"cat": "Tommy Family", "color": "#B8837A"}, "10": {"cat": "Jeyan Friends", "color": "#7A9E7E"}, "11": {"cat": "Jeyan Friends", "color": "#7A9E7E"}, "12": {"cat": "Jeyan Friends", "color": "#7A9E7E"}, "13": {"cat": "Jeyan Friends", "color": "#7A9E7E"}, "14": {"cat": "Tommy Friends", "color": "#8B1A35"}, "15": {"cat": "Tommy Friends", "color": "#8B1A35"}, "16": {"cat": "Tommy Friends", "color": "#8B1A35"}};
-const DEFAULT_TABLE_POS = {"1": {"x": 130, "y": 520}, "2": {"x": 322, "y": 520}, "3": {"x": 130, "y": 620}, "4": {"x": 322, "y": 620}, "5": {"x": 130, "y": 720}, "6": {"x": 322, "y": 720}, "7": {"x": 130, "y": 820}, "8": {"x": 322, "y": 820}, "9": {"x": 130, "y": 920}, "10": {"x": 322, "y": 920}, "11": {"x": 130, "y": 1020}, "12": {"x": 322, "y": 1020}, "13": {"x": 130, "y": 1120}, "14": {"x": 322, "y": 1120}, "15": {"x": 130, "y": 1220}, "16": {"x": 322, "y": 1220}};
-const DEFAULT_COMP_POS  = {"comp-sweetheart": {"x": 226, "y": 290}, "comp-dancefloor": {"x": 226, "y": 400}, "comp-dj": {"x": 410, "y": 218}, "comp-buffet": {"x": 413, "y": 960}, "comp-mobilebar": {"x": 83, "y": 1320}};
+// ── EMBEDDED DATA ─────────────────────────────────────────────────────────────
+const GUESTS          = [{"num": 1, "name": "Dean Joan", "pax": 1, "table": 1, "side": "Jeyan", "group": "Benilde"}, {"num": 2, "name": "Chairperson Christian", "pax": 1, "table": 2, "side": "Jeyan", "group": "Benilde"}, {"num": 3, "name": "Chairperson Mark", "pax": 1, "table": 13, "side": "Jeyan", "group": "Benilde"}, {"num": 4, "name": "Juls", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 5, "name": "Mich", "pax": 2, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 6, "name": "Aldrine", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 7, "name": "Micca", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 8, "name": "Carl", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 9, "name": "Prof Avila", "pax": 1, "table": 3, "side": "Jeyan", "group": "College"}, {"num": 10, "name": "Ms. Emma", "pax": 1, "table": 1, "side": "Jeyan", "group": "College"}, {"num": 11, "name": "Sir Joliber", "pax": 2, "table": 2, "side": "Jeyan", "group": "College"}, {"num": 12, "name": "Zynel", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 13, "name": "Troy", "pax": 1, "table": 12, "side": "Jeyan", "group": "College"}, {"num": 14, "name": "Papa", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 15, "name": "Mama", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 16, "name": "Ate", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 17, "name": "Joval", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 18, "name": "Kuya rom", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 19, "name": "Tito itoy", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 20, "name": "Tito pong", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 21, "name": "Maica", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 22, "name": "Poleen", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 23, "name": "Aj", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 24, "name": "Hannah", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 25, "name": "Pierre", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 26, "name": "Jillian", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 27, "name": "Katrina", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 28, "name": "Lola ana", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 29, "name": "Tito willie", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 30, "name": "Tita cora", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 31, "name": "Ninang maura", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 32, "name": "Mama amor", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 33, "name": "Papa von", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 34, "name": "Kuya VIC", "pax": 1, "table": 6, "side": "Jeyan", "group": "Family"}, {"num": 35, "name": "Mommy", "pax": 1, "table": 4, "side": "Jeyan", "group": "Family"}, {"num": 36, "name": "Tito ysh", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 37, "name": "Tita jen", "pax": 1, "table": 1, "side": "Jeyan", "group": "Family"}, {"num": 38, "name": "Josiah", "pax": 1, "table": 5, "side": "Jeyan", "group": "Family"}, {"num": 39, "name": "DIMPLES", "pax": 2, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 40, "name": "PAULO", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 41, "name": "DONNA", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 42, "name": "Josett", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 43, "name": "HAIDEE", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 44, "name": "GEM", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 45, "name": "JAIMINI", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 46, "name": "CEIJAS", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 47, "name": "Mica", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 48, "name": "Julia", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 49, "name": "Abby", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 50, "name": "Paolo", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 51, "name": "Mikay", "pax": 1, "table": 11, "side": "Jeyan", "group": "JHS"}, {"num": 53, "name": "Karen", "pax": 1, "table": 3, "side": "Jeyan", "group": "Manulife"}, {"num": 54, "name": "Shiela", "pax": 2, "table": 1, "side": "Jeyan", "group": "Manulife"}, {"num": 55, "name": "Kat", "pax": 1, "table": 13, "side": "Jeyan", "group": "Manulife"}, {"num": 56, "name": "Andrew", "pax": 1, "table": 13, "side": "Jeyan", "group": "Manulife"}, {"num": 57, "name": "Cheryl", "pax": 2, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 58, "name": "Pat", "pax": 2, "table": 3, "side": "Jeyan", "group": "PAL"}, {"num": 59, "name": "Honey", "pax": 1, "table": 13, "side": "Jeyan", "group": "PAL"}, {"num": 60, "name": "Denise", "pax": 1, "table": 13, "side": "Jeyan", "group": "PAL"}, {"num": 61, "name": "Andrew", "pax": 1, "table": 13, "side": "Jeyan", "group": "PAL"}, {"num": 62, "name": "Ana", "pax": 1, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 63, "name": "William", "pax": 1, "table": 3, "side": "Jeyan", "group": "PAL"}, {"num": 65, "name": "Jaime", "pax": 1, "table": 1, "side": "Jeyan", "group": "PAL"}, {"num": 66, "name": "Alvin", "pax": 1, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 67, "name": "Chi", "pax": 1, "table": 3, "side": "Jeyan", "group": "PAL"}, {"num": 68, "name": "Kath", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 69, "name": "Lance", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 70, "name": "Ian", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 71, "name": "Bing", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 72, "name": "Guia", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 73, "name": "Justin", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 76, "name": "Amy", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 77, "name": "ruel", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 78, "name": "Jeffrey", "pax": 1, "table": null, "side": "Jeyan", "group": "PAL"}, {"num": 79, "name": "Godo", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 80, "name": "Rom/voltaire", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 81, "name": "JC", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 82, "name": "EVP Jeng", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 83, "name": "Bernadeth/giron", "pax": 1, "table": 13, "side": "Jeyan", "group": "REBAP"}, {"num": 84, "name": "VAN", "pax": 1, "table": 12, "side": "Jeyan", "group": "SHS"}, {"num": 85, "name": "MAYE", "pax": 1, "table": 12, "side": "Jeyan", "group": "SHS"}, {"num": 86, "name": "JEAN", "pax": 1, "table": 12, "side": "Jeyan", "group": "SHS"}, {"num": 87, "name": "LOI", "pax": 1, "table": 12, "side": "Jeyan", "group": "SHS"}, {"num": 92, "name": "Betlee Barraquias", "pax": 2, "table": 16, "side": "Tommy", "group": "College"}, {"num": 93, "name": "Jason Deichmann", "pax": 1, "table": 16, "side": "Tommy", "group": "College"}, {"num": 94, "name": "Nikole Chan", "pax": 2, "table": 16, "side": "Tommy", "group": "College"}, {"num": 95, "name": "Piolo Barletta", "pax": 2, "table": 16, "side": "Tommy", "group": "College"}, {"num": 96, "name": "Jan Carlo Ponce", "pax": 1, "table": 16, "side": "Tommy", "group": "Deloitte"}, {"num": 97, "name": "Louise Litonjua", "pax": 1, "table": 16, "side": "Tommy", "group": "Deloitte"}, {"num": 98, "name": "Elaine Botabara", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 99, "name": "Sherwin Botabara", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 100, "name": "Teddy Botabara", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 101, "name": "Sheryl De Dios", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 102, "name": "Dong De Dios", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 103, "name": "Jun Botabara", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 104, "name": "Jackie Botabara", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 105, "name": "Mae Aspra", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 106, "name": "Kervy Aspra", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 107, "name": "Emil De Dios", "pax": 2, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 108, "name": "Luis De Dios", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 109, "name": "Alvin Botabara", "pax": 2, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 110, "name": "Bea Botabara", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 111, "name": "Nina Botabara", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 112, "name": "Seansean Botabara", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 113, "name": "Asuncion Mirabueno", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 114, "name": "Dennis Mirabueno", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 115, "name": "Grace Fondevilla", "pax": 1, "table": 1, "side": "Tommy", "group": "Family"}, {"num": 116, "name": "Axl John Mirabueno", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 117, "name": "George Suarez", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 118, "name": "Salvacion Ribano", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 119, "name": "Djalma Ribano", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 120, "name": "Antonio Remolacio", "pax": 1, "table": 9, "side": "Tommy", "group": "Family"}, {"num": 121, "name": "Merlyn Remolacio", "pax": 1, "table": 7, "side": "Tommy", "group": "Family"}, {"num": 122, "name": "Denley Mirabueno", "pax": 1, "table": 2, "side": "Tommy", "group": "Family"}, {"num": 123, "name": "Grace Mirabueno", "pax": 1, "table": 8, "side": "Tommy", "group": "Family"}, {"num": 124, "name": "Rachel Muller", "pax": 1, "table": 3, "side": "Tommy", "group": "Family Friends"}, {"num": 125, "name": "Rene Muller", "pax": 1, "table": 1, "side": "Tommy", "group": "Family Friends"}, {"num": 126, "name": "Traviz Keinn Climacosa", "pax": 2, "table": 14, "side": "Tommy", "group": "HS / Elem"}, {"num": 127, "name": "Vaunn Maribao", "pax": 2, "table": 15, "side": "Tommy", "group": "HS / Elem"}, {"num": 128, "name": "John Goloya", "pax": 1, "table": 14, "side": "Tommy", "group": "HS / Elem"}, {"num": 129, "name": "Jade Calera", "pax": 1, "table": 15, "side": "Tommy", "group": "HS / Elem"}, {"num": 130, "name": "Michael Somosot", "pax": 2, "table": 14, "side": "Tommy", "group": "HS / Elem"}, {"num": 131, "name": "Gabriel Ventura", "pax": 1, "table": 15, "side": "Tommy", "group": "HS / Elem"}, {"num": 132, "name": "Patrick Soriano", "pax": 2, "table": 15, "side": "Tommy", "group": "HS / Elem"}, {"num": 133, "name": "Ellwin Serge Panaglima", "pax": 2, "table": 14, "side": "Tommy", "group": "HS / Elem"}, {"num": 134, "name": "Tricia Ong", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 135, "name": "Francis Valencia", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 136, "name": "Didi Rico", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 137, "name": "Juan Gabriel Cuenco (Jiggy)", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 138, "name": "Enzo Papa", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 139, "name": "Juan Ambrocio Britanico (JA)", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 140, "name": "Sharm Lee", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 141, "name": "Bryle Raviz", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 142, "name": "Rahim Damanwala", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}, {"num": 143, "name": "Chito Ramos", "pax": 1, "table": null, "side": "Tommy", "group": "Deloitte"}];
+const DEFAULT_META    = {"1": {"cat": "VIP", "color": "#B5924C", "x": 130, "y": 520}, "2": {"cat": "VIP", "color": "#B5924C", "x": 322, "y": 520}, "3": {"cat": "VIP", "color": "#B5924C", "x": 130, "y": 620}, "4": {"cat": "Jeyan Family", "color": "#D4A5A0", "x": 322, "y": 620}, "5": {"cat": "Jeyan Family", "color": "#D4A5A0", "x": 130, "y": 720}, "6": {"cat": "Jeyan Family", "color": "#D4A5A0", "x": 322, "y": 720}, "7": {"cat": "Tommy Family", "color": "#B8837A", "x": 130, "y": 820}, "8": {"cat": "Tommy Family", "color": "#B8837A", "x": 322, "y": 820}, "9": {"cat": "Tommy Family", "color": "#B8837A", "x": 130, "y": 920}, "10": {"cat": "Jeyan Friends", "color": "#7A9E7E", "x": 322, "y": 920}, "11": {"cat": "Jeyan Friends", "color": "#7A9E7E", "x": 130, "y": 1020}, "12": {"cat": "Jeyan Friends", "color": "#7A9E7E", "x": 322, "y": 1020}, "13": {"cat": "Jeyan Friends", "color": "#7A9E7E", "x": 130, "y": 1120}, "14": {"cat": "Tommy Friends", "color": "#8B1A35", "x": 322, "y": 1120}, "15": {"cat": "Tommy Friends", "color": "#8B1A35", "x": 130, "y": 1220}, "16": {"cat": "Tommy Friends", "color": "#8B1A35", "x": 322, "y": 1220}};
+const DEFAULT_COMPS   = {"comp-sweetheart": {"x": 226, "y": 290}, "comp-dancefloor": {"x": 226, "y": 400}, "comp-dj": {"x": 410, "y": 218}, "comp-buffet": {"x": 413, "y": 960}, "comp-mobilebar": {"x": 83, "y": 1320}};
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
+// ── MUTABLE STATE ─────────────────────────────────────────────────────────────
+let tables      = {};   // tableNum → {cat, color, x, y}
 let assignments = {};   // guestNum → tableNum | null
-let snapOn = true;
-let selTable = null;
+let selTable    = null;
+let snapOn      = true;
 const SNAP = 20;          // 20 px = 50 cm
-const LS_POS  = 'tjwed_fp_pos';
-const LS_ASN  = 'tjwed_asn';
+const LS_T  = 'tjwed_tables';
+const LS_A  = 'tjwed_asn';
+const LS_FX = 'tjwed_fixtures';
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 function init() {
-  // Build default assignments from server data
+  // Default assignments from server data
   GUESTS.forEach(g => { assignments[g.num] = g.table || null; });
-  // Override with any saved assignments
-  const sa = localStorage.getItem(LS_ASN);
-  if (sa) { try { Object.assign(assignments, JSON.parse(sa)); } catch(_) {} }
-  // Restore saved positions
-  const sp = localStorage.getItem(LS_POS);
-  if (sp) {
-    try {
-      const pos = JSON.parse(sp);
-      Object.entries(pos).forEach(([id, {x, y}]) => {
+
+  // Load saved assignments
+  try { const a = localStorage.getItem(LS_A); if (a) Object.assign(assignments, JSON.parse(a)); } catch(_) {}
+
+  // Load tables (or use defaults)
+  const savedT = localStorage.getItem(LS_T);
+  if (savedT) {
+    try { tables = JSON.parse(savedT); } catch(_) { tables = {...DEFAULT_META}; }
+  } else {
+    tables = {...DEFAULT_META};
+  }
+
+  // Render all table SVG elements
+  Object.entries(tables).forEach(([t, meta]) => createTableSVG(+t, meta.x, meta.y, meta.color));
+
+  // Restore fixture positions
+  try {
+    const fx = localStorage.getItem(LS_FX);
+    if (fx) {
+      const pos = JSON.parse(fx);
+      Object.entries(pos).forEach(([id, {x,y}]) => {
         const el = document.getElementById(id);
         if (el) el.setAttribute('transform', `translate(${x},${y})`);
       });
-    } catch(_) {}
-  }
-  renderAll();
+    }
+  } catch(_) {}
+
   setupDrag();
-  document.getElementById('snap-cb').addEventListener('change', e => snapOn = e.target.checked);
-  document.getElementById('grid-cb').addEventListener('change', e => {
-    document.getElementById('fp-grid').style.display = e.target.checked ? '' : 'none';
-  });
+  setupToggles();
+  renderAll();
+}
+
+// ── SVG TABLE CREATION ────────────────────────────────────────────────────────
+function createTableSVG(tNum, cx, cy, color) {
+  const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  g.setAttribute('class', 'fp-comp fp-table');
+  g.setAttribute('id', `fp-t${tNum}`);
+  g.setAttribute('transform', `translate(${cx},${cy})`);
+  g.dataset.table = tNum;
+
+  g.innerHTML = `
+    <circle r="30" fill="${color}" fill-opacity=".20"
+            stroke="${color}" stroke-width="1.5" class="fp-body"/>
+    <text text-anchor="middle" y="-5" font-size="12"
+          font-weight="bold" fill="${color}">${tNum}</text>
+    <text id="fp-px${tNum}" text-anchor="middle" y="9"
+          font-size="9" fill="#5A4040">–pax</text>`;
+
+  document.getElementById('fp-tables').appendChild(g);
 }
 
 // ── DRAG & DROP ───────────────────────────────────────────────────────────────
@@ -290,221 +332,288 @@ function svgPt(e) {
 function getTr(el) {
   const m = (el.getAttribute('transform') || 'translate(0,0)')
               .match(/translate\(([^,]+),([^)]+)\)/);
-  return m ? {x: +m[1], y: +m[2]} : {x:0, y:0};
+  return m ? {x:+m[1], y:+m[2]} : {x:0,y:0};
 }
+
+function snapV(v) { return snapOn ? Math.round(v/SNAP)*SNAP : v; }
 
 function setupDrag() {
   const svg = document.getElementById('fp-svg');
-  let drag = null, off = {x:0,y:0}, moved = false;
+  let drag=null, off={x:0,y:0}, moved=false;
 
   svg.addEventListener('mousedown', e => {
     const comp = e.target.closest('.fp-comp');
     if (!comp) return;
     e.preventDefault();
-    drag = comp; moved = false;
+    drag=comp; moved=false;
     comp.classList.add('dragging');
-    comp.parentNode.appendChild(comp); // bring to front
-    const pt = svgPt(e), tr = getTr(comp);
-    off = {x: pt.x - tr.x, y: pt.y - tr.y};
+    comp.parentNode.appendChild(comp);
+    const pt=svgPt(e), tr=getTr(comp);
+    off={x:pt.x-tr.x, y:pt.y-tr.y};
   });
 
   svg.addEventListener('mousemove', e => {
     if (!drag) return;
-    moved = true;
-    const pt = svgPt(e);
-    let x = pt.x - off.x, y = pt.y - off.y;
-    if (snapOn) { x = Math.round(x/SNAP)*SNAP; y = Math.round(y/SNAP)*SNAP; }
-    drag.setAttribute('transform', `translate(${x},${y})`);
+    moved=true;
+    const pt=svgPt(e);
+    drag.setAttribute('transform',
+      `translate(${snapV(pt.x-off.x)},${snapV(pt.y-off.y)})`);
   });
 
-  function onEnd() {
+  function end() {
     if (!drag) return;
     drag.classList.remove('dragging');
-    if (!moved && drag.classList.contains('fp-table')) {
+    if (!moved && drag.classList.contains('fp-table'))
       selectTable(+drag.dataset.table);
-    }
-    savePositions();
-    drag = null;
+    saveAll();
+    drag=null;
   }
-  svg.addEventListener('mouseup',    onEnd);
-  svg.addEventListener('mouseleave', onEnd);
+  svg.addEventListener('mouseup', end);
+  svg.addEventListener('mouseleave', end);
 }
 
 // ── SAVE / RESET ──────────────────────────────────────────────────────────────
-function savePositions() {
-  const pos = {};
-  document.querySelectorAll('#fp-svg .fp-comp').forEach(el => {
-    const tr = getTr(el);
-    pos[el.id] = {x: tr.x, y: tr.y};
+function saveAll() {
+  // Save fixture positions
+  const fx={};
+  document.querySelectorAll('#fp-svg .fp-comp:not(.fp-table)').forEach(el => {
+    const tr=getTr(el); fx[el.id]={x:tr.x,y:tr.y};
   });
-  localStorage.setItem(LS_POS, JSON.stringify(pos));
-}
+  localStorage.setItem(LS_FX, JSON.stringify(fx));
 
-function saveAssignments() {
-  localStorage.setItem(LS_ASN, JSON.stringify(assignments));
+  // Save table state (position + meta)
+  const ts={};
+  Object.keys(tables).forEach(t => {
+    const el=document.getElementById(`fp-t${t}`);
+    const tr=el?getTr(el):{x:tables[t].x,y:tables[t].y};
+    ts[t]={...tables[t], x:tr.x, y:tr.y};
+  });
+  localStorage.setItem(LS_T, JSON.stringify(ts));
+
+  // Save assignments
+  localStorage.setItem(LS_A, JSON.stringify(assignments));
 }
 
 function doSave() {
-  savePositions();
-  saveAssignments();
-  const btn = document.getElementById('save-btn');
-  btn.textContent = 'Saved ✓';
-  setTimeout(() => btn.textContent = 'Save', 1800);
+  saveAll();
+  const btn=document.getElementById('save-btn');
+  btn.textContent='Saved ✓';
+  setTimeout(()=>btn.textContent='Save', 1800);
 }
 
-function resetAll() {
-  localStorage.removeItem(LS_POS);
-  Object.entries(DEFAULT_TABLE_POS).forEach(([t, {x, y}]) => {
-    const el = document.getElementById(`fp-t${t}`);
-    if (el) el.setAttribute('transform', `translate(${x},${y})`);
+function resetPositions() {
+  if (!confirm('Reset all positions to defaults?')) return;
+  localStorage.removeItem(LS_FX);
+  localStorage.removeItem(LS_T);
+
+  // Remove current tables, re-create from defaults
+  document.getElementById('fp-tables').innerHTML='';
+  tables={...DEFAULT_META};
+  Object.entries(tables).forEach(([t,m])=>createTableSVG(+t,m.x,m.y,m.color));
+
+  // Reset fixture positions
+  Object.entries(DEFAULT_COMPS).forEach(([id,{x,y}])=>{
+    const el=document.getElementById(id);
+    if(el) el.setAttribute('transform',`translate(${x},${y})`);
   });
-  Object.entries(DEFAULT_COMP_POS).forEach(([id, {x, y}]) => {
-    const el = document.getElementById(id);
-    if (el) el.setAttribute('transform', `translate(${x},${y})`);
-  });
+  renderAll();
 }
 
 function resetGuests() {
-  if (!confirm('Reset all seating to the Google Sheets data?')) return;
-  localStorage.removeItem(LS_ASN);
-  GUESTS.forEach(g => { assignments[g.num] = g.table || null; });
+  if (!confirm('Reset all seating to Google Sheets data?')) return;
+  localStorage.removeItem(LS_A);
+  GUESTS.forEach(g=>{ assignments[g.num]=g.table||null; });
   renderAll();
   if (selTable) renderDetail(selTable);
 }
 
-// ── GUEST ASSIGNMENT ──────────────────────────────────────────────────────────
-function moveGuest(gNum, newTable) {
-  assignments[gNum] = newTable ? +newTable : null;
-  saveAssignments();
+// ── ADD / DELETE TABLE ────────────────────────────────────────────────────────
+function addTable() {
+  const nums = Object.keys(tables).map(Number);
+  const newNum = nums.length ? Math.max(...nums)+1 : 1;
+  const color = '#9CA3AF';
+  // Place at center of hall
+  const cx=226, cy=810;
+  tables[newNum] = {cat:'Custom', color, x:cx, y:cy};
+  createTableSVG(newNum, cx, cy, color);
+  saveAll();
   renderAll();
-  if (selTable) renderDetail(selTable);
+  selectTable(newNum);
 }
 
-// ── SELECT TABLE ──────────────────────────────────────────────────────────────
+function deleteTable() {
+  if (!selTable) return;
+  if (!confirm(`Delete Table ${selTable} and unassign all its guests?`)) return;
+  // Unassign guests
+  GUESTS.forEach(g=>{ if(assignments[g.num]===selTable) assignments[g.num]=null; });
+  // Remove SVG
+  const el=document.getElementById(`fp-t${selTable}`);
+  if (el) el.remove();
+  // Remove from state
+  delete tables[selTable];
+  selTable=null;
+  saveAll();
+  document.getElementById('detail-content').style.display='none';
+  document.getElementById('detail-empty').style.display='';
+  renderAll();
+}
+
+// ── TABLE SELECTION ───────────────────────────────────────────────────────────
 function selectTable(tNum) {
-  document.querySelectorAll('.fp-table.sel').forEach(el => el.classList.remove('sel'));
-  if (selTable === tNum) {
-    selTable = null;
-    document.getElementById('detail-card').style.display = 'none';
+  document.querySelectorAll('.fp-table.sel').forEach(el=>el.classList.remove('sel'));
+  document.querySelectorAll('.trow.sel').forEach(el=>el.classList.remove('sel'));
+
+  if (selTable===tNum) {
+    selTable=null;
+    document.getElementById('detail-content').style.display='none';
+    document.getElementById('detail-empty').style.display='';
     return;
   }
-  selTable = tNum;
-  const el = document.getElementById(`fp-t${tNum}`);
-  if (el) el.classList.add('sel');
+  selTable=tNum;
+  const svgEl=document.getElementById(`fp-t${tNum}`);
+  if (svgEl) { svgEl.classList.add('sel'); svgEl.parentNode.appendChild(svgEl); }
+  const rowEl=document.getElementById(`trow-${tNum}`);
+  if (rowEl) rowEl.classList.add('sel');
+
   renderDetail(tNum);
-  document.getElementById('detail-card').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 function renderDetail(tNum) {
-  document.getElementById('detail-card').style.display = '';
-  const meta = TABLE_META[String(tNum)] || {cat:'Guest', color:'#A0A0A0'};
-  const gs   = GUESTS.filter(g => assignments[g.num] === tNum);
-  const pax  = gs.reduce((s,g) => s+g.pax, 0);
+  document.getElementById('detail-empty').style.display='none';
+  document.getElementById('detail-content').style.display='';
 
-  document.getElementById('d-title').textContent = `Table ${tNum}`;
-  document.getElementById('d-cat').innerHTML =
+  const meta  = tables[String(tNum)] || tables[tNum] || {cat:'Guest',color:'#A0A0A0'};
+  const gs    = GUESTS.filter(g=>assignments[g.num]===tNum);
+  const pax   = gs.reduce((s,g)=>s+g.pax,0);
+  const overLimit = pax>10;
+
+  document.getElementById('d-title').textContent=`Table ${tNum}`;
+  document.getElementById('d-cat').innerHTML=
     `<span style="color:${meta.color};font-size:16px">&#9679;</span> ${meta.cat}`;
-  document.getElementById('d-pax').textContent = pax + ' pax';
-  document.getElementById('d-pax').style.color = pax > 10 ? '#dc2626' : '#8B1A35';
+  document.getElementById('d-pax').textContent=pax+' pax';
+  document.getElementById('d-pax').style.color=overLimit?'#dc2626':'#8B1A35';
 
-  // Build table options for move dropdowns
-  const tOpts = Object.keys(TABLE_META).map(t =>
-    `<option value="${t}"${+t===tNum?' selected':''}>Table ${t} — ${TABLE_META[t].cat}</option>`
+  // Table options for move dropdown
+  const tOpts=Object.keys(tables).map(t=>
+    `<option value="${t}"${+t===tNum?' selected':''}>T${t} — ${(tables[t]||{}).cat||'?'}</option>`
   ).join('');
-  const noneOpt = `<option value="">— unassigned —</option>`;
+  const noneOpt=`<option value="">— unassign —</option>`;
 
-  const ul = document.getElementById('d-guests');
-  if (gs.length === 0) {
-    ul.innerHTML = '<li class="g-row text-stone-300 italic">No guests assigned</li>';
+  const ul=document.getElementById('d-guests');
+  if (!gs.length) {
+    ul.innerHTML='<li class="g-row text-stone-300 italic">No guests assigned</li>';
   } else {
-    ul.innerHTML = gs.map(g => `
+    ul.innerHTML=gs.map(g=>`
       <li class="g-row">
-        <span class="flex-1 text-stone-700">${g.name}${g.pax>1 ? `<span class="text-stone-400 text-xs ml-1">+${g.pax-1}</span>`:''} </span>
-        <span class="text-stone-400 text-xs mr-1">${g.side}</span>
-        <select onchange="moveGuest(${g.num}, this.value)" title="Move guest">
+        <span class="flex-1 text-stone-700">
+          ${g.name}${g.pax>1?`<span class="text-stone-400 text-xs ml-1">+${g.pax-1}</span>`:''}
+        </span>
+        <span class="text-stone-400 text-xs">${g.side}</span>
+        <select onchange="moveGuest(${g.num},this.value)">
           ${noneOpt}${tOpts}
         </select>
       </li>`).join('');
-    // Set correct selected value
-    gs.forEach(g => {
-      const sel = ul.querySelector(`li:nth-child(${gs.indexOf(g)+1}) select`);
-      if (sel) sel.value = String(tNum);
+    // Set correct selected option
+    gs.forEach((g,i)=>{
+      const sel=ul.querySelectorAll('select')[i];
+      if(sel) sel.value=String(tNum);
     });
+  }
+
+  if(overLimit) {
+    ul.insertAdjacentHTML('beforeend',
+      `<li class="g-row" style="color:#dc2626;font-size:11px">
+         ⚠ Over 10 pax — consider splitting this table
+       </li>`);
   }
 }
 
-// ── RENDER SUMMARY ────────────────────────────────────────────────────────────
+// ── GUEST ASSIGNMENT ──────────────────────────────────────────────────────────
+function moveGuest(gNum,newTable) {
+  assignments[gNum]=newTable?+newTable:null;
+  saveAll();
+  renderAll();
+  if(selTable) renderDetail(selTable);
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function renderAll() {
   updatePaxLabels();
-  renderSummary();
-  renderUnassigned();
+  renderTableList();
   updateStats();
 }
 
 function updatePaxLabels() {
-  const byTable = {};
-  GUESTS.forEach(g => {
-    if (assignments[g.num]) {
-      byTable[assignments[g.num]] = (byTable[assignments[g.num]] || 0) + g.pax;
-    }
+  const byT={};
+  GUESTS.forEach(g=>{
+    if(assignments[g.num]) byT[assignments[g.num]]=(byT[assignments[g.num]]||0)+g.pax;
   });
-  Object.keys(TABLE_META).forEach(t => {
-    const el = document.getElementById(`fp-px${t}`);
-    if (!el) return;
-    const p = byTable[t] || 0;
-    el.textContent = p + 'pax' + (p > 10 ? ' ⚠' : '');
-    el.setAttribute('fill', p > 10 ? '#dc2626' : '#5A4040');
+  Object.keys(tables).forEach(t=>{
+    const el=document.getElementById(`fp-px${t}`);
+    if(!el) return;
+    const p=byT[t]||0;
+    el.textContent=p+'pax'+(p>10?' ⚠':'');
+    el.setAttribute('fill',p>10?'#dc2626':'#5A4040');
   });
 }
 
-function renderSummary() {
-  const byTable = {};
-  GUESTS.forEach(g => {
-    if (assignments[g.num]) {
-      byTable[assignments[g.num]] = byTable[assignments[g.num]] || [];
-      byTable[assignments[g.num]].push(g);
+function renderTableList() {
+  const byT={};
+  GUESTS.forEach(g=>{
+    if(assignments[g.num]){
+      byT[assignments[g.num]]=byT[assignments[g.num]]||[];
+      byT[assignments[g.num]].push(g);
     }
   });
-  document.getElementById('summary-list').innerHTML =
-    Object.keys(TABLE_META).map(t => {
-      const meta = TABLE_META[t];
-      const gs   = byTable[t] || [];
-      const pax  = gs.reduce((s,g) => s+g.pax, 0);
-      const warn = pax > 10 ? ' <span class="text-rose-500">⚠</span>' : '';
-      return `<div class="flex items-center gap-2 py-1.5 border-b border-stone-50 last:border-0
-                           cursor-pointer hover:bg-stone-50 rounded px-1 -mx-1"
-                   onclick="selectTable(${t})">
-        <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:${meta.color}"></span>
-        <span class="text-xs text-stone-500 w-14">Table ${t}</span>
-        <span class="text-xs text-stone-400 flex-1 truncate">${meta.cat}</span>
-        <span class="text-xs font-semibold text-stone-600">${pax} pax${warn}</span>
-      </div>`;
-    }).join('');
-}
 
-function renderUnassigned() {
-  const ua = GUESTS.filter(g => !assignments[g.num]);
-  const card = document.getElementById('unassigned-card');
-  if (!ua.length) { card.style.display = 'none'; return; }
-  card.style.display = '';
+  // Unassigned guests at bottom
+  const ua=GUESTS.filter(g=>!assignments[g.num]);
 
-  // Build table options
-  const tOpts = Object.keys(TABLE_META).map(t =>
-    `<option value="${t}">Table ${t} — ${TABLE_META[t].cat}</option>`).join('');
+  const nums=Object.keys(tables).map(Number).sort((a,b)=>a-b);
+  let html=nums.map(t=>{
+    const meta=tables[t]||{};
+    const pax=(byT[t]||[]).reduce((s,g)=>s+g.pax,0);
+    const warn=pax>10?'<span style="color:#dc2626"> ⚠</span>':'';
+    const selCls=selTable===t?' sel':'';
+    return `<div class="trow${selCls}" id="trow-${t}" onclick="selectTable(${t})">
+      <span class="w-3 h-3 rounded-full flex-shrink-0"
+            style="background:${meta.color||'#ccc'}"></span>
+      <span style="font-size:12px;color:#78716c;width:52px">T${t}</span>
+      <span style="font-size:12px;color:#a8a29e;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${meta.cat||''}</span>
+      <span style="font-size:12px;font-weight:600;color:#57534e">${pax}p${warn}</span>
+    </div>`;
+  }).join('');
 
-  document.getElementById('unassigned-list').innerHTML = ua.map(g => `
-    <li class="g-row">
-      <span class="flex-1">${g.name}${g.pax>1?`<span class="text-stone-400 text-xs ml-1">+${g.pax-1}</span>`:''}</span>
-      <select onchange="moveGuest(${g.num}, this.value)" class="ml-auto">
-        <option value="">Assign to...</option>
-        ${tOpts}
-      </select>
-    </li>`).join('');
+  if(ua.length) {
+    html+=`<div style="margin-top:10px;padding-top:8px;border-top:1px solid #f0ebe4">
+      <p style="font-size:11px;color:#f59e0b;font-weight:600;margin-bottom:4px">
+        Unassigned (${ua.length} guests)
+      </p>
+      ${ua.map(g=>`<div class="trow" style="opacity:.7">
+        <span style="font-size:12px;color:#78716c;flex:1">${g.name}</span>
+        <select onchange="moveGuest(${g.num},this.value)" style="font-size:11px">
+          <option value="">Assign to…</option>
+          ${nums.map(t=>`<option value="${t}">T${t}</option>`).join('')}
+        </select>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  document.getElementById('table-list').innerHTML=html;
 }
 
 function updateStats() {
-  const assigned = GUESTS.filter(g => assignments[g.num]).reduce((s,g) => s+g.pax, 0);
-  document.getElementById('stat-a').textContent = assigned;
+  const a=GUESTS.filter(g=>assignments[g.num]).reduce((s,g)=>s+g.pax,0);
+  document.getElementById('stat-a').textContent=a;
+  document.getElementById('stat-a2').textContent=a;
+}
+
+// ── TOGGLES ───────────────────────────────────────────────────────────────────
+function setupToggles() {
+  document.getElementById('snap-cb').addEventListener('change',e=>snapOn=e.target.checked);
+  document.getElementById('grid-cb').addEventListener('change',e=>{
+    document.getElementById('fp-grid').style.display=e.target.checked?'':'none';
+  });
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
