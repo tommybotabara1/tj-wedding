@@ -626,19 +626,116 @@ TABLE_META = {
 }
 
 # Talisay floor plan: ~9.8m wide × 33m long (300 sqm)
-# SVG viewBox: 310 × 1000. Scale: ~30.6px/m
-# Kitchen at top, entrance at bottom.
-# Left table column x=80, right column x=230. Row spacing 85px.
+# SVG viewBox: 320 × 960. Scale: ~25px/m
+# Kitchen top-left, entrance at bottom, stairs notch bottom-right.
+# Left table column x=95, right column x=225. Row spacing 78px.
 TABLE_POS = {
-    1: (80, 170),  2: (230, 170),
-    3: (80, 255),  4: (230, 255),
-    5: (80, 340),  6: (230, 340),
-    7: (80, 425),  8: (230, 425),
-    9: (80, 510), 10: (230, 510),
-   11: (80, 595), 12: (230, 595),
-   13: (80, 680), 14: (230, 680),
-   15: (80, 765), 16: (230, 765),
+    1:  (95,  290),   # Row 1 left  — Sponsors
+    2:  (225, 290),   # Row 1 right — Sponsors
+    3:  (95,  368),   # Row 2 left  — Sponsors
+    4:  (225, 368),
+    5:  (95,  446),
+    6:  (225, 446),
+    7:  (95,  524),
+    8:  (225, 524),
+    9:  (95,  602),
+    10: (225, 602),
+    11: (95,  680),
+    12: (225, 680),
+    13: (95,  758),
+    14: (225, 758),
+    15: (95,  836),
+    16: (225, 836),
 }
+
+def make_floor_plan_svg(option, by_table):
+    """Return an SVG string for the Talisay floor plan.
+    option='a' → all round tables; option='b' → tables 1-3 as sponsor rectangles.
+    """
+    SPONSOR_TABLES = {1, 2, 3}
+
+    table_svgs = ""
+    for tnum, (cx, cy) in TABLE_POS.items():
+        _, color = TABLE_META.get(tnum, ("Guest", "#A0A0A0"))
+        members   = by_table.get(tnum, [])
+        total_pax = sum(g["pax"] for g in members)
+        warn      = " ⚠" if total_pax > 10 else ""
+
+        if option == "b" and tnum in SPONSOR_TABLES:
+            rw, rh   = 110, 38
+            rx_pos   = cx - rw // 2
+            ry_pos   = cy - rh // 2
+            table_svgs += f'\n    <rect x="{rx_pos}" y="{ry_pos}" width="{rw}" height="{rh}" rx="4" fill="{color}" fill-opacity="0.25" stroke="{color}" stroke-width="1.5"/>'
+            table_svgs += f'\n    <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="10" font-weight="bold" fill="{color}">{tnum} · {int(total_pax)}pax{warn}</text>'
+            table_svgs += f'\n    <text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="8" fill="{color}" font-style="italic">Sponsors</text>'
+        else:
+            table_svgs += f'\n    <circle cx="{cx}" cy="{cy}" r="28" fill="{color}" fill-opacity="0.25" stroke="{color}" stroke-width="1.5"/>'
+            table_svgs += f'\n    <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="11" font-weight="bold" fill="{color}">{tnum}</text>'
+            table_svgs += f'\n    <text x="{cx}" y="{cy + 9}" text-anchor="middle" font-size="9" fill="#5A4040">{int(total_pax)}pax{warn}</text>'
+
+    return f"""<svg viewBox="0 0 320 960" width="320" height="960" xmlns="http://www.w3.org/2000/svg" class="block">
+  <!-- Hall outline: slight trapezoid with stair notch bottom-right -->
+  <polygon points="30,30 290,30 290,920 250,960 30,960" fill="#F9F6F2" stroke="#D4C5B0" stroke-width="2"/>
+
+  <!-- Kitchen — top-left corner -->
+  <rect x="30" y="30" width="90" height="65" rx="3" fill="#f5e6d3" stroke="#C4A882" stroke-width="1.5"/>
+  <text x="75" y="57" text-anchor="middle" font-size="8" fill="#8B6340" font-weight="600" letter-spacing="0.5">KITCHEN</text>
+  <text x="75" y="70" text-anchor="middle" font-size="7" fill="#A88060">3.6m &#215; 2.6m</text>
+
+  <!-- Catering area — right of kitchen -->
+  <rect x="130" y="30" width="100" height="40" rx="3" fill="none" stroke="#C4A882" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="180" y="46" text-anchor="middle" font-size="8" fill="#8B6340" font-weight="600" letter-spacing="0.5">CATERING</text>
+  <text x="180" y="58" text-anchor="middle" font-size="7" fill="#A88060">area</text>
+
+  <!-- Stage — centered near top -->
+  <rect x="80" y="115" width="160" height="38" rx="6" fill="#8B1A35" fill-opacity="0.15" stroke="#8B1A35" stroke-width="1.5"/>
+  <text x="160" y="131" text-anchor="middle" font-size="9" font-weight="bold" fill="#8B1A35">Tommy &amp; Jeyan</text>
+  <text x="160" y="145" text-anchor="middle" font-size="8" fill="#8B1A35">Stage &middot; Couple&#39;s Table</text>
+
+  <!-- Dance floor — below stage -->
+  <rect x="70" y="165" width="180" height="70" rx="6" fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="160" y="196" text-anchor="middle" font-size="10" fill="#B0A090" letter-spacing="1.5">DANCE FLOOR</text>
+  <text x="160" y="212" text-anchor="middle" font-size="8" fill="#C8B8A0">7.2m &#215; 2.8m</text>
+
+  <!-- DJ Booth — right side near dance floor -->
+  <rect x="262" y="200" width="26" height="26" rx="3" fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5"/>
+  <text x="275" y="210" text-anchor="middle" font-size="6" fill="#8B6340" font-weight="600">DJ</text>
+  <text x="275" y="220" text-anchor="middle" font-size="6" fill="#8B6340">booth</text>
+
+  <!-- Utility rooms — right wall mid-section -->
+  <rect x="263" y="500" width="25" height="50" rx="2" fill="#EEE8E0" stroke="#C4B89A" stroke-width="1"/>
+  <text x="275" y="521" text-anchor="middle" font-size="6" fill="#8B7355">UTIL</text>
+  <text x="275" y="531" text-anchor="middle" font-size="6" fill="#8B7355">1</text>
+  <rect x="263" y="558" width="25" height="50" rx="2" fill="#EEE8E0" stroke="#C4B89A" stroke-width="1"/>
+  <text x="275" y="579" text-anchor="middle" font-size="6" fill="#8B7355">UTIL</text>
+  <text x="275" y="589" text-anchor="middle" font-size="6" fill="#8B7355">2</text>
+
+  <!-- Aisle line -->
+  <line x1="160" y1="248" x2="160" y2="865" stroke="#E8E0D5" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- Guest tables -->
+  {table_svgs}
+
+  <!-- Mobile bar — bottom-left near entrance -->
+  <rect x="30" y="895" width="60" height="28" rx="4" fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5"/>
+  <text x="60" y="908" text-anchor="middle" font-size="7" fill="#8B6340" font-weight="600">MOBILE</text>
+  <text x="60" y="918" text-anchor="middle" font-size="7" fill="#8B6340">BAR</text>
+
+  <!-- Entrance doors — bottom-center -->
+  <rect x="100" y="910" width="55" height="24" rx="4" fill="#E8E0D5"/>
+  <rect x="170" y="910" width="55" height="24" rx="4" fill="#E8E0D5"/>
+  <text x="127" y="926" text-anchor="middle" font-size="7" fill="#8B7355">DOOR</text>
+  <text x="197" y="926" text-anchor="middle" font-size="7" fill="#8B7355">DOOR</text>
+  <text x="160" y="950" text-anchor="middle" font-size="8" fill="#B0A090" letter-spacing="1">ENTRANCE</text>
+
+  <!-- Stairs notch — bottom-right -->
+  <polygon points="250,960 290,920 290,960" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1"/>
+  <text x="272" y="948" text-anchor="middle" font-size="6" fill="#8B7355">STAIRS</text>
+
+  <!-- Dimension label -->
+  <text x="160" y="25" text-anchor="middle" font-size="7" fill="#B0A090">9.8 m</text>
+</svg>"""
+
 
 def build_reception_html(guests):
     # Group guests by table
@@ -650,17 +747,9 @@ def build_reception_html(guests):
         else:
             unassigned.append(g)
 
-    # Build SVG table circles
-    svg_tables = ""
-    for tnum, (cx, cy) in TABLE_POS.items():
-        _, color = TABLE_META.get(tnum, ("Guest", "#A0A0A0"))
-        members  = by_table.get(tnum, [])
-        total_pax = sum(g["pax"] for g in members)
-        warn     = " ⚠" if total_pax > 10 else ""
-        svg_tables += f"""
-    <circle cx="{cx}" cy="{cy}" r="26" fill="{color}" fill-opacity="0.25" stroke="{color}" stroke-width="1.5"/>
-    <text x="{cx}" y="{cy - 6}" text-anchor="middle" font-size="11" font-weight="bold" fill="{color}">{tnum}</text>
-    <text x="{cx}" y="{cy + 8}" text-anchor="middle" font-size="9" fill="#5A4040">{int(total_pax)}pax{warn}</text>"""
+    # Build SVG floor plans for both layout options
+    svg_a = make_floor_plan_svg("a", by_table)
+    svg_b = make_floor_plan_svg("b", by_table)
 
     # Table cards HTML
     table_cards = ""
@@ -756,46 +845,21 @@ def build_reception_html(guests):
 
     <div class="flex flex-col lg:flex-row gap-8">
 
-      <!-- Floor plan SVG -->
+      <!-- Floor plan SVG with layout options -->
       <div class="section-card p-6 flex-shrink-0">
-        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">Floor Plan — Talisay (300 sqm)</p>
-        <svg viewBox="0 0 310 1010" width="310" height="1010" xmlns="http://www.w3.org/2000/svg" class="block">
-          <!-- Hall outline -->
-          <rect x="1" y="1" width="308" height="1008" rx="4" fill="#F9F6F2" stroke="#D4C5B0" stroke-width="2"/>
-
-          <!-- Kitchen label top -->
-          <rect x="100" y="4" width="110" height="38" rx="3" fill="#E8E0D5"/>
-          <text x="155" y="16" text-anchor="middle" font-size="8" fill="#8B7355" font-weight="600" letter-spacing="1">KITCHEN</text>
-          <text x="155" y="28" text-anchor="middle" font-size="7" fill="#A89070">9.80 m</text>
-          <line x1="100" y1="42" x2="210" y2="42" stroke="#D4C5B0" stroke-width="1" stroke-dasharray="3,3"/>
-
-          <!-- Dimension label -->
-          <text x="4" y="520" text-anchor="middle" font-size="8" fill="#B0A090" transform="rotate(-90, 4, 520)">33.00 m</text>
-          <text x="155" y="1008" text-anchor="middle" font-size="8" fill="#B0A090">9.80 m</text>
-
-          <!-- Sweetheart table -->
-          <rect x="105" y="60" width="100" height="38" rx="6" fill="#8B1A35" fill-opacity="0.15" stroke="#8B1A35" stroke-width="1.5"/>
-          <text x="155" y="76" text-anchor="middle" font-size="9" font-weight="bold" fill="#8B1A35">Tommy &amp; Jeyan</text>
-          <text x="155" y="90" text-anchor="middle" font-size="8" fill="#8B1A35">Sweetheart Table</text>
-
-          <!-- Aisle line (center) -->
-          <line x1="155" y1="110" x2="155" y2="840" stroke="#E8E0D5" stroke-width="1" stroke-dasharray="4,4"/>
-
-          <!-- Guest tables -->
-          {svg_tables}
-
-          <!-- Dance floor -->
-          <rect x="30" y="830" width="250" height="65" rx="6" fill="#F0EBE3" stroke="#D4C5B0" stroke-width="1" stroke-dasharray="4,3"/>
-          <text x="155" y="858" text-anchor="middle" font-size="10" fill="#B0A090" letter-spacing="2">DANCE FLOOR</text>
-          <text x="155" y="875" text-anchor="middle" font-size="8" fill="#C8B8A0">± 7.5m × 2m</text>
-
-          <!-- Entrance -->
-          <rect x="80" y="918" width="70" height="28" rx="4" fill="#E8E0D5"/>
-          <rect x="160" y="918" width="70" height="28" rx="4" fill="#E8E0D5"/>
-          <text x="115" y="936" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-          <text x="195" y="936" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-          <text x="155" y="998" text-anchor="middle" font-size="8" fill="#B0A090" letter-spacing="1">ENTRANCE</text>
-        </svg>
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">Floor Plan — Talisay (300 sqm)</p>
+        <div class="flex gap-2 mb-4">
+          <button id="btn-a" onclick="showOption('a')"
+            class="px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors">
+            Option A &middot; All Round
+          </button>
+          <button id="btn-b" onclick="showOption('b')"
+            class="px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors">
+            Option B &middot; Sponsor Tables
+          </button>
+        </div>
+        <div id="svg-a">{svg_a}</div>
+        <div id="svg-b" style="display:none">{svg_b}</div>
       </div>
 
       <!-- Table cards -->
@@ -813,6 +877,22 @@ def build_reception_html(guests):
   <footer class="text-center py-8 text-stone-300 text-xs tracking-wider">
     <span class="serif italic text-stone-400">Tommy &amp; Jeyan &bull; December 27, 2026</span>
   </footer>
+
+  <script>
+    function showOption(opt) {{
+      document.getElementById('svg-a').style.display = opt === 'a' ? '' : 'none';
+      document.getElementById('svg-b').style.display = opt === 'b' ? '' : 'none';
+      var activeClass = 'bg-[#8B1A35] text-white border-[#8B1A35]';
+      var inactiveClass = 'bg-white text-stone-500 border-stone-300 hover:bg-stone-50';
+      if (opt === 'a') {{
+        document.getElementById('btn-a').className = 'px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors';
+        document.getElementById('btn-b').className = 'px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors';
+      }} else {{
+        document.getElementById('btn-a').className = 'px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors';
+        document.getElementById('btn-b').className = 'px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors';
+      }}
+    }}
+  </script>
 
 </body>
 </html>"""
