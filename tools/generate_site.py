@@ -164,6 +164,9 @@ ROLE_BADGE = {
     "Cord":                       ("bg-stone-100 text-stone-500 border border-stone-200", "Cord"),
     "Veil":                       ("bg-stone-100 text-stone-500 border border-stone-200", "Veil"),
     "Ring":                       ("bg-stone-100 text-stone-500 border border-stone-200", "Ring"),
+    "Ring Bearer":                ("bg-stone-100 text-stone-500 border border-stone-200", "Ring Bearer"),
+    "Bible":                      ("bg-stone-100 text-stone-500 border border-stone-200", "Bible"),
+    "Bible Bearer":               ("bg-stone-100 text-stone-500 border border-stone-200", "Bible Bearer"),
     "Flower Girl":                ("bg-purple-100 text-purple-700 border border-purple-200", "Flower Girl"),
 }
 
