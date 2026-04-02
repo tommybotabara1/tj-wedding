@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tommy &amp; Jeyan — Save the Date · December 27, 2026</title>
+
+  <!-- Social sharing -->
+  <meta property="og:title"       content="Tommy &amp; Jeyan — Save the Date" />
+  <meta property="og:description" content="We're getting married! December 27, 2026 · Manila, Philippines" />
+  <meta property="og:type"        content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Great+Vibes&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── Design Tokens — TOR: Dreamy Minimalist ── */
+    :root {
+      /* TOR palette: Cream/White base · Sage + Dusty Rose accents */
+      --blush:      #D4A5A0;   /* Dusty Rose — primary accent */
+      --mauve:      #B8837A;   /* deeper rose for text */
+      --sage:       #7A9E7E;   /* Sage — secondary accent */
+      --champagne:  #C9A96E;   /* subtle label text */
+      --cream:      #FAF7F2;
+      --beige:      #F5EDE4;
+      --charcoal:   #3D2B2B;
+      --rose-light: #EDD5C8;
+      --rose-pale:  #F7EAE5;
+
+      --font-script: 'Great Vibes', cursive;
+      --font-serif:  'Cormorant Garamond', Georgia, serif;
+      --font-body:   'Inter', sans-serif;
+
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(61,43,43,0.10);
+      --shadow-hover: 0 8px 36px rgba(61,43,43,0.18);
+    }
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--cream);
+      color: var(--charcoal);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Ornamental Divider ── */
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 2.5rem auto;
+      max-width: 320px;
+    }
+    .ornament::before,
+    .ornament::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+    }
+    .ornament.on-dark::before,
+    .ornament.on-dark::after {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+    }
+    .ornament.on-light::before,
+    .ornament.on-light::after {
+      background: linear-gradient(90deg, transparent, var(--champagne), transparent);
+    }
+    .ornament span {
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+    .ornament.on-dark span  { color: rgba(255,255,255,0.80); }
+    .ornament.on-light span { color: var(--champagne); }
+
+    /* ── Section wrapper ── */
+    .section { padding: 5rem 1.5rem; }
+    .section-inner { max-width: 960px; margin: 0 auto; }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--mauve);
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .section-subtitle {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    /* ── Scroll-reveal utility ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.75s ease, transform 0.75s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════
+       1. HERO — VIDEO BACKGROUND
+    ═══════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 1.5rem 3rem;
+      overflow: hidden;
+    }
+
+    /* Full-bleed video */
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    /* Warm dark overlay so text stays readable */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        160deg,
+        rgba(28, 14, 6, 0.42) 0%,
+        rgba(40, 18, 8, 0.58) 50%,
+        rgba(28, 14, 6, 0.72) 100%
+      );
+      z-index: 1;
+    }
+
+    /* Everything on top of video */
+    .hero > *:not(.hero-video):not(.hero-overlay) { position: relative; z-index: 2; }
+
+    /* Corner accents */
+    .hero-corner-tl,
+    .hero-corner-br {
+      position: absolute;
+      font-size: 2.5rem;
+      color: rgba(255,255,255,0.12);
+      line-height: 1;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .hero-corner-tl { top: 1.75rem; left: 2rem; }
+    .hero-corner-br { bottom: 1.75rem; right: 2rem; transform: scaleX(-1); }
+
+    .std-eyebrow {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.80);
+      margin-bottom: 1.25rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.3s forwards;
+    }
+
+    .hero-names {
+      font-family: var(--font-script);
+      font-size: clamp(4rem, 14vw, 8rem);
+      color: #ffffff;
+      line-height: 1.05;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 4px 24px rgba(0,0,0,0.35);
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.5s forwards;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-script);
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      color: rgba(255,255,255,0.88);
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.65s forwards;
+    }
+
+    .hero-hashtag {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.72s forwards;
+    }
+
+    .std-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
+      font-style: italic;
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.80);
+      margin-bottom: 1.75rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.8s forwards;
+    }
+
+    .hero-date {
+      font-family: var(--font-body);
+      font-size: clamp(0.7rem, 2vw, 0.85rem);
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      font-weight: 400;
+      margin-bottom: 0.4rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.95s forwards;
+    }
+
+    .hero-location {
+      font-family: var(--font-serif);
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.75);
+      margin-bottom: 0;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.05s forwards;
+    }
+
+    .hero-ornament {
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.15s forwards;
+    }
+
+    /* ── Countdown ── */
+    .countdown-wrapper {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.3s forwards;
+    }
+    .countdown-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 10px;
+      padding: 0.75rem 1.1rem 0.6rem;
+      min-width: 68px;
+      backdrop-filter: blur(6px);
+    }
+    .countdown-digit {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 300;
+      color: #ffffff;
+      line-height: 1;
+    }
+    .countdown-digit.flip { animation: countFlip 0.35s ease; }
+    @keyframes countFlip {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+    .countdown-label {
+      font-family: var(--font-body);
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.60);
+      margin-top: 0.35rem;
+    }
+    .countdown-complete {
+      display: none;
+      font-family: var(--font-script);
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      color: #ffffff;
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.3s forwards;
+    }
+
+    /* ── Calendar buttons ── */
+    .cal-btns {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.45s forwards;
+    }
+    .cal-btn {
+      display: inline-block;
+      padding: 0.45rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.40);
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(4px);
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .cal-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.6);
+      color: #fff;
+    }
+
+    /* ── Scroll indicator ── */
+    .scroll-hint {
+      position: absolute;
+      bottom: 1.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.8s forwards;
+    }
+    .scroll-hint span {
+      font-family: var(--font-body);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .scroll-arrow {
+      width: 1px;
+      height: 32px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+      animation: arrowPulse 2s ease-in-out infinite;
+    }
+    @keyframes arrowPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50%       { opacity: 0.9; transform: scaleY(1.15); }
+    }
+
+    /* ═══════════════════════════════
+       2. STORY / PHOTOS
+    ═══════════════════════════════ */
+    .story-section {
+      background: var(--cream);
+      padding: 5rem 1.5rem;
+    }
+
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 720px) {
+      .story-grid {
+        grid-template-columns: 1fr;
+        max-width: 380px;
+        margin-inline: auto;
+      }
+    }
+
+    .story-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .story-photo {
+      aspect-ratio: 3 / 4;
+      border-radius: var(--radius) var(--radius) 0 0;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+    .story-card:hover .story-photo {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+    .story-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .story-card:hover .story-photo img { transform: scale(1.04); }
+
+    .story-caption {
+      background: white;
+      border: 1px solid #E8DDD2;
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 1.1rem 1.25rem 1.25rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .story-label {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: 0.3rem;
+    }
+    .story-desc {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--mauve);
+      line-height: 1.4;
+    }
+
+    /* ═══════════════════════════════
+       3. EVENT DETAILS
+    ═══════════════════════════════ */
+    .details-section {
+      background: var(--beige);
+    }
+
+    .event-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    @media (max-width: 600px) {
+      .event-cards { grid-template-columns: 1fr; }
+    }
+
+    .event-card {
+      background: var(--cream);
+      border: 1px solid #DDD0C8;
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .event-card::before {
+      content: '❀';
+      position: absolute;
+      top: -0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--beige);
+      padding: 0 0.5rem;
+      color: var(--champagne);
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+    .event-card-type {
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: 0.75rem;
+    }
+    .event-card-venue {
+      font-family: var(--font-serif);
+      font-size: clamp(1.2rem, 3vw, 1.65rem);
+      font-weight: 400;
+      color: var(--mauve);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+    .event-card-address {
+      font-family: var(--font-body);
+      font-size: 0.83rem;
+      color: var(--charcoal);
+      opacity: 0.65;
+      margin-bottom: 1.25rem;
+    }
+    .event-card-time {
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--sage);
+      font-weight: 500;
+    }
+    .directions-link {
+      display: inline-block;
+      margin-top: 1.25rem;
+      padding: 0.45rem 1.1rem;
+      border: 1.5px solid #7A9E7E;
+      border-radius: 50px;
+      background: transparent;
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #7A9E7E;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    .directions-link:hover { background: #7A9E7E; color: white; }
+
+    /* ═══════════════════════════════
+       4. FORMAL INVITATION TEASER
+    ═══════════════════════════════ */
+    .teaser-section {
+      background: var(--cream);
+    }
+
+    .teaser-card {
+      max-width: 540px;
+      margin: 0 auto;
+      text-align: center;
+      background: white;
+      border: 1px solid #DDD0C4;
+      border-radius: var(--radius);
+      padding: 3rem 2.5rem;
+      box-shadow: var(--shadow);
+    }
+    @media (max-width: 500px) { .teaser-card { padding: 2rem 1.25rem; } }
+
+    .teaser-message {
+      font-family: var(--font-serif);
+      font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+      font-style: italic;
+      color: var(--charcoal);
+      opacity: 0.8;
+      line-height: 1.85;
+      margin-bottom: 2rem;
+    }
+    .invitation-link {
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
+      background: var(--blush);
+      border-radius: 50px;
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: white;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .invitation-link:hover {
+      background: var(--mauve);
+      box-shadow: 0 4px 18px rgba(184,131,122,0.35);
+      transform: translateY(-1px);
+    }
+
+    /* ═══════════════════════════════
+       5. FOOTER
+    ═══════════════════════════════ */
+    .footer {
+      padding: 3rem 1.5rem;
+      text-align: center;
+      background: linear-gradient(to bottom, var(--beige), var(--rose-light));
+    }
+    .footer-names {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      color: var(--mauve);
+      margin: 0.5rem 0;
+    }
+    .footer-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.88rem;
+      color: var(--champagne);
+      margin-top: 0.25rem;
+      letter-spacing: 0.08em;
+    }
+    .footer-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      opacity: 0.38;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .footer-link:hover { opacity: 0.65; }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════ 1. HERO ═══════ -->
+  <section class="hero" aria-label="Save the Date">
+
+    <!-- Background video -->
+    <video
+      class="hero-video"
+      src="images/couple.mp4"
+      autoplay muted loop playsinline
+      aria-hidden="true"
+    ></video>
+
+    <!-- Warm dark overlay -->
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <!-- Corner accents -->
+    <span class="hero-corner-tl" aria-hidden="true">❧</span>
+    <span class="hero-corner-br" aria-hidden="true">❧</span>
+
+    <p class="std-eyebrow">Save the Date</p>
+
+    <h1 class="hero-names">Tommy &amp; Jeyan</h1>
+
+    <p class="hero-tagline">Soaring with TJ</p>
+    <p class="hero-hashtag">#ToMyJeyan</p>
+
+    <p class="std-headline">are getting married</p>
+
+    <p class="hero-date">Sunday · December 27, 2026</p>
+    <p class="hero-location">Manila, Philippines</p>
+
+    <div class="ornament on-dark hero-ornament" aria-hidden="true">
+      <span>✈</span>
+    </div>
+
+    <!-- Live countdown -->
+    <div class="countdown-wrapper" id="countdown-wrapper" aria-label="Countdown to wedding day">
+      <div class="countdown-box">
+        <span class="countdown-digit" id="cd-days">--</span>
+        <span class="countdown-label">Days</span>
+      </div>
+      <div class="countdown-box">
+        <span class="countdown-digit" id="cd-hours">--</span>
+        <span class="countdown-label">Hours</span>
+      </div>
+      <div class="countdown-box">
+        <span class="countdown-digit" id="cd-minutes">--</span>
+        <span class="countdown-label">Minutes</span>
+      </div>
+      <div class="countdown-box">
+        <span class="countdown-digit" id="cd-seconds">--</span>
+        <span class="countdown-label">Seconds</span>
+      </div>
+    </div>
+    <p class="countdown-complete" id="countdown-complete">Today is the day! ✦</p>
+
+    <!-- Add to Calendar -->
+    <div class="cal-btns">
+      <a class="cal-btn" id="gcal-btn" href="#" target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
+      <button class="cal-btn" id="ical-btn">Add to iCal</button>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+
+  </section>
+
+  <!-- ═══════ 2. OUR STORY ═══════ -->
+  <section class="section story-section" aria-label="Our story">
+    <div class="section-inner">
+      <p class="section-subtitle">Tommy &amp; Jeyan</p>
+      <h2 class="section-title reveal">Our story so far</h2>
+      <div class="ornament on-light reveal" aria-hidden="true"><span>✿</span></div>
+
+      <div class="story-grid" role="list">
+
+        <div class="story-card reveal" role="listitem">
+          <div class="story-photo">
+            <img src="images/photo-graduation.jpg" alt="Tommy and Jeyan at graduation" loading="lazy" />
+          </div>
+          <div class="story-caption">
+            <p class="story-label">Where It All Began</p>
+            <p class="story-desc">Side by side from the start</p>
+          </div>
+        </div>
+
+        <div class="story-card reveal" role="listitem">
+          <div class="story-photo">
+            <img src="images/photo-adventure.jpg" alt="Tommy and Jeyan at Tokyo Disneyland" loading="lazy" />
+          </div>
+          <div class="story-caption">
+            <p class="story-label">Adventures Together</p>
+            <p class="story-desc">Exploring the world, hand in hand</p>
+          </div>
+        </div>
+
+        <div class="story-card reveal" role="listitem">
+          <div class="story-photo">
+            <img src="images/photo-formal.jpg" alt="Tommy and Jeyan dressed up together" loading="lazy" />
+          </div>
+          <div class="story-caption">
+            <p class="story-label">Dressed for Forever</p>
+            <p class="story-desc">One more celebration to go</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ 3. EVENT DETAILS ═══════ -->
+  <section class="section details-section" aria-label="Event details">
+    <div class="section-inner">
+      <p class="section-subtitle">The Celebration</p>
+      <h2 class="section-title reveal">Event Details</h2>
+      <div class="ornament on-light reveal" aria-hidden="true"><span>❀</span></div>
+
+      <div class="event-cards">
+        <div class="event-card reveal">
+          <p class="event-card-type">Ceremony</p>
+          <p class="event-card-venue">Shrine of St.&nbsp;Thérèse of the Child Jesus</p>
+          <p class="event-card-address">Pasay City, Metro Manila</p>
+          <p class="event-card-time">1:30 PM · December 27, 2026</p>
+          <a
+            class="directions-link"
+            href="https://www.google.com/maps/search/Shrine+of+Saint+Therese+of+the+Child+Jesus+Pasay+City"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Get Directions ↗</a>
+        </div>
+
+        <div class="event-card reveal">
+          <p class="event-card-type">Reception</p>
+          <p class="event-card-venue">To Be Announced</p>
+          <p class="event-card-address">Details to follow</p>
+          <p class="event-card-time">December 27, 2026</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ 4. FORMAL INVITATION TEASER ═══════ -->
+  <section class="section teaser-section" aria-label="Formal invitation coming soon">
+    <div class="section-inner">
+      <p class="section-subtitle">Coming Soon</p>
+      <h2 class="section-title reveal">Formal Invitation</h2>
+      <div class="ornament on-light reveal" aria-hidden="true"><span>❧</span></div>
+
+      <div class="teaser-card reveal">
+        <p class="teaser-message">
+          Formal invitation to follow.<br />
+          We look forward to celebrating<br />
+          this special day with you.
+        </p>
+        <a class="invitation-link" href="invitation.html">View Invitation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ 5. FOOTER ═══════ -->
+  <footer class="footer" aria-label="Footer">
+    <div class="ornament on-light" aria-hidden="true"><span>✿</span></div>
+    <p class="footer-names">Tommy &amp; Jeyan · December 27, 2026</p>
+    <p class="footer-tagline">The Journey</p>
+    <a class="footer-link" href="invitation.html">View Formal Invitation →</a>
+  </footer>
+
+  <script>
+    // ── Countdown Timer ────────────────────────────────────────────────────────
+    function initCountdown() {
+      const target   = new Date('2026-12-27T05:30:00Z'); // 1:30 PM PHT (UTC+8)
+      const wrapper  = document.getElementById('countdown-wrapper');
+      const complete = document.getElementById('countdown-complete');
+      const dEl = document.getElementById('cd-days');
+      const hEl = document.getElementById('cd-hours');
+      const mEl = document.getElementById('cd-minutes');
+      const sEl = document.getElementById('cd-seconds');
+      const prev = { d: null, h: null, m: null, s: null };
+
+      function setDigit(el, val, key) {
+        const str = String(val).padStart(2, '0');
+        if (str !== prev[key]) {
+          el.textContent = str;
+          el.classList.remove('flip');
+          void el.offsetWidth;
+          el.classList.add('flip');
+          prev[key] = str;
+        }
+      }
+
+      function tick() {
+        const diff = target - new Date();
+        if (diff <= 0) {
+          wrapper.style.display = 'none';
+          complete.style.display = 'block';
+          clearInterval(timer);
+          return;
+        }
+        setDigit(dEl, Math.floor(diff / 86400000),              'd');
+        setDigit(hEl, Math.floor((diff % 86400000) / 3600000),  'h');
+        setDigit(mEl, Math.floor((diff % 3600000) / 60000),     'm');
+        setDigit(sEl, Math.floor((diff % 60000) / 1000),        's');
+      }
+
+      tick();
+      const timer = setInterval(tick, 1000);
+    }
+
+    // ── Add to Calendar ────────────────────────────────────────────────────────
+    function initCalendarLinks() {
+      const gcalBtn = document.getElementById('gcal-btn');
+      const icalBtn = document.getElementById('ical-btn');
+      if (!gcalBtn || !icalBtn) return;
+
+      const title    = "Tommy & Jeyan's Wedding";
+      const startUTC = '20261227T053000Z'; // 1:30 PM PHT (UTC+8)
+      const endUTC   = '20261227T110000Z'; // ~7 PM PHT
+      const location = 'Shrine of St. Thérèse of the Child Jesus, Pasay City, Metro Manila';
+      const desc     = "Wedding Ceremony of Tommy & Jeyan";
+
+      gcalBtn.href =
+        'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+        '&text=' + encodeURIComponent(title) +
+        '&dates=' + startUTC + '/' + endUTC +
+        '&details=' + encodeURIComponent(desc) +
+        '&location=' + encodeURIComponent(location);
+
+      icalBtn.addEventListener('click', () => {
+        const ics = [
+          'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//TJ Wedding//EN',
+          'BEGIN:VEVENT',
+          'UID:tj-wedding-ceremony@tjwedding',
+          'DTSTAMP:' + new Date().toISOString().replace(/[-:.]/g,'').slice(0,15) + 'Z',
+          'DTSTART:' + startUTC, 'DTEND:' + endUTC,
+          'SUMMARY:' + title, 'DESCRIPTION:' + desc, 'LOCATION:' + location,
+          'END:VEVENT', 'END:VCALENDAR'
+        ].join('\r\n');
+        const blob = new Blob([ics], { type: 'text/calendar' });
+        const url  = URL.createObjectURL(blob);
+        const a    = document.createElement('a');
+        a.href = url; a.download = 'tj-wedding.ics'; a.click();
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    // ── Scroll-reveal ──────────────────────────────────────────────────────────
+    const revealObserver = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.10 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ── Init ───────────────────────────────────────────────────────────────────
+    initCountdown();
+    initCalendarLinks();
+  </script>
+
+</body>
+</html>

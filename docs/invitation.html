@@ -163,6 +163,27 @@
       text-shadow: 0 2px 16px rgba(184,131,122,0.25);
     }
 
+    .hero-tagline {
+      font-family: var(--font-script);
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      color: var(--mauve);
+      line-height: 1.2;
+      margin-bottom: 0.2rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.6s forwards;
+    }
+
+    .hero-hashtag {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.68s forwards;
+    }
+
     .hero-invitation {
       font-family: var(--font-serif);
       font-size: clamp(1rem, 2.5vw, 1.3rem);
@@ -173,7 +194,7 @@
       line-height: 1.7;
       margin-bottom: 2rem;
       opacity: 0;
-      animation: fadeUp 0.9s ease 0.6s forwards;
+      animation: fadeUp 0.9s ease 0.78s forwards;
     }
 
     .hero-date {
@@ -395,9 +416,9 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: var(--blush);
+      background: var(--sage);
       border: 2px solid var(--cream);
-      box-shadow: 0 0 0 2px var(--blush);
+      box-shadow: 0 0 0 2px var(--sage);
       flex-shrink: 0;
     }
 
@@ -657,6 +678,14 @@
       font-size: clamp(1.1rem, 3vw, 1.4rem);
       color: var(--mauve);
       margin: 0.5rem 0;
+    }
+    .footer-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.88rem;
+      color: var(--champagne);
+      margin-top: 0.25rem;
+      letter-spacing: 0.08em;
     }
     .footer-link {
       display: inline-block;
@@ -978,6 +1007,9 @@
 
     <h1 class="hero-names">Tommy &amp; Jeyan</h1>
 
+    <p class="hero-tagline">Soaring with TJ</p>
+    <p class="hero-hashtag">#ToMyJeyan</p>
+
     <p class="hero-invitation">
       Together with their families,<br />
       they request the pleasure of your company<br />
@@ -988,7 +1020,7 @@
     <p class="hero-location">Shrine of St. Thérèse, Pasay · Manila, Philippines</p>
 
     <div class="ornament hero-ornament" aria-hidden="true">
-      <span>❧</span>
+      <span>✈</span>
     </div>
 
     <!-- Countdown to wedding day -->
@@ -1247,8 +1279,9 @@
 
   <!-- ═══════ 7. FOOTER ═══════ -->
   <footer class="footer" role="contentinfo">
-    <div class="ornament" aria-hidden="true"><span>❧</span></div>
+    <div class="ornament" aria-hidden="true"><span>✈</span></div>
     <p class="footer-names">Tommy &amp; Jeyan · December 27, 2026</p>
+    <p class="footer-tagline">The Journey</p>
     <a class="footer-link" href="index.html">Planning Dashboard ↗</a>
   </footer>
 
