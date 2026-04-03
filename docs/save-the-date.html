@@ -7,7 +7,7 @@
 
   <!-- Social sharing -->
   <meta property="og:title"       content="Tommy &amp; Jeyan — Save the Date" />
-  <meta property="og:description" content="We're getting married! December 27, 2026 · Manila, Philippines" />
+  <meta property="og:description" content="We're getting married! December 27, 2026 · Pasay, Philippines" />
   <meta property="og:type"        content="website" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -154,18 +154,20 @@
     /* Everything on top of video */
     .hero > *:not(.hero-video):not(.hero-overlay) { position: relative; z-index: 2; }
 
-    /* Corner accents */
+    /* Corner accents — dove (love) + airplane (journey) */
     .hero-corner-tl,
     .hero-corner-br {
       position: absolute;
-      font-size: 2.5rem;
-      color: rgba(255,255,255,0.12);
+      font-family: var(--font-body);
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.18);
       line-height: 1;
       pointer-events: none;
       z-index: 2;
+      letter-spacing: 0.15em;
     }
     .hero-corner-tl { top: 1.75rem; left: 2rem; }
-    .hero-corner-br { bottom: 1.75rem; right: 2rem; transform: scaleX(-1); }
+    .hero-corner-br { bottom: 1.75rem; right: 2rem; }
 
     .std-eyebrow {
       font-family: var(--font-body);
@@ -183,7 +185,7 @@
       font-size: clamp(4rem, 14vw, 8rem);
       color: #ffffff;
       line-height: 1.05;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1.2rem;
       text-shadow: 0 4px 24px rgba(0,0,0,0.35);
       opacity: 0;
       animation: fadeUp 0.9s ease 0.5s forwards;
@@ -203,7 +205,6 @@
       font-family: var(--font-body);
       font-size: 0.65rem;
       letter-spacing: 0.35em;
-      text-transform: uppercase;
       color: rgba(255,255,255,0.55);
       margin-bottom: 1.5rem;
       opacity: 0;
@@ -379,7 +380,14 @@
       gap: 1.5rem;
       margin-top: 1rem;
     }
-    @media (max-width: 720px) {
+    @media (max-width: 900px) and (min-width: 541px) {
+      .story-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 600px;
+        margin-inline: auto;
+      }
+    }
+    @media (max-width: 540px) {
       .story-grid {
         grid-template-columns: 1fr;
         max-width: 380px;
@@ -525,6 +533,34 @@
     }
     .directions-link:hover { background: #7A9E7E; color: white; }
 
+    .event-card-badge {
+      display: inline-block;
+      margin-top: 1.25rem;
+      padding: 0.3rem 1rem;
+      border: 1px dashed var(--blush);
+      border-radius: 50px;
+      font-family: var(--font-body);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--blush);
+    }
+
+    /* ── Journey quote bridge ── */
+    .journey-quote {
+      text-align: center;
+      padding: 3rem 1.5rem 0;
+      background: var(--cream);
+    }
+    .journey-quote p {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--champagne);
+      letter-spacing: 0.03em;
+      line-height: 1.7;
+    }
+
     /* ═══════════════════════════════
        4. FORMAL INVITATION TEASER
     ═══════════════════════════════ */
@@ -604,11 +640,11 @@
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--charcoal);
-      opacity: 0.38;
+      opacity: 0.55;
       text-decoration: none;
       transition: opacity 0.2s;
     }
-    .footer-link:hover { opacity: 0.65; }
+    .footer-link:hover { opacity: 0.75; }
   </style>
 </head>
 <body>
@@ -620,6 +656,7 @@
     <video
       class="hero-video"
       src="images/couple.mp4"
+      poster="images/photo-formal.jpg"
       autoplay muted loop playsinline
       aria-hidden="true"
     ></video>
@@ -627,9 +664,9 @@
     <!-- Warm dark overlay -->
     <div class="hero-overlay" aria-hidden="true"></div>
 
-    <!-- Corner accents -->
-    <span class="hero-corner-tl" aria-hidden="true">❧</span>
-    <span class="hero-corner-br" aria-hidden="true">❧</span>
+    <!-- Corner accents — dove (love) + airplane (journey) from TOR -->
+    <span class="hero-corner-tl" aria-hidden="true">✦ TJ ✦</span>
+    <span class="hero-corner-br" aria-hidden="true">✦ TJ ✦</span>
 
     <p class="std-eyebrow">Save the Date</p>
 
@@ -641,7 +678,7 @@
     <p class="std-headline">are getting married</p>
 
     <p class="hero-date">Sunday · December 27, 2026</p>
-    <p class="hero-location">Manila, Philippines</p>
+    <p class="hero-location">Pasay, Philippines</p>
 
     <div class="ornament on-dark hero-ornament" aria-hidden="true">
       <span>✈</span>
@@ -725,6 +762,11 @@
     </div>
   </section>
 
+  <!-- ── Journey Quote Bridge ── -->
+  <div class="journey-quote reveal" aria-hidden="true">
+    <p>Capture a moment and be part of our journey</p>
+  </div>
+
   <!-- ═══════ 3. EVENT DETAILS ═══════ -->
   <section class="section details-section" aria-label="Event details">
     <div class="section-inner">
@@ -746,11 +788,12 @@
           >Get Directions ↗</a>
         </div>
 
-        <div class="event-card reveal">
+        <div class="event-card event-card--pending reveal">
           <p class="event-card-type">Reception</p>
-          <p class="event-card-venue">To Be Announced</p>
-          <p class="event-card-address">Details to follow</p>
-          <p class="event-card-time">December 27, 2026</p>
+          <p class="event-card-venue" style="font-style:italic;opacity:0.7">To Be Announced</p>
+          <p class="event-card-address">Details coming soon</p>
+          <p class="event-card-time">Evening · December 27, 2026</p>
+          <span class="event-card-badge">Stay Tuned</span>
         </div>
       </div>
     </div>
@@ -776,7 +819,7 @@
 
   <!-- ═══════ 5. FOOTER ═══════ -->
   <footer class="footer" aria-label="Footer">
-    <div class="ornament on-light" aria-hidden="true"><span>✿</span></div>
+    <div class="ornament on-light" aria-hidden="true"><span>🕊 ✈</span></div>
     <p class="footer-names">Tommy &amp; Jeyan · December 27, 2026</p>
     <p class="footer-tagline">The Journey</p>
     <a class="footer-link" href="invitation.html">View Formal Invitation →</a>
