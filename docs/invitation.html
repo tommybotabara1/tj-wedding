@@ -130,15 +130,20 @@
       line-height: 1;
       pointer-events: none;
     }
+    .hero-corner-tl,
     .hero-corner-br {
       position: absolute;
-      bottom: 2rem;
-      right: 2.5rem;
-      font-size: 3rem;
-      color: rgba(184,131,122,0.18);
+      font-family: var(--font-body);
+      font-size: 1.2rem;
+      color: rgba(184,131,122,0.22);
       line-height: 1;
       pointer-events: none;
-      transform: scaleX(-1);
+      letter-spacing: 0.15em;
+    }
+    .hero-corner-tl { top: 2rem; left: 2.5rem; }
+    .hero-corner-br {
+      bottom: 2rem;
+      right: 2.5rem;
     }
 
     .hero-eyebrow {
@@ -157,10 +162,30 @@
       font-size: clamp(3.5rem, 12vw, 7rem);
       color: var(--mauve);
       line-height: 1.1;
-      margin-bottom: 1rem;
+      margin-bottom: 1.8rem;
       opacity: 0;
       animation: fadeUp 0.9s ease 0.4s forwards;
       text-shadow: 0 2px 16px rgba(184,131,122,0.25);
+    }
+
+    .hero-tagline {
+      font-family: var(--font-script);
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      color: var(--mauve);
+      line-height: 1.2;
+      margin-bottom: 0.2rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.6s forwards;
+    }
+
+    .hero-hashtag {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      color: var(--champagne);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.68s forwards;
     }
 
     .hero-invitation {
@@ -173,7 +198,7 @@
       line-height: 1.7;
       margin-bottom: 2rem;
       opacity: 0;
-      animation: fadeUp 0.9s ease 0.6s forwards;
+      animation: fadeUp 0.9s ease 0.78s forwards;
     }
 
     .hero-date {
@@ -258,20 +283,21 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
-      background: linear-gradient(135deg, var(--rose-pale), #EDE0D8);
+      gap: 0.5rem;
+      background:
+        radial-gradient(circle at 30% 40%, rgba(212,165,160,0.12) 0%, transparent 50%),
+        radial-gradient(circle at 70% 60%, rgba(122,158,126,0.08) 0%, transparent 50%),
+        linear-gradient(135deg, var(--rose-pale), #EDE0D8);
     }
     .gallery-card .placeholder span {
-      font-family: var(--font-serif);
-      font-style: italic;
+      font-family: var(--font-script);
       color: var(--blush);
-      font-size: 0.9rem;
+      font-size: 1.3rem;
     }
     .gallery-card .placeholder::before {
-      content: '❀';
-      font-size: 2rem;
-      color: var(--blush);
-      opacity: 0.5;
+      content: '🕊';
+      font-size: 1.8rem;
+      opacity: 0.4;
     }
     .gallery-card.hidden { display: none; }
 
@@ -341,6 +367,16 @@
       color: var(--champagne);
       font-weight: 500;
     }
+    .event-card-activities {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--champagne);
+      margin-top: 1.25rem;
+      line-height: 1.8;
+    }
+
     .event-card-note {
       font-family: var(--font-serif);
       font-style: italic;
@@ -395,9 +431,9 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: var(--blush);
+      background: var(--sage);
       border: 2px solid var(--cream);
-      box-shadow: 0 0 0 2px var(--blush);
+      box-shadow: 0 0 0 2px var(--sage);
       flex-shrink: 0;
     }
 
@@ -468,6 +504,7 @@
     .rsvp-card {
       background: white;
       border: 1px solid var(--blush);
+      border-top: 3px solid var(--sage);
       border-radius: var(--radius);
       padding: 3rem 2.5rem;
       max-width: 580px;
@@ -657,6 +694,14 @@
       font-size: clamp(1.1rem, 3vw, 1.4rem);
       color: var(--mauve);
       margin: 0.5rem 0;
+    }
+    .footer-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.88rem;
+      color: var(--champagne);
+      margin-top: 0.25rem;
+      letter-spacing: 0.08em;
     }
     .footer-link {
       display: inline-block;
@@ -972,11 +1017,15 @@
   <!-- ═══════ 1. HERO ═══════ -->
   <section class="hero" aria-label="Wedding invitation hero">
     <div class="hero-bg" aria-hidden="true"></div>
-    <span class="hero-corner-br" aria-hidden="true">❧</span>
+    <span class="hero-corner-tl" aria-hidden="true">✦ TJ ✦</span>
+    <span class="hero-corner-br" aria-hidden="true">✦ TJ ✦</span>
 
     <p class="hero-eyebrow">You are cordially invited to the wedding of</p>
 
     <h1 class="hero-names">Tommy &amp; Jeyan</h1>
+
+    <p class="hero-tagline">Soaring with TJ</p>
+    <p class="hero-hashtag">#ToMyJeyan</p>
 
     <p class="hero-invitation">
       Together with their families,<br />
@@ -985,10 +1034,10 @@
     </p>
 
     <p class="hero-date">Sunday · December 27, 2026</p>
-    <p class="hero-location">Shrine of St. Thérèse, Pasay · Manila, Philippines</p>
+    <p class="hero-location">Shrine of St. Thérèse, Pasay · Philippines</p>
 
     <div class="ornament hero-ornament" aria-hidden="true">
-      <span>❧</span>
+      <span>✈</span>
     </div>
 
     <!-- Countdown to wedding day -->
@@ -1023,19 +1072,19 @@
       <div class="gallery-strip" role="list" aria-label="Couple photos">
         <!-- Each card checks for image; JS shows placeholder if missing -->
         <div class="gallery-card reveal" data-img="images/photo-1.jpg" role="listitem">
-          <div class="placeholder"><span>photo coming soon</span></div>
+          <div class="placeholder"><span>Photos Coming Soon</span></div>
         </div>
         <div class="gallery-card reveal" data-img="images/photo-2.jpg" role="listitem">
-          <div class="placeholder"><span>photo coming soon</span></div>
+          <div class="placeholder"><span>Photos Coming Soon</span></div>
         </div>
         <div class="gallery-card reveal" data-img="images/photo-3.jpg" role="listitem">
-          <div class="placeholder"><span>photo coming soon</span></div>
+          <div class="placeholder"><span>Photos Coming Soon</span></div>
         </div>
         <div class="gallery-card reveal" data-img="images/photo-4.jpg" role="listitem">
-          <div class="placeholder"><span>photo coming soon</span></div>
+          <div class="placeholder"><span>Photos Coming Soon</span></div>
         </div>
         <div class="gallery-card reveal" data-img="images/photo-5.jpg" role="listitem">
-          <div class="placeholder"><span>photo coming soon</span></div>
+          <div class="placeholder"><span>Photos Coming Soon</span></div>
         </div>
       </div>
     </div>
@@ -1053,7 +1102,7 @@
           <p class="event-card-type">Ceremony</p>
           <p class="event-card-venue">Shrine of St. Thérèse of the Child Jesus</p>
           <p class="event-card-address">Pasay City, Metro Manila</p>
-          <p class="event-card-time">3:00 PM · December 27, 2026</p>
+          <p class="event-card-time">1:30 PM · December 27, 2026</p>
           <div class="cal-btns">
             <a class="cal-btn" id="gcal-btn" href="#" target="_blank" rel="noopener">Google Calendar</a>
             <button class="cal-btn" id="ical-btn">Add to iCal</button>
@@ -1073,6 +1122,7 @@
           <p class="event-card-venue">Gallio Events Hall</p>
           <p class="event-card-address">Talisay Hall · Pasay City, Metro Manila</p>
           <p class="event-card-time">5:00 PM · December 27, 2026</p>
+          <p class="event-card-activities">Photobooth · Scrapbook Station · QR Memory Wall</p>
         </div>
       </div>
     </div>
@@ -1087,19 +1137,19 @@
 
       <div class="timeline reveal" role="list">
         <div class="timeline-item" role="listitem">
-          <span class="timeline-time">3:00 PM</span>
+          <span class="timeline-time">1:30 PM</span>
           <span class="timeline-dot" aria-hidden="true"></span>
-          <span class="timeline-label">Wedding Ceremony</span>
+          <span class="timeline-label">Church Ceremony</span>
         </div>
         <div class="timeline-item" role="listitem">
-          <span class="timeline-time">4:30 PM</span>
+          <span class="timeline-time">3:00 PM</span>
           <span class="timeline-dot" aria-hidden="true"></span>
-          <span class="timeline-label">Post-ceremony photos</span>
+          <span class="timeline-label">Reception Opens</span>
         </div>
         <div class="timeline-item" role="listitem">
           <span class="timeline-time">5:00 PM</span>
           <span class="timeline-dot" aria-hidden="true"></span>
-          <span class="timeline-label">Cocktail hour &amp; reception</span>
+          <span class="timeline-label">Program Proper</span>
         </div>
       </div>
     </div>
@@ -1247,8 +1297,9 @@
 
   <!-- ═══════ 7. FOOTER ═══════ -->
   <footer class="footer" role="contentinfo">
-    <div class="ornament" aria-hidden="true"><span>❧</span></div>
+    <div class="ornament" aria-hidden="true"><span>🕊 ✈</span></div>
     <p class="footer-names">Tommy &amp; Jeyan · December 27, 2026</p>
+    <p class="footer-tagline">The Journey</p>
     <a class="footer-link" href="index.html">Planning Dashboard ↗</a>
   </footer>
 
@@ -1345,7 +1396,7 @@
 
     // ── Countdown Timer ────────────────────────────────────────────────────────
     function initCountdown() {
-      const target  = new Date('2026-12-27T07:00:00Z'); // 3 PM PHT (UTC+8)
+      const target  = new Date('2026-12-27T05:30:00Z'); // 1:30 PM PHT (UTC+8)
       const wrapper  = document.getElementById('countdown-wrapper');
       const complete = document.getElementById('countdown-complete');
       const dEl = document.getElementById('cd-days');
@@ -1390,7 +1441,7 @@
       if (!gcalBtn || !icalBtn) return;
 
       const title    = "Tommy & Jeyan's Wedding";
-      const startUTC = '20261227T070000Z'; // 3 PM PHT
+      const startUTC = '20261227T053000Z'; // 1:30 PM PHT
       const endUTC   = '20261227T110000Z'; // ~7 PM PHT
       const location = 'Shrine of St. Thérèse of the Child Jesus, Pasay City, Metro Manila';
       const desc     = "Wedding Ceremony of Tommy & Jeyan";
