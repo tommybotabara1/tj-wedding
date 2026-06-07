@@ -266,7 +266,10 @@
     .stdcard .body p { color: var(--soft); }
 
     /* ---------- Boarding-pass details ---------- */
-    .passes { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .passes { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+    .pass-col { display: grid; gap: 22px; align-content: start; }
+    .map-embed { border: 1px solid var(--line); box-shadow: var(--shadow-sm); overflow: hidden; line-height: 0; background: var(--paper); }
+    .map-embed iframe { width: 100%; height: 210px; border: 0; display: block; }
     .pass {
       background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow-sm);
       position: relative; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto;
@@ -563,7 +566,8 @@
         </div>
 
         <div class="passes">
-          <article class="pass reveal d1">
+          <div class="pass-col reveal d1">
+          <article class="pass">
             <div class="ph"><span>Boarding Pass · Ceremony</span><svg class="pl"><use href="#ic-plane"/></svg></div>
             <div class="pb">
               <span class="role">The Rite of Marriage</span>
@@ -581,8 +585,13 @@
               <span class="barcode"></span>
             </div>
           </article>
+          <div class="map-embed">
+            <iframe title="Map to St. Therese Parish, Newport City, Pasay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay&z=16&output=embed"></iframe>
+          </div>
+          </div>
 
-          <article class="pass rose reveal d2">
+          <div class="pass-col reveal d2">
+          <article class="pass rose">
             <div class="ph"><span>Boarding Pass · Reception</span><svg class="pl"><use href="#ic-plane"/></svg></div>
             <div class="pb">
               <span class="role">Dinner &amp; Celebration</span>
@@ -600,6 +609,10 @@
               <span class="barcode"></span>
             </div>
           </article>
+          <div class="map-embed">
+            <iframe title="Map to Savoy Hotel Manila, Newport City, Pasay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay&z=16&output=embed"></iframe>
+          </div>
+          </div>
         </div>
 
         <div class="timeline reveal d2" aria-label="Schedule of the day">
