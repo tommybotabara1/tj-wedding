@@ -110,28 +110,30 @@
     .gate .btn { width: 100%; margin-top: 14px; }
     .gate-error { min-height: 20px; color: var(--rose-text); font-size: 13px; margin: 12px 0 0; letter-spacing: .04em; }
 
-    /* ---------- Intro reveal ---------- */
-    .intro {
-      position: fixed; inset: 0; z-index: 80; pointer-events: none;
+    /* ---------- Opening loader: plane takeoff ---------- */
+    .loader {
+      position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: 6px;
+      background: radial-gradient(120% 80% at 50% 32%, rgba(156,170,143,.16), transparent 60%), var(--cream);
+      transition: opacity .7s var(--ease), visibility .7s;
     }
-    .intro .drape {
-      position: absolute; top: 0; bottom: 0; width: 50.5%; background: var(--cream);
-      transition: transform 1.5s var(--ease);
-      box-shadow: 0 0 60px rgba(74,64,52,.08);
+    .loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-scene { width: min(340px, 84vw); height: auto; display: block; overflow: visible; }
+    .loader-trail { fill: none; stroke: var(--sage); stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: 420; stroke-dashoffset: 420; }
+    .loader-plane { color: var(--sage-deep); offset-path: path('M24 150 Q150 150 296 34'); offset-rotate: auto 32deg; offset-distance: 0%; opacity: 0; }
+    .loader-word { font-family: var(--script); font-size: clamp(50px, 13vw, 80px); color: var(--rose-deep); line-height: .8; opacity: 0; transform: translateY(10px); }
+    .loader-sub { font-size: 11px; letter-spacing: .44em; text-transform: uppercase; color: var(--muted); opacity: 0; transform: translateY(8px); }
+    .loader.run .loader-trail { animation: lpTrail 1.5s var(--ease) .2s forwards; }
+    .loader.run .loader-plane { animation: lpTakeoff 1.8s var(--ease) .2s forwards; }
+    .loader.run .loader-word { animation: lpRise 1s var(--ease) .55s forwards; }
+    .loader.run .loader-sub  { animation: lpRise 1s var(--ease) .75s forwards; }
+    @keyframes lpTrail { to { stroke-dashoffset: 0; } }
+    @keyframes lpTakeoff { 0% { offset-distance: 0%; opacity: 0; } 12% { opacity: 1; } 86% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+    @keyframes lpRise { to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .loader-word, .loader-sub { opacity: 1; transform: none; }
+      .loader-plane { offset-distance: 86%; opacity: 1; }
+      .loader-trail { stroke-dashoffset: 0; }
     }
-    .intro .drape.left { left: 0; }
-    .intro .drape.right { right: 0; }
-    .intro .badge {
-      position: absolute; inset: 0; display: grid; place-content: center; justify-items: center;
-      gap: 6px; text-align: center; transition: opacity .7s var(--ease);
-    }
-    .intro .badge .mono { width: 92px; height: 92px; color: var(--sage-deep); }
-    .intro .badge .t { font-family: var(--script); font-size: 64px; color: var(--sage-deep); line-height: .8; }
-    .intro .badge .s { font-size: 11px; letter-spacing: .5em; text-transform: uppercase; color: var(--muted); }
-    .intro.run .drape.left { transform: translateX(-101%); }
-    .intro.run .drape.right { transform: translateX(101%); }
-    .intro.run .badge { opacity: 0; }
-    .intro.done { display: none; }
 
     /* ---------- Sky wash: dawn -> golden hour across the scroll ---------- */
     .sky {
@@ -152,7 +154,7 @@
     .fp-draw { fill: none; stroke: var(--sage); stroke-width: 1.7; stroke-linecap: round; }
     .fp-glow { fill: var(--sage); opacity: .15; }
     .fp-plane use { color: var(--sage-deep); }
-    @media (max-width: 1100px) { .flightpath { display: none; } }
+    @media (max-width: 1100px) { .flightpath.show { opacity: .8; } .fp-glow { r: 11px; } .fp-draw { stroke-width: 1.5; } }
     @media (prefers-reduced-motion: reduce) { .sky { opacity: .42; } }
 
     /* ---------- Top bar + side nav ---------- */
@@ -243,6 +245,26 @@
     .scrollcue .l::after { content: ''; position: absolute; left: 0; top: -50%; width: 1px; height: 50%; background: var(--sage-deep); animation: drop 1.8s var(--ease) infinite; }
     @keyframes drop { 0% { top: -50%; } 60%,100% { top: 100%; } }
 
+    /* ---------- In-flight feature (prenup film) ---------- */
+    .screen {
+      position: relative; width: min(900px, 100%); margin: 0 auto; aspect-ratio: 16 / 9;
+      background: #1f201d; border: 1px solid var(--kraft); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
+    }
+    .screen::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 5px rgba(255,253,250,.10); pointer-events: none; }
+    .screen iframe, .screen .screen-play { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .screen-play { display: grid; place-items: center; padding: 0; background: none; cursor: pointer; }
+    .screen-play img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .82; transition: transform 6s ease-in-out, opacity .4s; }
+    .screen-play:hover img { transform: scale(1.04); opacity: .9; }
+    .play-btn {
+      position: relative; width: clamp(62px, 9vw, 80px); aspect-ratio: 1; border-radius: 50%;
+      background: rgba(255,253,250,.94); display: grid; place-items: center; box-shadow: var(--shadow);
+      transition: transform .35s var(--ease);
+    }
+    .screen-play:hover .play-btn { transform: scale(1.08); }
+    .play-btn svg { width: 26px; height: 26px; margin-left: 4px; color: var(--ink); }
+    .screen-cap { position: absolute; left: 0; right: 0; bottom: 16px; text-align: center; color: #f1ebdf; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; text-shadow: 0 1px 8px rgba(0,0,0,.55); }
+    .feature-note { text-align: center; color: var(--soft); max-width: 560px; margin: 24px auto 0; }
+
     /* ---------- Journey gallery ---------- */
     .gallery { display: grid; grid-template-columns: repeat(6, 1fr); grid-auto-rows: 150px; gap: 14px; }
     .gi { border: 0; padding: 0; background: var(--white); overflow: hidden; cursor: pointer; position: relative; border: 1px solid var(--line); }
@@ -299,7 +321,7 @@
     .timeline .stop span { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
     .timeline .stop .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); margin: 6px auto 8px; }
 
-    .notes { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 26px; }
+    .notes { display: grid; grid-template-columns: 1fr; gap: 22px; margin: 26px auto 0; max-width: 640px; }
     .note { background: var(--paper); border: 1px solid var(--line); padding: clamp(24px,3vw,36px); display: grid; gap: 12px; }
     .note .ic { width: 30px; height: 30px; color: var(--sage-deep); }
     .note h3 { font-size: 25px; }
@@ -320,6 +342,23 @@
     .fund .route .dots { flex: 1; min-width: 60px; height: 1px; background: repeating-linear-gradient(90deg, var(--kraft) 0 5px, transparent 5px 11px); position: relative; }
     .fund .route .dots .pl { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) rotate(90deg); width: 22px; height: 22px; color: var(--sage-deep); background: var(--white); }
     .fund p { color: var(--soft); max-width: 520px; }
+    .fund .btn { margin-top: 6px; }
+
+    /* ---------- Send a Gift (QR modal) ---------- */
+    .gift-modal { border: 0; padding: 0; background: transparent; width: min(760px, 92vw); }
+    .gift-modal::backdrop { background: rgba(40,36,30,.6); backdrop-filter: blur(3px); }
+    .gift-panel { background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow); padding: clamp(26px,4vw,42px); position: relative; }
+    .gift-panel h3 { font-size: clamp(26px,4vw,34px); text-align: center; }
+    .gift-sub { text-align: center; color: var(--soft); font-size: 14px; margin: 8px auto 26px; max-width: 460px; }
+    .gift-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 18px; }
+    .qr { display: grid; justify-items: center; gap: 8px; margin: 0; }
+    .qr-img { width: 100%; aspect-ratio: 1; border: 1px solid var(--line); background: var(--paper); display: grid; place-items: center; overflow: hidden; }
+    .qr-img img { width: 100%; height: 100%; object-fit: contain; }
+    .qr-img.missing { border-style: dashed; }
+    .qr-img.missing::after { content: 'Add QR'; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+    .qr figcaption { font-family: var(--serif); font-weight: 400; font-size: 18px; }
+    .qr .qr-cap { font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .gift-close { position: absolute; top: 12px; right: 12px; width: 42px; height: 42px; border: 1px solid var(--line); background: var(--white); cursor: pointer; font-size: 22px; line-height: 1; color: var(--ink); display: grid; place-items: center; }
 
     /* ---------- Attire ---------- */
     .attire { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
@@ -354,7 +393,7 @@
     footer { background: var(--ink); color: #d7cfc2; text-align: center; padding: clamp(56px, 8vw, 84px) 20px; display: grid; gap: 14px; justify-items: center; }
     footer .mono { width: 70px; height: 70px; color: var(--sage); }
     footer .tag { font-family: var(--script); font-size: 52px; color: #e9e2d6; line-height: .7; }
-    footer .hash { letter-spacing: .3em; text-transform: uppercase; font-size: 11px; color: var(--sage); }
+    footer .hash { letter-spacing: .14em; font-size: 13px; color: var(--sage); }
     footer .verse { font-family: var(--serif); font-style: italic; font-size: 17px; max-width: 440px; color: #cabfae; }
     footer .fnav { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
     footer .fnav a { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; text-decoration: none; color: #b7ac9b; }
@@ -447,15 +486,14 @@
     </div>
   </div>
 
-  <!-- Intro reveal -->
-  <div class="intro" id="intro" aria-hidden="true">
-    <div class="drape left"></div>
-    <div class="drape right"></div>
-    <div class="badge">
-      <svg class="mono"><use href="#ic-mono"/></svg>
-      <div class="t">Soaring with TJ</div>
-      <div class="s">The Journey</div>
-    </div>
+  <!-- Opening loader: plane takeoff (first thing shown) -->
+  <div class="loader" id="loader" role="status" aria-label="Loading the invitation">
+    <svg class="loader-scene" viewBox="0 0 320 180" fill="none" aria-hidden="true">
+      <path class="loader-trail" d="M24 150 Q150 150 296 34" />
+      <g class="loader-plane"><use href="#ic-plane" x="-13" y="-13" width="28" height="28" /></g>
+    </svg>
+    <div class="loader-word">Soaring with TJ</div>
+    <div class="loader-sub">Now boarding</div>
   </div>
 
   <!-- Sky wash: dawn -> golden hour across the scroll -->
@@ -511,7 +549,7 @@
           <img src="images/hero.webp" alt="Tommy and Jeyan, prenup portrait" />
         </div>
         <div class="boarding reveal d2" aria-label="Countdown to the wedding">
-          <div class="bp-top"><span>Boarding Pass · #ToMyJeyan</span><svg class="pl"><use href="#ic-plane"/></svg><span>Gate 12·27·26</span></div>
+          <div class="bp-top"><span>Boarding Pass · <span style="text-transform:none">#ToMyJeyan</span></span><svg class="pl"><use href="#ic-plane"/></svg><span>Gate 12·27·26</span></div>
           <div class="countdown">
             <div><strong id="cd-d">--</strong><span>Days</span></div>
             <div><strong id="cd-h">--</strong><span>Hours</span></div>
@@ -520,6 +558,27 @@
           </div>
         </div>
         <div class="scrollcue"><span>Scroll</span><span class="l"></span></div>
+      </div>
+    </section>
+
+    <div class="divider"><span class="ln"></span><svg class="pl"><use href="#ic-plane"/></svg><span class="ln"></span></div>
+
+    <!-- IN-FLIGHT FEATURE (prenup film) -->
+    <section class="section" id="feature">
+      <div class="inner">
+        <div class="head">
+          <h2 class="reveal d1">Now Showing</h2>
+          <div class="script reveal d1">our story</div>
+          <div class="diamond reveal d2"></div>
+        </div>
+        <div class="screen reveal d1" id="film">
+          <button class="screen-play" id="film-play" type="button" aria-label="Play Tommy and Jeyan's prenup film">
+            <img src="images/savethedate.webp" alt="Tommy and Jeyan, save-the-date still" loading="lazy" />
+            <span class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>
+            <span class="screen-cap">Our In-Flight Feature · 12·27·26</span>
+          </button>
+        </div>
+        <p class="feature-note reveal d2">Settle in. Here's a little preview of the journey we can't wait to continue with you this December.</p>
       </div>
     </section>
 
@@ -543,15 +602,6 @@
           <button class="gi wide" type="button" data-full="images/journey-06.webp" aria-label="Open photo 7"><img src="images/journey-06.webp" alt="Tommy and Jeyan, foreheads together" loading="lazy" /></button>
         </div>
 
-        <div class="stdcard reveal d1">
-          <div class="media"><img src="images/savethedate.webp" alt="Tommy and Jeyan save-the-date" loading="lazy" /></div>
-          <div class="body">
-            <span class="eyebrow">Save the date</span>
-            <h3>The film is ready for boarding.</h3>
-            <p>Our save-the-date and prenup are ready: a little preview of the journey we can't wait to continue with you this December.</p>
-            <a class="btn ghost" href="https://drive.google.com/file/d/1aNoSdmHgr3xOcXdf6xlCZtTFTPAW7WmC/view?usp=drivesdk" target="_blank" rel="noopener">Watch the Film</a>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -628,11 +678,6 @@
             <h3>Arrive a little early</h3>
             <p>Kindly be seated by <strong>1:15 PM</strong> so the ceremony can begin gently at 1:30 PM and no one misses the processional.</p>
           </article>
-          <article class="note reveal d2">
-            <svg class="ic"><use href="#ic-cam"/></svg>
-            <h3>An unplugged ceremony</h3>
-            <p>Please keep phones and cameras tucked away during the rites. Once we've said "I do," photos are warmly welcome.</p>
-          </article>
         </div>
       </div>
     </section>
@@ -655,10 +700,42 @@
               <div class="city"><b>∞</b><span>Forever</span></div>
             </div>
             <p>Your presence is the greatest gift we could ask for. Should you wish to bless our journey, a monetary token toward our first home and travels as a married couple would mean the world.</p>
+            <button class="btn" id="gift-open" type="button">Send a Gift</button>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- Send a Gift: bank / e-wallet QR codes -->
+    <dialog class="gift-modal" id="gift-modal" aria-label="Send a gift">
+      <div class="gift-panel">
+        <button class="gift-close" id="gift-close" type="button" aria-label="Close">&times;</button>
+        <h3>Send a Gift</h3>
+        <p class="gift-sub">Open your banking or GCash app, scan the matching code, and your blessing finds its way to us. Thank you.</p>
+        <div class="gift-grid">
+          <figure class="qr">
+            <div class="qr-img"><img src="images/qr/bpi.png" alt="BPI QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <figcaption>BPI</figcaption><span class="qr-cap">Scan with BPI</span>
+          </figure>
+          <figure class="qr">
+            <div class="qr-img"><img src="images/qr/bdo.png" alt="BDO QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <figcaption>BDO</figcaption><span class="qr-cap">Scan with BDO</span>
+          </figure>
+          <figure class="qr">
+            <div class="qr-img"><img src="images/qr/unionbank.png" alt="UnionBank QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <figcaption>UnionBank</figcaption><span class="qr-cap">Scan with UnionBank</span>
+          </figure>
+          <figure class="qr">
+            <div class="qr-img"><img src="images/qr/pnb.png" alt="PNB QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <figcaption>PNB</figcaption><span class="qr-cap">Scan with PNB</span>
+          </figure>
+          <figure class="qr">
+            <div class="qr-img"><img src="images/qr/gcash.png" alt="GCash QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <figcaption>GCash</figcaption><span class="qr-cap">Scan with GCash</span>
+          </figure>
+        </div>
+      </div>
+    </dialog>
 
     <div class="divider"><span class="ln"></span><svg class="pl"><use href="#ic-dove"/></svg><span class="ln"></span></div>
 
@@ -777,19 +854,13 @@
 
     const $ = (id) => document.getElementById(id);
 
-    /* ---------- Gate + intro ---------- */
+    /* ---------- Loader -> gate -> page ---------- */
     const gate = $('gate'), gateInput = $('gate-input'), gateError = $('gate-error');
-    function runIntro() {
-      const intro = $('intro');
-      if (reduceMotion) { intro.classList.add('done'); afterEnter(); return; }
-      requestAnimationFrame(() => intro.classList.add('run'));
-      setTimeout(() => { intro.classList.add('done'); afterEnter(); }, 1700);
-    }
     function enter() {
       sessionStorage.setItem('tj_unlocked', '1');
       gate.classList.add('hidden');
       document.body.classList.remove('locked');
-      runIntro();
+      afterEnter();
     }
     function unlock() {
       if (gateInput.value.trim().toLowerCase() !== INVITE_PASSWORD) {
@@ -801,14 +872,23 @@
     $('gate-btn').addEventListener('click', unlock);
     gateInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') unlock(); });
 
-    if (sessionStorage.getItem('tj_unlocked') === '1') {
-      gate.classList.add('hidden');
-      document.body.classList.remove('locked');
-      $('intro').classList.add('done');
-      afterEnter();
-    } else {
-      setTimeout(() => gateInput.focus(), 200);
+    // The loader is the first thing shown; after it finishes, reveal the gate (or page if already unlocked).
+    function afterLoader() {
+      if (sessionStorage.getItem('tj_unlocked') === '1') {
+        gate.classList.add('hidden');
+        document.body.classList.remove('locked');
+        afterEnter();
+      } else {
+        setTimeout(() => gateInput.focus(), 120);
+      }
     }
+    (function runLoader() {
+      const loader = $('loader');
+      const finish = () => { loader.classList.add('done'); afterLoader(); };
+      if (reduceMotion) { setTimeout(finish, 700); return; }
+      requestAnimationFrame(() => loader.classList.add('run'));
+      setTimeout(finish, 2350);
+    })();
 
     function afterEnter() { initFlight(); initCountdown(); initReveal(); initNav(); }
 
@@ -816,10 +896,14 @@
     function initFlight() {
       const rail = $('flightpath'), base = $('fp-base'), draw = $('fp-draw'), planeG = $('fp-plane'), sky = $('sky');
       if (!rail || !draw) return;
-      const W = 120, A = 30, cx = 46, wl = 520; // band width, amplitude, centre, wavelength(px)
-      let H = 0, L = 0;
+      let H = 0, L = 0, W = 120;
+      const planeUse = rail.querySelector('.fp-plane use');
 
       function buildPath() {
+        const mobile = window.innerWidth <= 1100;        // slim version on phones
+        W = mobile ? 30 : 120;
+        const A = mobile ? 7 : 30, cx = mobile ? 15 : 46, wl = mobile ? 360 : 520, ps = mobile ? 16 : 28;
+        if (planeUse) { planeUse.setAttribute('width', ps); planeUse.setAttribute('height', ps); planeUse.setAttribute('x', -ps / 2); planeUse.setAttribute('y', -ps / 2); }
         H = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
         rail.setAttribute('width', W); rail.setAttribute('height', H); rail.style.height = H + 'px';
         let d = '';
@@ -969,6 +1053,24 @@
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
     });
+
+    /* ---------- In-flight feature: load the Drive player on first play ---------- */
+    (function () {
+      const btn = $('film-play'), wrap = $('film');
+      if (!btn || !wrap) return;
+      btn.addEventListener('click', () => {
+        wrap.innerHTML = '<iframe src="https://drive.google.com/file/d/1aNoSdmHgr3xOcXdf6xlCZtTFTPAW7WmC/preview" allow="autoplay; fullscreen" allowfullscreen title="Tommy and Jeyan prenup film"></iframe>';
+      });
+    })();
+
+    /* ---------- Send a Gift modal ---------- */
+    (function () {
+      const modal = $('gift-modal'), open = $('gift-open'), close = $('gift-close');
+      if (!modal || !open) return;
+      open.addEventListener('click', () => { if (modal.showModal) modal.showModal(); else modal.setAttribute('open', ''); });
+      close.addEventListener('click', () => modal.close());
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
+    })();
 
     /* ---------- Optional ambient music (graceful if file absent) ---------- */
     (function () {
