@@ -133,19 +133,27 @@
     .intro.run .badge { opacity: 0; }
     .intro.done { display: none; }
 
-    /* ---------- Flight path (left rail decoration) ---------- */
+    /* ---------- Sky wash: dawn -> golden hour across the scroll ---------- */
+    .sky {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .6;
+      background:
+        linear-gradient(180deg, var(--sky-top, rgba(185,194,217,.5)) 0%, transparent 44%),
+        radial-gradient(130% 78% at 50% 113%, var(--sky-bot, rgba(244,224,200,.14)), transparent 62%);
+    }
+
+    /* ---------- Flight path: a journey ribbon that draws as you scroll ---------- */
     .flightpath {
-      position: fixed; left: 30px; top: 0; bottom: 0; width: 2px; z-index: 4;
-      background: repeating-linear-gradient(var(--line) 0 6px, transparent 6px 14px);
-      opacity: 0; transition: opacity .6s; pointer-events: none;
+      position: absolute; left: 0; top: 0; width: 120px; z-index: 0;
+      pointer-events: none; overflow: visible;
+      opacity: 0; transition: opacity .9s var(--ease);
     }
-    .flightpath.show { opacity: .9; }
-    .flightpath .plane {
-      position: absolute; left: 50%; top: 0; width: 26px; height: 26px;
-      transform: translate(-50%, -50%) rotate(135deg); color: var(--sage-deep);
-      transition: top .15s linear;
-    }
+    .flightpath.show { opacity: 1; }
+    .fp-base { fill: none; stroke: var(--line); stroke-width: 1.4; stroke-dasharray: 1.5 8; stroke-linecap: round; }
+    .fp-draw { fill: none; stroke: var(--sage); stroke-width: 1.7; stroke-linecap: round; }
+    .fp-glow { fill: var(--sage); opacity: .15; }
+    .fp-plane use { color: var(--sage-deep); }
     @media (max-width: 1100px) { .flightpath { display: none; } }
+    @media (prefers-reduced-motion: reduce) { .sky { opacity: .42; } }
 
     /* ---------- Top bar + side nav ---------- */
     .topbar {
@@ -447,10 +455,18 @@
     </div>
   </div>
 
-  <!-- Flight path rail -->
-  <div class="flightpath" id="flightpath" aria-hidden="true">
-    <svg class="plane" id="rail-plane"><use href="#ic-plane"/></svg>
-  </div>
+  <!-- Sky wash: dawn -> golden hour across the scroll -->
+  <div class="sky" id="sky" aria-hidden="true"></div>
+
+  <!-- Flight path: a journey ribbon that draws as you scroll -->
+  <svg class="flightpath" id="flightpath" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <path class="fp-base" id="fp-base" d="" />
+    <path class="fp-draw" id="fp-draw" d="" />
+    <g class="fp-plane" id="fp-plane">
+      <circle class="fp-glow" id="fp-glow" r="20" />
+      <use href="#ic-plane" x="-13" y="-13" width="26" height="26" />
+    </g>
+  </svg>
 
   <!-- Top bar -->
   <header class="topbar" id="topbar">
@@ -781,7 +797,62 @@
       setTimeout(() => gateInput.focus(), 200);
     }
 
-    function afterEnter() { initCountdown(); initReveal(); initNav(); }
+    function afterEnter() { initFlight(); initCountdown(); initReveal(); initNav(); }
+
+    /* ---------- Flight path: a journey ribbon that draws with scroll ---------- */
+    function initFlight() {
+      const rail = $('flightpath'), base = $('fp-base'), draw = $('fp-draw'), planeG = $('fp-plane'), sky = $('sky');
+      if (!rail || !draw) return;
+      const W = 120, A = 30, cx = 46, wl = 520; // band width, amplitude, centre, wavelength(px)
+      let H = 0, L = 0;
+
+      function buildPath() {
+        H = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+        rail.setAttribute('width', W); rail.setAttribute('height', H); rail.style.height = H + 'px';
+        let d = '';
+        for (let y = 0; y <= H; y += 26) {
+          const x = cx + A * Math.sin((y / wl) * Math.PI * 2);
+          d += (y === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y + ' ';
+        }
+        base.setAttribute('d', d); draw.setAttribute('d', d);
+        L = draw.getTotalLength();
+        draw.style.strokeDasharray = L;
+        draw.style.strokeDashoffset = reduceMotion ? 0 : L;
+      }
+
+      // dawn (lavender) -> golden-hour, kept low-chroma so it never fights the cream
+      const top0 = [185, 194, 217], top1 = [233, 201, 163];
+      const bot0 = [223, 230, 232], bot1 = [244, 206, 150];
+      const lp = (a, b, t) => Math.round(a + (b - a) * t);
+      function setSky(t) {
+        sky.style.setProperty('--sky-top', `rgba(${lp(top0[0],top1[0],t)},${lp(top0[1],top1[1],t)},${lp(top0[2],top1[2],t)},.5)`);
+        sky.style.setProperty('--sky-bot', `rgba(${lp(bot0[0],bot1[0],t)},${lp(bot0[1],bot1[1],t)},${lp(bot0[2],bot1[2],t)},${(0.12 + 0.5 * t).toFixed(2)})`);
+      }
+
+      function placePlane(dist) {
+        const p = draw.getPointAtLength(dist);
+        const p2 = draw.getPointAtLength(Math.min(L, dist + 1.5));
+        const deg = Math.atan2(p2.y - p.y, p2.x - p.x) * 180 / Math.PI + 32;
+        planeG.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) rotate(${deg.toFixed(1)})`);
+      }
+
+      function update(pct, y) {
+        if (Math.abs(document.documentElement.scrollHeight - H) > 80) buildPath();
+        rail.classList.toggle('show', (y || window.scrollY) > window.innerHeight * 0.3);
+        setSky(reduceMotion ? 0.5 : pct);
+        if (reduceMotion || !L) return;
+        draw.style.strokeDashoffset = L * (1 - pct);
+        placePlane(Math.max(0.5, Math.min(L - 0.5, L * pct)));
+      }
+
+      buildPath();
+      window._flight = update;
+      if (reduceMotion) { rail.classList.add('show'); setSky(0.5); placePlane(L * 0.5); }
+      window.addEventListener('load', () => { buildPath(); const dH = document.documentElement.scrollHeight - innerHeight; update(dH > 0 ? Math.min(1, scrollY / dH) : 0); });
+      let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { buildPath(); const dH = document.documentElement.scrollHeight - innerHeight; update(dH > 0 ? Math.min(1, scrollY / dH) : 0); }, 200); }, { passive: true });
+      const dH = document.documentElement.scrollHeight - innerHeight;
+      update(dH > 0 ? Math.min(1, scrollY / dH) : 0, scrollY);
+    }
 
     /* ---------- Countdown (ceremony 1:30 PM PHT) ---------- */
     function initCountdown() {
@@ -813,17 +884,22 @@
 
     /* ---------- Nav: solid bar, active link, flight path, mobile ---------- */
     function initNav() {
-      const topbar = $('topbar'), rail = $('flightpath'), plane = $('rail-plane');
+      const topbar = $('topbar');
       const links = [...document.querySelectorAll('.nav a')];
       const sections = links.map(a => document.querySelector(a.getAttribute('href')));
 
+      let ticking = false;
       function onScroll() {
-        const y = window.scrollY;
-        topbar.classList.toggle('solid', y > 60);
-        rail.classList.toggle('show', y > window.innerHeight * 0.6);
-        const docH = document.documentElement.scrollHeight - window.innerHeight;
-        const pct = docH > 0 ? Math.min(1, y / docH) : 0;
-        plane.style.top = (pct * 100) + 'vh';
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          topbar.classList.toggle('solid', y > 60);
+          const docH = document.documentElement.scrollHeight - window.innerHeight;
+          const pct = docH > 0 ? Math.min(1, y / docH) : 0;
+          if (window._flight) window._flight(pct, y);
+          ticking = false;
+        });
       }
       window.addEventListener('scroll', onScroll, { passive: true });
       onScroll();
