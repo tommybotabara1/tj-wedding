@@ -192,7 +192,7 @@
     .mobile-nav .close { position: absolute; top: 24px; right: 24px; border: 0; background: none; font-size: 30px; cursor: pointer; color: var(--ink); }
 
     /* ---------- Layout helpers ---------- */
-    .section { padding: clamp(80px, 12vw, 150px) clamp(20px, 5vw, 64px); position: relative; }
+    .section { padding: clamp(60px, 8vw, 104px) clamp(20px, 5vw, 64px); position: relative; }
     .inner { width: min(1080px, 100%); margin: 0 auto; }
     .head { text-align: center; display: grid; gap: 14px; justify-items: center; margin-bottom: clamp(40px, 6vw, 68px); }
     .head h2 { font-size: clamp(40px, 7vw, 78px); }
@@ -212,7 +212,7 @@
     .hero .eyebrow { display: block; }
     .hero h1 { font-size: clamp(58px, 12vw, 132px); font-weight: 300; margin: 14px 0 0; }
     .hero h1 .amp { font-style: italic; color: var(--sage-deep); font-weight: 300; }
-    .hero .tag { font-family: var(--script); font-size: clamp(54px, 10vw, 104px); color: var(--rose-deep); line-height: .7; margin: 6px 0 4px; }
+    .hero .tag { font-family: var(--script); font-size: clamp(54px, 10vw, 104px); color: var(--rose-deep); line-height: .9; margin: 12px 0 18px; }
     .hero .meta { color: var(--soft); letter-spacing: .12em; font-size: 15px; }
     .hero .ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
     .portal {
@@ -250,7 +250,7 @@
 
     /* ---------- In-flight feature (prenup film) ---------- */
     .screen {
-      position: relative; width: min(900px, 100%); margin: 0 auto; aspect-ratio: 16 / 9;
+      position: relative; width: min(390px, 100%); margin: 0 auto; aspect-ratio: 9 / 16;
       background: #1f201d; border: 1px solid var(--kraft); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
     }
     .screen::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 5px rgba(255,253,250,.10); pointer-events: none; }
@@ -273,7 +273,7 @@
     .gi { border: 0; padding: 0; background: var(--white); overflow: hidden; cursor: pointer; position: relative; border: 1px solid var(--line); }
     .gi img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
     .gi:hover img { transform: scale(1.06); }
-    .gi::after { content: '\\002B'; position: absolute; right: 12px; bottom: 8px; color: #fff; font-size: 20px; opacity: 0; transition: opacity .3s; text-shadow: 0 1px 6px rgba(0,0,0,.4); }
+    .gi::after { content: '+'; position: absolute; right: 14px; bottom: 10px; color: #fff; font-size: 22px; line-height: 1; opacity: 0; transition: opacity .3s; text-shadow: 0 1px 6px rgba(0,0,0,.4); }
     .gi:hover::after { opacity: .9; }
     .gi.tall { grid-row: span 3; }
     .gi.big { grid-column: span 2; grid-row: span 4; }
@@ -378,6 +378,47 @@
     .swatch { display: grid; justify-items: center; gap: 10px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
     .swatch .dot { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
 
+    /* ---------- Attire guide plate ---------- */
+    .attire-guide { width: min(960px, 100%); margin: clamp(40px, 6vw, 64px) auto 0; display: grid; justify-items: center; gap: 14px; }
+    .ag-frame { display: block; width: 100%; padding: clamp(10px, 1.6vw, 18px); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow); cursor: zoom-in; position: relative; font: inherit; color: inherit; text-align: left; border-radius: 0; }
+    .ag-frame img { display: block; width: 100%; height: auto; }
+    .ag-zoom { position: absolute; right: clamp(16px, 2.4vw, 26px); bottom: clamp(16px, 2.4vw, 26px); display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; background: rgba(58,55,51,.82); color: #f3ede2; font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; pointer-events: none; }
+    .ag-frame:focus-visible { outline: 2px solid var(--sage-deep); outline-offset: 3px; }
+    .attire-guide figcaption { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+
+    /* ---------- Entourage ---------- */
+    #entourage .head p { color: var(--soft); max-width: 32em; margin-inline: auto; }
+    .manifest { width: min(960px, 100%); margin: 0 auto; background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow); }
+    .manifest .mh { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px clamp(20px, 3vw, 30px); background: var(--kraft); color: var(--ink); font-size: 10.5px; letter-spacing: .24em; text-transform: uppercase; }
+    .manifest .mh .pl { width: 15px; height: 15px; transform: rotate(90deg); color: var(--ink); opacity: .7; }
+    .manifest .mb { padding: clamp(26px, 4vw, 44px); display: grid; gap: clamp(30px, 4.5vw, 46px); }
+    #entourage .role { font-size: 10.5px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
+    .ent-leads { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2.6vw, 22px); }
+    .ent-lead { position: relative; padding: clamp(22px, 3vw, 30px) clamp(20px, 3vw, 28px); background: var(--paper); border: 1px solid var(--line); display: grid; gap: 7px; overflow: hidden; }
+    .ent-lead::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--rose); }
+    .ent-lead.sage::before { background: var(--sage); }
+    .ent-lead h3 { font-size: clamp(26px, 3.6vw, 36px); }
+    .ent-lead.rose .role { color: var(--rose-text); }
+    .ent-lead.sage .role { color: var(--sage-text); }
+    .ent-lead .nm { color: var(--soft); font-size: clamp(15px, 1.8vw, 18px); }
+    .ent-lead .nm:first-of-type { margin-top: 4px; }
+    .ent-party { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 44px); }
+    .ent-col > .role { color: var(--rose-text); }
+    .ent-col.sage > .role { color: var(--sage-text); }
+    .ent-col h3 { font-size: clamp(24px, 3vw, 32px); margin: 6px 0 0; }
+    .ent-roster { list-style: none; margin: 16px 0 0; padding: 0; border-top: 1px dashed var(--line); }
+    .ent-roster li { padding: 11px 2px; border-bottom: 1px dashed var(--line); color: var(--soft); font-size: 15px; }
+    .ent-block { border-top: 1px solid var(--line); padding-top: clamp(24px, 3.5vw, 34px); display: grid; gap: 18px; }
+    .ent-block .ehd { display: grid; gap: 4px; }
+    .ent-block .ehd h3 { font-size: clamp(26px, 3.4vw, 36px); margin-top: 4px; }
+    .ent-sub { color: var(--muted); font-style: italic; font-family: var(--serif); font-size: 15px; }
+    .ent-mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: clamp(12px, 1.8vw, 16px); }
+    .ent-tk { padding: 16px 16px 18px; background: var(--paper); border: 1px solid var(--line); display: grid; gap: 6px; align-content: start; }
+    .ent-tk b { font-family: var(--serif); font-weight: 400; font-size: 19px; }
+    .ent-tk span { color: var(--soft); font-size: 13.5px; line-height: 1.45; }
+    .ent-sponsors { columns: 3; column-gap: clamp(22px, 4vw, 48px); border-top: 1px dashed var(--line); padding-top: 12px; }
+    .ent-sponsors span { display: block; break-inside: avoid; padding: 7px 0; border-bottom: 1px dashed var(--line); color: var(--soft); font-size: 14.5px; }
+
     /* ---------- RSVP ---------- */
     .rsvp-sec { background: var(--paper); }
     .rsvp-card { width: min(680px, 100%); margin: 0 auto; background: var(--white); border: 1px solid var(--line); box-shadow: var(--shadow); padding: clamp(28px, 4vw, 48px); }
@@ -420,12 +461,16 @@
     .lightbox .lb-close { top: 22px; right: 22px; }
     .lightbox .lb-prev { left: 22px; top: 50%; transform: translateY(-50%); }
     .lightbox .lb-next { right: 22px; top: 50%; transform: translateY(-50%); }
+    .lightbox.single .lb-prev, .lightbox.single .lb-next { display: none; }
+    .lightbox img { cursor: zoom-out; }
 
     /* ---------- Responsive ---------- */
     @media (max-width: 860px) {
       .nav { display: none; }
       .menu-btn { display: flex; }
       .passes, .notes, .attire { grid-template-columns: 1fr; }
+      .ent-leads, .ent-party { grid-template-columns: 1fr; }
+      .ent-sponsors { columns: 1; }
       .stdcard { grid-template-columns: 1fr; min-height: auto; }
       .stdcard .media { min-height: 260px; }
       .gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 130px; }
@@ -523,7 +568,8 @@
       <a href="#details"><span class="n">03</span>Details</a>
       <a href="#gifts"><span class="n">04</span>Gifts</a>
       <a href="#attire"><span class="n">05</span>Attire</a>
-      <a href="#rsvp"><span class="n">06</span>RSVP</a>
+      <a href="#entourage"><span class="n">06</span>Entourage</a>
+      <a href="#rsvp"><span class="n">07</span>RSVP</a>
     </nav>
     <button class="menu-btn" id="menu-btn" aria-label="Open menu"><span></span><span></span><span></span></button>
   </header>
@@ -535,7 +581,8 @@
     <a href="#details"><span class="n">03</span>Details</a>
     <a href="#gifts"><span class="n">04</span>Gifts</a>
     <a href="#attire"><span class="n">05</span>Attire</a>
-    <a href="#rsvp"><span class="n">06</span>RSVP</a>
+    <a href="#entourage"><span class="n">06</span>Entourage</a>
+    <a href="#rsvp"><span class="n">07</span>RSVP</a>
   </nav>
 
   <main>
@@ -766,6 +813,14 @@
             <p>Long gowns and formal menswear in our wedding palette below. The wedding party leads the runway.</p>
           </article>
         </div>
+        <figure class="attire-guide reveal d2">
+          <button type="button" class="ag-frame" id="attire-zoom" aria-label="Enlarge the attire guide">
+            <img src="images/attire-guide.webp" width="1672" height="941" loading="lazy" decoding="async"
+                 alt="Illustrated attire guide. From left: parents in gold, secondary sponsors in beige gold, bridesmaids in dusty rose, the maid of honor in old rose, the bride and groom, the best man in taupe with a sage tie, groomsmen in light beige with sage ties, flower girls and ring bearers, and guests in sage-green pastel, each shown above their colour swatch." />
+            <span class="ag-zoom">&#10530; Tap to enlarge</span>
+          </button>
+          <figcaption>Attire Guide &middot; dress in our colours</figcaption>
+        </figure>
         <div class="palette reveal d2" aria-label="Wedding palette">
           <div class="script">our colors</div>
           <div class="swatches">
@@ -775,6 +830,110 @@
             <div class="swatch"><span class="dot" style="background:#fbf9f4"></span>Ivory</div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <div class="divider"><span class="ln"></span><svg class="pl"><use href="#ic-ring"/></svg><span class="ln"></span></div>
+
+    <!-- ENTOURAGE -->
+    <section class="section" id="entourage">
+      <div class="inner">
+        <div class="head">
+          <h2 class="reveal d1">Our Entourage</h2>
+          <div class="script reveal d2" style="color:var(--rose-deep)">with us</div>
+          <div class="diamond reveal d2"></div>
+          <p class="reveal d2">The family and friends who walk beside us as our next chapter takes flight.</p>
+        </div>
+
+        <article class="manifest reveal d1">
+          <div class="mh"><span>Flight Manifest</span><svg class="pl"><use href="#ic-plane"/></svg><span>Boarding to Forever</span></div>
+          <div class="mb">
+
+            <div class="ent-leads">
+              <div class="ent-lead rose">
+                <h3>Maids of Honor</h3>
+                <span class="nm">Hannah C. Santioque</span>
+                <span class="nm">Dimples Jenna S. Collera</span>
+              </div>
+              <div class="ent-lead sage">
+                <h3>Best Men</h3>
+                <span class="nm">Teddy Botabara</span>
+                <span class="nm">Joval C. Santioque</span>
+              </div>
+            </div>
+
+            <div class="ent-party">
+              <div class="ent-col">
+                <span class="role">In Dusty Rose</span>
+                <h3>Bridesmaids</h3>
+                <ul class="ent-roster">
+                  <li>Micca Ricka Raphaella T. Cantos</li>
+                  <li>Denise M. Beltran</li>
+                  <li>Josett A. Romano</li>
+                  <li>Gemela Marian A. David</li>
+                  <li>Ceijas Lyn Tagana</li>
+                  <li>Abigail Cayabyab</li>
+                  <li>Vanessa Trinidad</li>
+                  <li>Marielle Serania</li>
+                </ul>
+              </div>
+              <div class="ent-col sage">
+                <span class="role">In Sage</span>
+                <h3>Groomsmen</h3>
+                <ul class="ent-roster">
+                  <li>Romulo Fronda Jr.</li>
+                  <li>Betlee Barraquias</li>
+                  <li>Jason Deichmann</li>
+                  <li>Piolo Barletta</li>
+                  <li>Emil De Dios</li>
+                  <li>Traviz Keinn Climacosa</li>
+                  <li>Vaunn Maribao</li>
+                  <li>John Goloya</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="ent-block">
+              <div class="ehd">
+                <span class="role">In the Ceremony</span>
+                <h3>Ceremony Roles</h3>
+              </div>
+              <div class="ent-mini">
+                <div class="ent-tk"><b>Candle</b><span>Julian Christopher A. Lopez</span><span>Michelle A. Alaras</span></div>
+                <div class="ent-tk"><b>Cord</b><span>Dean Joan</span><span>Chairperson Christian</span></div>
+                <div class="ent-tk"><b>Veil</b><span>Adrianne Micaela Manalaotao</span><span>Axl John Mirabueno</span></div>
+                <div class="ent-tk"><b>Bible</b><span>Seansean Botabara</span></div>
+                <div class="ent-tk"><b>Flower Girl</b><span>Nina Botabara</span></div>
+              </div>
+            </div>
+
+            <div class="ent-block">
+              <div class="ehd">
+                <span class="role">With Gratitude</span>
+                <h3>Principal Sponsors</h3>
+                <span class="ent-sub">Our Ninong &amp; Ninang</span>
+              </div>
+              <div class="ent-sponsors">
+                <span>Dean Joan</span>
+                <span>Chairperson Christian</span>
+                <span>Prof. Benedict Avila</span>
+                <span>Karen Austria</span>
+                <span>Shiela Chan</span>
+                <span>Cheryl Imelda V. Capinpin</span>
+                <span>Patrick M. Santillan</span>
+                <span>Andrew Paul I. Montinola</span>
+                <span>Analiza C. Chiapoco</span>
+                <span>William G. Tan</span>
+                <span>Jaime C. Perez</span>
+                <span>Ma. Corazon D. Babadilla</span>
+                <span>Emalyn Lira</span>
+                <span>Yshmael I. Calma</span>
+                <span>Jennifer Calma</span>
+              </div>
+            </div>
+
+          </div>
+        </article>
       </div>
     </section>
 
@@ -832,7 +991,7 @@
     <p class="verse">"Two are better than one, because they have a good reward for their toil." (Ecclesiastes 4:9)</p>
     <nav class="fnav" aria-label="Footer">
       <a href="#home">Invitation</a><a href="#journey">The Journey</a><a href="#details">Details</a>
-      <a href="#gifts">Gifts</a><a href="#attire">Attire</a><a href="#rsvp">RSVP</a>
+      <a href="#gifts">Gifts</a><a href="#attire">Attire</a><a href="#entourage">Entourage</a><a href="#rsvp">RSVP</a>
     </nav>
     <small>Tommy &amp; Jeyan · December 27, 2026 · Newport City, Pasay</small>
   </footer>
@@ -1032,16 +1191,31 @@
     let lbTrigger = null;
     function showLb(i) {
       if (!lb.classList.contains('active')) lbTrigger = document.activeElement;
+      lb.classList.remove('single');
       lbIndex = (i + galleryBtns.length) % galleryBtns.length;
       lbImg.src = galleryBtns[lbIndex].dataset.full;
+      lbImg.alt = 'Expanded prenup photo';
       lb.classList.add('active'); lb.setAttribute('aria-hidden', 'false');
       $('lb-close').focus();
     }
     const LB_BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
     function closeLb() {
-      lb.classList.remove('active'); lb.setAttribute('aria-hidden', 'true'); lbImg.src = LB_BLANK;
+      lb.classList.remove('active', 'single'); lb.setAttribute('aria-hidden', 'true');
+      lbImg.src = LB_BLANK; lbImg.alt = 'Expanded prenup photo';
       if (lbTrigger && lbTrigger.focus) lbTrigger.focus();
     }
+    function showSingleLb(src, alt) {
+      lbTrigger = document.activeElement;
+      lb.classList.add('single');
+      lbImg.src = src; lbImg.alt = alt || '';
+      lb.classList.add('active'); lb.setAttribute('aria-hidden', 'false');
+      $('lb-close').focus();
+    }
+    const attireZoom = $('attire-zoom');
+    if (attireZoom) attireZoom.addEventListener('click', () => {
+      const img = attireZoom.querySelector('img');
+      showSingleLb(img.currentSrc || img.src, img.alt);
+    });
     galleryBtns.forEach((b, i) => b.addEventListener('click', () => showLb(i)));
     $('lb-close').addEventListener('click', closeLb);
     $('lb-prev').addEventListener('click', (e) => { e.stopPropagation(); showLb(lbIndex - 1); });
@@ -1050,6 +1224,7 @@
     document.addEventListener('keydown', (e) => {
       if (!lb.classList.contains('active')) return;
       if (e.key === 'Escape') { closeLb(); return; }
+      if (lb.classList.contains('single')) { if (e.key === 'Tab') { e.preventDefault(); $('lb-close').focus(); } return; }
       if (e.key === 'ArrowLeft') showLb(lbIndex - 1);
       if (e.key === 'ArrowRight') showLb(lbIndex + 1);
       if (e.key === 'Tab') {
