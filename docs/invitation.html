@@ -117,6 +117,9 @@
       transition: opacity .7s var(--ease), visibility .7s;
     }
     .loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader.quick .loader-word, .loader.quick .loader-sub { opacity: 1; transform: none; }
+    .loader.quick .loader-plane { offset-distance: 86%; opacity: 1; }
+    .loader.quick .loader-trail { stroke-dashoffset: 0; }
     .loader-scene { width: min(340px, 84vw); height: auto; display: block; overflow: visible; }
     .loader-trail { fill: none; stroke: var(--sage); stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: 420; stroke-dashoffset: 420; }
     .loader-plane { color: var(--sage-deep); offset-path: path('M24 150 Q150 150 296 34'); offset-rotate: auto 32deg; offset-distance: 0%; opacity: 0; }
@@ -307,7 +310,8 @@
     .pass .fields .f span { display: block; font-size: 9.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
     .pass .fields .f b { font-family: var(--serif); font-weight: 400; font-size: 19px; }
     .pass .pf { border-top: 1px dashed var(--line); padding: 14px 22px; display: flex; align-items: center; justify-content: space-between; }
-    .pass .map { color: var(--sage-text); font-weight: 400; text-decoration: none; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; display: inline-flex; gap: 7px; align-items: center; }
+    .pass .map { color: var(--sage-text); font-weight: 400; text-decoration: none; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; display: inline-flex; gap: 7px; align-items: center; position: relative; }
+    .pass .map::before { content: ''; position: absolute; inset: -12px 0; }
     .pass.rose .map { color: var(--rose-text); }
     .pass .map:hover { text-decoration: underline; }
     .pass .barcode { height: 26px; width: 90px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 9px); opacity: .55; }
@@ -358,7 +362,7 @@
     .qr-img.missing::after { content: 'Add QR'; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
     .qr figcaption { font-family: var(--serif); font-weight: 400; font-size: 18px; }
     .qr .qr-cap { font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-    .gift-close { position: absolute; top: 12px; right: 12px; width: 42px; height: 42px; border: 1px solid var(--line); background: var(--white); cursor: pointer; font-size: 22px; line-height: 1; color: var(--ink); display: grid; place-items: center; }
+    .gift-close { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border: 1px solid var(--line); background: var(--white); cursor: pointer; font-size: 22px; line-height: 1; color: var(--ink); display: grid; place-items: center; }
 
     /* ---------- Attire ---------- */
     .attire { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
@@ -440,6 +444,7 @@
       *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
       .reveal { opacity: 1 !important; transform: none !important; }
       .portal img { animation: none; transform: none; }
+      .screen-play:hover img { transform: none; }
     }
   </style>
 </head>
@@ -714,23 +719,23 @@
         <p class="gift-sub">Open your banking or GCash app, scan the matching code, and your blessing finds its way to us. Thank you.</p>
         <div class="gift-grid">
           <figure class="qr">
-            <div class="qr-img"><img src="images/qr/bpi.png" alt="BPI QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <div class="qr-img"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="images/qr/bpi.png" alt="BPI QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
             <figcaption>BPI</figcaption><span class="qr-cap">Scan with BPI</span>
           </figure>
           <figure class="qr">
-            <div class="qr-img"><img src="images/qr/bdo.png" alt="BDO QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <div class="qr-img"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="images/qr/bdo.png" alt="BDO QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
             <figcaption>BDO</figcaption><span class="qr-cap">Scan with BDO</span>
           </figure>
           <figure class="qr">
-            <div class="qr-img"><img src="images/qr/unionbank.png" alt="UnionBank QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <div class="qr-img"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="images/qr/unionbank.png" alt="UnionBank QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
             <figcaption>UnionBank</figcaption><span class="qr-cap">Scan with UnionBank</span>
           </figure>
           <figure class="qr">
-            <div class="qr-img"><img src="images/qr/pnb.png" alt="PNB QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <div class="qr-img"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="images/qr/pnb.png" alt="PNB QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
             <figcaption>PNB</figcaption><span class="qr-cap">Scan with PNB</span>
           </figure>
           <figure class="qr">
-            <div class="qr-img"><img src="images/qr/gcash.png" alt="GCash QR code" loading="lazy" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
+            <div class="qr-img"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="images/qr/gcash.png" alt="GCash QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div>
             <figcaption>GCash</figcaption><span class="qr-cap">Scan with GCash</span>
           </figure>
         </div>
@@ -885,7 +890,9 @@
     (function runLoader() {
       const loader = $('loader');
       const finish = () => { loader.classList.add('done'); afterLoader(); };
-      if (reduceMotion) { setTimeout(finish, 700); return; }
+      // Full takeoff once per session; returning (already-unlocked) visits get a quick badge.
+      const quick = reduceMotion || sessionStorage.getItem('tj_unlocked') === '1';
+      if (quick) { loader.classList.add('quick'); setTimeout(finish, 650); return; }
       requestAnimationFrame(() => loader.classList.add('run'));
       setTimeout(finish, 2350);
     })();
@@ -1067,7 +1074,9 @@
     (function () {
       const modal = $('gift-modal'), open = $('gift-open'), close = $('gift-close');
       if (!modal || !open) return;
-      open.addEventListener('click', () => { if (modal.showModal) modal.showModal(); else modal.setAttribute('open', ''); });
+      let qrLoaded = false;
+      const loadQRs = () => { if (qrLoaded) return; qrLoaded = true; modal.querySelectorAll('.qr-img img[data-src]').forEach(img => { img.src = img.dataset.src; }); };
+      open.addEventListener('click', () => { loadQRs(); if (modal.showModal) modal.showModal(); else modal.setAttribute('open', ''); });
       close.addEventListener('click', () => modal.close());
       modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
     })();
