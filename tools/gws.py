@@ -79,6 +79,30 @@ def upload_workbook(wb: openpyxl.Workbook) -> str:
     return result.get("id", FILE_ID)
 
 
+def upload_workbook_bytes(path: str) -> str:
+    """Upload a local .xlsx file's RAW bytes to Drive, replacing the existing file.
+
+    Use this (not upload_workbook) when the file contains images/drawings: it
+    streams the bytes verbatim, so nothing is lost. Requires the service account
+    to have Editor access on FILE_ID.
+    """
+    if not FILE_ID:
+        raise ValueError("GOOGLE_DRIVE_FILE_ID not set in .env")
+
+    with open(path, "rb") as fh:
+        buf = io.BytesIO(fh.read())
+    buf.seek(0)
+
+    service = _drive_service()
+    media = MediaIoBaseUpload(
+        buf,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        resumable=False,
+    )
+    result = service.files().update(fileId=FILE_ID, media_body=media).execute()
+    return result.get("id", FILE_ID)
+
+
 if __name__ == "__main__":
     print("Downloading workbook...")
     wb = download_workbook()

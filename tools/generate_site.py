@@ -84,29 +84,107 @@ def read_vendors(wb):
 
 
 def read_guests(wb):
+    """Parse the Guest List by HEADER names, not fixed column indexes.
+
+    The workbook schema has shifted (an honorific column — Mr./Ms. — was
+    inserted between '#' and 'Name'), so hard-coded indexes mis-map every
+    field. We locate the header row, build a name->index map, and read each
+    guest relative to that. Robust to future column reordering/insertions.
+    """
     ws = wb["Guest List"]
-    # Columns: #, Name, Side, Group, Role, +1?, Pax, Status, Notes, Table#
+    all_rows = list(ws.iter_rows(values_only=True))
+
+    def norm(cell):
+        return str(cell).strip().lower() if cell is not None else ""
+
+    # Find the header row: the one carrying Name + Side + Pax.
+    header = None
+    header_idx = None
+    for i, row in enumerate(all_rows):
+        cells = [norm(c) for c in row]
+        if "name" in cells and "side" in cells and "pax" in cells:
+            header = cells
+            header_idx = i
+            break
+    if header is None:
+        return {"total": 0, "rows": []}
+
+    def col(*aliases):
+        for a in aliases:
+            if a in header:
+                return header.index(a)
+        return None
+
+    ci = {
+        "num":    col("#"),
+        "name":   col("name"),
+        "side":   col("side"),
+        "group":  col("group"),
+        "role":   col("role"),
+        "plus1":  col("+1?", "+1"),
+        "pax":    col("pax"),
+        "status": col("status"),
+        "notes":  col("notes"),
+        "table":  col("table #", "table#", "table"),
+    }
+
+    def get(row, key):
+        idx = ci[key]
+        if idx is None or idx >= len(row):
+            return None
+        return row[idx]
+
     rows = []
     total_pax = 0
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        if not row[0] or not isinstance(row[0], (int, float)):
+    for row in all_rows[header_idx + 1:]:
+        num = get(row, "num")
+        if not isinstance(num, (int, float)):
             continue
-        pax   = int(row[6]) if isinstance(row[6], (int, float)) else 1
-        table = int(row[9]) if isinstance(row[9], (int, float)) else None
+        pax_val = get(row, "pax")
+        pax = int(pax_val) if isinstance(pax_val, (int, float)) else 1
+        table_val = get(row, "table")
+        table = int(table_val) if isinstance(table_val, (int, float)) else None
+        plus1 = get(row, "plus1")
         rows.append({
-            "num":    int(row[0]),
-            "name":   str(row[1]).strip() if row[1] else "",
-            "side":   str(row[2]).strip() if row[2] else "",
-            "group":  str(row[3]).strip() if row[3] else "",
-            "role":   str(row[4]).strip() if row[4] else "",
-            "plus1":  str(row[5]).strip() if row[5] else "No",
+            "num":    int(num),
+            "name":   str(get(row, "name")).strip() if get(row, "name") else "",
+            "side":   str(get(row, "side")).strip() if get(row, "side") else "",
+            "group":  str(get(row, "group")).strip() if get(row, "group") else "",
+            "role":   str(get(row, "role")).strip() if get(row, "role") else "",
+            "plus1":  str(plus1).strip() if plus1 else "No",
             "pax":    pax,
-            "status": str(row[7]).strip() if row[7] else "TBC",
-            "notes":  str(row[8]).strip() if row[8] else "",
+            "status": str(get(row, "status")).strip() if get(row, "status") else "TBC",
+            "notes":  str(get(row, "notes")).strip() if get(row, "notes") else "",
             "table":  table,
         })
         total_pax += pax
     return {"total": int(total_pax), "rows": rows}
+
+
+def read_reception(wb):
+    """Reception facts derived from the Budget sheet (single source of truth)."""
+    import re as _re
+    venue, total, notes = "Reception Venue", None, ""
+    catering = ""
+    ws = wb["Budget + Vendor Tracker"]
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        if row[0] == "Reception Venue":
+            venue = (row[1] or "Reception Venue").strip()
+            total = row[3]
+            notes = row[5] or ""
+        elif row[0] == "Caterer":
+            catering = (row[1] or "").strip()
+    # Pull pax / rate from the reception note, with sensible Savoy fallbacks.
+    pax = 120
+    m = _re.search(r"for\s+(\d+)\s*pax", notes, _re.I)
+    if m:
+        pax = int(m.group(1))
+    rate = 2500
+    m = _re.search(r"PHP\s*([\d,]+)\s*/?\s*person", notes, _re.I)
+    if m:
+        rate = int(m.group(1).replace(",", ""))
+    return {"venue": venue, "total": total, "pax": pax, "rate": rate,
+            "catering": catering, "notes": notes}
 
 
 def read_schedule(wb):
@@ -135,6 +213,7 @@ STATUS_BADGE = {
 
 VENDOR_STATUS_BADGE = {
     "Booked":     ("bg-emerald-100 text-emerald-800 border border-emerald-300", "Booked"),
+    "Done":       ("bg-emerald-100 text-emerald-800 border border-emerald-300", "Done"),
     "Finalizing": ("bg-blue-100 text-blue-800 border border-blue-300",          "Finalizing"),
     "Looking":    ("bg-amber-100 text-amber-800 border border-amber-300",       "Looking"),
     "Pending":    ("bg-stone-100 text-stone-500 border border-stone-300",       "Pending"),
@@ -158,19 +237,37 @@ ROLE_BADGE = {
     "VIP / Principal Sponsor (Ninong/Ninang)": ("bg-amber-100 text-amber-800 border border-amber-200", "Principal Sponsor"),
     "MOH":                        ("bg-rose-100 text-rose-700 border border-rose-200",    "MOH"),
     "Best Man":                   ("bg-rose-100 text-rose-700 border border-rose-200",    "Best Man"),
+    "Best Men":                   ("bg-rose-100 text-rose-700 border border-rose-200",    "Best Man"),
     "Entourage - Bridesmaid":     ("bg-pink-100 text-pink-700 border border-pink-200",    "Bridesmaid"),
+    "Bridesmaid":                 ("bg-pink-100 text-pink-700 border border-pink-200",    "Bridesmaid"),
     "Entourage - Groomsmen":      ("bg-blue-100 text-blue-700 border border-blue-200",    "Groomsman"),
     "Candle":                     ("bg-stone-100 text-stone-500 border border-stone-200", "Candle"),
     "Cord":                       ("bg-stone-100 text-stone-500 border border-stone-200", "Cord"),
     "Veil":                       ("bg-stone-100 text-stone-500 border border-stone-200", "Veil"),
     "Ring":                       ("bg-stone-100 text-stone-500 border border-stone-200", "Ring"),
+    "Bible":                      ("bg-stone-100 text-stone-500 border border-stone-200", "Bible"),
+    "Coin":                       ("bg-stone-100 text-stone-500 border border-stone-200", "Coin"),
     "Flower Girl":                ("bg-purple-100 text-purple-700 border border-purple-200", "Flower Girl"),
 }
+
+
+def role_badge_info(role):
+    """Look up a role badge, tolerating compound roles like
+    'VIP / Principal Sponsor (Ninong/Ninang) | Cord' (uses the first match)."""
+    if not role:
+        return None
+    if role in ROLE_BADGE:
+        return ROLE_BADGE[role]
+    for part in role.split("|"):
+        info = ROLE_BADGE.get(part.strip())
+        if info:
+            return info
+    return None
 
 def build_html(tasks, budget, vendors, schedule, guests):
     today          = date.today()
     days_to_go     = (WEDDING_DATE - today).days
-    booked_count   = sum(1 for v in vendors if v["status"] == "Booked")
+    booked_count   = sum(1 for v in vendors if v["status"] in ("Booked", "Done"))
     total_vendors  = len(vendors)
     total_actual   = sum(r["actual"] for r in budget if r["actual"])
     overdue_count  = sum(1 for t in tasks if t["status"] == "Overdue")
@@ -182,7 +279,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
     guest_rows = ""
     for g in guests["rows"]:
         side_cls   = "bg-rose-50 text-rose-700" if g["side"] == "Jeyan" else "bg-blue-50 text-blue-700"
-        role_info  = ROLE_BADGE.get(g["role"])
+        role_info  = role_badge_info(g["role"])
         role_badge = f'<span class="px-1.5 py-0.5 rounded text-xs font-medium {role_info[0]}">{role_info[1]}</span>' if role_info else ""
         table_str  = f"Table {g['table']}" if g["table"] else '<span class="text-stone-300">—</span>'
         guest_rows += f"""
@@ -617,147 +714,121 @@ def build_html(tasks, budget, vendors, schedule, guests):
 # ── Reception / Seating Chart ─────────────────────────────────────────────────
 
 TABLE_META = {
-    1:  ("VIP", "#B5924C"),   2:  ("VIP", "#B5924C"),   3:  ("VIP", "#B5924C"),
-    4:  ("Jeyan Family", "#D4A5A0"), 5: ("Jeyan Family", "#D4A5A0"), 6: ("Jeyan Family", "#D4A5A0"),
-    7:  ("Tommy Family", "#B8837A"), 8: ("Tommy Family", "#B8837A"), 9: ("Tommy Family", "#B8837A"),
-    10: ("Jeyan Friends", "#7A9E7E"), 11: ("Jeyan Friends", "#7A9E7E"),
-    12: ("Jeyan Friends", "#7A9E7E"), 13: ("Jeyan Friends", "#7A9E7E"),
-    14: ("Tommy Friends", "#8B1A35"), 15: ("Tommy Friends", "#8B1A35"), 16: ("Tommy Friends", "#8B1A35"),
+    1:  ("VIP / Sponsors", "#B5924C"), 2:  ("VIP / Sponsors", "#B5924C"),
+    3:  ("Jeyan Family",   "#D4A5A0"),
+    4:  ("Tommy Family",   "#B8837A"), 5:  ("Tommy Family",   "#B8837A"),
+    6:  ("Jeyan Friends",  "#7A9E7E"),
+    7:  ("Tommy Friends",  "#8B1A35"), 8:  ("Tommy Friends",  "#8B1A35"),
+    9:  ("Jeyan Friends",  "#7A9E7E"),
+    10: ("Mixed Friends",  "#8896A6"),
 }
 
-# Talisay floor plan: 9.8m wide × 33m long (300 sqm)
-# SVG viewBox: 420 × 1300.  Scale: 32px/m
-# Kitchen: separate external room above hall (not part of 300sqm).
-# Hall: x=54–366 (312px = 9.75m), y=132–1160 (1028px = 32.1m), stair notch bottom-right.
-# Layout top→bottom: Stage/Backdrop → Sweetheart table → Dance floor → 8 rows of guest tables.
-# Buffet strip on RIGHT WALL alongside rows 4–8 (matches seating mockup).
-# Left col x=130, right col x=290, row spacing 90px from y=400.
+TABLE_CAP = 12   # Savoy "Connect Lounge" round tables seat 12
+
+# Savoy "Connect Lounge" — round-table setup (231.56 sqm; ideal 120 / max 140).
+# Landscape SVG, viewBox 0 0 920 510. Stage on the RIGHT; two rows of five round
+# tables; managed buffet bottom-centre; three entrances along the bottom;
+# registration bottom-left; tech booth + beverage stations top; service rooms
+# (lobby / pantry / toilets / storage / gym) on the left.
 TABLE_POS = {
-    1:  (130, 400),   # Row 1 left  — Sponsors
-    2:  (290, 400),   # Row 1 right — Sponsors
-    3:  (130, 490),   # Row 2 left  — Sponsors
-    4:  (290, 490),
-    5:  (130, 580),
-    6:  (290, 580),
-    7:  (130, 670),
-    8:  (290, 670),
-    9:  (130, 760),
-    10: (290, 760),
-    11: (130, 850),
-    12: (290, 850),
-    13: (130, 940),
-    14: (290, 940),
-    15: (130, 1030),
-    16: (290, 1030),
+    1: (706, 190), 2: (706, 340),     # nearest the stage  — VIP / Sponsors
+    3: (590, 190), 4: (590, 340),
+    5: (474, 190), 6: (474, 340),
+    7: (358, 190), 8: (358, 340),
+    9: (242, 190), 10: (242, 340),    # nearest the entrance
 }
 
-def make_floor_plan_svg(option, by_table):
-    """Return an SVG string for the Talisay floor plan.
-    option='a' → all round tables; option='b' → tables 1-3 as sponsor rectangles.
 
-    Scale: 32px/m.  ViewBox: 0 0 420 1300
-    Hall: x=54–366 (312px = 9.75m), y=132–1160 (1028px = 32.1m)
-    Top→bottom inside hall:
-      Stage/Backdrop (full-width, 2.3m deep)
-      Sweetheart table — T&J circle (separate, below stage)
-      Dance floor (8.5m × 2.7m, dashed)
-      Guest tables T01–T16 (8 rows × 2 cols, r=26, 90px row spacing)
-      Buffet strip RIGHT WALL, rows 4–8 (y=665–1057, matches seating mockup)
-      Mobile bar + Entrance at bottom
-      Stair notch bottom-right
-    """
-    SPONSOR_TABLES = {1, 2, 3}
+def connect_lounge_shell():
+    """Static SVG (no guest tables) for the Savoy Connect Lounge, viewBox 920x510."""
+    return """
+  <!-- outer floor -->
+  <rect x="18" y="36" width="884" height="456" fill="#ffffff" stroke="#C4B49A" stroke-width="2"/>
 
+  <!-- LEFT SERVICE BLOCK -->
+  <rect x="18" y="36" width="152" height="456" fill="#F3ECE2" stroke="#C4B49A" stroke-width="1.5"/>
+  <rect x="32" y="50"  width="124" height="86" rx="2" fill="#fff" stroke="#C9BBA4"/>
+  <text x="94" y="97"  text-anchor="middle" font-size="9" fill="#8B7355">Elevator Lobby</text>
+  <rect x="32" y="146" width="124" height="62" rx="2" fill="#fff" stroke="#C9BBA4"/>
+  <text x="94" y="181" text-anchor="middle" font-size="9" fill="#8B7355">Pantry / Prep</text>
+  <rect x="32" y="218" width="60"  height="64" rx="2" fill="#fff" stroke="#C9BBA4"/>
+  <text x="62" y="254" text-anchor="middle" font-size="8" fill="#8B7355">Female</text>
+  <rect x="96" y="218" width="60"  height="64" rx="2" fill="#fff" stroke="#C9BBA4"/>
+  <text x="126" y="254" text-anchor="middle" font-size="8" fill="#8B7355">Male</text>
+  <rect x="32" y="292" width="124" height="92" rx="2" fill="#fff" stroke="#C9BBA4"/>
+  <text x="94" y="342" text-anchor="middle" font-size="9" fill="#8B7355">Storage</text>
+  <rect x="32" y="394" width="124" height="84" rx="2" fill="#fff" stroke="#C9BBA4"/>
+  <text x="94" y="440" text-anchor="middle" font-size="9" fill="#8B7355">Gym</text>
+
+  <!-- MAIN HALL -->
+  <rect x="175" y="76" width="628" height="356" fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
+
+  <!-- top greenery / planters strip -->
+  <rect x="320" y="84" width="478" height="40" rx="3" fill="#EAF1E6" stroke="#A9C2A0" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="559" y="109" text-anchor="middle" font-size="9" fill="#6F9166" letter-spacing="2">PLANTERS / WINDOWS</text>
+
+  <!-- tech booth + top beverage -->
+  <rect x="676" y="130" width="60" height="24" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
+  <text x="706" y="146" text-anchor="middle" font-size="8" fill="#8B7355">Tech Booth</text>
+  <rect x="516" y="130" width="70" height="20" rx="3" fill="#FEFAE8" stroke="#C4A840" stroke-dasharray="4,2"/>
+  <text x="551" y="144" text-anchor="middle" font-size="8" fill="#7A6010">Beverage</text>
+
+  <!-- right control room -->
+  <rect x="804" y="76" width="80" height="84" rx="2" fill="#F3ECE2" stroke="#C4B49A"/>
+  <text x="844" y="113" text-anchor="middle" font-size="8" fill="#8B7355">Mtg Room</text>
+  <text x="844" y="125" text-anchor="middle" font-size="8" fill="#8B7355">Sto / Ctrl</text>
+
+  <!-- STAGE (right end) -->
+  <rect x="804" y="168" width="84" height="172" rx="4" fill="#EAD8EC" fill-opacity="0.6" stroke="#A484A8" stroke-width="1.5"/>
+  <rect x="810" y="184" width="32" height="26" rx="2" fill="#fff" stroke="#A484A8"/>
+  <text x="826" y="201" text-anchor="middle" font-size="7" fill="#6A3080">Podium</text>
+  <text x="858" y="262" text-anchor="middle" font-size="12" font-weight="bold" fill="#6A3080" transform="rotate(90,858,262)">STAGE</text>
+  <text x="800" y="262" text-anchor="middle" font-size="7" fill="#9070A0" transform="rotate(90,800,262)">projector screen</text>
+
+  <!-- sweetheart table (couple), in front of stage -->
+  <circle cx="758" cy="262" r="21" fill="#8B1A35" fill-opacity="0.15" stroke="#8B1A35" stroke-width="1.8"/>
+  <text x="758" y="259" text-anchor="middle" font-size="9" font-weight="bold" fill="#8B1A35">T &amp; J</text>
+  <text x="758" y="271" text-anchor="middle" font-size="6.5" fill="#8B1A35">sweetheart</text>
+
+  <!-- bottom: beverage + entrances + registration -->
+  <rect x="430" y="404" width="70" height="20" rx="3" fill="#FEFAE8" stroke="#C4A840" stroke-dasharray="4,2"/>
+  <text x="465" y="418" text-anchor="middle" font-size="8" fill="#7A6010">Beverage</text>
+  <rect x="248" y="424" width="48" height="12" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
+  <rect x="464" y="424" width="48" height="12" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
+  <rect x="676" y="424" width="48" height="12" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
+  <text x="272" y="450" text-anchor="middle" font-size="7.5" fill="#8B7355">Room 1 entrance</text>
+  <text x="488" y="450" text-anchor="middle" font-size="7.5" fill="#8B7355">Room 2 entrance</text>
+  <text x="700" y="450" text-anchor="middle" font-size="7.5" fill="#8B7355">Room 3 entrance</text>
+  <rect x="176" y="442" width="50" height="20" rx="2" fill="#fff" stroke="#C9BBA4"/>
+  <text x="201" y="455" text-anchor="middle" font-size="7.5" fill="#8B7355">Registration</text>
+
+  <!-- managed buffet station (corridor, bottom-centre) -->
+  <rect x="406" y="466" width="156" height="22" rx="4" fill="#FEFAE8" fill-opacity="0.95" stroke="#C4A840" stroke-width="1.5"/>
+  <text x="484" y="481" text-anchor="middle" font-size="9" fill="#7A6010" font-weight="600">MANAGED BUFFET STATION</text>
+"""
+
+
+def make_floor_plan_svg(by_table):
+    """Static seating SVG for the Savoy Connect Lounge (10 round tables of 12)."""
     table_svgs = ""
     for tnum, (cx, cy) in TABLE_POS.items():
         _, color = TABLE_META.get(tnum, ("Guest", "#A0A0A0"))
         members   = by_table.get(tnum, [])
         total_pax = sum(g["pax"] for g in members)
-        warn      = " ⚠" if total_pax > 10 else ""
+        warn      = " ⚠" if total_pax > TABLE_CAP else ""
+        table_svgs += f'\n  <circle cx="{cx}" cy="{cy}" r="34" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.6"/>'
+        table_svgs += f'\n  <text x="{cx}" y="{cy - 4}" text-anchor="middle" font-size="14" font-weight="bold" fill="{color}">{tnum}</text>'
+        table_svgs += f'\n  <text x="{cx}" y="{cy + 12}" text-anchor="middle" font-size="9" fill="#5A4040">{int(total_pax)} pax{warn}</text>'
 
-        if option == "b" and tnum in SPONSOR_TABLES:
-            rw, rh   = 120, 44
-            rx_pos   = cx - rw // 2
-            ry_pos   = cy - rh // 2
-            table_svgs += f'\n  <rect x="{rx_pos}" y="{ry_pos}" width="{rw}" height="{rh}" rx="5" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.5"/>'
-            table_svgs += f'\n  <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="11" font-weight="bold" fill="{color}">{tnum} · {int(total_pax)}pax{warn}</text>'
-            table_svgs += f'\n  <text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="9" fill="{color}" font-style="italic">Sponsors</text>'
-        else:
-            table_svgs += f'\n  <circle cx="{cx}" cy="{cy}" r="26" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.5"/>'
-            table_svgs += f'\n  <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="11" font-weight="bold" fill="{color}">{tnum}</text>'
-            table_svgs += f'\n  <text x="{cx}" y="{cy + 9}" text-anchor="middle" font-size="9" fill="#5A4040">{int(total_pax)}pax{warn}</text>'
-
-    return f"""<svg viewBox="0 0 420 1300" width="380" height="1176" xmlns="http://www.w3.org/2000/svg" class="block">
-
-  <!-- ═══ EXTERNAL KITCHEN — separate room, NOT part of 300sqm hall ═══ -->
-  <rect x="54" y="14" width="135" height="118" rx="3" fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
-  <text x="121" y="56" text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700" letter-spacing="0.5">KITCHEN</text>
-  <text x="121" y="72" text-anchor="middle" font-size="9" fill="#9B7A52">separate room</text>
-  <text x="121" y="86" text-anchor="middle" font-size="8" fill="#B09070">(not part of main hall)</text>
-  <!-- Service door: gap in top wall with swing arc -->
-  <line x1="54"  y1="132" x2="76"  y2="132" stroke="#C4B49A" stroke-width="2.5"/>
-  <line x1="100" y1="132" x2="366" y2="132" stroke="#C4B49A" stroke-width="2.5"/>
-  <path d="M 76,132 A 24,24 0 0 1 100,108" fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="3,2"/>
-  <text x="88" y="127" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
-
-  <!-- ═══ MAIN HALL — 9.75m × 32.1m, stair notch bottom-right ═══ -->
-  <polygon points="54,132 366,132 366,1108 316,1160 54,1160" fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
-
-  <!-- ── STAGE / BACKDROP — full-width, top of hall, ~2.3m deep ── -->
-  <rect x="62" y="144" width="296" height="74" rx="6"
-        fill="#EAD8EC" fill-opacity="0.65" stroke="#A484A8" stroke-width="1.5"/>
-  <text x="210" y="176" text-anchor="middle" font-size="12" font-weight="bold" fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
-  <text x="210" y="193" text-anchor="middle" font-size="8" fill="#9070A0">9.25m &#215; 2.3m</text>
-
-  <!-- ── SWEETHEART TABLE — T&amp;J, small circle below stage ── -->
-  <circle cx="210" cy="248" r="22" fill="#8B1A35" fill-opacity="0.15" stroke="#8B1A35" stroke-width="1.8"/>
-  <text x="210" y="244" text-anchor="middle" font-size="9" font-weight="bold" fill="#8B1A35">T &amp; J</text>
-  <text x="210" y="257" text-anchor="middle" font-size="7" fill="#8B1A35">sweetheart</text>
-
-  <!-- ── DANCE FLOOR — below sweetheart table, ~8.5m × 2.7m ── -->
-  <rect x="72" y="278" width="272" height="86" rx="6"
-        fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5" stroke-dasharray="6,3"/>
-  <text x="208" y="318" text-anchor="middle" font-size="11" fill="#B0A090" letter-spacing="2">&#43; DANCE FLOOR</text>
-  <text x="208" y="335" text-anchor="middle" font-size="8" fill="#C8B8A0">8.5m &#215; 2.7m</text>
-
-  <!-- ── DJ BOOTH — right corner beside stage ── -->
-  <rect x="346" y="144" width="18" height="52" rx="3" fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5"/>
-  <text x="355" y="168" text-anchor="middle" font-size="8" fill="#8B6340" font-weight="700" transform="rotate(90,355,168)">DJ</text>
-
-  <!-- ── BUFFET STRIP — RIGHT WALL, rows T04–T16 (y=665–1057) ── -->
-  <rect x="346" y="665" width="20" height="392" rx="3"
-        fill="#FEFAE8" fill-opacity="0.9" stroke="#C4A840" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="356" y="860" text-anchor="middle" font-size="9" fill="#7A6010" font-weight="600" transform="rotate(90,356,860)">BUFFET</text>
-
-  <!-- ── CENTER AISLE ── -->
-  <line x1="210" y1="374" x2="210" y2="1062" stroke="#E0D8D0" stroke-width="1" stroke-dasharray="5,5"/>
-
-  <!-- ── GUEST TABLES T01–T16 ── -->
+    return f"""<svg viewBox="0 0 920 510" width="100%" style="max-width:920px" xmlns="http://www.w3.org/2000/svg" class="block">
+{connect_lounge_shell()}
+  <!-- ── GUEST TABLES (10 × 12) ── -->
   {table_svgs}
-
-  <!-- ── MOBILE BAR — bottom-left ── -->
-  <rect x="57" y="1082" width="74" height="40" rx="5" fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5"/>
-  <text x="94" y="1098" text-anchor="middle" font-size="9" fill="#8B6340" font-weight="600">MOBILE</text>
-  <text x="94" y="1112" text-anchor="middle" font-size="9" fill="#8B6340">BAR</text>
-
-  <!-- ── ENTRANCE DOORS — bottom-center ── -->
-  <rect x="152" y="1098" width="52" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
-  <rect x="218" y="1098" width="52" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
-  <text x="178" y="1118" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-  <text x="244" y="1118" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-  <text x="210" y="1148" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
-
-  <!-- ── STAIR NOTCH — bottom-right ── -->
-  <polygon points="316,1160 366,1108 366,1160" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
-  <text x="343" y="1148" text-anchor="middle" font-size="7" fill="#8B7355" transform="rotate(-45,343,1148)">STAIRS</text>
-
-  <!-- ── DIMENSION LABELS ── -->
-  <text x="210" y="11" text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
-  <text x="22" y="650" text-anchor="middle" font-size="8" fill="#B0A090" transform="rotate(-90,22,650)">33 m</text>
+  <text x="744" y="395" text-anchor="middle" font-size="7.5" fill="#9070A0">guests face the stage →</text>
 </svg>"""
 
 
-def build_reception_html(guests):
+def build_reception_html(guests, reception):
     # Group guests by table
     by_table = {}
     unassigned = []
@@ -767,9 +838,8 @@ def build_reception_html(guests):
         else:
             unassigned.append(g)
 
-    # Build SVG floor plans for both layout options
-    svg_a = make_floor_plan_svg("a", by_table)
-    svg_b = make_floor_plan_svg("b", by_table)
+    # Build the Connect Lounge seating SVG
+    floor_svg = make_floor_plan_svg(by_table)
 
     # Table cards HTML
     table_cards = ""
@@ -777,10 +847,10 @@ def build_reception_html(guests):
         members  = by_table[tnum]
         cat, color = TABLE_META.get(tnum, ("Guest", "#A0A0A0"))
         total_pax  = sum(g["pax"] for g in members)
-        warn_html  = '<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span>' if total_pax > 10 else ""
+        warn_html  = f'<span class="ml-1 text-amber-600 font-bold" title="Over {TABLE_CAP} pax">⚠</span>' if total_pax > TABLE_CAP else ""
         names_html = ""
         for g in members:
-            role_info = ROLE_BADGE.get(g["role"])
+            role_info = role_badge_info(g["role"])
             role_html = f'<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium {role_info[0]}">{role_info[1]}</span>' if role_info else ""
             plus_html = ' <span class="text-xs text-emerald-600">+1</span>' if g["plus1"] == "Yes" else ""
             names_html += f'<li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">{g["name"]}{plus_html}{role_html}</li>'
@@ -834,7 +904,7 @@ def build_reception_html(guests):
   <header style="background: linear-gradient(160deg, #2D0A16 0%, #5A1525 50%, #8B1A35 100%);">
     <div class="max-w-7xl mx-auto px-6 py-10 flex items-center justify-between flex-wrap gap-4">
       <div>
-        <p class="text-[#B5924C] text-xs tracking-[0.4em] uppercase mb-1">Reception · Talisay Events Hall</p>
+        <p class="text-[#B5924C] text-xs tracking-[0.4em] uppercase mb-1">Reception · {reception['venue']}</p>
         <h1 class="serif text-4xl md:text-5xl text-white font-light italic">Seating Chart</h1>
         <p class="text-stone-400 text-xs mt-2">Tommy &amp; Jeyan &bull; December 27, 2026 &bull; Updated {now_str}</p>
       </div>
@@ -851,8 +921,8 @@ def build_reception_html(guests):
     <div class="flex flex-wrap gap-4 mb-8 items-start">
       <div class="section-card px-6 py-4 flex-1 min-w-60">
         <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Venue</p>
-        <p class="serif text-xl font-light text-stone-800">Gallio Events Hall — Talisay</p>
-        <p class="text-stone-400 text-sm">±300 sqm · 9.8m × 33m · {guests['total']} est. pax</p>
+        <p class="serif text-xl font-light text-stone-800">{reception['venue']}</p>
+        <p class="text-stone-400 text-sm">Package for {reception['pax']} pax · ₱{reception['rate']:,}/pax · {fmt_php(reception['total'])} (incl. catering)</p>
       </div>
       <div class="section-card px-6 py-4">
         <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">Legend</p>
@@ -862,31 +932,22 @@ def build_reception_html(guests):
           <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#B8837A"></span>Tommy's Family</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#7A9E7E"></span>Jeyan's Friends</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#8B1A35"></span>Tommy's Friends</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#8896A6"></span>Mixed Friends</span>
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col lg:flex-row gap-8">
+    <div class="space-y-8">
 
-      <!-- Floor plan SVG with layout options -->
-      <div class="section-card p-6 flex-shrink-0">
-        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3">Floor Plan — Talisay (300 sqm)</p>
-        <div class="flex gap-2 mb-4">
-          <button id="btn-a" onclick="showOption('a')"
-            class="px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors">
-            Option A &middot; All Round
-          </button>
-          <button id="btn-b" onclick="showOption('b')"
-            class="px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors">
-            Option B &middot; Sponsor Tables
-          </button>
-        </div>
-        <div id="svg-a">{svg_a}</div>
-        <div id="svg-b" style="display:none">{svg_b}</div>
+      <!-- Floor plan SVG — Savoy Connect Lounge -->
+      <div class="section-card p-6">
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Floor Plan — {reception['venue']} · Connect Lounge</p>
+        <p class="text-stone-400 text-xs mb-4">Round-table setup &middot; 10 tables &times; 12 &middot; ideal 120 pax &middot; stage at right, buffet &amp; entrances along the bottom</p>
+        {floor_svg}
       </div>
 
       <!-- Table cards -->
-      <div class="flex-1">
+      <div>
         <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-4">Tables &amp; Guests</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {table_cards}
@@ -901,22 +962,6 @@ def build_reception_html(guests):
     <span class="serif italic text-stone-400">Tommy &amp; Jeyan &bull; December 27, 2026</span>
   </footer>
 
-  <script>
-    function showOption(opt) {{
-      document.getElementById('svg-a').style.display = opt === 'a' ? '' : 'none';
-      document.getElementById('svg-b').style.display = opt === 'b' ? '' : 'none';
-      var activeClass = 'bg-[#8B1A35] text-white border-[#8B1A35]';
-      var inactiveClass = 'bg-white text-stone-500 border-stone-300 hover:bg-stone-50';
-      if (opt === 'a') {{
-        document.getElementById('btn-a').className = 'px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors';
-        document.getElementById('btn-b').className = 'px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors';
-      }} else {{
-        document.getElementById('btn-a').className = 'px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors';
-        document.getElementById('btn-b').className = 'px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors';
-      }}
-    }}
-  </script>
-
 </body>
 </html>"""
     return html
@@ -924,7 +969,7 @@ def build_reception_html(guests):
 
 # ── Interactive Floor Plan Editor ────────────────────────────────────────────
 
-def build_floorplan_html(guests):
+def build_floorplan_html(guests, reception):
     """
     Interactive drag-and-drop floor plan editor.
     Scale: 40px/m  →  Hall 9.8m × 33m = 392 × 1320 px  (x=30–422, y=150–1470)
@@ -944,20 +989,8 @@ def build_floorplan_html(guests):
         for t, (cat, col) in TABLE_META.items()
     })
 
-    # Initial table positions at 40px/m
-    # Hall: left x=30, right x=422 (9.8m), top y=150, bottom y=1470 (33m)
-    # Left col x=130 (2.5m from left), right col x=322 (2.5m from right)
-    # Rows start at y=520, spacing 100px (2.5m between centers)
-    fp_pos = {
-        1: (130, 520), 2: (322, 520),
-        3: (130, 620), 4: (322, 620),
-        5: (130, 720), 6: (322, 720),
-        7: (130, 820), 8: (322, 820),
-        9: (130, 920), 10: (322, 920),
-       11: (130,1020), 12: (322,1020),
-       13: (130,1120), 14: (322,1120),
-       15: (130,1220), 16: (322,1220),
-    }
+    # Initial table positions = the Connect Lounge 2x5 grid (viewBox 920x510).
+    fp_pos = dict(TABLE_POS)
     table_pos_json = json.dumps(
         {str(t): {"x": x, "y": y} for t, (x, y) in fp_pos.items()}
     )
@@ -966,22 +999,19 @@ def build_floorplan_html(guests):
         for t, (cat, col) in TABLE_META.items()
     })
 
-    comp_defaults_json = json.dumps({
-        "comp-sweetheart": {"x": 226, "y": 290},
-        "comp-dancefloor": {"x": 226, "y": 400},
-        "comp-dj":         {"x": 410, "y": 218},
-        "comp-buffet":     {"x": 413, "y": 960},
-        "comp-mobilebar":  {"x": 83,  "y": 1320},
-    })
+    # Venue fixtures (stage, buffet, sweetheart…) are part of the fixed shell now,
+    # so there are no draggable fixtures — only the guest tables move.
+    comp_defaults_json = json.dumps({})
 
-    # ── Grid lines (1 m = 40 px, inside hall bounds) ─────────────────────────
+    # ── Grid lines (inside hall bounds, viewBox 920x510) ─────────────────────
     grid_svg = ""
-    for gx in range(70, 422, 40):
-        grid_svg += f'<line x1="{gx}" y1="150" x2="{gx}" y2="1470"/>'
-    for gy in range(190, 1470, 40):
-        grid_svg += f'<line x1="30" y1="{gy}" x2="422" y2="{gy}"/>'
+    for gx in range(195, 800, 40):
+        grid_svg += f'<line x1="{gx}" y1="76" x2="{gx}" y2="432"/>'
+    for gy in range(96, 432, 40):
+        grid_svg += f'<line x1="175" y1="{gy}" x2="803" y2="{gy}"/>'
 
     now_str = datetime.now().strftime("%B %d, %Y at %I:%M %p")
+    shell = connect_lounge_shell()
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -1040,7 +1070,7 @@ def build_floorplan_html(guests):
     <div>
       <p class="text-[#B5924C] text-xs tracking-[.4em] uppercase mb-1">Interactive Editor</p>
       <h1 class="serif text-4xl text-white font-light italic">Floor Plan</h1>
-      <p class="text-stone-400 text-xs mt-1">Tommy &amp; Jeyan · Dec 27 2026 · Talisay Events Hall · 9.8 m × 33 m · 40 px/m</p>
+      <p class="text-stone-400 text-xs mt-1">Tommy &amp; Jeyan · Dec 27 2026 · {reception['venue']} · Connect Lounge · drag tables to reposition</p>
     </div>
     <div class="flex gap-3 flex-wrap">
       <a href="reception.html" class="text-xs text-[#B5924C] border border-[#B5924C] px-4 py-2 rounded-full hover:bg-[#B5924C] hover:text-white transition-colors">Seating Chart</a>
@@ -1084,103 +1114,17 @@ def build_floorplan_html(guests):
   <div class="flex justify-center mb-6">
     <div class="sc p-5">
       <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3 text-center">
-        Talisay Events Hall · 9.8 m × 33 m · drag any item to reposition
+        Savoy Connect Lounge · round-table setup (10 × 12) · drag a table to reposition
       </p>
-      <div style="overflow-y:auto; max-height:78vh; overflow-x:hidden;">
-        <svg id="fp-svg" viewBox="0 0 460 1570" width="460"
-             xmlns="http://www.w3.org/2000/svg" style="display:block; touch-action:none;">
+      <div style="overflow:auto; max-height:78vh;">
+        <svg id="fp-svg" viewBox="0 0 920 510" width="920"
+             xmlns="http://www.w3.org/2000/svg" style="display:block; touch-action:none; max-width:100%;">
 
           <!-- Grid (1 m = 40 px) -->
           <g id="fp-grid" style="display:none">{grid_svg}</g>
 
-          <!-- ── FIXED: Hall background ── -->
-
-          <!-- Kitchen: external separate room -->
-          <rect x="30" y="10" width="160" height="120" rx="3"
-                fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
-          <text x="110" y="52"  text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700">KITCHEN</text>
-          <text x="110" y="67"  text-anchor="middle" font-size="9"  fill="#9B7A52">separate room</text>
-          <text x="110" y="80"  text-anchor="middle" font-size="8"  fill="#B09070">not part of 300 sqm</text>
-
-          <!-- Service door gap + swing arc -->
-          <line x1="30"  y1="150" x2="62"  y2="150" stroke="#C4B49A" stroke-width="2.5"/>
-          <line x1="94"  y1="150" x2="422" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
-          <path d="M 62,150 A 32,32 0 0 1 94,118"
-                fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="4,2"/>
-          <text x="78" y="145" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
-
-          <!-- Main hall: 9.8 m × 33 m -->
-          <polygon points="30,150 422,150 422,1430 382,1470 30,1470"
-                   fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
-
-          <!-- Stage / Backdrop: 9.4 m × 2.0 m, fixed -->
-          <rect x="38" y="162" width="376" height="80" rx="6"
-                fill="#EAD8EC" fill-opacity=".65" stroke="#A484A8" stroke-width="1.5"/>
-          <text x="226" y="198" text-anchor="middle" font-size="12" font-weight="bold"
-                fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
-          <text x="226" y="214" text-anchor="middle" font-size="8" fill="#9070A0">9.4 m × 2.0 m · fixed</text>
-
-          <!-- Stair notch -->
-          <polygon points="382,1470 422,1430 422,1470" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
-          <text x="408" y="1462" text-anchor="middle" font-size="7" fill="#8B7355"
-                transform="rotate(-45,408,1462)">STAIRS</text>
-
-          <!-- Entrance doors -->
-          <rect x="152" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
-          <rect x="234" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
-          <text x="184" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-          <text x="266" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
-          <text x="226" y="1500" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
-
-          <!-- Dimension labels -->
-          <text x="226" y="7"   text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
-          <text x="16"  y="810" text-anchor="middle" font-size="8" fill="#B0A090"
-                transform="rotate(-90,16,810)">33 m</text>
-
-          <!-- Scale bar (1 m = 40 px) -->
-          <line x1="38" y1="1540" x2="78" y2="1540" stroke="#B0A090" stroke-width="2"/>
-          <line x1="38" y1="1534" x2="38" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
-          <line x1="78" y1="1534" x2="78" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
-          <text x="58" y="1558" text-anchor="middle" font-size="9" fill="#B0A090">1 m</text>
-
-          <!-- ── DRAGGABLE FIXTURES ── -->
-
-          <g class="fp-comp" id="comp-sweetheart" transform="translate(226,290)" data-type="sweetheart">
-            <circle r="22" fill="#8B1A35" fill-opacity=".18" stroke="#8B1A35" stroke-width="2" class="fp-body"/>
-            <text text-anchor="middle" y="-3" font-size="8" font-weight="bold" fill="#8B1A35">T&amp;J</text>
-            <text text-anchor="middle" y="9"  font-size="6" fill="#8B1A35">sweetheart</text>
-          </g>
-
-          <g class="fp-comp" id="comp-dancefloor" transform="translate(226,400)" data-type="dancefloor">
-            <rect x="-170" y="-60" width="340" height="120" rx="6"
-                  fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5"
-                  stroke-dasharray="6,3" class="fp-body"/>
-            <text text-anchor="middle" y="-10" font-size="11" fill="#B0A090" letter-spacing="2">+ DANCE FLOOR</text>
-            <text text-anchor="middle" y="7"   font-size="8"  fill="#C8B8A0">8.5 m × 3.0 m</text>
-            <text text-anchor="middle" y="22"  font-size="7"  fill="#D0C8C0">drag to reposition</text>
-          </g>
-
-          <g class="fp-comp" id="comp-dj" transform="translate(410,218)" data-type="dj">
-            <rect x="-12" y="-32" width="24" height="64" rx="3"
-                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
-            <text text-anchor="middle" y="-6" font-size="8" font-weight="700" fill="#8B6340">DJ</text>
-            <text text-anchor="middle" y="6"  font-size="6"                   fill="#A88050">booth</text>
-          </g>
-
-          <g class="fp-comp" id="comp-buffet" transform="translate(413,960)" data-type="buffet">
-            <rect x="-15" y="-120" width="30" height="240" rx="3"
-                  fill="#FEFAE8" fill-opacity=".92" stroke="#C4A840"
-                  stroke-width="1.5" stroke-dasharray="5,3" class="fp-body"/>
-            <text text-anchor="middle" y="5" font-size="9" fill="#7A6010" font-weight="600"
-                  transform="rotate(-90,0,5)">BUFFET</text>
-          </g>
-
-          <g class="fp-comp" id="comp-mobilebar" transform="translate(83,1320)" data-type="mobilebar">
-            <rect x="-46" y="-20" width="92" height="40" rx="5"
-                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
-            <text text-anchor="middle" y="-3" font-size="9"  font-weight="600" fill="#8B6340">MOBILE BAR</text>
-            <text text-anchor="middle" y="10" font-size="7"                    fill="#B09070">2.3 m × 1.0 m</text>
-          </g>
+          <!-- ── FIXED: Connect Lounge shell ── -->
+          {shell}
 
           <!-- ── TABLES (rendered by JS on init) ── -->
           <g id="fp-tables"></g>
@@ -1418,7 +1362,7 @@ function addTable() {{
   const newNum = nums.length ? Math.max(...nums)+1 : 1;
   const color = '#9CA3AF';
   // Place at center of hall
-  const cx=226, cy=810;
+  const cx=489, cy=255;
   tables[newNum] = {{cat:'Custom', color, x:cx, y:cy}};
   createTableSVG(newNum, cx, cy, color);
   saveAll();
@@ -1470,7 +1414,7 @@ function renderDetail(tNum) {{
   const meta  = tables[String(tNum)] || tables[tNum] || {{cat:'Guest',color:'#A0A0A0'}};
   const gs    = GUESTS.filter(g=>assignments[g.num]===tNum);
   const pax   = gs.reduce((s,g)=>s+g.pax,0);
-  const overLimit = pax>10;
+  const overLimit = pax>12;
 
   document.getElementById('d-title').textContent=`Table ${{tNum}}`;
   document.getElementById('d-cat').innerHTML=
@@ -1537,8 +1481,8 @@ function updatePaxLabels() {{
     const el=document.getElementById(`fp-px${{t}}`);
     if(!el) return;
     const p=byT[t]||0;
-    el.textContent=p+'pax'+(p>10?' ⚠':'');
-    el.setAttribute('fill',p>10?'#dc2626':'#5A4040');
+    el.textContent=p+'pax'+(p>12?' ⚠':'');
+    el.setAttribute('fill',p>12?'#dc2626':'#5A4040');
   }});
 }}
 
@@ -1558,7 +1502,7 @@ function renderTableList() {{
   let html=nums.map(t=>{{
     const meta=tables[t]||{{}};
     const pax=(byT[t]||[]).reduce((s,g)=>s+g.pax,0);
-    const warn=pax>10?'<span style="color:#dc2626"> ⚠</span>':'';
+    const warn=pax>12?'<span style="color:#dc2626"> ⚠</span>':'';
     const selCls=selTable===t?' sel':'';
     return `<div class="trow${{selCls}}" id="trow-${{t}}" onclick="selectTable(${{t}})">
       <span class="w-3 h-3 rounded-full flex-shrink-0"
@@ -1620,17 +1564,19 @@ def main():
     vendors  = read_vendors(wb)
     schedule = read_schedule(wb)
     guests   = read_guests(wb)
+    reception = read_reception(wb)
 
     print(f"  Timeline : {len(tasks)} tasks")
     print(f"  Budget   : {len(budget)} categories")
     print(f"  Vendors  : {len(vendors)} vendors")
     print(f"  Schedule : {len(schedule)} items")
     print(f"  Guests   : {guests['total']} total pax, {len(guests['rows'])} names")
+    print(f"  Reception: {reception['venue']} — {reception['pax']} pax @ PHP {reception['rate']:,}")
 
     print("Generating HTML...")
     dashboard_html  = build_html(tasks, budget, vendors, schedule, guests)
-    reception_html  = build_reception_html(guests)
-    floorplan_html  = build_floorplan_html(guests)
+    reception_html  = build_reception_html(guests, reception)
+    floorplan_html  = build_floorplan_html(guests, reception)
 
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
