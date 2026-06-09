@@ -299,58 +299,84 @@
     #s-world .eyebrow { color: var(--sage-text); }
     #s-world h2 { color: var(--ink); font-size: clamp(30px, 6vw, 58px); }
     #s-world .lede { margin-top: 16px; color: var(--soft); }
-    /* Scattered explorable map of "venues" */
+    /* Keepsake travel map of "venues" */
     .world-map {
       position: relative; width: 100%; max-width: 980px; margin: 34px auto 0;
       aspect-ratio: 3 / 4.4; min-height: 600px;
-      border-radius: 18px; overflow: hidden;
+      border-radius: 14px; overflow: hidden;
       background:
-        radial-gradient(60% 45% at 22% 18%, rgba(156,170,143,.16), transparent 70%),
-        radial-gradient(55% 40% at 82% 72%, rgba(207,154,147,.14), transparent 70%),
-        radial-gradient(50% 38% at 70% 26%, rgba(216,184,106,.12), transparent 70%),
-        var(--paper);
-      border: 1px solid var(--line);
-      box-shadow: inset 0 0 60px rgba(120,90,50,.05);
+        radial-gradient(120% 90% at 50% 0%, rgba(255,253,247,.9), transparent 55%),
+        radial-gradient(70% 50% at 18% 22%, rgba(156,170,143,.13), transparent 70%),
+        radial-gradient(60% 45% at 84% 66%, rgba(207,154,147,.11), transparent 70%),
+        radial-gradient(140% 110% at 50% 110%, rgba(196,168,110,.14), transparent 60%),
+        linear-gradient(165deg, #fdfaf3 0%, #f7f0e1 58%, #f3ead7 100%);
+      border: 1px solid rgba(196,168,110,.4);
+      box-shadow: 0 24px 60px rgba(74,64,52,.10), inset 0 0 80px rgba(140,105,60,.07);
     }
-    /* faint contour / paper grid so it reads as a map */
+    /* aged-paper grain */
     .world-map::before {
-      content: ""; position: absolute; inset: 0; opacity: .5; pointer-events: none;
+      content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: .5;
       background-image:
-        linear-gradient(rgba(120,100,70,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(120,100,70,.05) 1px, transparent 1px);
-      background-size: 46px 46px;
+        radial-gradient(rgba(120,95,60,.05) 1px, transparent 1.4px),
+        radial-gradient(rgba(120,95,60,.04) 1px, transparent 1.4px);
+      background-size: 90px 90px, 57px 57px;
+      background-position: 0 0, 31px 47px;
+    }
+    /* fine inner frame, like an old chart */
+    .world-map::after {
+      content: ""; position: absolute; inset: 11px; z-index: 0; pointer-events: none;
+      border: 1px solid rgba(196,168,110,.38); border-radius: 8px;
+    }
+    .map-decor { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    .map-compass { position: absolute; top: 22px; right: 22px; width: 62px; z-index: 1; pointer-events: none; opacity: .9; }
+    .map-script {
+      position: absolute; left: 24px; bottom: 16px; z-index: 1; pointer-events: none;
+      font-family: var(--serif); font-style: italic; font-size: 21px; color: var(--sage-text); opacity: .85;
     }
     .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-    .map-lines path { fill: none; stroke: var(--sage); stroke-width: 1.4; stroke-dasharray: 2 7;
-      stroke-linecap: round; opacity: .45; }
+    .map-lines .route-glow { fill: none; stroke: rgba(216,184,106,.16); stroke-width: 7; stroke-linecap: round; }
+    .map-lines .route { fill: none; stroke: var(--gold-deep); stroke-width: 2.4; stroke-linecap: round;
+      stroke-dasharray: .1 10.5; opacity: .58; }
+    .route-plane { color: var(--gold-deep); opacity: .92; }
     .map-pin {
       position: absolute; left: calc(var(--mx,50) * 1%); top: calc(var(--my,50) * 1%);
       transform: translate(-50%, -50%); z-index: 2;
       appearance: none; background: none; border: none; cursor: pointer; padding: 0;
-      display: flex; flex-direction: column; align-items: center; gap: 8px; width: 96px;
+      display: flex; flex-direction: column; align-items: center; gap: 7px; width: 104px;
       transition: transform .35s var(--ease);
     }
     .pin-dot {
-      position: relative; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
-      background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-warm);
-      transition: background .35s var(--ease), border-color .35s var(--ease), transform .35s var(--ease);
+      position: relative; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+      background: radial-gradient(circle at 36% 30%, #fffdf8 0%, #f8f2e5 70%, #f3ead7 100%);
+      border: 1px solid rgba(196,168,110,.6);
+      box-shadow: 0 0 0 3px rgba(255,253,248,.9), 0 0 0 4px rgba(196,168,110,.42), 0 12px 26px rgba(80,60,40,.16);
+      transition: background .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease);
     }
-    .pin-dot svg { width: 28px; height: 28px; color: var(--sage-deep); transition: color .35s var(--ease); }
+    .pin-dot svg { width: 27px; height: 27px; color: var(--sage-deep); transition: color .35s var(--ease); }
     .pin-dot::after {
-      content: ""; position: absolute; inset: -6px; border-radius: 50%;
-      border: 1px solid rgba(156,170,143,.5); opacity: 0; animation: pinpulse 3.4s var(--ease) infinite;
+      content: ""; position: absolute; inset: -8px; border-radius: 50%;
+      border: 1px solid rgba(184,150,78,.55); opacity: 0; animation: pinpulse 3.8s var(--ease) infinite;
     }
-    .map-pin:nth-child(odd) .pin-dot::after { animation-delay: 1.1s; }
-    .map-pin:nth-child(3n) .pin-dot::after { animation-delay: 2s; }
-    @keyframes pinpulse { 0% { transform: scale(.85); opacity: .7; } 70% { transform: scale(1.5); opacity: 0; } 100% { opacity: 0; } }
+    .map-pin:nth-child(odd) .pin-dot::after { animation-delay: 1.2s; }
+    .map-pin:nth-child(3n) .pin-dot::after { animation-delay: 2.2s; }
+    @keyframes pinpulse { 0% { transform: scale(.82); opacity: .75; } 70% { transform: scale(1.45); opacity: 0; } 100% { opacity: 0; } }
+    /* place-name labels, like names on an old chart */
     .pin-label {
-      font-family: var(--serif); font-size: 17px; line-height: 1.1; color: var(--ink);
-      background: rgba(255,253,248,.86); padding: 3px 10px; border-radius: 20px; white-space: nowrap;
-      box-shadow: 0 4px 14px rgba(80,60,40,.08);
+      font-family: var(--serif); font-style: italic; font-weight: 500;
+      font-size: 18px; line-height: 1.1; color: var(--ink); white-space: nowrap;
+      text-shadow: 0 1px 0 rgba(253,250,243,.95), 0 0 8px rgba(253,250,243,.95), 0 0 16px rgba(253,250,243,.85);
+      transition: color .3s var(--ease);
     }
-    .map-pin:hover, .map-pin:focus-visible { transform: translate(-50%, -50%) scale(1.07); outline: none; }
-    .map-pin:hover .pin-dot, .map-pin:focus-visible .pin-dot { background: var(--sage); border-color: var(--sage); transform: translateY(-2px); }
+    .map-pin:nth-child(3n) .pin-label { transform: rotate(-1.6deg); }
+    .map-pin:nth-child(3n+1) .pin-label { transform: rotate(1.3deg); }
+    .map-pin:hover, .map-pin:focus-visible { transform: translate(-50%, -50%) scale(1.06); outline: none; }
+    .map-pin:hover .pin-dot, .map-pin:focus-visible .pin-dot {
+      background: radial-gradient(circle at 36% 30%, #aab896 0%, var(--sage) 75%);
+      box-shadow: 0 0 0 3px rgba(255,253,248,.9), 0 0 0 4px rgba(120,136,105,.6), 0 16px 30px rgba(80,60,40,.22);
+      transform: translateY(-3px);
+    }
     .map-pin:hover .pin-dot svg, .map-pin:focus-visible .pin-dot svg { color: #fff; }
+    .map-pin:hover .pin-label, .map-pin:focus-visible .pin-label { color: var(--sage-text); }
     .map-hint { margin-top: 14px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
 
     /* Section 4 — next chapter */
@@ -479,10 +505,12 @@
       #initT { transform: translate(-30vw, -12vh); }
       #initJ { transform: translate(30vw, 12vh); }
       .detail-grid { grid-template-columns: 1fr; }
-      .map-pin { width: 84px; }
-      .pin-label { font-size: 14px; padding: 2px 8px; }
-      .pin-dot { width: 50px; height: 50px; }
-      .pin-dot svg { width: 25px; height: 25px; }
+      .map-pin { width: 88px; }
+      .pin-label { font-size: 15px; }
+      .pin-dot { width: 48px; height: 48px; }
+      .pin-dot svg { width: 24px; height: 24px; }
+      .map-compass { width: 46px; top: 18px; right: 18px; }
+      .map-script { font-size: 17px; left: 18px; bottom: 12px; }
       .ent-leads, .ent-party { grid-template-columns: 1fr; }
       dialog.panel { width: 100%; max-width: 100%; height: 100svh; max-height: 100svh; border-radius: 0; margin: 0; }
       .panel-inner { padding: 28px 20px 40px; }
@@ -615,7 +643,44 @@
         <h2 class="reveal d1">Pieces of us</h2>
         <p class="lede reveal d2">A scattered little map of who we are. Wander, and tap a marker to find your way around the day.</p>
         <div class="world-map reveal d2" id="world-map">
-          <svg class="map-lines" id="map-lines" aria-hidden="true" preserveAspectRatio="none"><path d="" /></svg>
+          <!-- decorative chart layer: contours, graticule, coastline -->
+          <svg class="map-decor" aria-hidden="true" viewBox="0 0 1000 1300" preserveAspectRatio="none">
+            <g stroke="#9caa8f" fill="none" stroke-opacity=".32" vector-effect="non-scaling-stroke">
+              <path vector-effect="non-scaling-stroke" d="M120,260 C140,180 290,150 330,230 C370,310 270,380 190,350 C130,330 105,300 120,260 Z"/>
+              <path vector-effect="non-scaling-stroke" d="M165,265 C180,210 280,195 305,250 C330,305 260,345 205,325 C170,310 155,295 165,265 Z"/>
+              <path vector-effect="non-scaling-stroke" d="M205,265 C215,235 270,230 282,262 C292,290 250,308 222,296 C208,290 200,280 205,265 Z" fill="rgba(156,170,143,.07)"/>
+              <path vector-effect="non-scaling-stroke" d="M760,560 C800,480 940,490 960,580 C980,670 880,730 800,700 C745,680 735,615 760,560 Z"/>
+              <path vector-effect="non-scaling-stroke" d="M800,575 C828,520 910,530 925,590 C940,650 870,690 820,668 C785,652 782,615 800,575 Z"/>
+              <path vector-effect="non-scaling-stroke" d="M180,1020 C200,950 330,940 360,1010 C390,1080 300,1140 225,1115 C175,1098 162,1060 180,1020 Z"/>
+              <path vector-effect="non-scaling-stroke" d="M222,1025 C238,980 320,975 338,1022 C355,1068 295,1105 245,1086 C215,1074 210,1052 222,1025 Z"/>
+            </g>
+            <g stroke="#7a6446" stroke-opacity=".13" vector-effect="non-scaling-stroke">
+              <path vector-effect="non-scaling-stroke" stroke-dasharray="2 12" d="M0,330 H1000 M0,650 H1000 M0,975 H1000"/>
+              <path vector-effect="non-scaling-stroke" stroke-dasharray="2 12" d="M250,0 V1300 M500,0 V1300 M750,0 V1300"/>
+            </g>
+            <path vector-effect="non-scaling-stroke" d="M620,1300 C700,1210 850,1170 1000,1195" fill="none" stroke="#cbb89f" stroke-opacity=".5" stroke-dasharray="1 8" stroke-linecap="round"/>
+            <g stroke="#b8964e" stroke-opacity=".3" stroke-linecap="round" vector-effect="non-scaling-stroke">
+              <path vector-effect="non-scaling-stroke" d="M520,180 h16 M528,172 v16"/>
+              <path vector-effect="non-scaling-stroke" d="M120,620 h16 M128,612 v16"/>
+              <path vector-effect="non-scaling-stroke" d="M880,930 h16 M888,922 v16"/>
+              <path vector-effect="non-scaling-stroke" d="M560,1180 h16 M568,1172 v16"/>
+            </g>
+          </svg>
+          <svg class="map-compass" aria-hidden="true" viewBox="0 0 64 64">
+            <circle cx="32" cy="34" r="26" fill="none" stroke="#b8964e" stroke-opacity=".55"/>
+            <circle cx="32" cy="34" r="2.2" fill="#b8964e"/>
+            <path d="M32,10 L36,34 L32,42 L28,34 Z" fill="#b8964e" fill-opacity=".85"/>
+            <path d="M32,58 L36,34 L28,34 Z" fill="#b8964e" fill-opacity=".3"/>
+            <path d="M8,34 L32,30 L32,38 Z" fill="#b8964e" fill-opacity=".3"/>
+            <path d="M56,34 L32,30 L32,38 Z" fill="#b8964e" fill-opacity=".3"/>
+            <text x="32" y="7.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="11" fill="#945a52">N</text>
+          </svg>
+          <div class="map-script" aria-hidden="true">our little world</div>
+          <svg class="map-lines" id="map-lines" aria-hidden="true" preserveAspectRatio="none">
+            <path class="route-glow" d="" />
+            <path class="route" d="" />
+            <g class="route-plane" id="route-plane" style="display:none"><use href="#ic-plane" width="20" height="20" x="-10" y="-10"/></g>
+          </svg>
           <button class="map-pin" style="--mx:28;--my:8;--x:14;--y:34" data-panel="p-entourage" aria-label="Entourage"><span class="pin-dot"><svg><use href="#ic-box"/></svg></span><span class="pin-label">Entourage</span></button>
           <button class="map-pin" style="--mx:70;--my:16;--x:33;--y:16" data-panel="p-rsvp" aria-label="RSVP"><span class="pin-dot"><svg><use href="#ic-coffee"/></svg></span><span class="pin-label">RSVP</span></button>
           <button class="map-pin" style="--mx:72;--my:38;--x:83;--y:21" data-panel="p-directions" aria-label="Directions"><span class="pin-dot"><svg><use href="#ic-road"/></svg></span><span class="pin-label">Directions</span></button>
@@ -1010,8 +1075,24 @@
     (function () {
       const map = $('world-map'), svg = $('map-lines');
       if (!map || !svg) return;
-      const path = svg.querySelector('path');
+      const route = svg.querySelector('.route');
+      const glow = svg.querySelector('.route-glow');
+      const plane = svg.querySelector('.route-plane');
       const pins = Array.from(map.querySelectorAll('.map-pin'));
+
+      // Smooth Catmull-Rom curve through the pin centres: a wandering travel route.
+      function smoothPath(pts) {
+        if (pts.length < 2) return '';
+        let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+        for (let i = 0; i < pts.length - 1; i++) {
+          const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+          const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+          const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+          d += ` C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+        }
+        return d;
+      }
+
       function draw() {
         const mr = map.getBoundingClientRect();
         if (!mr.width) return;
@@ -1020,14 +1101,41 @@
           const r = p.querySelector('.pin-dot').getBoundingClientRect();
           return [r.left + r.width / 2 - mr.left, r.top + r.height / 2 - mr.top];
         });
-        path.setAttribute('d', pts.map((pt, i) => (i ? 'L' : 'M') + pt[0].toFixed(1) + ' ' + pt[1].toFixed(1)).join(' '));
+        const d = smoothPath(pts);
+        route.setAttribute('d', d);
+        glow.setAttribute('d', d);
       }
       draw();
       window.addEventListener('resize', draw);
       window.addEventListener('load', draw);
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
-      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { draw(); setTimeout(draw, 350); } }), { threshold: 0.15 });
+
+      // A small gold plane drifts along the route while the map is on screen.
+      let visible = false, flying = false, prog = 0, lastT = 0;
+      const LOOP_S = 26; // one full circuit
+      function fly(now) {
+        if (!visible || document.hidden || REDUCED) { flying = false; plane.style.display = 'none'; return; }
+        if (lastT) prog = (prog + (now - lastT) / 1000 / LOOP_S) % 1;
+        lastT = now;
+        let len = 0;
+        try { len = route.getTotalLength(); } catch (e) {}
+        if (len > 0) {
+          const p = route.getPointAtLength(prog * len);
+          const q = route.getPointAtLength(Math.min(len, prog * len + 2));
+          const ang = Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI;
+          plane.style.display = '';
+          plane.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) rotate(${(ang + 90).toFixed(1)})`);
+        }
+        requestAnimationFrame(fly);
+      }
+      function startFly() { if (flying || REDUCED) return; flying = true; lastT = 0; requestAnimationFrame(fly); }
+
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        visible = e.isIntersecting;
+        if (visible) { draw(); setTimeout(draw, 350); startFly(); }
+      }), { threshold: 0.15 });
       io.observe(map);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden && visible) startFly(); });
     })();
 
     /* =========================================================
