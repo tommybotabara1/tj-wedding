@@ -67,7 +67,7 @@
     body.locked main, body.locked .footer-note { opacity: 0; pointer-events: none; }
     a { color: inherit; }
     img { display: block; max-width: 100%; }
-    h1, h2, h3 { font-family: var(--serif); font-weight: 500; margin: 0; line-height: 1.1; letter-spacing: .005em; }
+    h1, h2, h3 { font-family: var(--serif); font-weight: 500; margin: 0; line-height: 1.1; letter-spacing: .005em; text-wrap: balance; }
     p { margin: 0; }
     ::selection { background: rgba(216,184,106,.32); }
     .eyebrow {
@@ -183,12 +183,29 @@
     @keyframes pulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
     /* keyboard / reduced-motion fallback */
     .connect-fallback {
-      position: absolute; left: 50%; bottom: 5.5vh; transform: translateX(-50%); z-index: 3;
-      background: none; border: 1px solid rgba(216,184,106,.5); color: var(--gold-soft);
-      padding: 11px 22px; font-family: var(--sans); font-size: 11px; letter-spacing: .26em;
-      text-transform: uppercase; cursor: pointer; border-radius: 2px;
+      position: absolute; left: 50%; bottom: 6vh; transform: translateX(-50%); z-index: 3;
+      display: inline-flex; align-items: center; min-height: 48px;
+      background: rgba(216,184,106,.10); border: 1px solid rgba(216,184,106,.55); color: var(--gold-soft);
+      padding: 0 26px; font-family: var(--sans); font-size: 12px; letter-spacing: .22em;
+      text-transform: uppercase; cursor: pointer; border-radius: 40px;
+      opacity: 0; animation: fadein 1s var(--ease) 1.8s forwards;
+      transition: background .3s var(--ease), border-color .3s var(--ease), transform .3s var(--ease);
     }
-    .connect-fallback:hover { background: rgba(216,184,106,.12); }
+    .connect-fallback:hover { background: rgba(216,184,106,.2); border-color: var(--gold-soft); transform: translateX(-50%) translateY(-2px); }
+
+    /* ============ Connect bloom (fires when T + J join) ============ */
+    .bloom {
+      position: fixed; inset: 0; z-index: 85; pointer-events: none; opacity: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,244,214,.95), rgba(216,184,106,.32) 28%, transparent 62%);
+      will-change: opacity, transform;
+    }
+    .bloom.fire { animation: bloomflash 1.5s var(--ease) forwards; }
+    @keyframes bloomflash {
+      0% { opacity: 0; transform: scale(.25); }
+      28% { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.9); }
+    }
+    @media (prefers-reduced-motion: reduce) { .bloom.fire { animation: bloomfade .4s linear forwards; } @keyframes bloomfade { 0%{opacity:.6} 100%{opacity:0} } }
 
     /* ============ Title curtain — "Welcome to Our Journey" ============ */
     #title {
@@ -217,8 +234,12 @@
     main { position: relative; z-index: 10; }
     .scene { min-height: 100svh; display: grid; place-items: center; padding: 12vh 24px; position: relative; }
     .scene .copy { text-align: center; max-width: 640px; }
-    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
-    .reveal.in { opacity: 1; transform: none; }
+    .lede, .panel p { text-wrap: pretty; }
+    /* Visible by default; only hidden-for-reveal when JS is active to drive it back in.
+       Guarantees content never ships blank on a hidden tab / headless renderer / JS failure. */
+    .reveal { transition: opacity 1s var(--ease), transform 1s var(--ease); }
+    html.js .reveal { opacity: 0; transform: translateY(26px); }
+    html.js .reveal.in { opacity: 1; transform: none; }
     .reveal.d1 { transition-delay: .05s; } .reveal.d2 { transition-delay: .2s; } .reveal.d3 { transition-delay: .35s; }
 
     /* Section 1 — the journey (over globe, transparent) */
@@ -241,9 +262,11 @@
     .scene.banner, .scene.closer { padding: 0; overflow: hidden; }
     .banner-img, .closer-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
     .banner-veil { position: absolute; inset: 0; z-index: 1; pointer-events: none;
-      background: linear-gradient(180deg, rgba(8,10,9,.7) 0%, rgba(8,10,9,.18) 38%, rgba(8,10,9,.42) 100%); }
+      background:
+        radial-gradient(95% 72% at 50% 52%, rgba(8,10,9,.6), transparent 72%),
+        linear-gradient(180deg, rgba(8,10,9,.62) 0%, rgba(8,10,9,.22) 42%, rgba(8,10,9,.5) 100%); }
     .banner-copy { position: relative; z-index: 2; text-align: center; }
-    .banner-copy .eyebrow { color: var(--gold-soft); }
+    .banner-copy .eyebrow { color: var(--gold-soft); text-shadow: 0 1px 14px rgba(0,0,0,.7); }
     .banner-copy h2 { color: #fdf8ee; font-size: clamp(32px, 7vw, 70px); text-shadow: 0 2px 30px rgba(0,0,0,.5); }
 
     /* Section 2 — The Day (photo + details) */
@@ -458,6 +481,10 @@
       #initT { transform: translate(-30vw, -12vh); }
       #initJ { transform: translate(30vw, 12vh); }
       .detail-grid { grid-template-columns: 1fr; }
+      .map-pin { width: 84px; }
+      .pin-label { font-size: 14px; padding: 2px 8px; }
+      .pin-dot { width: 50px; height: 50px; }
+      .pin-dot svg { width: 25px; height: 25px; }
       .ent-leads, .ent-party { grid-template-columns: 1fr; }
       dialog.panel { width: 100%; max-width: 100%; height: 100svh; max-height: 100svh; border-radius: 0; margin: 0; }
       .panel-inner { padding: 28px 20px 40px; }
@@ -475,10 +502,11 @@
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
       *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
-      .reveal { opacity: 1; transform: none; }
+      .reveal, html.js .reveal { opacity: 1; transform: none; }
       .initial.idle { animation: none; }
     }
   </style>
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body class="locked">
 
@@ -511,6 +539,7 @@
     <canvas id="globe-canvas"></canvas>
     <div class="globe-fallback" id="globe-fallback"></div>
   </div>
+  <div class="bloom" id="bloom" aria-hidden="true"></div>
 
   <!-- ============ Act 0 — opening ============ -->
   <div id="opening" role="dialog" aria-modal="true" aria-label="Drag the initials together to begin">
@@ -520,9 +549,9 @@
       <div class="initial idle" id="initJ" tabindex="0" role="button" aria-label="Initial J — drag toward T, or press Enter">J</div>
       <div class="open-caption" id="open-caption">
         <span class="eyebrow">Welcome</span>
-        <div class="hint">Drag the initials together</div>
+        <div class="hint">Drag the two initials together to begin</div>
       </div>
-      <button class="connect-fallback" id="connect-btn" type="button">Begin the journey</button>
+      <button class="connect-fallback" id="connect-btn" type="button">Or tap here to enter</button>
     </div>
   </div>
 
@@ -544,7 +573,7 @@
       <div class="copy">
         <span class="eyebrow reveal d1">The Journey</span>
         <h2 class="reveal d1">Different paths.<br/>One destination.</h2>
-        <p class="lede reveal d2">Two travelers, a world apart — every turn quietly leading to the same horizon.</p>
+        <p class="lede reveal d2">Two travelers, a world apart. Every turn quietly leading to the same horizon.</p>
         <div class="pinwords reveal d3">
           <span>Adventure</span><span>Growth</span><span>Trust</span>
           <span>Laughter</span><span>Timing</span><span>Dreams</span>
@@ -555,7 +584,7 @@
 
     <!-- Bridge banner — dark globe → warm world (real photo) -->
     <section class="scene banner" id="s-banner" data-scene="banner">
-      <img class="banner-img" src="images/journey-wide.webp" alt="Tommy and Jeyan together under warm festival lights" loading="lazy" decoding="async" />
+      <img class="banner-img" data-parallax="0.18" src="images/journey-wide.webp" alt="Tommy and Jeyan together under warm festival lights" loading="lazy" decoding="async" />
       <div class="banner-veil" aria-hidden="true"></div>
       <div class="copy banner-copy">
         <span class="eyebrow reveal d1">And then the world grew warm</span>
@@ -577,7 +606,7 @@
             <div class="detail reveal d1"><div class="k">Date</div><div class="v">December 27, 2026</div><div class="s">Sunday</div></div>
             <div class="detail reveal d1"><div class="k">Ceremony</div><div class="v">1:30 in the afternoon</div><div class="s">Kindly be seated by 1:15 PM</div></div>
             <div class="detail wide reveal d2"><div class="k">Venue</div><div class="v">St. Therese Parish &middot; Newport City, Pasay</div><div class="s">Reception to follow at Savoy Hotel Manila &middot; program proper 5:00 PM</div></div>
-            <div class="detail wide reveal d2"><div class="k">Dress code</div><div class="v">Smart Formal</div><div class="s">In our colours — sage &amp; dusty rose</div></div>
+            <div class="detail wide reveal d2"><div class="k">Dress code</div><div class="v">Smart Formal</div><div class="s">In our colours: sage &amp; dusty rose</div></div>
           </div>
         </div>
       </div>
@@ -593,7 +622,6 @@
           <svg class="map-lines" id="map-lines" aria-hidden="true" preserveAspectRatio="none"><path d="" /></svg>
           <button class="map-pin" style="--mx:28;--my:8;--x:14;--y:34" data-panel="p-entourage" aria-label="Entourage"><span class="pin-dot"><svg><use href="#ic-box"/></svg></span><span class="pin-label">Entourage</span></button>
           <button class="map-pin" style="--mx:70;--my:16;--x:33;--y:16" data-panel="p-rsvp" aria-label="RSVP"><span class="pin-dot"><svg><use href="#ic-coffee"/></svg></span><span class="pin-label">RSVP</span></button>
-          <button class="map-pin" style="--mx:34;--my:27;--x:56;--y:30" data-panel="p-stay" aria-label="Accommodation"><span class="pin-dot"><svg><use href="#ic-mtn"/></svg></span><span class="pin-label">Accommodation</span></button>
           <button class="map-pin" style="--mx:72;--my:38;--x:83;--y:21" data-panel="p-directions" aria-label="Directions"><span class="pin-dot"><svg><use href="#ic-road"/></svg></span><span class="pin-label">Directions</span></button>
           <button class="map-pin" style="--mx:28;--my:50;--x:85;--y:54" data-panel="p-program" aria-label="Program"><span class="pin-dot"><svg><use href="#ic-mic"/></svg></span><span class="pin-label">Program</span></button>
           <button class="map-pin" style="--mx:70;--my:62;--x:58;--y:72" data-panel="p-itinerary" aria-label="Itinerary"><span class="pin-dot"><svg><use href="#ic-ball"/></svg></span><span class="pin-label">Itinerary</span></button>
@@ -611,12 +639,12 @@
         <h2 class="reveal d1">A few of our favourite moments</h2>
       </div>
       <div class="gallery">
-        <img class="reveal d1" src="images/journey-01.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
-        <img class="reveal d1" src="images/journey-02.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
-        <img class="reveal d1" src="images/journey-03.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
-        <img class="reveal d2" src="images/journey-04.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
-        <img class="reveal d2" src="images/journey-05.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
-        <img class="reveal d2" src="images/journey-06.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
+        <img class="reveal d1" src="images/journey-01.webp" alt="Tommy and Jeyan smiling side by side among soft blue festival lights" loading="lazy" decoding="async" />
+        <img class="reveal d1" src="images/journey-02.webp" alt="Tommy and Jeyan close together at their evening prenup shoot" loading="lazy" decoding="async" />
+        <img class="reveal d1" src="images/journey-03.webp" alt="Tommy and Jeyan looking at each other under warm string lights" loading="lazy" decoding="async" />
+        <img class="reveal d2" src="images/journey-04.webp" alt="Tommy and Jeyan laughing together, dressed in white" loading="lazy" decoding="async" />
+        <img class="reveal d2" src="images/journey-05.webp" alt="Tommy and Jeyan holding each other amid glowing lanterns" loading="lazy" decoding="async" />
+        <img class="reveal d2" src="images/journey-06.webp" alt="Tommy and Jeyan together on a lantern-lit evening" loading="lazy" decoding="async" />
         <img class="wide reveal d2" src="images/savethedate.webp" alt="Tommy and Jeyan — Save the Date, December 27, 2026" loading="lazy" decoding="async" />
       </div>
     </section>
@@ -698,8 +726,8 @@
         <div class="field">
           <label>Will you be joining us?</label>
           <div class="toggle-group" role="group" aria-label="Will you be attending?">
-            <button class="toggle-btn" type="button" data-value="yes">Yes, joyfully</button>
-            <button class="toggle-btn" type="button" data-value="no">Regretfully, no</button>
+            <button class="toggle-btn" type="button" data-value="yes" aria-pressed="false">Yes, joyfully</button>
+            <button class="toggle-btn" type="button" data-value="no" aria-pressed="false">Regretfully, no</button>
           </div>
         </div>
         <div class="field" id="party-size-group">
@@ -795,37 +823,22 @@
     </div>
   </dialog>
 
-  <!-- Accommodation (placeholder) -->
-  <dialog class="panel" id="p-stay" aria-label="Accommodation">
-    <div class="panel-inner">
-      <div class="panel-head">
-        <div><span class="eyebrow">Mountain · Rest &amp; basecamp</span><h3>Accommodation</h3></div>
-        <button class="panel-close" type="button" aria-label="Close">&times;</button>
-      </div>
-      <p>Both the ceremony and reception sit inside <strong>Newport City, Pasay</strong> — a short, walkable cluster of hotels beside NAIA Terminal 3, perfect for guests travelling in.</p>
-      <div class="placeholder-card">
-        <svg class="pc-ic"><use href="#ic-mtn"/></svg>
-        <div class="pc-tag">Details to follow</div>
-        <p style="margin-top:10px">We're finalising a list of recommended hotels and any room blocks near Savoy Hotel Manila. Check back soon — this corner of the map is still being drawn.</p>
-      </div>
-    </div>
-  </dialog>
-
-  <!-- Directions (placeholder + maps) -->
+  <!-- Directions (venue maps + parking) -->
   <dialog class="panel" id="p-directions" aria-label="Directions">
     <div class="panel-inner">
       <div class="panel-head">
         <div><span class="eyebrow">Road · Finding the way</span><h3>Directions</h3></div>
         <button class="panel-close" type="button" aria-label="Close">&times;</button>
       </div>
-      <p>Everything happens within <strong>Newport City, Pasay</strong>, just across from NAIA Terminal 3. Tap a destination to open live directions.</p>
+      <p>Everything happens within <strong>Newport City, Pasay</strong>, just across from NAIA Terminal 3. Tap a venue to open live directions.</p>
       <div class="passes" style="margin-top:18px">
         <article class="pass"><div class="ph"><span>Ceremony</span><svg><use href="#ic-pin"/></svg></div><div class="pb"><h4>St. Therese Parish</h4><p class="addr">Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay" target="_blank" rel="noopener"><svg><use href="#ic-road"/></svg> Get directions</a></div></article>
         <article class="pass rose"><div class="ph"><span>Reception</span><svg><use href="#ic-pin"/></svg></div><div class="pb"><h4>Savoy Hotel Manila</h4><p class="addr">Andrews Avenue, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay" target="_blank" rel="noopener"><svg><use href="#ic-road"/></svg> Get directions</a></div></article>
       </div>
       <div class="placeholder-card" style="margin-top:18px">
-        <div class="pc-tag">Coming soon</div>
-        <p style="margin-top:10px">Parking and shuttle details will be added here closer to the day.</p>
+        <svg class="pc-ic"><use href="#ic-road"/></svg>
+        <div class="pc-tag">Parking on site</div>
+        <p style="margin-top:10px">On-site parking is available at both the church and the hotel. Both venues sit minutes from NAIA Terminal 3 by car or ride-hail.</p>
       </div>
     </div>
   </dialog>
@@ -841,7 +854,7 @@
       <div class="placeholder-card">
         <svg class="pc-ic"><use href="#ic-mic"/></svg>
         <div class="pc-tag">Revealed on the day</div>
-        <p style="margin-top:10px">The full program — and the story of how our paths aligned — will unfold live at the reception. We're keeping this one a happy surprise.</p>
+        <p style="margin-top:10px">The full program, and the story of how our paths aligned, will unfold live at the reception. We're keeping this one a happy surprise.</p>
       </div>
     </div>
   </dialog>
@@ -866,6 +879,7 @@
         try { sessionStorage.setItem('tj-journey-entered', '1'); } catch (e) {}
         if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) {}
         window.dispatchEvent(new CustomEvent('tj-connect'));
+        const bloom = document.getElementById('bloom'); if (bloom) bloom.classList.add('fire');
         opening.classList.add('gone');
         title.classList.add('show'); title.setAttribute('aria-hidden', 'false');
         // Hold the title curtain alone (content stays hidden via body.locked),
@@ -944,10 +958,14 @@
        ========================================================= */
     let activeScene = 'journey';
     (function () {
+      const reveals = document.querySelectorAll('.reveal');
       const io = new IntersectionObserver((entries) => {
         entries.forEach((en) => { if (en.isIntersecting) en.target.classList.add('in'); });
       }, { threshold: 0.18 });
-      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+      reveals.forEach((el) => io.observe(el));
+      // Safety net: if the observer never fires (hidden tab, headless, edge cases),
+      // reveal everything so the page can never be stuck blank.
+      setTimeout(() => reveals.forEach((el) => el.classList.add('in')), 2600);
 
       const sceneIO = new IntersectionObserver((entries) => {
         entries.forEach((en) => {
@@ -1024,8 +1042,8 @@
       let attendingValue = null;
       document.querySelectorAll('.toggle-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.toggle-btn').forEach((i) => i.classList.remove('selected'));
-          btn.classList.add('selected');
+          document.querySelectorAll('.toggle-btn').forEach((i) => { i.classList.remove('selected'); i.setAttribute('aria-pressed', 'false'); });
+          btn.classList.add('selected'); btn.setAttribute('aria-pressed', 'true');
           attendingValue = btn.dataset.value;
           $('party-size-group').style.display = attendingValue === 'yes' ? '' : 'none';
           if (attendingValue === 'no') $('guest-fields-wrapper').innerHTML = '';
@@ -1238,6 +1256,45 @@
         g.fillStyle = grd; g.fillRect(0, 0, 64, 64);
         const t = new THREE.CanvasTexture(c); return t;
       }
+    })();
+
+    /* =========================================================
+       Cinematic motion — Lenis smooth scroll + lightweight parallax
+       Progressive enhancement: if anything fails, native scroll +
+       CSS/IO reveals still work. Disabled under reduced motion.
+       ========================================================= */
+    (function () {
+      function setupParallax() {
+        const layers = [...document.querySelectorAll('[data-parallax]')].map((el) => ({
+          el, speed: parseFloat(el.dataset.parallax) || 0.15
+        }));
+        if (!layers.length) return;
+        let ticking = false;
+        function apply() {
+          const vh = window.innerHeight;
+          layers.forEach(({ el, speed }) => {
+            const r = el.getBoundingClientRect();
+            const off = ((r.top + r.height / 2) - vh / 2) / vh; // ~-1..1
+            el.style.transform = `translate3d(0, ${(-off * speed * 100).toFixed(1)}px, 0) scale(1.16)`;
+          });
+          ticking = false;
+        }
+        function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(apply); } }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        apply();
+      }
+
+      if (REDUCED) return; // motion off → native scroll, no parallax
+
+      // Lenis smooth scroll (lazy). Falls back to native + parallax if it can't load.
+      import('https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.mjs').then((m) => {
+        const Lenis = m.default || m.Lenis;
+        const lenis = new Lenis({ lerp: 0.085, smoothWheel: true, wheelMultiplier: 1 });
+        function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+        setupParallax();
+      }).catch(() => setupParallax());
     })();
   </script>
 </body>
