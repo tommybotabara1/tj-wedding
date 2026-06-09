@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Tommy &amp; Jeyan · Welcome to Our Journey</title>
+  <meta name="description" content="Welcome to Our Journey — the wedding of Tommy &amp; Jeyan. Different paths. One destination. Sunday, December 27, 2026, Newport City, Pasay." />
+  <meta name="theme-color" content="#0b0f0d" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0f0d'/%3E%3Ccircle cx='16' cy='16' r='12.5' fill='none' stroke='%23d8b86a' stroke-width='1'/%3E%3Ctext x='16' y='21' font-family='Georgia,serif' font-size='13' fill='%23e6cd95' text-anchor='middle'%3ETJ%3C/text%3E%3C/svg%3E" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Tommy &amp; Jeyan · Welcome to Our Journey" />
+  <meta property="og:description" content="Different paths. One destination. Sunday, December 27, 2026 · Newport City, Pasay." />
+  <meta property="og:url" content="https://tommybotabara1.github.io/tj-wedding/journey.html" />
+  <meta property="og:image" content="https://tommybotabara1.github.io/tj-wedding/images/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tommy &amp; Jeyan · Welcome to Our Journey" />
+  <meta name="twitter:image" content="https://tommybotabara1.github.io/tj-wedding/images/og-image.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      /* cinematic globe register */
+      --night0: #0b0f0d;
+      --night1: #05070a;
+      --night2: #11161a;
+      --gold: #d8b86a;
+      --gold-soft: #e6cd95;
+      --gold-deep: #b8964e;
+      --sage: #9caa8f;
+      --sage-deep: #788869;
+      --rose: #cf9a93;
+      --rose-deep: #b27c75;
+      /* warm content register */
+      --ivory: #fbf9f4;
+      --cream: #f3ede2;
+      --paper: #fffdfa;
+      --ink: #2e2b27;
+      --soft: #5c554d;
+      --muted: #6e655a;
+      --line: #e6ddcf;
+      --sage-text: #566848;
+      --rose-text: #945a52;
+      --shadow: 0 30px 80px rgba(8, 10, 9, .45);
+      --shadow-warm: 0 24px 60px rgba(74, 64, 52, .14);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+      --script: 'Cormorant Garamond', Georgia, serif;
+      --ease: cubic-bezier(.22,.61,.36,1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--night1); color: #ece6da;
+      font-family: var(--sans); font-weight: 300; line-height: 1.7; letter-spacing: .01em;
+      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    }
+    body.locked { overflow: hidden; height: 100vh; }
+    /* hide the scroll content until the gate is connected */
+    main, .footer-note { transition: opacity 1.1s var(--ease); }
+    body.locked main, body.locked .footer-note { opacity: 0; pointer-events: none; }
+    a { color: inherit; }
+    img { display: block; max-width: 100%; }
+    h1, h2, h3 { font-family: var(--serif); font-weight: 500; margin: 0; line-height: 1.1; letter-spacing: .005em; }
+    p { margin: 0; }
+    ::selection { background: rgba(216,184,106,.32); }
+    .eyebrow {
+      font-size: 12px; letter-spacing: .42em; text-transform: uppercase;
+      color: var(--gold); font-weight: 400;
+    }
+    .script { font-family: var(--script); line-height: 1; }
+    :where(a, button, input, textarea, select, [tabindex]):focus-visible {
+      outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      border: 1px solid var(--gold); background: var(--gold); color: var(--night1);
+      padding: 0 30px; min-height: 52px; cursor: pointer;
+      font-family: var(--sans); font-size: 12px; font-weight: 500;
+      letter-spacing: .26em; text-transform: uppercase; text-decoration: none;
+      transition: background .4s var(--ease), color .4s var(--ease), transform .3s var(--ease);
+    }
+    .btn:hover { background: transparent; color: var(--gold); transform: translateY(-2px); }
+    .btn.ghost { background: transparent; color: var(--gold); }
+    .btn.ghost:hover { background: var(--gold); color: var(--night1); }
+    .btn.dark { border-color: var(--ink); background: var(--ink); color: var(--ivory); }
+    .btn.dark:hover { background: transparent; color: var(--ink); }
+    .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    /* ============ Fixed globe stage (behind everything) ============ */
+    #stage {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(120% 90% at 50% 18%, #14191d 0%, var(--night0) 45%, var(--night1) 100%);
+      transition: opacity 1.1s var(--ease);
+    }
+    #globe-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    /* CSS fallback globe (also the reduced-motion / no-WebGL globe) */
+    .globe-fallback {
+      position: absolute; top: 50%; left: 50%; width: min(64vmin, 520px); aspect-ratio: 1;
+      transform: translate(-50%, -50%); border-radius: 50%;
+      background:
+        radial-gradient(60% 60% at 38% 32%, rgba(216,184,106,.22), transparent 70%),
+        radial-gradient(circle at 50% 50%, #1b2024 0%, #0d1114 70%, #070a0c 100%);
+      box-shadow: 0 0 90px rgba(216,184,106,.10), inset -30px -24px 70px rgba(0,0,0,.6);
+      opacity: .0; transition: opacity 1.2s var(--ease);
+    }
+    .globe-fallback.show { opacity: 1; }
+    .globe-fallback::before {
+      content: ""; position: absolute; inset: 0; border-radius: 50%;
+      background-image: radial-gradient(rgba(216,184,106,.5) .6px, transparent .8px);
+      background-size: 13px 13px; opacity: .35;
+      -webkit-mask: radial-gradient(circle at 50% 50%, #000 60%, transparent 73%);
+              mask: radial-gradient(circle at 50% 50%, #000 60%, transparent 73%);
+      animation: globespin 90s linear infinite;
+    }
+    .globe-fallback::after {
+      content: ""; position: absolute; inset: -6%; border-radius: 50%;
+      border: 1px solid rgba(216,184,106,.18);
+    }
+    @keyframes globespin { to { background-position: 260px 0; } }
+    .stars { position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,250,240,.7), transparent),
+        radial-gradient(1px 1px at 75% 22%, rgba(255,250,240,.5), transparent),
+        radial-gradient(1px 1px at 60% 70%, rgba(255,250,240,.6), transparent),
+        radial-gradient(1px 1px at 35% 80%, rgba(255,250,240,.4), transparent),
+        radial-gradient(1.4px 1.4px at 85% 60%, rgba(255,250,240,.5), transparent),
+        radial-gradient(1px 1px at 12% 64%, rgba(255,250,240,.45), transparent);
+      opacity: .8;
+    }
+
+    /* ============ Act 0 — opening / drag-to-connect ============ */
+    #opening {
+      position: fixed; inset: 0; z-index: 80; display: grid; place-items: center;
+      transition: opacity 1.2s var(--ease), visibility 1.2s var(--ease);
+      touch-action: none;
+    }
+    #opening.gone { opacity: 0; visibility: hidden; pointer-events: none; }
+    .open-inner { position: relative; width: 100%; height: 100%; }
+    .initial {
+      position: absolute; top: 50%; left: 50%;
+      width: 92px; height: 92px; margin: -46px 0 0 -46px;
+      display: grid; place-items: center; cursor: grab; touch-action: none;
+      font-family: var(--serif); font-size: 56px; color: var(--gold-soft);
+      text-shadow: 0 0 26px rgba(216,184,106,.55);
+      border-radius: 50%;
+      transition: transform .5s var(--ease), text-shadow .4s var(--ease);
+      user-select: none; -webkit-user-select: none;
+      z-index: 2;
+    }
+    .initial::after {
+      content: ""; position: absolute; inset: 6px; border-radius: 50%;
+      border: 1px solid rgba(216,184,106,.4);
+      box-shadow: 0 0 40px rgba(216,184,106,.18); opacity: .9;
+      transition: opacity .4s var(--ease), transform .4s var(--ease);
+    }
+    .initial:active { cursor: grabbing; }
+    .initial.idle { animation: float 5.5s var(--ease) infinite; }
+    #initT { transform: translate(calc(-32vw), -8vh); }
+    #initJ { transform: translate(calc(32vw), 8vh); }
+    @keyframes float { 0%,100% { margin-top: -46px; } 50% { margin-top: -56px; } }
+    #connect-line { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: visible; }
+    #connect-line path { fill: none; stroke: url(#goldgrad); stroke-width: 2.2; stroke-linecap: round;
+      filter: drop-shadow(0 0 6px rgba(216,184,106,.8)); }
+    .open-caption {
+      position: absolute; left: 50%; bottom: 12vh; transform: translateX(-50%);
+      text-align: center; z-index: 3; width: min(440px, 86vw);
+    }
+    .open-caption .eyebrow { display: block; opacity: 0; animation: fadein 1s var(--ease) 1s forwards; }
+    .open-caption .hint {
+      margin-top: 12px; font-size: 13px; color: rgba(236,230,218,.6); letter-spacing: .04em;
+      opacity: 0; animation: fadein 1s var(--ease) 1.4s forwards;
+    }
+    .open-caption.nudge .eyebrow { animation: pulse 1.6s var(--ease) infinite; }
+    @keyframes fadein { to { opacity: 1; } }
+    @keyframes pulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+    /* keyboard / reduced-motion fallback */
+    .connect-fallback {
+      position: absolute; left: 50%; bottom: 5.5vh; transform: translateX(-50%); z-index: 3;
+      background: none; border: 1px solid rgba(216,184,106,.5); color: var(--gold-soft);
+      padding: 11px 22px; font-family: var(--sans); font-size: 11px; letter-spacing: .26em;
+      text-transform: uppercase; cursor: pointer; border-radius: 2px;
+    }
+    .connect-fallback:hover { background: rgba(216,184,106,.12); }
+
+    /* ============ Title curtain — "Welcome to Our Journey" ============ */
+    #title {
+      position: fixed; inset: 0; z-index: 70; display: grid; place-items: center;
+      text-align: center; pointer-events: none; padding: 24px;
+      opacity: 0; visibility: hidden; transition: opacity 1.3s var(--ease), visibility 1.3s var(--ease);
+    }
+    #title.show { opacity: 1; visibility: visible; }
+    #title.fade { opacity: 0; }
+    #title .eyebrow { display: block; margin-bottom: 18px; transform: translateY(14px); opacity: 0; }
+    #title.show .eyebrow { transition: all 1s var(--ease) .2s; transform: none; opacity: 1; }
+    #title h1 {
+      font-size: clamp(40px, 11vw, 118px); color: #f4eede; line-height: .98;
+      transform: translateY(20px); opacity: 0; text-shadow: 0 0 40px rgba(216,184,106,.18);
+    }
+    #title.show h1 { transition: all 1.2s var(--ease) .35s; transform: none; opacity: 1; }
+    #title .rule { width: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 26px auto 0; }
+    #title.show .rule { transition: width 1.3s var(--ease) .9s; width: min(280px, 60vw); }
+    #title .scroll-cue { margin-top: 30px; font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(236,230,218,.55); opacity: 0; }
+    #title.show .scroll-cue { transition: opacity 1s var(--ease) 1.6s; opacity: 1; animation: bob 2.2s ease-in-out 2.6s infinite; }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+    /* ============ Scroll content ============ */
+    main { position: relative; z-index: 10; }
+    .scene { min-height: 100svh; display: grid; place-items: center; padding: 12vh 24px; position: relative; }
+    .scene .copy { text-align: center; max-width: 640px; }
+    .reveal { opacity: 0; transform: translateY(26px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
+    .reveal.in { opacity: 1; transform: none; }
+    .reveal.d1 { transition-delay: .05s; } .reveal.d2 { transition-delay: .2s; } .reveal.d3 { transition-delay: .35s; }
+
+    /* Section 1 — the journey (over globe, transparent) */
+    #s-journey .copy h2 { font-size: clamp(30px, 6vw, 60px); color: #f4eede; }
+    #s-journey .lede { margin-top: 18px; color: rgba(236,230,218,.72); font-size: 17px; }
+    .pinwords { display: flex; flex-wrap: wrap; gap: 10px 14px; justify-content: center; margin-top: 28px; }
+    .pinwords span {
+      font-size: 12px; letter-spacing: .26em; text-transform: uppercase; color: var(--gold-soft);
+      border: 1px solid rgba(216,184,106,.32); padding: 8px 14px; border-radius: 40px;
+      background: rgba(216,184,106,.05);
+    }
+    .first-cue { position: absolute; bottom: 4vh; left: 50%; transform: translateX(-50%);
+      font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: rgba(236,230,218,.45); }
+
+    /* Light, warm content base (everything after the globe) */
+    .scene.light { background: var(--ivory); color: var(--ink); }
+    .scene.light .lede { color: var(--soft); }
+
+    /* Bridge banner & closer — full-bleed real photos */
+    .scene.banner, .scene.closer { padding: 0; overflow: hidden; }
+    .banner-img, .closer-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+    .banner-veil { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(180deg, rgba(8,10,9,.7) 0%, rgba(8,10,9,.18) 38%, rgba(8,10,9,.42) 100%); }
+    .banner-copy { position: relative; z-index: 2; text-align: center; }
+    .banner-copy .eyebrow { color: var(--gold-soft); }
+    .banner-copy h2 { color: #fdf8ee; font-size: clamp(32px, 7vw, 70px); text-shadow: 0 2px 30px rgba(0,0,0,.5); }
+
+    /* Section 2 — The Day (photo + details) */
+    .day-wrap { display: grid; gap: 30px; align-items: center; max-width: 1040px; width: 100%; }
+    .day-photo { margin: 0; }
+    .day-photo img { width: 100%; height: 100%; max-height: 76vh; object-fit: cover; border-radius: 10px;
+      box-shadow: var(--shadow-warm); }
+    .day-copy { text-align: left; }
+    #s-beach .eyebrow { color: var(--sage-text); }
+    #s-beach h2 { color: var(--ink); font-size: clamp(34px, 7vw, 64px); }
+    #s-beach .lede { margin-top: 14px; }
+    .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 30px; }
+    .detail { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 20px 18px;
+      text-align: left; box-shadow: var(--shadow-warm); color: var(--ink); }
+    .detail .k { font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--rose-text); }
+    .detail .v { font-family: var(--serif); font-size: 24px; line-height: 1.1; margin-top: 6px; color: var(--ink); }
+    .detail .s { font-size: 13px; color: var(--muted); margin-top: 5px; }
+    .detail.wide { grid-column: 1 / -1; }
+
+    /* Photo gallery */
+    #s-gallery .copy { margin-bottom: 30px; }
+    #s-gallery .eyebrow { color: var(--sage-text); }
+    #s-gallery h2 { color: var(--ink); font-size: clamp(28px, 6vw, 54px); }
+    .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 1040px; }
+    .gallery img { width: 100%; height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px;
+      box-shadow: var(--shadow-warm); transition: transform .5s var(--ease); }
+    .gallery img:hover { transform: scale(1.02); }
+    .gallery .wide { grid-column: 1 / -1; aspect-ratio: 16/9; }
+
+    /* Section 3 — Our World icon grid */
+    #s-world .copy { max-width: 880px; }
+    #s-world .eyebrow { color: var(--sage-text); }
+    #s-world h2 { color: var(--ink); font-size: clamp(30px, 6vw, 58px); }
+    #s-world .lede { margin-top: 16px; color: var(--soft); }
+    /* Scattered explorable map of "venues" */
+    .world-map {
+      position: relative; width: 100%; max-width: 980px; margin: 34px auto 0;
+      aspect-ratio: 3 / 4.4; min-height: 600px;
+      border-radius: 18px; overflow: hidden;
+      background:
+        radial-gradient(60% 45% at 22% 18%, rgba(156,170,143,.16), transparent 70%),
+        radial-gradient(55% 40% at 82% 72%, rgba(207,154,147,.14), transparent 70%),
+        radial-gradient(50% 38% at 70% 26%, rgba(216,184,106,.12), transparent 70%),
+        var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: inset 0 0 60px rgba(120,90,50,.05);
+    }
+    /* faint contour / paper grid so it reads as a map */
+    .world-map::before {
+      content: ""; position: absolute; inset: 0; opacity: .5; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(120,100,70,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120,100,70,.05) 1px, transparent 1px);
+      background-size: 46px 46px;
+    }
+    .map-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+    .map-lines path { fill: none; stroke: var(--sage); stroke-width: 1.4; stroke-dasharray: 2 7;
+      stroke-linecap: round; opacity: .45; }
+    .map-pin {
+      position: absolute; left: calc(var(--mx,50) * 1%); top: calc(var(--my,50) * 1%);
+      transform: translate(-50%, -50%); z-index: 2;
+      appearance: none; background: none; border: none; cursor: pointer; padding: 0;
+      display: flex; flex-direction: column; align-items: center; gap: 8px; width: 96px;
+      transition: transform .35s var(--ease);
+    }
+    .pin-dot {
+      position: relative; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
+      background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-warm);
+      transition: background .35s var(--ease), border-color .35s var(--ease), transform .35s var(--ease);
+    }
+    .pin-dot svg { width: 28px; height: 28px; color: var(--sage-deep); transition: color .35s var(--ease); }
+    .pin-dot::after {
+      content: ""; position: absolute; inset: -6px; border-radius: 50%;
+      border: 1px solid rgba(156,170,143,.5); opacity: 0; animation: pinpulse 3.4s var(--ease) infinite;
+    }
+    .map-pin:nth-child(odd) .pin-dot::after { animation-delay: 1.1s; }
+    .map-pin:nth-child(3n) .pin-dot::after { animation-delay: 2s; }
+    @keyframes pinpulse { 0% { transform: scale(.85); opacity: .7; } 70% { transform: scale(1.5); opacity: 0; } 100% { opacity: 0; } }
+    .pin-label {
+      font-family: var(--serif); font-size: 17px; line-height: 1.1; color: var(--ink);
+      background: rgba(255,253,248,.86); padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(80,60,40,.08);
+    }
+    .map-pin:hover, .map-pin:focus-visible { transform: translate(-50%, -50%) scale(1.07); outline: none; }
+    .map-pin:hover .pin-dot, .map-pin:focus-visible .pin-dot { background: var(--sage); border-color: var(--sage); transform: translateY(-2px); }
+    .map-pin:hover .pin-dot svg, .map-pin:focus-visible .pin-dot svg { color: #fff; }
+    .map-hint { margin-top: 14px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+
+    /* Section 4 — next chapter */
+    #s-next { background:
+        linear-gradient(180deg, var(--ivory) 0%, #1a211d 22%, var(--night0) 60%, var(--night1) 100%); }
+    #s-next .copy { max-width: 640px; }
+    #s-next .eyebrow { color: var(--gold); }
+    #s-next h2 { color: #f4eede; font-size: clamp(28px, 5.6vw, 52px); margin-top: 8px; }
+    #s-next .sub { margin-top: 18px; color: rgba(236,230,218,.74); font-size: 18px; font-family: var(--serif); font-style: italic; }
+    #s-next .btn { margin-top: 34px; }
+    .footer-note { z-index: 10; position: relative; text-align: center; padding: 40px 24px 64px; background: var(--night1); color: rgba(236,230,218,.5); }
+    .footer-note .mono { width: 46px; height: 46px; color: var(--gold); margin: 0 auto 12px; }
+    .footer-note .tag { font-family: var(--script); font-size: 30px; color: var(--gold-soft); }
+    .footer-note .hash { font-size: 12px; letter-spacing: .26em; text-transform: uppercase; margin-top: 6px; color: var(--gold); }
+    .footer-note small { display: block; margin-top: 16px; font-size: 12px; letter-spacing: .08em; }
+    .footer-note a.back { color: rgba(236,230,218,.7); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid rgba(216,184,106,.4); padding-bottom: 2px; }
+
+    /* ============ Panels (dialog) ============ */
+    dialog.panel {
+      border: none; padding: 0; max-width: 720px; width: min(720px, 100%);
+      background: var(--ivory); color: var(--ink); box-shadow: var(--shadow);
+      border-radius: 8px; margin: auto;
+    }
+    dialog.panel::backdrop { background: rgba(8,10,9,.6); backdrop-filter: blur(3px); }
+    .panel-inner { padding: 40px 30px 44px; }
+    .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+    .panel-head .eyebrow { color: var(--sage-text); }
+    .panel-head h3 { font-size: clamp(26px, 5vw, 40px); margin-top: 6px; }
+    .panel-close {
+      flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line);
+      background: var(--paper); font-size: 22px; line-height: 1; cursor: pointer; color: var(--soft);
+    }
+    .panel-close:hover { background: var(--ink); color: var(--ivory); border-color: var(--ink); }
+    .panel p { color: var(--soft); }
+    .divider-sm { display: flex; align-items: center; gap: 12px; margin: 26px 0; color: var(--sage); }
+    .divider-sm::before, .divider-sm::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+    .placeholder-card {
+      border: 1px dashed var(--line); border-radius: 6px; padding: 28px 22px; text-align: center; background: var(--paper);
+    }
+    .placeholder-card .pc-ic { width: 36px; height: 36px; color: var(--sage); margin: 0 auto 12px; }
+    .placeholder-card .pc-tag { font-size: 11px; letter-spacing: .26em; text-transform: uppercase; color: var(--gold-deep); }
+
+    /* Itinerary panel */
+    .passes { display: grid; gap: 22px; }
+    .pass { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--paper); }
+    .pass .ph { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;
+      background: var(--sage); color: #fff; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+    .pass.rose .ph { background: var(--rose); }
+    .pass .ph svg { width: 16px; height: 16px; }
+    .pass .pb { padding: 18px 18px 20px; }
+    .pass .role { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+    .pass h4 { font-family: var(--serif); font-size: 24px; margin: 4px 0 4px; }
+    .pass .addr { font-size: 14px; color: var(--muted); }
+    .pass .fields { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; }
+    .pass .fields .f span { display: block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+    .pass .fields .f b { font-family: var(--serif); font-size: 16px; }
+    .pass .map { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-size: 12px;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--sage-text); text-decoration: none; }
+    .pass .map svg { width: 13px; height: 13px; }
+    .timeline { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 26px; }
+    .timeline .stop { flex: 1 1 120px; }
+    .timeline .stop b { display: block; font-family: var(--serif); font-size: 18px; }
+    .timeline .stop span { font-size: 12px; color: var(--muted); letter-spacing: .1em; }
+
+    /* Attire panel */
+    .attire-cards { display: grid; gap: 14px; }
+    .acard { border: 1px solid var(--line); border-radius: 6px; padding: 20px; background: var(--paper); }
+    .acard .role { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--sage-text); }
+    .acard.rose .role { color: var(--rose-text); }
+    .acard h4 { font-family: var(--serif); font-size: 22px; margin: 4px 0 6px; }
+    .acard .code { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .swatches { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 22px; justify-content: center; }
+    .swatch { font-size: 12px; letter-spacing: .1em; color: var(--soft); display: flex; align-items: center; gap: 8px; }
+    .swatch .dot { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08); }
+    .attire-guide img { width: 100%; border-radius: 6px; border: 1px solid var(--line); margin-top: 6px; }
+
+    /* Gift / QR */
+    .qr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 14px; margin-top: 8px; }
+    .qr { margin: 0; text-align: center; border: 1px solid var(--line); border-radius: 6px; padding: 14px; background: var(--paper); }
+    .qr-img { aspect-ratio: 1; display: grid; place-items: center; background: #fff; border-radius: 4px; overflow: hidden; }
+    .qr-img img { width: 100%; height: 100%; object-fit: contain; }
+    .qr-img.missing::after { content: "Add QR"; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+    .qr figcaption { font-family: var(--serif); font-size: 16px; margin-top: 8px; }
+    .qr .qr-cap { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+    /* Entourage panel */
+    .ent-leads { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .ent-lead { border: 1px solid var(--line); border-radius: 6px; padding: 16px; background: var(--paper); }
+    .ent-lead.rose h4 { color: var(--rose-text); } .ent-lead.sage h4 { color: var(--sage-text); }
+    .ent-lead h4 { font-family: var(--serif); font-size: 18px; margin: 0 0 6px; }
+    .ent-lead .nm { display: block; font-size: 14px; color: var(--soft); }
+    .ent-party { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .ent-col .role { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--rose-text); }
+    .ent-col.sage .role { color: var(--sage-text); }
+    .ent-col h4 { font-family: var(--serif); font-size: 18px; margin: 2px 0 8px; }
+    .ent-roster { list-style: none; margin: 0; padding: 0; }
+    .ent-roster li { font-size: 14px; color: var(--soft); padding: 2px 0; }
+    .ent-block { margin-top: 20px; }
+    .ent-block h4 { font-family: var(--serif); font-size: 18px; margin: 2px 0 8px; }
+    .ent-block .role { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+    .ent-mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 12px; }
+    .ent-tk b { display: block; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--sage-text); }
+    .ent-tk span { display: block; font-size: 13px; color: var(--soft); }
+    .ent-sponsors { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 4px 16px; }
+    .ent-sponsors span { font-size: 13px; color: var(--soft); }
+
+    /* RSVP form (inside panel) */
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+    .field input, .field select, .field textarea {
+      width: 100%; font-family: var(--sans); font-size: 15px; color: var(--ink);
+      background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px;
+    }
+    .field textarea { min-height: 92px; resize: vertical; }
+    .toggle-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .toggle-btn { font-family: var(--sans); font-size: 13px; letter-spacing: .06em; cursor: pointer;
+      background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 13px; color: var(--soft); }
+    .toggle-btn.selected { background: var(--sage); border-color: var(--sage); color: #fff; }
+    .form-error { color: var(--rose-text); font-size: 13px; min-height: 18px; }
+    .success { display: none; background: rgba(156,170,143,.14); border: 1px solid var(--sage);
+      border-radius: 6px; padding: 22px; text-align: center; font-family: var(--serif); font-size: 18px; color: var(--sage-text); }
+
+    /* ============ Responsive ============ */
+    @media (max-width: 560px) {
+      .initial { width: 78px; height: 78px; margin: -39px 0 0 -39px; font-size: 46px; }
+      #initT { transform: translate(-30vw, -12vh); }
+      #initJ { transform: translate(30vw, 12vh); }
+      .detail-grid { grid-template-columns: 1fr; }
+      .ent-leads, .ent-party { grid-template-columns: 1fr; }
+      dialog.panel { width: 100%; max-width: 100%; height: 100svh; max-height: 100svh; border-radius: 0; margin: 0; }
+      .panel-inner { padding: 28px 20px 40px; }
+    }
+    @media (min-width: 720px) {
+      .world-grid { grid-template-columns: repeat(4, 1fr); }
+      .passes { grid-template-columns: 1fr 1fr; }
+      .day-wrap { grid-template-columns: 1fr 1fr; gap: 48px; }
+      .gallery { grid-template-columns: repeat(3, 1fr); }
+      .world-map { aspect-ratio: 16 / 9.2; min-height: 460px; }
+      .map-pin { left: calc(var(--x, 50) * 1%); top: calc(var(--y, 50) * 1%); }
+    }
+
+    /* ============ Reduced motion ============ */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; }
+      .reveal { opacity: 1; transform: none; }
+      .initial.idle { animation: none; }
+    }
+  </style>
+</head>
+<body class="locked">
+
+  <!-- Shared gold gradient + icon symbols -->
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <defs>
+      <linearGradient id="goldgrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#e6cd95"/><stop offset="1" stop-color="#b8964e"/>
+      </linearGradient>
+    </defs>
+    <symbol id="ic-mono" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width="1.4"/><text x="60" y="74" font-family="Fraunces,Georgia,serif" font-size="44" fill="currentColor" text-anchor="middle">TJ</text></symbol>
+    <symbol id="ic-plane" viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" fill="currentColor"/></symbol>
+    <symbol id="ic-ring" viewBox="0 0 24 24"><path d="M12 8l2-3h-4z" fill="currentColor"/><circle cx="12" cy="15" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+    <symbol id="ic-dove" viewBox="0 0 24 24"><path d="M3 14c4 0 6-2 8-5 1 2 3 3 6 2-2 4-6 6-10 6-2 0-4-1-4-3z" fill="currentColor"/><path d="M16 8l4-2-2 4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-pin" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="9" r="2.4" fill="currentColor"/></symbol>
+    <!-- Our World icons -->
+    <symbol id="ic-box" viewBox="0 0 24 24"><path d="M7 4h7a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-2v3a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-coffee" viewBox="0 0 24 24"><path d="M4 8h13v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M17 9h2a2 2 0 0 1 0 4h-2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 3c-1 1 0 2 0 3M12 3c-1 1 0 2 0 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="ic-mtn" viewBox="0 0 24 24"><path d="M3 19l6-11 4 7 2-3 6 7z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 9.5l1.2 2" stroke="currentColor" stroke-width="1.3"/></symbol>
+    <symbol id="ic-road" viewBox="0 0 24 24"><path d="M8 21L10 3M16 21L14 3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 6v2M12 11v2M12 16v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+    <symbol id="ic-yoga" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v4M5 18l7-6 7 6M5 18h14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="currentColor"/></symbol>
+    <symbol id="ic-city" viewBox="0 0 24 24"><path d="M3 21V9l5-3v15M8 21V3l6 3v15M14 21v-9l6 3v6z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <!-- ============ Fixed globe stage ============ -->
+  <div id="stage" aria-hidden="true">
+    <div class="stars"></div>
+    <canvas id="globe-canvas"></canvas>
+    <div class="globe-fallback" id="globe-fallback"></div>
+  </div>
+
+  <!-- ============ Act 0 — opening ============ -->
+  <div id="opening" role="dialog" aria-modal="true" aria-label="Drag the initials together to begin">
+    <div class="open-inner">
+      <svg id="connect-line" aria-hidden="true"><path d="" /></svg>
+      <div class="initial idle" id="initT" tabindex="0" role="button" aria-label="Initial T — drag toward J, or press Enter">T</div>
+      <div class="initial idle" id="initJ" tabindex="0" role="button" aria-label="Initial J — drag toward T, or press Enter">J</div>
+      <div class="open-caption" id="open-caption">
+        <span class="eyebrow">Welcome</span>
+        <div class="hint">Drag the initials together</div>
+      </div>
+      <button class="connect-fallback" id="connect-btn" type="button">Begin the journey</button>
+    </div>
+  </div>
+
+  <!-- ============ Title curtain ============ -->
+  <div id="title" aria-hidden="true">
+    <div>
+      <span class="eyebrow">Tommy &amp; Jeyan</span>
+      <h1>Welcome to<br/>Our Journey</h1>
+      <div class="rule"></div>
+      <div class="scroll-cue">Scroll to explore ↓</div>
+    </div>
+  </div>
+
+  <!-- ============ Scroll content ============ -->
+  <main id="main" aria-hidden="false">
+
+    <!-- Section 1 — The Journey -->
+    <section class="scene" id="s-journey" data-scene="journey">
+      <div class="copy">
+        <span class="eyebrow reveal d1">The Journey</span>
+        <h2 class="reveal d1">Different paths.<br/>One destination.</h2>
+        <p class="lede reveal d2">Two travelers, a world apart — every turn quietly leading to the same horizon.</p>
+        <div class="pinwords reveal d3">
+          <span>Adventure</span><span>Growth</span><span>Trust</span>
+          <span>Laughter</span><span>Timing</span><span>Dreams</span>
+        </div>
+      </div>
+      <div class="first-cue">Keep scrolling</div>
+    </section>
+
+    <!-- Bridge banner — dark globe → warm world (real photo) -->
+    <section class="scene banner" id="s-banner" data-scene="banner">
+      <img class="banner-img" src="images/journey-wide.webp" alt="Tommy and Jeyan together under warm festival lights" loading="lazy" decoding="async" />
+      <div class="banner-veil" aria-hidden="true"></div>
+      <div class="copy banner-copy">
+        <span class="eyebrow reveal d1">And then the world grew warm</span>
+        <h2 class="reveal d1">Two paths,<br/>one light.</h2>
+      </div>
+    </section>
+
+    <!-- Section 2 — The Day (photo + details) -->
+    <section class="scene light" id="s-beach" data-scene="beach">
+      <div class="day-wrap">
+        <figure class="day-photo reveal d1">
+          <img src="images/hero.webp" alt="Tommy and Jeyan, dressed in white among soft lights" loading="lazy" decoding="async" />
+        </figure>
+        <div class="copy day-copy">
+          <span class="eyebrow reveal d1">Where the paths meet</span>
+          <h2 class="reveal d1">The Day</h2>
+          <p class="lede reveal d2">One afternoon, two families, and the beginning of forever.</p>
+          <div class="detail-grid">
+            <div class="detail reveal d1"><div class="k">Date</div><div class="v">December 27, 2026</div><div class="s">Sunday</div></div>
+            <div class="detail reveal d1"><div class="k">Ceremony</div><div class="v">1:30 in the afternoon</div><div class="s">Kindly be seated by 1:15 PM</div></div>
+            <div class="detail wide reveal d2"><div class="k">Venue</div><div class="v">St. Therese Parish &middot; Newport City, Pasay</div><div class="s">Reception to follow at Savoy Hotel Manila &middot; program proper 5:00 PM</div></div>
+            <div class="detail wide reveal d2"><div class="k">Dress code</div><div class="v">Smart Formal</div><div class="s">In our colours — sage &amp; dusty rose</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3 — Our World -->
+    <section class="scene light" id="s-world" data-scene="world">
+      <div class="copy">
+        <span class="eyebrow reveal d1">Our World</span>
+        <h2 class="reveal d1">Pieces of us</h2>
+        <p class="lede reveal d2">A scattered little map of who we are. Wander, and tap a marker to find your way around the day.</p>
+        <div class="world-map reveal d2" id="world-map">
+          <svg class="map-lines" id="map-lines" aria-hidden="true" preserveAspectRatio="none"><path d="" /></svg>
+          <button class="map-pin" style="--mx:28;--my:8;--x:14;--y:34" data-panel="p-entourage" aria-label="Entourage"><span class="pin-dot"><svg><use href="#ic-box"/></svg></span><span class="pin-label">Entourage</span></button>
+          <button class="map-pin" style="--mx:70;--my:16;--x:33;--y:16" data-panel="p-rsvp" aria-label="RSVP"><span class="pin-dot"><svg><use href="#ic-coffee"/></svg></span><span class="pin-label">RSVP</span></button>
+          <button class="map-pin" style="--mx:34;--my:27;--x:56;--y:30" data-panel="p-stay" aria-label="Accommodation"><span class="pin-dot"><svg><use href="#ic-mtn"/></svg></span><span class="pin-label">Accommodation</span></button>
+          <button class="map-pin" style="--mx:72;--my:38;--x:83;--y:21" data-panel="p-directions" aria-label="Directions"><span class="pin-dot"><svg><use href="#ic-road"/></svg></span><span class="pin-label">Directions</span></button>
+          <button class="map-pin" style="--mx:28;--my:50;--x:85;--y:54" data-panel="p-program" aria-label="Program"><span class="pin-dot"><svg><use href="#ic-mic"/></svg></span><span class="pin-label">Program</span></button>
+          <button class="map-pin" style="--mx:70;--my:62;--x:58;--y:72" data-panel="p-itinerary" aria-label="Itinerary"><span class="pin-dot"><svg><use href="#ic-ball"/></svg></span><span class="pin-label">Itinerary</span></button>
+          <button class="map-pin" style="--mx:30;--my:74;--x:33;--y:78" data-panel="p-attire" aria-label="Attire"><span class="pin-dot"><svg><use href="#ic-yoga"/></svg></span><span class="pin-label">Attire</span></button>
+          <button class="map-pin" style="--mx:70;--my:86;--x:14;--y:64" data-panel="p-gift" aria-label="Gift Fund"><span class="pin-dot"><svg><use href="#ic-city"/></svg></span><span class="pin-label">Gift Fund</span></button>
+        </div>
+        <p class="map-hint reveal d2">Wander the map · tap a marker</p>
+      </div>
+    </section>
+
+    <!-- Photo gallery — glimpses (no story, just warmth) -->
+    <section class="scene light" id="s-gallery" data-scene="gallery">
+      <div class="copy">
+        <span class="eyebrow reveal d1">Glimpses</span>
+        <h2 class="reveal d1">A few of our favourite moments</h2>
+      </div>
+      <div class="gallery">
+        <img class="reveal d1" src="images/journey-01.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
+        <img class="reveal d1" src="images/journey-02.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
+        <img class="reveal d1" src="images/journey-03.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
+        <img class="reveal d2" src="images/journey-04.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
+        <img class="reveal d2" src="images/journey-05.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
+        <img class="reveal d2" src="images/journey-06.webp" alt="Tommy and Jeyan" loading="lazy" decoding="async" />
+        <img class="wide reveal d2" src="images/savethedate.webp" alt="Tommy and Jeyan — Save the Date, December 27, 2026" loading="lazy" decoding="async" />
+      </div>
+    </section>
+
+    <!-- Section 4 — Next chapter -->
+    <section class="scene" id="s-next" data-scene="next">
+      <div class="copy">
+        <span class="eyebrow reveal d1">The Next Chapter</span>
+        <h2 class="reveal d1">The best part of the journey<br/>is still ahead.</h2>
+        <p class="sub reveal d2">Join us as we begin our next chapter.</p>
+        <button class="btn reveal d2" data-panel="p-rsvp" type="button">RSVP</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-note">
+    <svg class="mono"><use href="#ic-mono"/></svg>
+    <div class="tag">Soaring with TJ</div>
+    <div class="hash">#ToMyJeyan</div>
+    <small>Tommy &amp; Jeyan · December 27, 2026 · Newport City, Pasay</small>
+    <small><a class="back" href="invitation.html">View the full invitation →</a></small>
+  </footer>
+
+  <!-- ============ Panels ============ -->
+
+  <!-- Entourage -->
+  <dialog class="panel" id="p-entourage" aria-label="Our Entourage">
+    <div class="panel-inner">
+      <div class="panel-head">
+        <div><span class="eyebrow">Boxing · Our corner</span><h3>Our Entourage</h3></div>
+        <button class="panel-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <p>The family and friends who walk beside us as our next chapter takes flight.</p>
+      <div class="divider-sm"><svg width="16" height="16"><use href="#ic-ring"/></svg></div>
+      <div class="ent-leads">
+        <div class="ent-lead rose"><h4>Maids of Honor</h4><span class="nm">Hannah C. Santioque</span><span class="nm">Dimples Jenna S. Collera</span></div>
+        <div class="ent-lead sage"><h4>Best Men</h4><span class="nm">Teddy Botabara</span><span class="nm">Joval C. Santioque</span></div>
+      </div>
+      <div class="ent-party">
+        <div class="ent-col"><span class="role">In Dusty Rose</span><h4>Bridesmaids</h4>
+          <ul class="ent-roster"><li>Micca Ricka Raphaella T. Cantos</li><li>Denise M. Beltran</li><li>Josett A. Romano</li><li>Gemela Marian A. David</li><li>Ceijas Lyn Tagana</li><li>Abigail Cayabyab</li><li>Vanessa Trinidad</li><li>Marielle Serania</li></ul>
+        </div>
+        <div class="ent-col sage"><span class="role">In Sage</span><h4>Groomsmen</h4>
+          <ul class="ent-roster"><li>Romulo Fronda Jr.</li><li>Betlee Barraquias</li><li>Jason Deichmann</li><li>Piolo Barletta</li><li>Emil De Dios</li><li>Traviz Keinn Climacosa</li><li>Vaunn Maribao</li><li>John Goloya</li></ul>
+        </div>
+      </div>
+      <div class="ent-block">
+        <span class="role">In the Ceremony</span><h4>Ceremony Roles</h4>
+        <div class="ent-mini">
+          <div class="ent-tk"><b>Candle</b><span>Julian Christopher A. Lopez</span><span>Michelle A. Alaras</span></div>
+          <div class="ent-tk"><b>Cord</b><span>Dean Joan</span><span>Chairperson Christian</span></div>
+          <div class="ent-tk"><b>Veil</b><span>Adrianne Micaela Manalaotao</span><span>Axl John Mirabueno</span></div>
+          <div class="ent-tk"><b>Bible</b><span>Seansean Botabara</span></div>
+          <div class="ent-tk"><b>Flower Girl</b><span>Nina Botabara</span></div>
+        </div>
+      </div>
+      <div class="ent-block">
+        <span class="role">With Gratitude</span><h4>Principal Sponsors</h4>
+        <div class="ent-sponsors">
+          <span>Dean Joan</span><span>Chairperson Christian</span><span>Prof. Benedict Avila</span><span>Karen Austria</span><span>Shiela Chan</span><span>Cheryl Imelda V. Capinpin</span><span>Patrick M. Santillan</span><span>Andrew Paul I. Montinola</span><span>Analiza C. Chiapoco</span><span>William G. Tan</span><span>Jaime C. Perez</span><span>Ma. Corazon D. Babadilla</span><span>Emalyn Lira</span><span>Yshmael I. Calma</span><span>Jennifer Calma</span>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- RSVP -->
+  <dialog class="panel" id="p-rsvp" aria-label="RSVP">
+    <div class="panel-inner">
+      <div class="panel-head">
+        <div><span class="eyebrow">Coffee · Let's talk</span><h3>RSVP</h3></div>
+        <button class="panel-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <p>Kindly respond by <strong>November 30, 2026</strong> so we can finalize seats with Savoy Hotel Manila. A confirmed RSVP secures your place at the reception.</p>
+      <div class="divider-sm"><svg width="16" height="16"><use href="#ic-coffee"/></svg></div>
+      <div class="success" id="rsvp-success" role="status" aria-live="polite"></div>
+      <form id="rsvp-form" novalidate>
+        <div class="field"><label for="rsvp-name">Your name *</label><input id="rsvp-name" name="name" autocomplete="name" placeholder="Full name" required /></div>
+        <div class="field"><label for="rsvp-email">Email</label><input id="rsvp-email" name="email" type="email" autocomplete="email" placeholder="your@email.com (optional)" /></div>
+        <div class="field">
+          <label>Will you be joining us?</label>
+          <div class="toggle-group" role="group" aria-label="Will you be attending?">
+            <button class="toggle-btn" type="button" data-value="yes">Yes, joyfully</button>
+            <button class="toggle-btn" type="button" data-value="no">Regretfully, no</button>
+          </div>
+        </div>
+        <div class="field" id="party-size-group">
+          <label for="rsvp-party-size">How many in your party?</label>
+          <select id="rsvp-party-size" name="party_size">
+            <option value="1">1 guest</option><option value="2">2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option>
+            <option value="5">5 guests</option><option value="6">6 guests</option><option value="7">7 guests</option><option value="8">8 guests</option>
+          </select>
+        </div>
+        <div id="guest-fields-wrapper"></div>
+        <div class="field"><label for="rsvp-notes">Dietary needs or a note for the couple</label><textarea id="rsvp-notes" name="notes" placeholder="Allergies, dietary needs, or a message"></textarea></div>
+        <div class="form-error" id="form-error" role="alert"></div>
+        <button class="btn dark" id="submit-btn" type="submit" style="width:100%">Send RSVP</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Itinerary -->
+  <dialog class="panel" id="p-itinerary" aria-label="Itinerary">
+    <div class="panel-inner">
+      <div class="panel-head">
+        <div><span class="eyebrow">Billiards · The line-up</span><h3>Itinerary</h3></div>
+        <button class="panel-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <div class="passes">
+        <article class="pass">
+          <div class="ph"><span>Boarding Pass · Ceremony</span><svg><use href="#ic-plane"/></svg></div>
+          <div class="pb">
+            <span class="role">The Rite of Marriage</span><h4>St. Therese Parish</h4>
+            <p class="addr">Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p>
+            <div class="fields"><div class="f"><span>Date</span><b>Dec 27, 2026</b></div><div class="f"><span>Time</span><b>1:30 PM</b></div><div class="f"><span>Dress</span><b>Smart Formal</b></div></div>
+            <a class="map" href="https://maps.google.com/?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay" target="_blank" rel="noopener"><svg><use href="#ic-pin"/></svg> Open map</a>
+          </div>
+        </article>
+        <article class="pass rose">
+          <div class="ph"><span>Boarding Pass · Reception</span><svg><use href="#ic-plane"/></svg></div>
+          <div class="pb">
+            <span class="role">Dinner &amp; Celebration</span><h4>Savoy Hotel Manila</h4>
+            <p class="addr">Andrews Avenue, Newport City, Pasay</p>
+            <div class="fields"><div class="f"><span>Reception opens</span><b>3:00 PM</b></div><div class="f"><span>Program</span><b>5:00 PM</b></div><div class="f"><span>Dress</span><b>Smart Formal</b></div></div>
+            <a class="map" href="https://maps.google.com/?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay" target="_blank" rel="noopener"><svg><use href="#ic-pin"/></svg> Open map</a>
+          </div>
+        </article>
+      </div>
+      <div class="timeline">
+        <div class="stop"><b>1:30 PM</b><span>Ceremony</span></div>
+        <div class="stop"><b>3:00 PM</b><span>Reception opens</span></div>
+        <div class="stop"><b>3:00–5:00</b><span>Pre-program</span></div>
+        <div class="stop"><b>5:00 PM</b><span>Program proper</span></div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Attire -->
+  <dialog class="panel" id="p-attire" aria-label="Attire">
+    <div class="panel-inner">
+      <div class="panel-head">
+        <div><span class="eyebrow">Yoga · Find your flow</span><h3>Attire</h3></div>
+        <button class="panel-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <div class="attire-cards">
+        <article class="acard"><span class="role">Our Guests</span><h4>Smart Formal</h4><span class="code">Come dressed to soar</span><p>Polished suits, barong, long dresses, or elegant cocktail attire, in soft, celebratory tones.</p></article>
+        <article class="acard rose"><span class="role">The Entourage</span><h4>Formal · in our colours</h4><span class="code">The wedding party leads the runway</span><p>Long gowns and formal menswear in our wedding palette below.</p></article>
+      </div>
+      <figure class="attire-guide">
+        <img src="images/attire-guide.webp" width="1672" height="941" loading="lazy" decoding="async" alt="Illustrated attire guide showing the wedding palette from parents in gold through bridesmaids in dusty rose, groomsmen with sage ties, to guests in sage-green pastel." />
+      </figure>
+      <div class="swatches">
+        <div class="swatch"><span class="dot" style="background:#9caa8f"></span>Sage</div>
+        <div class="swatch"><span class="dot" style="background:#cf9a93"></span>Dusty Rose</div>
+        <div class="swatch"><span class="dot" style="background:#f3ede2"></span>Cream</div>
+        <div class="swatch"><span class="dot" style="background:#fbf9f4"></span>Ivory</div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Gift Fund -->
+  <dialog class="panel" id="p-gift" aria-label="Our First Journey Fund">
+    <div class="panel-inner">
+      <div class="panel-head">
+        <div><span class="eyebrow">Skyline · Our first home</span><h3>Our First Journey Fund</h3></div>
+        <button class="panel-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <p>Your presence is the greatest gift we could ask for. Should you wish to bless our journey, a monetary token toward our first home and travels as a married couple would mean the world.</p>
+      <div class="divider-sm"><svg width="16" height="16"><use href="#ic-plane"/></svg> Scan to send a gift</div>
+      <div class="qr-grid">
+        <figure class="qr"><div class="qr-img"><img data-src="images/qr/bpi.png" alt="BPI QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>BPI</figcaption><span class="qr-cap">Scan with BPI</span></figure>
+        <figure class="qr"><div class="qr-img"><img data-src="images/qr/bdo.png" alt="BDO QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>BDO</figcaption><span class="qr-cap">Scan with BDO</span></figure>
+        <figure class="qr"><div class="qr-img"><img data-src="images/qr/unionbank.png" alt="UnionBank QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>UnionBank</figcaption><span class="qr-cap">Scan with UnionBank</span></figure>
+        <figure class="qr"><div class="qr-img"><img data-src="images/qr/pnb.png" alt="PNB QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>PNB</figcaption><span class="qr-cap">Scan with PNB</span></figure>
+        <figure class="qr"><div class="qr-img"><img data-src="images/qr/gcash.png" alt="GCash QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>GCash</figcaption><span class="qr-cap">Scan with GCash</span></figure>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Accommodation (placeholder) -->
+  <dialog class="panel" id="p-stay" aria-label="Accommodation">
+    <div class="panel-inner">
+      <div class="panel-head">
+        <div><span class="eyebrow">Mountain · Rest &amp; basecamp</span><h3>Accommodation</h3></div>
+        <button class="panel-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <p>Both the ceremony and reception sit inside <strong>Newport City, Pasay</strong> — a short, walkable cluster of hotels beside NAIA Terminal 3, perfect for guests travelling in.</p>
+      <div class="placeholder-card">
+        <svg class="pc-ic"><use href="#ic-mtn"/></svg>
+        <div class="pc-tag">Details to follow</div>
+        <p style="margin-top:10px">We're finalising a list of recommended hotels and any room blocks near Savoy Hotel Manila. Check back soon — this corner of the map is still being drawn.</p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Directions (placeholder + maps) -->
+  <dialog class="panel" id="p-directions" aria-label="Directions">
+    <div class="panel-inner">
+      <div class="panel-head">
+        <div><span class="eyebrow">Road · Finding the way</span><h3>Directions</h3></div>
+        <button class="panel-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <p>Everything happens within <strong>Newport City, Pasay</strong>, just across from NAIA Terminal 3. Tap a destination to open live directions.</p>
+      <div class="passes" style="margin-top:18px">
+        <article class="pass"><div class="ph"><span>Ceremony</span><svg><use href="#ic-pin"/></svg></div><div class="pb"><h4>St. Therese Parish</h4><p class="addr">Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay" target="_blank" rel="noopener"><svg><use href="#ic-road"/></svg> Get directions</a></div></article>
+        <article class="pass rose"><div class="ph"><span>Reception</span><svg><use href="#ic-pin"/></svg></div><div class="pb"><h4>Savoy Hotel Manila</h4><p class="addr">Andrews Avenue, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay" target="_blank" rel="noopener"><svg><use href="#ic-road"/></svg> Get directions</a></div></article>
+      </div>
+      <div class="placeholder-card" style="margin-top:18px">
+        <div class="pc-tag">Coming soon</div>
+        <p style="margin-top:10px">Parking and shuttle details will be added here closer to the day.</p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Program (placeholder) -->
+  <dialog class="panel" id="p-program" aria-label="Program">
+    <div class="panel-inner">
+      <div class="panel-head">
+        <div><span class="eyebrow">Microphone · On the day</span><h3>The Program</h3></div>
+        <button class="panel-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <p>Some chapters are best heard in person.</p>
+      <div class="placeholder-card">
+        <svg class="pc-ic"><use href="#ic-mic"/></svg>
+        <div class="pc-tag">Revealed on the day</div>
+        <p style="margin-top:10px">The full program — and the story of how our paths aligned — will unfold live at the reception. We're keeping this one a happy surprise.</p>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxvLRW-_JejderjHjt4DnY0JaJpihphEjzHOK9ViY-84bz2HZpqcpJFFQYCc-Kgrnx1/exec';
+    const $ = (id) => document.getElementById(id);
+    const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const MOBILE = window.matchMedia('(max-width: 700px)').matches;
+
+    /* =========================================================
+       ACT 0 — drag-to-connect gate
+       ========================================================= */
+    (function () {
+      const opening = $('opening'), title = $('title'), main = $('main');
+      const T = $('initT'), J = $('initJ'), line = $('connect-line').querySelector('path');
+      const caption = $('open-caption'), connectBtn = $('connect-btn');
+      let connected = false;
+
+      function reveal() {
+        if (connected) return; connected = true;
+        try { sessionStorage.setItem('tj-journey-entered', '1'); } catch (e) {}
+        if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) {}
+        window.dispatchEvent(new CustomEvent('tj-connect'));
+        opening.classList.add('gone');
+        title.classList.add('show'); title.setAttribute('aria-hidden', 'false');
+        // Hold the title curtain alone (content stays hidden via body.locked),
+        // then fade the curtain and only AFTER it clears reveal the page — no overlap.
+        setTimeout(() => { title.classList.add('fade'); }, 2600);
+        setTimeout(() => {
+          document.body.classList.remove('locked');
+          title.style.pointerEvents = 'none';
+        }, 3800);
+      }
+
+      // Skip the gate for returning visitors this session
+      let already = false;
+      try { already = sessionStorage.getItem('tj-journey-entered') === '1'; } catch (e) {}
+      if (already) {
+        opening.classList.add('gone'); document.body.classList.remove('locked');
+        title.style.display = 'none';
+      }
+
+      // --- pointer drag ---
+      let dragging = null, raf = 0;
+      const center = (el) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
+      function setPos(el, x, y) {
+        el.style.left = x + 'px'; el.style.top = y + 'px';
+        el.style.transform = 'translate(-50%,-50%)'; el.style.margin = '0';
+        el.classList.remove('idle');
+      }
+      function drawLine() {
+        const a = center(T), b = center(J);
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 - 30;
+        line.setAttribute('d', `M ${a.x} ${a.y} Q ${mx} ${my} ${b.x} ${b.y}`);
+      }
+      function proximity() {
+        const a = center(T), b = center(J);
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        drawLine();
+        line.style.opacity = String(Math.max(0, Math.min(1, (260 - d) / 200)));
+        if (d < 92) { line.style.opacity = '1'; reveal(); }
+      }
+      function onDown(el, e) {
+        if (connected) return;
+        dragging = el; el.setPointerCapture && el.setPointerCapture(e.pointerId);
+        e.preventDefault();
+      }
+      function onMove(e) {
+        if (!dragging) return;
+        const x = e.clientX, y = e.clientY;
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => { setPos(dragging, x, y); proximity(); });
+      }
+      function onUp() { dragging = null; }
+      [T, J].forEach((el) => {
+        el.addEventListener('pointerdown', (e) => onDown(el, e));
+      });
+      window.addEventListener('pointermove', onMove, { passive: false });
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
+
+      // --- keyboard / button fallback ---
+      function snapTogether() {
+        const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+        setPos(T, cx - 26, cy); setPos(J, cx + 26, cy);
+        drawLine(); line.style.opacity = '1'; reveal();
+      }
+      connectBtn.addEventListener('click', snapTogether);
+      [T, J].forEach((el) => el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); snapTogether(); }
+      }));
+
+      // nudge if idle
+      setTimeout(() => { if (!connected) caption.classList.add('nudge'); }, 6000);
+    })();
+
+    /* =========================================================
+       Scroll reveals + active scene tracking
+       ========================================================= */
+    let activeScene = 'journey';
+    (function () {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => { if (en.isIntersecting) en.target.classList.add('in'); });
+      }, { threshold: 0.18 });
+      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+      const sceneIO = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting && en.intersectionRatio > 0.5) {
+            activeScene = en.target.dataset.scene;
+            window.dispatchEvent(new CustomEvent('tj-scene', { detail: activeScene }));
+          }
+        });
+      }, { threshold: [0.5, 0.75] });
+      document.querySelectorAll('.scene').forEach((el) => sceneIO.observe(el));
+
+      // dim the globe stage behind the light content sections
+      const stage = $('stage');
+      const dimIO = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (!en.isIntersecting) return;
+          const s = en.target.dataset.scene;
+          // Globe only shows for the cinematic globe scenes; dim behind warm/photo content.
+          stage.style.opacity = (s === 'journey' || s === 'next') ? '1' : '0.12';
+        });
+      }, { threshold: 0.55 });
+      document.querySelectorAll('.scene').forEach((el) => dimIO.observe(el));
+    })();
+
+    /* =========================================================
+       Panels (dialog) open/close
+       ========================================================= */
+    (function () {
+      let lastFocus = null;
+      function openPanel(id) {
+        const dlg = document.getElementById(id); if (!dlg) return;
+        lastFocus = document.activeElement;
+        if (id === 'p-gift') dlg.querySelectorAll('.qr-img img[data-src]').forEach((img) => { if (!img.src) img.src = img.dataset.src; });
+        if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', '');
+      }
+      function closePanel(dlg) { dlg.close ? dlg.close() : dlg.removeAttribute('open'); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+      document.querySelectorAll('[data-panel]').forEach((btn) => btn.addEventListener('click', () => openPanel(btn.dataset.panel)));
+      document.querySelectorAll('dialog.panel').forEach((dlg) => {
+        dlg.querySelector('.panel-close').addEventListener('click', () => closePanel(dlg));
+        dlg.addEventListener('click', (e) => { if (e.target === dlg) closePanel(dlg); });
+      });
+    })();
+
+    /* =========================================================
+       Our World — draw the wandering dotted route between pins
+       ========================================================= */
+    (function () {
+      const map = $('world-map'), svg = $('map-lines');
+      if (!map || !svg) return;
+      const path = svg.querySelector('path');
+      const pins = Array.from(map.querySelectorAll('.map-pin'));
+      function draw() {
+        const mr = map.getBoundingClientRect();
+        if (!mr.width) return;
+        svg.setAttribute('viewBox', `0 0 ${mr.width} ${mr.height}`);
+        const pts = pins.map((p) => {
+          const r = p.querySelector('.pin-dot').getBoundingClientRect();
+          return [r.left + r.width / 2 - mr.left, r.top + r.height / 2 - mr.top];
+        });
+        path.setAttribute('d', pts.map((pt, i) => (i ? 'L' : 'M') + pt[0].toFixed(1) + ' ' + pt[1].toFixed(1)).join(' '));
+      }
+      draw();
+      window.addEventListener('resize', draw);
+      window.addEventListener('load', draw);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+      const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { draw(); setTimeout(draw, 350); } }), { threshold: 0.15 });
+      io.observe(map);
+    })();
+
+    /* =========================================================
+       RSVP form (same endpoint + logic as the invitation)
+       ========================================================= */
+    (function () {
+      let attendingValue = null;
+      document.querySelectorAll('.toggle-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.toggle-btn').forEach((i) => i.classList.remove('selected'));
+          btn.classList.add('selected');
+          attendingValue = btn.dataset.value;
+          $('party-size-group').style.display = attendingValue === 'yes' ? '' : 'none';
+          if (attendingValue === 'no') $('guest-fields-wrapper').innerHTML = '';
+        });
+      });
+      $('rsvp-party-size').addEventListener('change', function () {
+        const wrapper = $('guest-fields-wrapper'); wrapper.innerHTML = '';
+        const size = parseInt(this.value, 10);
+        for (let i = 2; i <= size; i++) {
+          const div = document.createElement('div'); div.className = 'field';
+          div.innerHTML = `<label for="guest-${i}">Guest ${i} name</label><input id="guest-${i}" name="guest_${i}" placeholder="Full name" />`;
+          wrapper.appendChild(div);
+        }
+      });
+      $('rsvp-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const errorEl = $('form-error'), btn = $('submit-btn');
+        const nameVal = $('rsvp-name').value.trim();
+        const emailVal = $('rsvp-email').value.trim();
+        const notesVal = $('rsvp-notes').value.trim();
+        const partySize = parseInt($('rsvp-party-size').value, 10);
+        errorEl.textContent = '';
+        if (!nameVal) { errorEl.textContent = 'Please enter your name.'; $('rsvp-name').focus(); return; }
+        if (!attendingValue) { errorEl.textContent = 'Please let us know if you can join us.'; return; }
+        const guests = [];
+        for (let i = 2; i <= partySize; i++) { const inp = $(`guest-${i}`); if (inp && inp.value.trim()) guests.push(inp.value.trim()); }
+        const payload = { name: nameVal, email: emailVal, attending: attendingValue, party_size: attendingValue === 'yes' ? partySize : 1, guests, notes: notesVal };
+        btn.disabled = true; btn.textContent = 'Sending...';
+        try {
+          const res = await fetch(RSVP_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+          const data = await res.json();
+          if (data.status !== 'ok') throw new Error(data.message || 'Unexpected response');
+          $('rsvp-form').style.display = 'none';
+          const success = $('rsvp-success');
+          success.textContent = attendingValue === 'yes'
+            ? `Thank you, ${nameVal}. Your seat is booked. We can't wait to celebrate with you.`
+            : `Thank you, ${nameVal}. We'll miss you, but we appreciate you letting us know.`;
+          success.style.display = 'block';
+        } catch (err) {
+          console.error(err);
+          errorEl.textContent = 'We could not send your RSVP just now. Please check your connection and try again.';
+          btn.disabled = false; btn.textContent = 'Send RSVP';
+        }
+      });
+    })();
+
+    /* =========================================================
+       Globe — Three.js (lazy), with CSS fallback
+       ========================================================= */
+    (function () {
+      const fallback = $('globe-fallback');
+      const canvas = $('globe-canvas');
+      function useFallback() { fallback.classList.add('show'); if (canvas) canvas.style.display = 'none'; }
+
+      // No WebGL or reduced motion → elegant static globe, skip Three.js entirely.
+      let gl = null;
+      try { gl = canvas.getContext('webgl2') || canvas.getContext('webgl'); } catch (e) {}
+      if (REDUCED || !gl) { useFallback(); return; }
+
+      const SRC = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+      import(SRC).then((THREE) => { initGlobe(THREE); }).catch(() => useFallback());
+
+      function initGlobe(THREE) {
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MOBILE ? 1.5 : 2));
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+        camera.position.set(0, 0, 3.4);
+
+        const group = new THREE.Group();
+        scene.add(group);
+
+        // Occluder sphere (dark) so back dots read dimmer
+        const core = new THREE.Mesh(
+          new THREE.SphereGeometry(0.985, 48, 48),
+          new THREE.MeshBasicMaterial({ color: 0x0a0e10 })
+        );
+        group.add(core);
+
+        // Dot-matrix planet (fibonacci sphere)
+        const COUNT = MOBILE ? 1500 : 3000;
+        const pos = new Float32Array(COUNT * 3);
+        const golden = Math.PI * (3 - Math.sqrt(5));
+        for (let i = 0; i < COUNT; i++) {
+          const y = 1 - (i / (COUNT - 1)) * 2;
+          const r = Math.sqrt(1 - y * y);
+          const th = golden * i;
+          pos[i*3] = Math.cos(th) * r; pos[i*3+1] = y; pos[i*3+2] = Math.sin(th) * r;
+        }
+        const dotGeo = new THREE.BufferGeometry();
+        dotGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        const dotMat = new THREE.PointsMaterial({ color: 0xd8b86a, size: 0.018, sizeAttenuation: true, transparent: true, opacity: 0.35 });
+        const dots = new THREE.Points(dotGeo, dotMat);
+        group.add(dots);
+
+        // Wireframe halo
+        const wire = new THREE.LineSegments(
+          new THREE.WireframeGeometry(new THREE.SphereGeometry(1.003, 14, 10)),
+          new THREE.LineBasicMaterial({ color: 0xd8b86a, transparent: true, opacity: 0.06 })
+        );
+        group.add(wire);
+
+        // Symbolic pins (no real locations)
+        const pinDefs = [
+          [22, 30], [-15, -50], [40, 120], [-30, 70], [10, -120], [55, -20]
+        ];
+        const pinTex = makeGlowTexture(THREE);
+        const pins = pinDefs.map(([lat, lon]) => {
+          const p = latLonToVec(THREE, lat, lon, 1.02);
+          const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0xe6cd95, transparent: true, opacity: 0.9, depthWrite: false }));
+          s.position.copy(p); s.scale.setScalar(0.16); group.add(s); return s;
+        });
+
+        // Route (drawn in the "next" scene)
+        const start = latLonToVec(THREE, -15, -50, 1.01);
+        const end = latLonToVec(THREE, 40, 120, 1.01);
+        const mid = start.clone().add(end).multiplyScalar(0.5).normalize().multiplyScalar(1.35);
+        const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
+        const routePts = curve.getPoints(120);
+        const routeGeo = new THREE.BufferGeometry().setFromPoints(routePts);
+        const routeMat = new THREE.LineBasicMaterial({ color: 0xe6cd95, transparent: true, opacity: 0.9 });
+        const route = new THREE.Line(routeGeo, routeMat);
+        routeGeo.setDrawRange(0, 0);
+        group.add(route);
+        const dest = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0xffe9c2, transparent: true, opacity: 0, depthWrite: false }));
+        dest.position.copy(end); dest.scale.setScalar(0.22); group.add(dest);
+
+        const amb = new THREE.AmbientLight(0xffffff, 0.6); scene.add(amb);
+
+        // State
+        let illum = 0;            // 0..1 illumination after connect
+        let targetCamZ = 3.4;
+        let routeProg = 0, destOp = 0;
+        if (sessionStorageEntered()) illum = 1;
+        window.addEventListener('tj-connect', () => { /* illum tween below */ });
+
+        // Render loop runs only while the globe matters; idles on light/photo sections.
+        let running = false, renderUntil = 0;
+        function ensureRunning(extraMs) {
+          renderUntil = Math.max(renderUntil, performance.now() + (extraMs || 0));
+          if (!running) { running = true; clock.getDelta(); requestAnimationFrame(tick); }
+        }
+        window.addEventListener('tj-scene', (e) => {
+          const s = e.detail;
+          targetCamZ = (s === 'next') ? 2.7 : (s === 'journey' ? 3.2 : 3.6);
+          ensureRunning(1500); // animate the transition, then idle if it's a content scene
+        });
+        window.addEventListener('tj-connect', () => ensureRunning(2500));
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) ensureRunning(800); });
+
+        function sessionStorageEntered() { try { return sessionStorage.getItem('tj-journey-entered') === '1'; } catch (e) { return false; } }
+
+        function resize() {
+          const w = window.innerWidth, h = window.innerHeight;
+          renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+        }
+        window.addEventListener('resize', resize); resize();
+
+        const clock = new THREE.Clock();
+        function tick() {
+          const dt = clock.getDelta();
+          group.rotation.y += dt * 0.06;
+
+          // illumination eases toward 1 once the gate is connected
+          const wantIllum = sessionStorageEntered() ? 1 : 0;
+          illum += (wantIllum - illum) * Math.min(1, dt * 1.3);
+          dotMat.opacity = 0.18 + illum * 0.5;
+          wire.material.opacity = 0.04 + illum * 0.10;
+          pins.forEach((s, i) => {
+            const pulse = 0.14 + Math.sin(clock.elapsedTime * 1.6 + i) * 0.02;
+            s.scale.setScalar(pulse * (0.6 + illum * 0.6));
+            s.material.opacity = (0.2 + illum * 0.7);
+          });
+
+          // camera distance eases toward target scene
+          camera.position.z += (targetCamZ - camera.position.z) * Math.min(1, dt * 1.6);
+
+          // route reveals when on the "next" scene
+          const wantRoute = (activeScene === 'next') ? 1 : 0;
+          routeProg += (wantRoute - routeProg) * Math.min(1, dt * 1.1);
+          routeGeo.setDrawRange(0, Math.floor(routeProg * routePts.length));
+          destOp += ((wantRoute > 0.6 ? 1 : 0) - destOp) * Math.min(1, dt * 2);
+          dest.material.opacity = destOp;
+
+          renderer.render(scene, camera);
+
+          const globeScene = (activeScene === 'journey' || activeScene === 'next');
+          if (document.hidden) { running = false; return; }
+          if (globeScene || performance.now() < renderUntil) { requestAnimationFrame(tick); }
+          else { running = false; }
+        }
+        ensureRunning(2500);
+      }
+
+      function latLonToVec(THREE, lat, lon, r) {
+        const phi = (90 - lat) * Math.PI / 180, theta = (lon + 180) * Math.PI / 180;
+        return new THREE.Vector3(
+          -r * Math.sin(phi) * Math.cos(theta),
+           r * Math.cos(phi),
+           r * Math.sin(phi) * Math.sin(theta)
+        );
+      }
+      function makeGlowTexture(THREE) {
+        const c = document.createElement('canvas'); c.width = c.height = 64;
+        const g = c.getContext('2d');
+        const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+        grd.addColorStop(0, 'rgba(255,240,200,1)');
+        grd.addColorStop(0.25, 'rgba(230,205,149,0.9)');
+        grd.addColorStop(1, 'rgba(216,184,106,0)');
+        g.fillStyle = grd; g.fillRect(0, 0, 64, 64);
+        const t = new THREE.CanvasTexture(c); return t;
+      }
+    })();
+  </script>
+</body>
+</html>
