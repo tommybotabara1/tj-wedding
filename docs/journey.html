@@ -271,9 +271,8 @@
 
     /* Section 2 — The Day (photo + details) */
     .day-wrap { display: grid; gap: 30px; align-items: center; max-width: 1040px; width: 100%; }
-    .day-photo { margin: 0; }
-    .day-photo img { width: 100%; height: 100%; max-height: 76vh; object-fit: cover; border-radius: 10px;
-      box-shadow: var(--shadow-warm); }
+    .day-photo { margin: 0; overflow: hidden; border-radius: 10px; box-shadow: var(--shadow-warm); }
+    .day-photo img { width: 100%; height: 100%; max-height: 76vh; object-fit: cover; display: block; will-change: transform; }
     .day-copy { text-align: left; }
     #s-beach .eyebrow { color: var(--sage-text); }
     #s-beach h2 { color: var(--ink); font-size: clamp(34px, 7vw, 64px); }
@@ -291,10 +290,9 @@
     #s-gallery .eyebrow { color: var(--sage-text); }
     #s-gallery h2 { color: var(--ink); font-size: clamp(28px, 6vw, 54px); }
     .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 1040px; }
-    .gallery img { width: 100%; height: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 8px;
-      box-shadow: var(--shadow-warm); transition: transform .5s var(--ease); }
-    .gallery img:hover { transform: scale(1.02); }
-    .gallery .wide { grid-column: 1 / -1; aspect-ratio: 16/9; }
+    .gtile { margin: 0; overflow: hidden; border-radius: 8px; box-shadow: var(--shadow-warm); aspect-ratio: 3/4; }
+    .gtile img { width: 100%; height: 100%; object-fit: cover; display: block; will-change: transform; }
+    .gtile.wide { grid-column: 1 / -1; aspect-ratio: 16/9; }
 
     /* Section 3 — Our World icon grid */
     #s-world .copy { max-width: 880px; }
@@ -571,7 +569,6 @@
     <!-- Section 1 — The Journey -->
     <section class="scene" id="s-journey" data-scene="journey">
       <div class="copy">
-        <span class="eyebrow reveal d1">The Journey</span>
         <h2 class="reveal d1">Different paths.<br/>One destination.</h2>
         <p class="lede reveal d2">Two travelers, a world apart. Every turn quietly leading to the same horizon.</p>
         <div class="pinwords reveal d3">
@@ -596,7 +593,7 @@
     <section class="scene light" id="s-beach" data-scene="beach">
       <div class="day-wrap">
         <figure class="day-photo reveal d1">
-          <img src="images/hero.webp" alt="Tommy and Jeyan, dressed in white among soft lights" loading="lazy" decoding="async" />
+          <img data-parallax="0.09" src="images/hero.webp" alt="Tommy and Jeyan, dressed in white among soft lights" loading="lazy" decoding="async" />
         </figure>
         <div class="copy day-copy">
           <span class="eyebrow reveal d1">Where the paths meet</span>
@@ -615,7 +612,6 @@
     <!-- Section 3 — Our World -->
     <section class="scene light" id="s-world" data-scene="world">
       <div class="copy">
-        <span class="eyebrow reveal d1">Our World</span>
         <h2 class="reveal d1">Pieces of us</h2>
         <p class="lede reveal d2">A scattered little map of who we are. Wander, and tap a marker to find your way around the day.</p>
         <div class="world-map reveal d2" id="world-map">
@@ -635,17 +631,16 @@
     <!-- Photo gallery — glimpses (no story, just warmth) -->
     <section class="scene light" id="s-gallery" data-scene="gallery">
       <div class="copy">
-        <span class="eyebrow reveal d1">Glimpses</span>
         <h2 class="reveal d1">A few of our favourite moments</h2>
       </div>
       <div class="gallery">
-        <img class="reveal d1" src="images/journey-01.webp" alt="Tommy and Jeyan smiling side by side among soft blue festival lights" loading="lazy" decoding="async" />
-        <img class="reveal d1" src="images/journey-02.webp" alt="Tommy and Jeyan close together at their evening prenup shoot" loading="lazy" decoding="async" />
-        <img class="reveal d1" src="images/journey-03.webp" alt="Tommy and Jeyan looking at each other under warm string lights" loading="lazy" decoding="async" />
-        <img class="reveal d2" src="images/journey-04.webp" alt="Tommy and Jeyan laughing together, dressed in white" loading="lazy" decoding="async" />
-        <img class="reveal d2" src="images/journey-05.webp" alt="Tommy and Jeyan holding each other amid glowing lanterns" loading="lazy" decoding="async" />
-        <img class="reveal d2" src="images/journey-06.webp" alt="Tommy and Jeyan together on a lantern-lit evening" loading="lazy" decoding="async" />
-        <img class="wide reveal d2" src="images/savethedate.webp" alt="Tommy and Jeyan — Save the Date, December 27, 2026" loading="lazy" decoding="async" />
+        <figure class="gtile reveal d1"><img data-parallax="0.07" src="images/journey-01.webp" alt="Tommy and Jeyan smiling side by side among soft blue festival lights" loading="lazy" decoding="async" /></figure>
+        <figure class="gtile reveal d1"><img data-parallax="0.07" src="images/journey-02.webp" alt="Tommy and Jeyan close together at their evening prenup shoot" loading="lazy" decoding="async" /></figure>
+        <figure class="gtile reveal d1"><img data-parallax="0.07" src="images/journey-03.webp" alt="Tommy and Jeyan looking at each other under warm string lights" loading="lazy" decoding="async" /></figure>
+        <figure class="gtile reveal d2"><img data-parallax="0.07" src="images/journey-04.webp" alt="Tommy and Jeyan laughing together, dressed in white" loading="lazy" decoding="async" /></figure>
+        <figure class="gtile reveal d2"><img data-parallax="0.07" src="images/journey-05.webp" alt="Tommy and Jeyan holding each other amid glowing lanterns" loading="lazy" decoding="async" /></figure>
+        <figure class="gtile reveal d2"><img data-parallax="0.07" src="images/journey-06.webp" alt="Tommy and Jeyan together on a lantern-lit evening" loading="lazy" decoding="async" /></figure>
+        <figure class="gtile wide reveal d2"><img data-parallax="0.05" src="images/savethedate.webp" alt="Tommy and Jeyan, Save the Date, December 27, 2026" loading="lazy" decoding="async" /></figure>
       </div>
     </section>
 
@@ -1275,7 +1270,7 @@
           layers.forEach(({ el, speed }) => {
             const r = el.getBoundingClientRect();
             const off = ((r.top + r.height / 2) - vh / 2) / vh; // ~-1..1
-            el.style.transform = `translate3d(0, ${(-off * speed * 100).toFixed(1)}px, 0) scale(1.16)`;
+            el.style.transform = `translate3d(0, ${(-off * speed * 100).toFixed(1)}px, 0) scale(1.12)`;
           });
           ticking = false;
         }
