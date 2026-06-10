@@ -55,12 +55,17 @@
       --ease: cubic-bezier(.22,.61,.36,1);
     }
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    /* Root-level horizontal clipping: body-only overflow-x does not stop
+       sideways panning on iOS. `clip` (with `hidden` fallback) avoids creating
+       a new scroll container, so the sticky pin-tour keeps working. */
+    html { scroll-behavior: smooth; overflow-x: hidden; overflow-x: clip; width: 100%; }
     body {
       margin: 0; background: var(--night1); color: #ece6da;
       font-family: var(--sans); font-weight: 300; line-height: 1.7; letter-spacing: .01em;
-      -webkit-font-smoothing: antialiased; overflow-x: hidden;
+      -webkit-font-smoothing: antialiased; overflow-x: hidden; overflow-x: clip;
+      width: 100%; max-width: 100%;
     }
+    main { overflow-x: clip; }
     body.locked { overflow: hidden; height: 100vh; }
     /* hide the scroll content until the gate is connected */
     main, .footer-note { transition: opacity 1.1s var(--ease); }
