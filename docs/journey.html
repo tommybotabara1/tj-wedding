@@ -1737,7 +1737,7 @@
 
         // Route (drawn in the "next" scene)
         const start = latLonToVec(THREE, -15, -50, 1.01);
-        const end = latLonToVec(THREE, 40, 120, 1.01);
+        const end = latLonToVec(THREE, 14.6, 121.0, 1.01); /* the route comes home: Manila */
         const mid = start.clone().add(end).multiplyScalar(0.5).normalize().multiplyScalar(1.35);
         const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
         const routePts = curve.getPoints(120);
@@ -1750,6 +1750,14 @@
         dest.position.copy(end); dest.scale.setScalar(0.22); group.add(dest);
 
         const amb = new THREE.AmbientLight(0xffffff, 0.6); scene.add(amb);
+
+        // The spin begins and ends at home: the Philippines faces the camera
+        // on load, and the finale settles back onto it.
+        const phV = latLonToVec(THREE, 14.6, 121.0, 1);
+        const phYaw = Math.atan2(-phV.x, phV.z);
+        const phTilt = Math.max(-0.5, Math.min(0.5, Math.asin(phV.y) * 0.8));
+        group.rotation.y = phYaw;
+        group.rotation.x = phTilt;
 
         // Atmosphere rim glow (always faces camera) + deep starfield for parallax depth
         const atmo = new THREE.Sprite(new THREE.SpriteMaterial({
@@ -1835,6 +1843,13 @@
             group.rotation.x += (xT - group.rotation.x) * Math.min(1, dt * 2.2);
             targetCamZ = 2.95 + 0.4 * Math.sin(Math.PI * tt);     // settle in at each pin, breathe out between
             arcs.forEach((a2, i) => { a2.lit = Math.max(a2.lit, Math.min(1, Math.max(0, f - i))); });
+          } else if (activeScene === 'next') {
+            // the spin settles back home: the Philippines faces the camera as the route lands
+            let yT = phYaw;
+            while (yT - group.rotation.y > Math.PI) yT -= Math.PI * 2;
+            while (yT - group.rotation.y < -Math.PI) yT += Math.PI * 2;
+            group.rotation.y += (yT - group.rotation.y) * Math.min(1, dt * 1.4);
+            group.rotation.x += (phTilt - group.rotation.x) * Math.min(1, dt * 1.4);
           } else {
             group.rotation.y += dt * 0.06;
             group.rotation.x += (0 - group.rotation.x) * Math.min(1, dt * 1.2);
