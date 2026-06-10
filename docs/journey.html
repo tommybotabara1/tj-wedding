@@ -303,41 +303,49 @@
     .banner-copy .eyebrow { color: var(--gold-soft); text-shadow: 0 1px 14px rgba(0,0,0,.7); }
     .banner-copy h2 { color: #fdf8ee; font-size: clamp(32px, 7vw, 70px); text-shadow: 0 2px 30px rgba(0,0,0,.5); }
 
-    /* Section 2 — The Day: a quiet sunset beach (layered scene) */
-    #s-beach { overflow: hidden; background: #eecda4; }
-    .beach-sky { position: absolute; left: 0; right: 0; top: 0; height: 58%; pointer-events: none;
+    /* Section 2 — The Day: a quiet sunset beach.
+       The scene lives in its own stage; the detail cards sit BELOW it on the
+       sand, so the sun, waves, guitar and sunglasses are never covered. */
+    #s-beach { display: block; padding: 0; min-height: 100svh; overflow: hidden; background: #e9cda1; }
+    .beach-stage { position: relative; height: max(62svh, 430px); overflow: hidden; }
+    .beach-sky { position: absolute; left: 0; right: 0; top: 0; height: 60%; pointer-events: none;
       background: linear-gradient(180deg, #dfa172 0%, #efc491 46%, #fbe7c6 100%); }
-    .beach-sun { position: absolute; left: 0; right: 0; top: 42%; height: 0; pointer-events: none; }
+    .beach-sun { position: absolute; left: 0; right: 0; top: 47%; height: 0; pointer-events: none; }
     .beach-sun::before { content: ""; display: block; margin: 0 auto; width: clamp(130px, 26vw, 210px);
       aspect-ratio: 1; border-radius: 50%; transform: translateY(-50%);
       background: radial-gradient(circle, #fff3d6 0%, #ffe2ad 38%, rgba(255,214,150,.45) 62%, transparent 75%);
       filter: blur(1px); }
-    .beach-sea { position: absolute; left: 0; right: 0; top: 54%; height: 13%; pointer-events: none;
+    .beach-sea { position: absolute; left: 0; right: 0; top: 58%; height: 15%; pointer-events: none;
       background: linear-gradient(180deg, #d9a276 0%, #cb9a7c 100%); }
     .beach-sea::after { /* sun glitter path on the water */
       content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: clamp(60px, 12vw, 110px);
       transform: translateX(-50%);
       background: linear-gradient(180deg, rgba(255,240,205,.55), rgba(255,240,205,0));
       filter: blur(4px); }
-    .beach-waves { position: absolute; left: -4%; right: -4%; width: 108%; top: 52.5%; height: 70px; pointer-events: none; }
+    .beach-waves { position: absolute; left: -4%; right: -4%; width: 108%; top: 56%; height: 64px; pointer-events: none; }
     .beach-waves .w1 { fill: rgba(213,150,110,.5); animation: wdrift 16s ease-in-out infinite alternate; }
     .beach-waves .w2 { fill: rgba(236,188,138,.65); animation: wdrift 11s ease-in-out infinite alternate-reverse; }
     .beach-waves .w3 { fill: none; stroke: rgba(253,240,214,.8); stroke-width: 2; stroke-linecap: round;
       animation: wdrift 13s ease-in-out infinite alternate; }
     @keyframes wdrift { from { transform: translateX(-18px); } to { transform: translateX(18px); } }
-    .beach-sand { position: absolute; left: 0; right: 0; top: 64%; bottom: 0; pointer-events: none;
+    .beach-sand { position: absolute; left: 0; right: 0; top: 71%; bottom: 0; pointer-events: none;
       background: linear-gradient(180deg, #f2d9b0 0%, #e9cda1 100%); }
     .beach-sand::after { content: ""; position: absolute; inset: 0; opacity: .4;
       background-image: radial-gradient(rgba(140,100,55,.12) 1px, transparent 1.4px);
       background-size: 26px 26px; }
-    .beach-guitar { position: absolute; right: clamp(6px, 5vw, 80px); bottom: 4%; height: clamp(150px, 26vh, 250px);
+    .beach-guitar { position: absolute; right: clamp(10px, 6vw, 90px); bottom: 6px; height: clamp(130px, 44%, 230px);
       width: auto; color: #6b4527; opacity: .6; transform: rotate(7deg); pointer-events: none; }
-    .beach-shades { position: absolute; left: clamp(10px, 7vw, 110px); bottom: 9%; width: clamp(66px, 10vw, 110px);
+    .beach-shades { position: absolute; left: clamp(12px, 8vw, 120px); bottom: 7%; width: clamp(60px, 16%, 110px);
       color: #6b4527; opacity: .55; transform: rotate(-9deg); pointer-events: none; }
-    .day-copy { position: relative; z-index: 2; max-width: 760px; }
-    #s-beach .eyebrow { color: #8a5430; }
+    .beach-head { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; text-align: center;
+      padding: clamp(44px, 8svh, 84px) 24px 0; }
+    #s-beach .eyebrow { color: #6b3a1c; }
     #s-beach h2 { color: #46291a; font-size: clamp(34px, 7vw, 64px); }
-    #s-beach .lede { margin-top: 14px; color: #6e4730; }
+    #s-beach .lede { margin-top: 12px; color: #6e4730; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .beach-details { position: relative; z-index: 1; padding: 4px 24px clamp(48px, 8svh, 84px);
+      background: linear-gradient(180deg, #e9cda1 0%, #e3c393 100%); }
+    .beach-details .detail-grid { max-width: 760px; margin: 14px auto 0; }
+    @media (min-width: 720px) { .beach-stage { height: max(68svh, 520px); } }
     .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 30px; }
     .detail { background: rgba(255,252,245,.84); backdrop-filter: blur(6px);
       border: 1px solid rgba(255,255,255,.65); border-radius: 6px; padding: 20px 18px;
@@ -357,14 +365,18 @@
     .gtile.wide { grid-column: 1 / -1; aspect-ratio: 16/9; }
 
     /* Section 3 — Our World icon grid */
-    #s-world .copy { max-width: 880px; }
+    /* min-width: 0 stops the map's intrinsic size from widening this grid item
+       past the viewport (the cause of the cut-off right edge on phones) */
+    #s-world .copy { max-width: 880px; width: 100%; min-width: 0; }
     #s-world .eyebrow { color: var(--sage-text); }
     #s-world h2 { color: var(--ink); font-size: clamp(30px, 6vw, 58px); }
     #s-world .lede { margin-top: 16px; color: var(--soft); }
     /* Keepsake travel map of "venues" */
     .world-map {
+      /* no min-height: with aspect-ratio it transfers into a min-WIDTH (409px)
+         that overflowed phone screens; the ratio alone defines the height */
       position: relative; width: 100%; max-width: 980px; margin: 34px auto 0;
-      aspect-ratio: 3 / 4.4; min-height: 600px;
+      aspect-ratio: 3 / 4.4;
       border-radius: 14px; overflow: hidden;
       background:
         radial-gradient(120% 90% at 50% 0%, rgba(255,253,247,.9), transparent 55%),
@@ -673,10 +685,11 @@
       .pin-dot svg { width: 24px; height: 24px; }
       .map-compass { width: 46px; top: 18px; right: 18px; }
       .map-script { font-size: 17px; left: 18px; bottom: 12px; }
+      #s-world { padding-left: 14px; padding-right: 14px; }
       .map-cartouche { padding: 5px 14px 7px; }
       .map-cartouche span { font-size: 8px; }
       .map-cartouche b { font-size: 16px; }
-      .map-sea { font-size: 12.5px; letter-spacing: .2em; }
+      .map-sea { font-size: 12.5px; letter-spacing: .2em; bottom: 30%; right: 5%; }
       .map-legend { font-size: 9px; padding: 5px 9px; }
       .pin-place { font-size: 11.5px; }
       .ent-leads, .ent-party { grid-template-columns: 1fr; }
@@ -690,7 +703,7 @@
       .passes { grid-template-columns: 1fr 1fr; }
       .day-wrap { grid-template-columns: 1fr 1fr; gap: 48px; }
       .gallery { grid-template-columns: repeat(3, 1fr); }
-      .world-map { aspect-ratio: 16 / 9.2; min-height: 460px; }
+      .world-map { aspect-ratio: 16 / 9.2; }
       .map-pin { left: calc(var(--x, 50) * 1%); top: calc(var(--y, 50) * 1%); }
     }
 
@@ -848,6 +861,7 @@
 
     <!-- Section 2 — The Day (sunset beach scene) -->
     <section class="scene" id="s-beach" data-scene="beach">
+      <div class="beach-stage">
       <div class="beach-sky" aria-hidden="true"></div>
       <div class="beach-sun" aria-hidden="true" data-parallax="0.1" data-pscale="1"></div>
       <div class="beach-sea" aria-hidden="true"></div>
@@ -876,10 +890,13 @@
           <path d="M25 25 L6 15 M107 25 L126 15" />
         </g>
       </svg>
-      <div class="copy day-copy">
+      <div class="beach-head">
         <span class="eyebrow reveal d1">Where the paths meet</span>
         <h2 class="reveal d1">The Day</h2>
         <p class="lede reveal d2">One afternoon, two families, and the beginning of forever.</p>
+      </div>
+      </div><!-- /beach-stage -->
+      <div class="beach-details">
         <div class="detail-grid">
           <div class="detail reveal d1"><div class="k">Date</div><div class="v">December 27, 2026</div><div class="s">Sunday</div></div>
           <div class="detail reveal d1"><div class="k">Ceremony</div><div class="v">1:30 in the afternoon</div><div class="s">Kindly be seated by 1:15 PM</div></div>
