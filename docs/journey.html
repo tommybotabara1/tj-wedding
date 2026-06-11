@@ -309,10 +309,12 @@
         linear-gradient(180deg, var(--ivory) 0%, rgba(247,243,234,0) 16%),
         radial-gradient(110% 80% at 50% 58%, transparent 46%, rgba(5,6,6,.5) 100%),
         linear-gradient(180deg, transparent 60%, rgba(5,6,6,.85) 100%); }
+    /* centred, with a soft dark halo so the words hold against the bright hands */
     .closer-copy { position: relative; z-index: 2; text-align: center;
-      align-self: end; padding-bottom: clamp(52px, 10svh, 110px); }
-    .closer-copy .eyebrow { color: #ecd9a8; font-size: 13px; letter-spacing: .34em;
-      text-shadow: 0 1px 4px rgba(0,0,0,.95), 0 2px 18px rgba(0,0,0,.9), 0 0 30px rgba(0,0,0,.8); }
+      padding: clamp(48px, 7vw, 90px) clamp(64px, 10vw, 130px);
+      background: radial-gradient(closest-side, rgba(3,4,4,.62) 0%, rgba(3,4,4,.38) 48%, transparent 78%); }
+    .closer-copy .eyebrow { color: #f3e2b6; font-size: clamp(13px, 1.6vw, 16px); letter-spacing: .4em;
+      text-shadow: 0 1px 4px rgba(0,0,0,.95), 0 2px 22px rgba(0,0,0,.9), 0 0 36px rgba(0,0,0,.85); }
 
     /* Section 2 — The Day: a sunset beach.
        The scene lives in its own full-width stage; the detail cards sit BELOW
