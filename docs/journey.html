@@ -654,7 +654,8 @@
     .manifest .mb { padding: clamp(16px, 3vw, 26px); }
 
     /* Embedded venue maps (ported from the invitation) */
-    .pass-col { display: flex; flex-direction: column; gap: 10px; }
+    .pass-col { display: flex; flex-direction: column; gap: 10px; align-self: stretch; }
+    .pass-col .pass { flex: 1 1 auto; }
     .map-embed { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; line-height: 0; background: var(--paper); }
     .map-embed iframe { width: 100%; height: 220px; border: 0; display: block; }
 
@@ -1359,10 +1360,8 @@
     <img id="lb-img" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" />
   </dialog>
 
-  <!-- Ambient music: to enable, add an owned/licensed file (e.g. docs/audio/ambient.mp3)
-       and set src on #ambient below. The toggle button appears automatically. -->
-  <audio id="ambient" loop preload="none"></audio>
-  <button class="music-btn" id="music-btn" type="button" aria-label="Play ambient music" aria-pressed="false">
+  <audio id="ambient" loop preload="none" src="audio/enchanting-romantic-lofi.mp3"></audio>
+  <button class="music-btn" id="music-btn" type="button" aria-label="Play ambient music" aria-pressed="false" title="Play music">
     <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
       <path d="M9 18V6l9-2v12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
       <circle cx="6.8" cy="18" r="2.4" fill="currentColor"/><circle cx="15.8" cy="16" r="2.4" fill="currentColor"/>
@@ -1388,6 +1387,7 @@
         if (connected) return; connected = true;
         try { sessionStorage.setItem('tj-journey-entered', '1'); } catch (e) {}
         if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) {}
+        if (window.__tjStartMusic) window.__tjStartMusic();
         window.dispatchEvent(new CustomEvent('tj-connect'));
         const bloom = document.getElementById('bloom'); if (bloom) bloom.classList.add('fire');
         if (!REDUCED) {
@@ -1712,14 +1712,32 @@
     (function () {
       const a = $('ambient'), b = $('music-btn'); if (!a || !b) return;
       if (!a.getAttribute('src') && !a.querySelector('source')) return;
-      a.addEventListener('canplay', () => b.classList.add('show'), { once: true });
+      a.volume = 0.24;
+      const setState = (playing) => {
+        b.classList.toggle('playing', playing);
+        b.setAttribute('aria-pressed', String(playing));
+        b.setAttribute('aria-label', playing ? 'Pause ambient music' : 'Play ambient music');
+        b.title = playing ? 'Pause music' : 'Play music';
+      };
+      const playAmbient = () => {
+        if (!a.paused) return;
+        a.play().then(() => setState(true))
+          .catch(() => setState(false));
+      };
+      window.__tjStartMusic = playAmbient;
+      const showButton = () => b.classList.add('show');
+      a.addEventListener('canplay', showButton);
+      a.addEventListener('loadedmetadata', showButton);
+      a.addEventListener('pause', () => setState(false));
+      a.addEventListener('ended', () => setState(false));
       a.load();
+      showButton();
+      window.addEventListener('tj-connect', playAmbient, { once: true });
       b.addEventListener('click', () => {
         if (a.paused) {
-          a.play().then(() => { b.classList.add('playing'); b.setAttribute('aria-pressed', 'true'); b.setAttribute('aria-label', 'Pause ambient music'); })
-            .catch(() => b.classList.remove('show'));
+          playAmbient();
         } else {
-          a.pause(); b.classList.remove('playing'); b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', 'Play ambient music');
+          a.pause(); setState(false);
         }
       });
     })();

@@ -450,6 +450,7 @@
     .music.show { display: flex; }
     .music .bars { display: flex; gap: 2px; align-items: flex-end; height: 16px; }
     .music .bars i { width: 2.5px; height: 6px; background: currentColor; }
+    .music.playing { background: var(--sage); border-color: var(--sage); color: var(--white); }
     .music.playing .bars i { animation: eq .9s ease-in-out infinite; }
     .music .bars i:nth-child(2) { animation-delay: .2s; } .music .bars i:nth-child(3) { animation-delay: .4s; } .music .bars i:nth-child(4) { animation-delay: .1s; }
     @keyframes eq { 0%,100% { height: 5px; } 50% { height: 15px; } }
@@ -997,11 +998,10 @@
   </footer>
 
   <!-- Music toggle (enabled only if an audio file is present) -->
-  <button class="music" id="music" aria-label="Toggle background music">
+  <button class="music" id="music" aria-label="Play ambient music" aria-pressed="false" title="Play music">
     <span class="bars"><i></i><i></i><i></i><i></i></span>
   </button>
-  <!-- To enable background music, drop a track at assets/ambient.mp3 and set it as src below. -->
-  <audio id="audio" loop preload="none"></audio>
+  <audio id="audio" loop preload="none" src="audio/enchanting-romantic-lofi.mp3"></audio>
 
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox" aria-hidden="true">
@@ -1262,11 +1262,23 @@
       // Music stays dormant unless a real <source>/src is provided on #audio.
       if (!audio.currentSrc && !audio.getAttribute('src')) return;
       let enabled = false;
-      audio.addEventListener('canplay', () => { if (!enabled) { btn.classList.add('show'); enabled = true; } });
+      audio.volume = 0.24;
+      const setState = (playing) => {
+        btn.classList.toggle('playing', playing);
+        btn.setAttribute('aria-pressed', String(playing));
+        btn.setAttribute('aria-label', playing ? 'Pause ambient music' : 'Play ambient music');
+        btn.title = playing ? 'Pause music' : 'Play music';
+      };
+      const showButton = () => { if (!enabled) { btn.classList.add('show'); enabled = true; } };
+      audio.addEventListener('canplay', showButton);
+      audio.addEventListener('loadedmetadata', showButton);
+      audio.addEventListener('pause', () => setState(false));
+      audio.addEventListener('ended', () => setState(false));
       audio.load();
+      showButton();
       btn.addEventListener('click', () => {
-        if (audio.paused) { audio.play().then(() => btn.classList.add('playing')).catch(() => btn.classList.remove('show')); }
-        else { audio.pause(); btn.classList.remove('playing'); }
+        if (audio.paused) { audio.play().then(() => setState(true)).catch(() => setState(false)); }
+        else { audio.pause(); setState(false); }
       });
     })();
 
