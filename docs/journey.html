@@ -255,9 +255,9 @@
     .reveal.d1 { transition-delay: .05s; } .reveal.d2 { transition-delay: .2s; } .reveal.d3 { transition-delay: .35s; }
 
     /* Section 1 — the journey (over globe, transparent; becomes a scroll "pin tour" with WebGL) */
-    #s-journey { display: block; padding: 0; }
+    #s-journey { display: block; place-items: normal; padding: 0; }
     html.webgl #s-journey { min-height: 320svh; }
-    .tour-sticky { position: sticky; top: 0; min-height: 100svh; display: grid; place-items: center; padding: 12vh 24px; }
+    .tour-sticky { position: sticky; top: 0; width: 100%; min-height: 100svh; display: grid; place-items: center; padding: 12vh 24px; }
     #s-journey .copy h2 { font-size: clamp(30px, 6vw, 60px); color: #f4eede; }
     #s-journey .lede { margin-top: 18px; color: rgba(236,230,218,.72); font-size: 17px; }
     .pinwords { display: flex; flex-wrap: wrap; gap: 10px 14px; justify-content: center; margin-top: 28px; }
@@ -303,49 +303,86 @@
     .banner-copy .eyebrow { color: var(--gold-soft); text-shadow: 0 1px 14px rgba(0,0,0,.7); }
     .banner-copy h2 { color: #fdf8ee; font-size: clamp(32px, 7vw, 70px); text-shadow: 0 2px 30px rgba(0,0,0,.5); }
 
-    /* Section 2 — The Day: a quiet sunset beach.
-       The scene lives in its own stage; the detail cards sit BELOW it on the
-       sand, so the sun, waves, guitar and sunglasses are never covered. */
-    #s-beach { display: block; padding: 0; min-height: 100svh; overflow: hidden; background: #e9cda1; }
-    .beach-stage { position: relative; height: max(62svh, 430px); overflow: hidden; }
-    .beach-sky { position: absolute; left: 0; right: 0; top: 0; height: 60%; pointer-events: none;
-      background: linear-gradient(180deg, #dfa172 0%, #efc491 46%, #fbe7c6 100%); }
-    .beach-sun { position: absolute; left: 0; right: 0; top: 47%; height: 0; pointer-events: none; }
-    .beach-sun::before { content: ""; display: block; margin: 0 auto; width: clamp(130px, 26vw, 210px);
-      aspect-ratio: 1; border-radius: 50%; transform: translateY(-50%);
-      background: radial-gradient(circle, #fff3d6 0%, #ffe2ad 38%, rgba(255,214,150,.45) 62%, transparent 75%);
+    /* Section 2 — The Day: a sunset beach.
+       The scene lives in its own full-width stage; the detail cards sit BELOW
+       it on the sand, so the water, sun, palms and guitar are never covered.
+       place-items: normal undoes .scene's place-items:center — in newer
+       Chrome that now reaches block children too and shrink-wrapped the
+       stage to the heading's text width on desktop. */
+    #s-beach { display: block; place-items: normal; padding: 0; min-height: 100svh; overflow: hidden; background: #ecd2a6; }
+    .beach-stage { position: relative; width: 100%; height: max(64svh, 460px); overflow: hidden; }
+    .beach-stage > * { pointer-events: none; }
+    .beach-sky { position: absolute; left: 0; right: 0; top: 0; height: 58%;
+      background: linear-gradient(180deg, #c96b43 0%, #e08d59 26%, #f2b87e 56%, #fbdfae 83%, #fdeec9 100%); }
+    .beach-cloud { position: absolute; height: 15px; border-radius: 50px; background: rgba(255,238,212,.7);
+      filter: blur(7px); animation: cdrift 70s linear infinite; }
+    .beach-cloud.c1 { top: 38%; width: clamp(140px, 16vw, 240px); opacity: .8; }
+    .beach-cloud.c2 { top: 46%; width: clamp(90px, 11vw, 170px); height: 11px; animation-duration: 95s; animation-delay: -40s; opacity: .65; }
+    .beach-cloud.c3 { top: 7%; width: clamp(70px, 8vw, 130px); height: 9px; animation-duration: 80s; animation-delay: -64s; opacity: .5; }
+    @keyframes cdrift { from { transform: translateX(-28vw); } to { transform: translateX(112vw); } }
+    .beach-birds { position: absolute; top: 6%; left: 0; width: clamp(64px, 8vw, 110px); color: rgba(86,50,28,.6);
+      animation: bglide 44s linear infinite; }
+    .beach-birds.b2 { top: 40%; width: clamp(44px, 5.4vw, 76px); animation-duration: 58s; animation-delay: -30s; opacity: .65; }
+    @keyframes bglide {
+      from { transform: translateX(-18vw) translateY(0); }
+      50%  { transform: translateX(46vw) translateY(-16px); }
+      to   { transform: translateX(112vw) translateY(2px); }
+    }
+    .beach-sun { position: absolute; left: 0; right: 0; top: 58%; height: 0; }
+    .beach-sun::before { content: ""; display: block; margin: 0 auto; width: clamp(150px, 19vw, 280px);
+      aspect-ratio: 1; border-radius: 50%; transform: translateY(-58%);
+      background: radial-gradient(circle, #fff6dd 0%, #ffe3a6 38%, #ffc887 58%, rgba(255,196,135,.5) 72%, transparent 80%);
       filter: blur(1px); }
-    .beach-sea { position: absolute; left: 0; right: 0; top: 58%; height: 15%; pointer-events: none;
-      background: linear-gradient(180deg, #d9a276 0%, #cb9a7c 100%); }
+    /* water: a warm mirror at the horizon melting into real sea-glass teal */
+    .beach-sea { position: absolute; left: 0; right: 0; top: 58%; height: 19%;
+      background: linear-gradient(180deg,
+        #e2a36a 0%, #c2a07c 7%, #79ada0 22%, #5b9a90 46%, #74b3a4 72%, #9ccdba 92%, #bfdfcd 100%); }
     .beach-sea::after { /* sun glitter path on the water */
-      content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: clamp(60px, 12vw, 110px);
+      content: ""; position: absolute; left: 50%; top: 0; height: 70%; width: clamp(70px, 9vw, 130px);
       transform: translateX(-50%);
-      background: linear-gradient(180deg, rgba(255,240,205,.55), rgba(255,240,205,0));
-      filter: blur(4px); }
-    .beach-waves { position: absolute; left: -4%; right: -4%; width: 108%; top: 56%; height: 64px; pointer-events: none; }
-    .beach-waves .w1 { fill: rgba(213,150,110,.5); animation: wdrift 16s ease-in-out infinite alternate; }
-    .beach-waves .w2 { fill: rgba(236,188,138,.65); animation: wdrift 11s ease-in-out infinite alternate-reverse; }
-    .beach-waves .w3 { fill: none; stroke: rgba(253,240,214,.8); stroke-width: 2; stroke-linecap: round;
+      background: linear-gradient(180deg, rgba(255,236,185,.8), rgba(255,236,185,0));
+      filter: blur(5px); }
+    .beach-waves { position: absolute; left: -4%; right: -4%; width: 108%; top: 68.5%; height: 70px; }
+    .beach-waves .w1 { fill: rgba(64,134,124,.42); animation: wdrift 16s ease-in-out infinite alternate; }
+    .beach-waves .w2 { fill: rgba(141,200,185,.62); animation: wdrift 11s ease-in-out infinite alternate-reverse; }
+    .beach-waves .w3 { fill: none; stroke: rgba(253,247,232,.9); stroke-width: 2; stroke-linecap: round;
       animation: wdrift 13s ease-in-out infinite alternate; }
     @keyframes wdrift { from { transform: translateX(-18px); } to { transform: translateX(18px); } }
-    .beach-sand { position: absolute; left: 0; right: 0; top: 71%; bottom: 0; pointer-events: none;
-      background: linear-gradient(180deg, #f2d9b0 0%, #e9cda1 100%); }
+    /* foam licking the sand */
+    .beach-foam { position: absolute; left: -4%; width: 108%; top: 73.2%; height: 44px; color: #fdf4e0;
+      animation: swash 8s ease-in-out infinite alternate; }
+    .beach-foam path { fill: currentColor; opacity: .9; }
+    @keyframes swash { from { transform: translateY(-5px); } to { transform: translateY(5px); } }
+    .beach-sand { position: absolute; left: 0; right: 0; top: 76%; bottom: 0;
+      background: linear-gradient(180deg, #f6deb4 0%, #ecd2a6 100%); }
     .beach-sand::after { content: ""; position: absolute; inset: 0; opacity: .4;
       background-image: radial-gradient(rgba(140,100,55,.12) 1px, transparent 1.4px);
       background-size: 26px 26px; }
-    .beach-guitar { position: absolute; right: clamp(10px, 6vw, 90px); bottom: 6px; height: clamp(130px, 44%, 230px);
-      width: auto; color: #6b4527; opacity: .6; transform: rotate(7deg); pointer-events: none; }
-    .beach-shades { position: absolute; left: clamp(12px, 8vw, 120px); bottom: 7%; width: clamp(60px, 16%, 110px);
-      color: #6b4527; opacity: .55; transform: rotate(-9deg); pointer-events: none; }
+    /* line-art keepsakes on the sand */
+    .beach-palm { position: absolute; top: -8px; left: -10px; width: clamp(170px, 25vw, 380px); color: #5d3c22;
+      opacity: .8; transform-origin: 6% 4%; animation: sway 9s ease-in-out infinite alternate; }
+    @keyframes sway { from { transform: rotate(-1deg); } to { transform: rotate(1.2deg); } }
+    .beach-guitar { position: absolute; right: clamp(14px, 7vw, 130px); bottom: 8px; height: clamp(150px, 48%, 270px);
+      width: auto; color: #6b4527; opacity: .72; transform: rotate(7deg); }
+    .beach-shades { position: absolute; left: clamp(14px, 8vw, 130px); bottom: 6.5%; width: clamp(64px, 14%, 118px);
+      color: #6b4527; opacity: .6; transform: rotate(-9deg); }
+    .beach-star { position: absolute; left: 34%; bottom: 4.5%; width: clamp(30px, 4vw, 52px);
+      color: #8a5a32; opacity: .55; transform: rotate(14deg); }
+    .beach-shell { position: absolute; right: 31%; bottom: 13%; width: clamp(22px, 3vw, 38px);
+      color: #8a5a32; opacity: .5; transform: rotate(-12deg); }
     .beach-head { position: relative; z-index: 2; max-width: 760px; margin: 0 auto; text-align: center;
       padding: clamp(44px, 8svh, 84px) 24px 0; }
-    #s-beach .eyebrow { color: #6b3a1c; }
-    #s-beach h2 { color: #46291a; font-size: clamp(34px, 7vw, 64px); }
-    #s-beach .lede { margin-top: 12px; color: #6e4730; max-width: 520px; margin-left: auto; margin-right: auto; }
-    .beach-details { position: relative; z-index: 1; padding: 4px 24px clamp(48px, 8svh, 84px);
-      background: linear-gradient(180deg, #e9cda1 0%, #e3c393 100%); }
+    #s-beach .eyebrow { color: #5d2f15; }
+    #s-beach h2 { color: #3f2312; font-size: clamp(34px, 7vw, 64px); }
+    #s-beach .lede { margin-top: 12px; color: #5f3a22; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .beach-details { position: relative; z-index: 1; padding: 10px 24px clamp(48px, 8svh, 84px);
+      background: linear-gradient(180deg, #ecd2a6 0%, #e4c596 100%); }
     .beach-details .detail-grid { max-width: 760px; margin: 14px auto 0; }
-    @media (min-width: 720px) { .beach-stage { height: max(68svh, 520px); } }
+    @media (min-width: 720px) { .beach-stage { height: max(74svh, 560px); } }
+    @media (min-width: 980px) { /* widescreen: one elegant row of four */
+      .beach-details .detail-grid { max-width: 1140px; grid-template-columns: repeat(4, 1fr); }
+      .beach-details .detail.wide { grid-column: auto; }
+    }
     .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 30px; }
     .detail { background: rgba(255,252,245,.84); backdrop-filter: blur(6px);
       border: 1px solid rgba(255,255,255,.65); border-radius: 6px; padding: 20px 18px;
@@ -376,7 +413,7 @@
       /* no min-height: with aspect-ratio it transfers into a min-WIDTH (409px)
          that overflowed phone screens; the ratio alone defines the height */
       position: relative; width: 100%; max-width: 980px; margin: 34px auto 0;
-      aspect-ratio: 3 / 4.4;
+      aspect-ratio: 3 / 4.9;
       border-radius: 14px; overflow: hidden;
       background:
         radial-gradient(120% 90% at 50% 0%, rgba(255,253,247,.9), transparent 55%),
@@ -524,8 +561,20 @@
     .music-btn.playing { background: var(--gold); color: var(--night1); }
     /* gallery lightbox */
     .gtile { cursor: zoom-in; }
-    dialog.panel.lightbox { background: transparent; box-shadow: none; width: auto; max-width: min(94vw, 1100px); overflow: visible; }
-    dialog.panel.lightbox img { display: block; max-width: 94vw; max-height: 86svh; border-radius: 10px; box-shadow: var(--shadow); }
+    /* fit-content (not auto): a modal dialog has inset:0, so auto would
+       stretch it across the viewport and the image would pin to one edge
+       instead of centering. The box hugs the image; margin:auto centers it. */
+    dialog.panel.lightbox { background: transparent; box-shadow: none;
+      width: fit-content; height: fit-content; max-width: none; max-height: none; overflow: visible; }
+    dialog.panel.lightbox img { display: block; max-width: 94vw; max-height: 88svh; border-radius: 10px; box-shadow: var(--shadow); }
+    /* phones: a wide image in a portrait viewport turns sideways to use the
+       whole screen (JS adds .rotated and sets the width) */
+    dialog.panel.lightbox.rotated { width: 100vw; max-width: 100vw; height: 100svh; max-height: 100svh; margin: 0; }
+    /* absolute centering: a grid cell start-aligns content that overflows it,
+       so the sideways (extra-wide layout box) image would sit off-centre */
+    dialog.panel.lightbox.rotated img { position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%) rotate(90deg); max-width: none; max-height: none; }
+    dialog.panel.lightbox.rotated .panel-close { position: fixed; top: calc(10px + env(safe-area-inset-top)); right: 10px; }
     dialog.panel.lightbox .panel-close {
       position: absolute; top: -14px; right: -14px; background: var(--ivory); border-color: var(--ivory);
     }
@@ -686,15 +735,17 @@
       .map-compass { width: 46px; top: 18px; right: 18px; }
       .map-script { font-size: 17px; left: 18px; bottom: 12px; }
       #s-world { padding-left: 14px; padding-right: 14px; }
+      .beach-shell { right: 47%; bottom: 11%; }
       .map-cartouche { padding: 5px 14px 7px; }
       .map-cartouche span { font-size: 8px; }
       .map-cartouche b { font-size: 16px; }
-      .map-sea { font-size: 12.5px; letter-spacing: .2em; bottom: 30%; right: 5%; }
-      .map-legend { font-size: 9px; padding: 5px 9px; }
+      .map-sea { font-size: 12.5px; letter-spacing: .2em; top: 31%; left: 7%; right: auto; bottom: auto; }
+      /* the hint below the map says the same thing — give the chart air */
+      .map-legend { display: none; }
       .pin-place { font-size: 11.5px; }
       .ent-leads, .ent-party { grid-template-columns: 1fr; }
       dialog.panel { width: 100%; max-width: 100%; height: 100svh; max-height: 100svh; border-radius: 0; margin: 0; }
-      dialog.panel.lightbox { width: auto; height: auto; max-height: none; margin: auto; background: transparent; }
+      dialog.panel.lightbox { width: fit-content; height: fit-content; max-height: none; margin: auto; background: transparent; border-radius: 8px; }
       dialog.panel.lightbox .panel-close { top: 6px; right: 6px; }
       .panel-inner { padding: 28px 20px 40px; }
     }
@@ -716,7 +767,10 @@
       .spark { display: none; }
       #title h1 .tw { opacity: 1; transform: none; }
       #s-next .arrive-reveal { opacity: 1; transform: none; }
-      .beach-waves .w1, .beach-waves .w2, .beach-waves .w3 { animation: none; }
+      .beach-waves .w1, .beach-waves .w2, .beach-waves .w3,
+      .beach-foam, .beach-palm { animation: none; }
+      .beach-cloud, .beach-birds { animation: none; transform: translateX(30vw); }
+      .beach-cloud.c2, .beach-birds.b2 { transform: translateX(60vw); }
       #s-journey { min-height: 100svh !important; }
     }
   </style>
@@ -863,6 +917,20 @@
     <section class="scene" id="s-beach" data-scene="beach">
       <div class="beach-stage">
       <div class="beach-sky" aria-hidden="true"></div>
+      <div class="beach-cloud c1" aria-hidden="true"></div>
+      <div class="beach-cloud c2" aria-hidden="true"></div>
+      <div class="beach-cloud c3" aria-hidden="true"></div>
+      <svg class="beach-birds" aria-hidden="true" viewBox="0 0 100 40">
+        <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+          <path d="M8 22 Q15 14 22 20 Q29 14 36 22" />
+          <path d="M58 30 Q64 24 69 28 Q74 24 80 30" />
+        </g>
+      </svg>
+      <svg class="beach-birds b2" aria-hidden="true" viewBox="0 0 100 40">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+          <path d="M30 22 Q37 14 44 20 Q51 14 58 22" />
+        </g>
+      </svg>
       <div class="beach-sun" aria-hidden="true" data-parallax="0.1" data-pscale="1"></div>
       <div class="beach-sea" aria-hidden="true"></div>
       <svg class="beach-waves" aria-hidden="true" viewBox="0 0 1440 120" preserveAspectRatio="none">
@@ -871,6 +939,32 @@
         <path class="w3" d="M0,64 C190,50 380,78 580,64 C780,50 980,80 1180,66 C1300,58 1390,70 1440,64" />
       </svg>
       <div class="beach-sand" aria-hidden="true"></div>
+      <svg class="beach-foam" aria-hidden="true" viewBox="0 0 1440 60" preserveAspectRatio="none">
+        <path d="M0,36 C50,18 130,48 210,30 C290,14 360,50 450,30 C530,14 610,48 700,26 C780,12 860,50 950,30 C1030,16 1110,48 1190,28 C1270,14 1350,46 1440,28 L1440,60 L0,60 Z" />
+      </svg>
+      <svg class="beach-palm" aria-hidden="true" viewBox="0 0 400 300">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M24 14 C90 30 160 70 218 138" />
+          <path d="M52 28 q-2 16 -12 26 M78 40 q-3 16 -13 27 M104 55 q-4 17 -15 27 M130 71 q-5 17 -16 26 M156 90 q-6 17 -17 25 M181 110 q-7 16 -18 23 M203 130 q-8 15 -18 21" stroke-width="1.9" />
+          <path d="M52 28 q10 -14 24 -19 M78 40 q11 -13 25 -17 M104 55 q12 -12 26 -15 M130 71 q13 -11 27 -13 M156 90 q14 -10 27 -11 M181 110 q14 -9 26 -9" stroke-width="1.9" />
+          <path d="M22 18 C60 80 96 140 108 218" />
+          <path d="M38 52 q-16 4 -26 14 M50 84 q-17 4 -27 14 M62 118 q-18 5 -28 15 M72 150 q-18 6 -27 16 M82 184 q-17 7 -25 17 M90 210 q-16 8 -23 18" stroke-width="1.9" />
+          <path d="M38 52 q12 -12 26 -14 M50 84 q13 -11 27 -12 M62 118 q14 -10 28 -10 M72 150 q14 -9 27 -8 M82 184 q14 -8 26 -6" stroke-width="1.9" />
+          <path d="M26 12 C100 8 170 22 232 56" />
+          <path d="M70 12 q0 14 -8 26 M104 16 q-1 15 -10 27 M138 24 q-2 16 -12 27 M172 34 q-4 16 -14 26 M204 45 q-5 15 -15 24" stroke-width="1.9" />
+          <path d="M70 12 q8 -10 22 -12 M104 16 q9 -10 23 -11 M138 24 q10 -9 24 -9 M172 34 q11 -8 24 -7" stroke-width="1.9" />
+        </g>
+      </svg>
+      <svg class="beach-star" aria-hidden="true" viewBox="0 0 60 60">
+        <path d="M30 7 C32 17 35 21 43 22 C36 27 34 31 36 41 C30 36 27 36 20 42 C23 32 22 27 14 22 C23 21 27 16 30 7 Z"
+          fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" />
+      </svg>
+      <svg class="beach-shell" aria-hidden="true" viewBox="0 0 50 44">
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M25 6 C38 6 45 18 44 32 C38 38 12 38 6 32 C5 18 12 6 25 6 Z" />
+          <path d="M25 7 V36 M14 9 L20 36 M36 9 L30 36" stroke-width="1.6" />
+        </g>
+      </svg>
       <svg class="beach-guitar" aria-hidden="true" viewBox="0 0 120 280">
         <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M60 122 C38 122 24 140 24 162 C24 178 33 188 30 202 C27 226 44 248 62 248 C82 248 98 228 95 204 C93 189 100 179 100 162 C100 140 83 122 60 122 Z" />
@@ -966,13 +1060,13 @@
             <path class="route" d="" />
             <g class="route-plane" id="route-plane" style="display:none"><use href="#ic-plane" width="20" height="20" x="-10" y="-10"/></g>
           </svg>
-          <button class="map-pin" style="--mx:22;--my:15;--x:14;--y:34" data-panel="p-film" aria-label="Stop 1, Coffee Cove: watch our film"><span class="pin-dot"><svg><use href="#ic-coffee"/></svg><i class="pin-num">1</i></span><span class="pin-label">Our Film</span><span class="pin-place">Coffee Cove</span></button>
-          <button class="map-pin" style="--mx:70;--my:16;--x:33;--y:16" data-panel="p-itinerary" aria-label="Stop 2, Billiard Plains: itinerary"><span class="pin-dot"><svg><use href="#ic-ball"/></svg><i class="pin-num">2</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Billiard Plains</span></button>
-          <button class="map-pin" style="--mx:72;--my:38;--x:83;--y:21" data-panel="p-directions" aria-label="Stop 3, Long Road Home: directions"><span class="pin-dot"><svg><use href="#ic-road"/></svg><i class="pin-num">3</i></span><span class="pin-label">Directions</span><span class="pin-place">Long Road Home</span></button>
-          <button class="map-pin" style="--mx:28;--my:50;--x:85;--y:54" data-panel="p-attire" aria-label="Stop 4, Yoga Shores: attire"><span class="pin-dot"><svg><use href="#ic-yoga"/></svg><i class="pin-num">4</i></span><span class="pin-label">Attire</span><span class="pin-place">Yoga Shores</span></button>
-          <button class="map-pin" style="--mx:70;--my:62;--x:58;--y:72" data-panel="p-entourage" aria-label="Stop 5, Boxing Bay: entourage"><span class="pin-dot"><svg><use href="#ic-box"/></svg><i class="pin-num">5</i></span><span class="pin-label">Entourage</span><span class="pin-place">Boxing Bay</span></button>
-          <button class="map-pin" style="--mx:30;--my:74;--x:33;--y:78" data-panel="p-program" aria-label="Stop 6, Karaoke Heights: program"><span class="pin-dot"><svg><use href="#ic-mic"/></svg><i class="pin-num">6</i></span><span class="pin-label">Program</span><span class="pin-place">Karaoke Heights</span></button>
-          <button class="map-pin" style="--mx:70;--my:86;--x:14;--y:64" data-panel="p-gift" aria-label="Stop 7, City of Us: gift fund"><span class="pin-dot"><svg><use href="#ic-city"/></svg><i class="pin-num">7</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">City of Us</span></button>
+          <button class="map-pin" style="--mx:22;--my:11;--x:14;--y:34" data-panel="p-film" aria-label="Stop 1, Coffee Cove: watch our film"><span class="pin-dot"><svg><use href="#ic-coffee"/></svg><i class="pin-num">1</i></span><span class="pin-label">Our Film</span><span class="pin-place">Coffee Cove</span></button>
+          <button class="map-pin" style="--mx:70;--my:13;--x:33;--y:16" data-panel="p-itinerary" aria-label="Stop 2, Billiard Plains: itinerary"><span class="pin-dot"><svg><use href="#ic-ball"/></svg><i class="pin-num">2</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Billiard Plains</span></button>
+          <button class="map-pin" style="--mx:72;--my:35;--x:83;--y:21" data-panel="p-directions" aria-label="Stop 3, Long Road Home: directions"><span class="pin-dot"><svg><use href="#ic-road"/></svg><i class="pin-num">3</i></span><span class="pin-label">Directions</span><span class="pin-place">Long Road Home</span></button>
+          <button class="map-pin" style="--mx:26;--my:48;--x:85;--y:54" data-panel="p-attire" aria-label="Stop 4, Yoga Shores: attire"><span class="pin-dot"><svg><use href="#ic-yoga"/></svg><i class="pin-num">4</i></span><span class="pin-label">Attire</span><span class="pin-place">Yoga Shores</span></button>
+          <button class="map-pin" style="--mx:70;--my:61;--x:58;--y:72" data-panel="p-entourage" aria-label="Stop 5, Boxing Bay: entourage"><span class="pin-dot"><svg><use href="#ic-box"/></svg><i class="pin-num">5</i></span><span class="pin-label">Entourage</span><span class="pin-place">Boxing Bay</span></button>
+          <button class="map-pin" style="--mx:28;--my:74;--x:33;--y:78" data-panel="p-program" aria-label="Stop 6, Karaoke Heights: program"><span class="pin-dot"><svg><use href="#ic-mic"/></svg><i class="pin-num">6</i></span><span class="pin-label">Program</span><span class="pin-place">Karaoke Heights</span></button>
+          <button class="map-pin" style="--mx:64;--my:87;--x:14;--y:64" data-panel="p-gift" aria-label="Stop 7, City of Us: gift fund"><span class="pin-dot"><svg><use href="#ic-city"/></svg><i class="pin-num">7</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">City of Us</span></button>
         </div>
         <p class="map-hint reveal d2">Follow stops 1&ndash;7 &middot; tap any marker</p>
       </div>
@@ -1135,7 +1229,7 @@
       </div>
       <figure class="attire-guide">
         <button type="button" class="ag-frame" id="attire-zoom" aria-label="Enlarge the attire guide">
-          <img src="images/attire-guide.webp" width="1672" height="941" loading="lazy" decoding="async" alt="Illustrated attire guide showing the wedding palette from parents in gold through bridesmaids in dusty rose, groomsmen with sage ties, to guests in sage-green pastel." />
+          <img src="images/attire-guide.webp?v=2" width="1672" height="941" loading="lazy" decoding="async" alt="Illustrated attire guide showing the wedding palette from parents in gold through bridesmaids in dusty rose, groomsmen with sage ties, to guests in sage-green pastel." />
           <span class="ag-zoom">Tap to enlarge</span>
         </button>
       </figure>
@@ -1494,10 +1588,28 @@
     (function () {
       const dlg = $('p-photo'), im = $('lb-img'); if (!dlg || !im) return;
       let lastTrigger = null;
+      /* On a portrait phone a wide image is tiny; turn it sideways so it can
+         use the whole screen. Layout width = on-screen height after rotation. */
+      function fitRotate() {
+        if (!dlg.open) { return; }
+        const nw = im.naturalWidth, nh = im.naturalHeight;
+        const portrait = window.innerHeight > window.innerWidth;
+        const phone = Math.min(window.innerWidth, window.innerHeight) < 720;
+        if (nw && nh && nw / nh >= 1.35 && portrait && phone) {
+          dlg.classList.add('rotated');
+          const w = Math.min(.92 * window.innerHeight, .92 * window.innerWidth * nw / nh);
+          im.style.width = Math.round(w) + 'px';
+        } else {
+          dlg.classList.remove('rotated'); im.style.width = '';
+        }
+      }
+      im.addEventListener('load', fitRotate);
+      window.addEventListener('resize', fitRotate);
       function openWith(trigger, src, alt) {
         lastTrigger = trigger; im.src = src; im.alt = alt || '';
         if (window.__lenis) window.__lenis.stop();
         if (dlg.showModal) dlg.showModal();
+        if (im.complete) fitRotate();
       }
       document.querySelectorAll('.gtile').forEach((f) => {
         const img = f.querySelector('img'); if (!img) return;
@@ -1512,7 +1624,10 @@
         const img = ag.querySelector('img');
         openWith(ag, img.currentSrc || img.src, img.alt);
       });
-      dlg.addEventListener('close', () => { if (lastTrigger && lastTrigger.focus) lastTrigger.focus(); });
+      dlg.addEventListener('close', () => {
+        dlg.classList.remove('rotated'); im.style.width = '';
+        if (lastTrigger && lastTrigger.focus) lastTrigger.focus();
+      });
     })();
 
     /* Our film: load the Drive player only on first play */
