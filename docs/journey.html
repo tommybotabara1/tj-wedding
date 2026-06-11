@@ -309,8 +309,10 @@
         linear-gradient(180deg, var(--ivory) 0%, rgba(247,243,234,0) 16%),
         radial-gradient(110% 80% at 50% 58%, transparent 46%, rgba(5,6,6,.5) 100%),
         linear-gradient(180deg, transparent 60%, rgba(5,6,6,.85) 100%); }
-    .closer-copy { position: relative; z-index: 2; text-align: center; }
-    .closer-copy .eyebrow { color: var(--gold-soft); text-shadow: 0 1px 16px rgba(0,0,0,.85); }
+    .closer-copy { position: relative; z-index: 2; text-align: center;
+      align-self: end; padding-bottom: clamp(52px, 10svh, 110px); }
+    .closer-copy .eyebrow { color: #ecd9a8; font-size: 13px; letter-spacing: .34em;
+      text-shadow: 0 1px 4px rgba(0,0,0,.95), 0 2px 18px rgba(0,0,0,.9), 0 0 30px rgba(0,0,0,.8); }
 
     /* Section 2 — The Day: a sunset beach.
        The scene lives in its own full-width stage; the detail cards sit BELOW
@@ -536,7 +538,10 @@
        (place-items: normal + width: 100% — the Chrome block-alignment gotcha.) */
     #s-next { display: block; place-items: normal; padding: 0; background:
         linear-gradient(180deg, #060707 0%, var(--night0) 55%, var(--night1) 100%); }
-    html.webgl #s-next { min-height: 240svh; }
+    /* with WebGL the section must be GLASS: an opaque background here would
+       sit on top of the fixed globe canvas and hide the entire route flight
+       (main is z-index 10 above #stage). Only a top blend from the promise. */
+    html.webgl #s-next { min-height: 200svh; background: linear-gradient(180deg, #060707 0%, rgba(6,7,7,0) 26%); }
     .next-sticky { position: sticky; top: 0; width: 100%; min-height: 100svh;
       display: grid; place-items: center; padding: 12vh 24px; }
     #s-next .copy { max-width: 640px; }
@@ -1577,7 +1582,7 @@
         window.__tjNext.p = p;
         if (activeScene !== 'next') { activeScene = 'next'; window.dispatchEvent(new CustomEvent('tj-scene', { detail: 'next' })); }
         stage.style.opacity = '1';
-        if (p > 0.78) sec.classList.add('arrived');
+        if (p > 0.62) sec.classList.add('arrived');
       }
       let queued = false;
       window.addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(() => { update(); queued = false; }); } }, { passive: true });
@@ -1949,6 +1954,9 @@
         group.add(route);
         const dest = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0xffe9c2, transparent: true, opacity: 0, depthWrite: false }));
         dest.position.copy(end); dest.scale.setScalar(0.22); group.add(dest);
+        // the bright head of the route - a little golden traveller you can follow
+        const ship = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0xfff3d0, transparent: true, opacity: 0, depthWrite: false }));
+        ship.scale.setScalar(0.13); group.add(ship);
 
         const amb = new THREE.AmbientLight(0xffffff, 0.6); scene.add(amb);
 
@@ -2046,7 +2054,7 @@
             arcs.forEach((a2, i) => { a2.lit = Math.max(a2.lit, Math.min(1, Math.max(0, f - i))); });
           } else if (activeScene === 'next') {
             const np = (window.__tjNext && window.__tjNext.p >= 0) ? window.__tjNext.p : -1;
-            if (np >= 0 && np < 0.82 && routeProg < 0.985) {
+            if (np >= 0 && np < 0.64 && routeProg < 0.985) {
               // the camera chases the head of the route as it flies home
               const head = routePts[Math.max(0, Math.min(routePts.length - 1, Math.floor(routeProg * (routePts.length - 1))))];
               let yT = Math.atan2(-head.x, head.z);
@@ -2055,7 +2063,7 @@
               const xT = Math.max(-0.5, Math.min(0.5, Math.asin(head.y / head.length()) * 0.8));
               group.rotation.y += (yT - group.rotation.y) * Math.min(1, dt * 2.4);
               group.rotation.x += (xT - group.rotation.x) * Math.min(1, dt * 2.4);
-              targetCamZ = 3.3 - 0.75 * np;       // slow push-in as home draws near
+              targetCamZ = 3.3 - 1.15 * np;       // slow push-in as home draws near
             } else {
               // the spin settles back home: the Philippines faces the camera as the route lands
               let yT = phYaw;
@@ -2106,10 +2114,15 @@
           // until the path lands, then ignites with a bloom
           const npr = (activeScene === 'next' && window.__tjNext && window.__tjNext.p >= 0) ? window.__tjNext.p : -1;
           const wantRoute = (activeScene === 'next')
-            ? (npr >= 0 ? Math.min(1, Math.max(0, (npr - 0.06) / 0.72)) : 1)
+            ? (npr >= 0 ? Math.min(1, Math.max(0, (npr - 0.04) / 0.56)) : 1)
             : 0;
           routeProg += (wantRoute - routeProg) * Math.min(1, dt * (npr >= 0 ? 4 : 1.1));
           routeGeo.setDrawRange(0, Math.floor(routeProg * routePts.length));
+          // the traveller rides the head of the path, glowing while in flight
+          ship.position.copy(routePts[Math.max(0, Math.min(routePts.length - 1, Math.floor(routeProg * (routePts.length - 1))))]);
+          const flying = activeScene === 'next' && routeProg > 0.015 && routeProg < 0.97;
+          ship.material.opacity += ((flying ? 0.95 : 0) - ship.material.opacity) * Math.min(1, dt * 4);
+          ship.scale.setScalar(0.13 * (1 + 0.12 * Math.sin(clock.elapsedTime * 5)));
           const ignite = routeProg > 0.92;
           destOp += ((ignite ? 1 : 0) - destOp) * Math.min(1, dt * (ignite ? 3.5 : 2.5));
           dest.material.opacity = destOp;
