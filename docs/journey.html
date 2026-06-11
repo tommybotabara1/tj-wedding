@@ -1386,6 +1386,7 @@
         if (connected) return; connected = true;
         try { sessionStorage.setItem('tj-journey-entered', '1'); } catch (e) {}
         if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) {}
+        if (window.__tjStartMusic) window.__tjStartMusic();
         window.dispatchEvent(new CustomEvent('tj-connect'));
         const bloom = document.getElementById('bloom'); if (bloom) bloom.classList.add('fire');
         if (!REDUCED) {
@@ -1710,13 +1711,19 @@
     (function () {
       const a = $('ambient'), b = $('music-btn'); if (!a || !b) return;
       if (!a.getAttribute('src') && !a.querySelector('source')) return;
-      a.volume = 0.42;
+      a.volume = 0.24;
       const setState = (playing) => {
         b.classList.toggle('playing', playing);
         b.setAttribute('aria-pressed', String(playing));
         b.setAttribute('aria-label', playing ? 'Pause ambient music' : 'Play ambient music');
         b.title = playing ? 'Pause music' : 'Play music';
       };
+      const playAmbient = () => {
+        if (!a.paused) return;
+        a.play().then(() => setState(true))
+          .catch(() => setState(false));
+      };
+      window.__tjStartMusic = playAmbient;
       const showButton = () => b.classList.add('show');
       a.addEventListener('canplay', showButton);
       a.addEventListener('loadedmetadata', showButton);
@@ -1724,10 +1731,10 @@
       a.addEventListener('ended', () => setState(false));
       a.load();
       showButton();
+      window.addEventListener('tj-connect', playAmbient, { once: true });
       b.addEventListener('click', () => {
         if (a.paused) {
-          a.play().then(() => setState(true))
-            .catch(() => setState(false));
+          playAmbient();
         } else {
           a.pause(); setState(false);
         }

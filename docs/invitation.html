@@ -1262,7 +1262,7 @@
       // Music stays dormant unless a real <source>/src is provided on #audio.
       if (!audio.currentSrc && !audio.getAttribute('src')) return;
       let enabled = false;
-      audio.volume = 0.42;
+      audio.volume = 0.24;
       const setState = (playing) => {
         btn.classList.toggle('playing', playing);
         btn.setAttribute('aria-pressed', String(playing));
