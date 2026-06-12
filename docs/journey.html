@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Tommy &amp; Jeyan · Welcome to Our Journey</title>
   <meta name="description" content="Welcome to Our Journey — the wedding of Tommy &amp; Jeyan. Different paths. One destination. Sunday, December 27, 2026, Newport City, Pasay." />
-  <meta name="theme-color" content="#0b0f0d" />
+  <meta name="theme-color" content="#fbf9f4" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0f0d'/%3E%3Ccircle cx='16' cy='16' r='12.5' fill='none' stroke='%23d8b86a' stroke-width='1'/%3E%3Ctext x='16' y='21' font-family='Georgia,serif' font-size='13' fill='%23e6cd95' text-anchor='middle'%3ETJ%3C/text%3E%3C/svg%3E" />
 
   <!-- Open Graph / Twitter -->
@@ -60,7 +60,7 @@
        a new scroll container, so the sticky pin-tour keeps working. */
     html { scroll-behavior: smooth; overflow-x: hidden; overflow-x: clip; width: 100%; }
     body {
-      margin: 0; background: var(--night1); color: #ece6da;
+      margin: 0; background: var(--ivory); color: var(--ink);
       font-family: var(--sans); font-weight: 300; line-height: 1.7; letter-spacing: .01em;
       -webkit-font-smoothing: antialiased; overflow-x: hidden; overflow-x: clip;
       width: 100%; max-width: 100%;
@@ -79,6 +79,8 @@
       font-size: 12px; letter-spacing: .42em; text-transform: uppercase;
       color: var(--gold); font-weight: 400;
     }
+    /* globe scenes sit on the light sky — sage reads, gold washes out */
+    #opening .eyebrow, #title .eyebrow, #s-journey .eyebrow { color: var(--sage-text); }
     .script { font-family: var(--script); line-height: 1; }
     :where(a, button, input, textarea, select, [tabindex]):focus-visible {
       outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px;
@@ -102,7 +104,8 @@
     #stage {
       position: fixed; inset: 0; z-index: 0;
       background:
-        radial-gradient(120% 90% at 50% 18%, #14191d 0%, var(--night0) 45%, var(--night1) 100%);
+        linear-gradient(180deg, rgba(156,170,143,0) 60%, rgba(156,170,143,.12) 100%),
+        radial-gradient(120% 90% at 50% 18%, var(--paper) 0%, var(--ivory) 45%, var(--cream) 100%);
       transition: opacity 1.1s var(--ease);
     }
     #globe-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
@@ -111,34 +114,34 @@
       position: absolute; top: 50%; left: 50%; width: min(64vmin, 520px); aspect-ratio: 1;
       transform: translate(-50%, -50%); border-radius: 50%;
       background:
-        radial-gradient(60% 60% at 38% 32%, rgba(216,184,106,.22), transparent 70%),
-        radial-gradient(circle at 50% 50%, #1b2024 0%, #0d1114 70%, #070a0c 100%);
-      box-shadow: 0 0 90px rgba(216,184,106,.10), inset -30px -24px 70px rgba(0,0,0,.6);
+        radial-gradient(60% 60% at 38% 32%, rgba(255,253,250,.8), transparent 70%),
+        radial-gradient(circle at 50% 50%, #f1efe3 0%, #e7e9da 70%, #dde1d0 100%);
+      box-shadow: 0 0 90px rgba(110,70,40,.12), inset -30px -24px 70px rgba(120,136,105,.22);
       opacity: .0; transition: opacity 1.2s var(--ease);
     }
     .globe-fallback.show { opacity: 1; }
     .globe-fallback::before {
       content: ""; position: absolute; inset: 0; border-radius: 50%;
-      background-image: radial-gradient(rgba(216,184,106,.5) .6px, transparent .8px);
-      background-size: 13px 13px; opacity: .35;
+      background-image: radial-gradient(rgba(120,136,105,.55) .6px, transparent .8px);
+      background-size: 13px 13px; opacity: .5;
       -webkit-mask: radial-gradient(circle at 50% 50%, #000 60%, transparent 73%);
               mask: radial-gradient(circle at 50% 50%, #000 60%, transparent 73%);
       animation: globespin 90s linear infinite;
     }
     .globe-fallback::after {
       content: ""; position: absolute; inset: -6%; border-radius: 50%;
-      border: 1px solid rgba(216,184,106,.18);
+      border: 1px solid rgba(120,136,105,.25);
     }
     @keyframes globespin { to { background-position: 260px 0; } }
     .stars { position: absolute; inset: 0; pointer-events: none;
       background-image:
-        radial-gradient(1px 1px at 20% 30%, rgba(255,250,240,.7), transparent),
-        radial-gradient(1px 1px at 75% 22%, rgba(255,250,240,.5), transparent),
-        radial-gradient(1px 1px at 60% 70%, rgba(255,250,240,.6), transparent),
-        radial-gradient(1px 1px at 35% 80%, rgba(255,250,240,.4), transparent),
-        radial-gradient(1.4px 1.4px at 85% 60%, rgba(255,250,240,.5), transparent),
-        radial-gradient(1px 1px at 12% 64%, rgba(255,250,240,.45), transparent);
-      opacity: .8;
+        radial-gradient(1px 1px at 20% 30%, rgba(184,150,78,.30), transparent),
+        radial-gradient(1px 1px at 75% 22%, rgba(120,136,105,.25), transparent),
+        radial-gradient(1px 1px at 60% 70%, rgba(184,150,78,.26), transparent),
+        radial-gradient(1px 1px at 35% 80%, rgba(120,136,105,.2), transparent),
+        radial-gradient(1.4px 1.4px at 85% 60%, rgba(184,150,78,.24), transparent),
+        radial-gradient(1px 1px at 12% 64%, rgba(120,136,105,.22), transparent);
+      opacity: .9;
     }
 
     /* ============ Act 0 — opening / drag-to-connect ============ */
@@ -153,8 +156,8 @@
       position: absolute; top: 50%; left: 50%;
       width: 92px; height: 92px; margin: -46px 0 0 -46px;
       display: grid; place-items: center; cursor: grab; touch-action: none;
-      font-family: var(--serif); font-size: 56px; color: var(--gold-soft);
-      text-shadow: 0 0 26px rgba(216,184,106,.55);
+      font-family: var(--serif); font-size: 56px; color: var(--ink);
+      text-shadow: 0 0 26px rgba(207,154,147,.55);
       border-radius: 50%;
       transition: transform .5s var(--ease), text-shadow .4s var(--ease);
       user-select: none; -webkit-user-select: none;
@@ -162,8 +165,8 @@
     }
     .initial::after {
       content: ""; position: absolute; inset: 6px; border-radius: 50%;
-      border: 1px solid rgba(216,184,106,.4);
-      box-shadow: 0 0 40px rgba(216,184,106,.18); opacity: .9;
+      border: 1px solid rgba(178,124,117,.45);
+      box-shadow: 0 0 40px rgba(207,154,147,.25); opacity: .9;
       transition: opacity .4s var(--ease), transform .4s var(--ease);
     }
     .initial:active { cursor: grabbing; }
@@ -173,7 +176,7 @@
     @keyframes float { 0%,100% { margin-top: -46px; } 50% { margin-top: -56px; } }
     #connect-line { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: visible; }
     #connect-line path { fill: none; stroke: url(#goldgrad); stroke-width: 2.2; stroke-linecap: round;
-      filter: drop-shadow(0 0 6px rgba(216,184,106,.8)); }
+      filter: drop-shadow(0 0 6px rgba(178,124,117,.7)); }
     .open-caption {
       /* svh keeps this above mobile browser chrome (vh = layout viewport = cut off) */
       position: absolute; left: 50%; bottom: calc(17svh + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
@@ -181,7 +184,7 @@
     }
     .open-caption .eyebrow { display: block; opacity: 0; animation: fadein 1s var(--ease) 1s forwards; }
     .open-caption .hint {
-      margin-top: 10px; font-size: 14px; color: rgba(236,230,218,.78); letter-spacing: .04em;
+      margin-top: 10px; font-size: 14px; color: var(--soft); letter-spacing: .04em;
       opacity: 0; animation: fadein 1s var(--ease) 1.4s forwards;
     }
     .open-caption.nudge .eyebrow { animation: pulse 1.6s var(--ease) infinite; }
@@ -191,18 +194,18 @@
     .connect-fallback {
       position: absolute; left: 50%; bottom: calc(5svh + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 3;
       display: inline-flex; align-items: center; min-height: 48px; white-space: nowrap;
-      background: rgba(216,184,106,.10); border: 1px solid rgba(216,184,106,.55); color: var(--gold-soft);
+      background: rgba(156,170,143,.14); border: 1px solid rgba(120,136,105,.5); color: var(--sage-text);
       padding: 0 26px; font-family: var(--sans); font-size: 12px; letter-spacing: .22em;
       text-transform: uppercase; cursor: pointer; border-radius: 40px;
       opacity: 0; animation: fadein 1s var(--ease) 1.8s forwards;
       transition: background .3s var(--ease), border-color .3s var(--ease), transform .3s var(--ease);
     }
-    .connect-fallback:hover { background: rgba(216,184,106,.2); border-color: var(--gold-soft); transform: translateX(-50%) translateY(-2px); }
+    .connect-fallback:hover { background: rgba(156,170,143,.24); border-color: var(--sage-deep); transform: translateX(-50%) translateY(-2px); }
 
     /* ============ Connect bloom (fires when T + J join) ============ */
     .bloom {
       position: fixed; inset: 0; z-index: 85; pointer-events: none; opacity: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(255,244,214,.95), rgba(216,184,106,.32) 28%, transparent 62%);
+      background: radial-gradient(circle at 50% 50%, rgba(255,250,243,.95), rgba(207,154,147,.5) 28%, transparent 62%);
       will-change: opacity, transform;
     }
     .bloom.fire { animation: bloomflash 1.5s var(--ease) forwards; }
@@ -224,8 +227,8 @@
     #title .eyebrow { display: block; margin-bottom: 18px; transform: translateY(14px); opacity: 0; }
     #title.show .eyebrow { transition: all 1s var(--ease) .2s; transform: none; opacity: 1; }
     #title h1 {
-      font-size: clamp(40px, 11vw, 96px); color: #f4eede; line-height: .98;
-      text-shadow: 0 0 40px rgba(216,184,106,.18);
+      font-size: clamp(40px, 11vw, 96px); color: var(--ink); line-height: .98;
+      text-shadow: 0 0 40px rgba(110,70,40,.12);
     }
     /* word-by-word rise */
     #title h1 .tw { display: inline-block; opacity: 0; transform: translateY(.45em); }
@@ -234,11 +237,11 @@
     #title.show h1 .tw:nth-of-type(2) { transition-delay: .5s; }
     #title.show h1 .tw:nth-of-type(3) { transition-delay: .75s; }
     #title.show h1 .tw:nth-of-type(4) { transition-delay: .95s; }
-    #title .rule { width: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    #title .rule { width: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--sage-deep), transparent);
       margin: 26px auto 0; }
     #title.show .rule { transition: width 1.3s var(--ease) .9s; width: min(280px, 60vw); }
     #title .scroll-cue { margin-top: 30px; font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
-      color: rgba(236,230,218,.55); opacity: 0; }
+      color: var(--muted); opacity: 0; }
     #title.show .scroll-cue { transition: opacity 1s var(--ease) 1.6s; opacity: 1; animation: bob 2.2s ease-in-out 2.6s infinite; }
     @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
 
@@ -258,26 +261,26 @@
     #s-journey { display: block; place-items: normal; padding: 0; }
     html.webgl #s-journey { min-height: 320svh; }
     .tour-sticky { position: sticky; top: 0; width: 100%; min-height: 100svh; display: grid; place-items: center; padding: 12vh 24px; }
-    #s-journey .copy h2 { font-size: clamp(30px, 6vw, 60px); color: #f4eede; }
-    #s-journey .lede { margin-top: 18px; color: rgba(236,230,218,.72); font-size: 17px; }
+    #s-journey .copy h2 { font-size: clamp(30px, 6vw, 60px); color: var(--ink); }
+    #s-journey .lede { margin-top: 18px; color: var(--soft); font-size: 17px; }
     .pinwords { display: flex; flex-wrap: wrap; gap: 10px 14px; justify-content: center; margin-top: 28px; }
     .pinwords span {
-      font-size: 12px; letter-spacing: .26em; text-transform: uppercase; color: var(--gold-soft);
-      border: 1px solid rgba(216,184,106,.32); padding: 8px 14px; border-radius: 40px;
-      background: rgba(216,184,106,.05);
+      font-size: 12px; letter-spacing: .26em; text-transform: uppercase; color: var(--sage-text);
+      border: 1px solid rgba(120,136,105,.35); padding: 8px 14px; border-radius: 40px;
+      background: rgba(156,170,143,.08);
       transition: color .5s var(--ease), background .5s var(--ease), border-color .5s var(--ease),
                   transform .5s var(--ease), box-shadow .5s var(--ease);
     }
     .pinwords span.visiting {
-      color: var(--night1); background: var(--gold-soft); border-color: var(--gold-soft);
-      transform: translateY(-2px) scale(1.06); box-shadow: 0 6px 20px rgba(216,184,106,.35);
+      color: var(--ivory); background: var(--sage-deep); border-color: var(--sage-deep);
+      transform: translateY(-2px) scale(1.06); box-shadow: 0 6px 20px rgba(120,136,105,.35);
     }
     .first-cue { position: absolute; bottom: 4vh; left: 50%; transform: translateX(-50%);
-      font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: rgba(236,230,218,.45); }
+      font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); }
     /* connect spark burst */
     .spark {
       position: fixed; width: 5px; height: 5px; border-radius: 50%; z-index: 86; pointer-events: none;
-      background: var(--gold-soft); box-shadow: 0 0 10px rgba(216,184,106,.9);
+      background: var(--rose); box-shadow: 0 0 10px rgba(207,154,147,.9);
       animation: sparkfly .95s var(--ease) forwards;
     }
     @keyframes sparkfly { to { transform: translate(var(--sx), var(--sy)) scale(.15); opacity: 0; } }
@@ -539,17 +542,18 @@
        route flies across the globe as you scroll, and the copy stays pinned.
        (place-items: normal + width: 100% — the Chrome block-alignment gotcha.) */
     #s-next { display: block; place-items: normal; padding: 0; background:
-        linear-gradient(180deg, #060707 0%, var(--night0) 55%, var(--night1) 100%); }
+        linear-gradient(180deg, #0c0c0b 0%, var(--ivory) 34%, var(--cream) 100%); }
     /* with WebGL the section must be GLASS: an opaque background here would
        sit on top of the fixed globe canvas and hide the entire route flight
-       (main is z-index 10 above #stage). Only a top blend from the promise. */
-    html.webgl #s-next { min-height: 200svh; background: linear-gradient(180deg, #060707 0%, rgba(6,7,7,0) 26%); }
+       (main is z-index 10 above #stage). Only a top blend from the promise —
+       the dark photo gives way to the morning sky, dawn breaking. */
+    html.webgl #s-next { min-height: 200svh; background: linear-gradient(180deg, #0a0a09 0%, rgba(251,249,244,0) 30%); }
     .next-sticky { position: sticky; top: 0; width: 100%; min-height: 100svh;
       display: grid; place-items: center; padding: 12vh 24px; }
     #s-next .copy { max-width: 640px; }
-    #s-next .eyebrow { color: var(--gold); }
-    #s-next h2 { color: #f4eede; font-size: clamp(28px, 5.6vw, 52px); margin-top: 8px; }
-    #s-next .sub { margin-top: 18px; color: rgba(236,230,218,.74); font-size: 18px; font-family: var(--serif); font-style: italic; }
+    #s-next .eyebrow { color: var(--sage-text); }
+    #s-next h2 { color: var(--ink); font-size: clamp(28px, 5.6vw, 52px); margin-top: 8px; }
+    #s-next .sub { margin-top: 18px; color: var(--soft); font-size: 18px; font-family: var(--serif); font-style: italic; }
     /* staged reveal: "Join us…", the date, the clock and RSVP appear when the route arrives */
     #s-next .arrive-reveal { opacity: 0; transform: translateY(14px); transition: opacity 1s var(--ease), transform 1s var(--ease); }
     #s-next.arrived .arrive-reveal { opacity: 1; transform: none; }
@@ -559,27 +563,27 @@
     #s-next.arrived .cd-cap { transition-delay: .7s; }
     #s-next.arrived .btn { transition-delay: .9s; }
     html:not(.webgl) #s-next .arrive-reveal { opacity: 1; transform: none; }
-    .date-stamp { margin-top: 22px; font-family: var(--serif); font-size: clamp(22px, 4vw, 30px); color: var(--gold-soft); }
+    .date-stamp { margin-top: 22px; font-family: var(--serif); font-size: clamp(22px, 4vw, 30px); color: var(--rose-text); }
     /* live boarding-pass clock */
     .cd { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 22px auto 0; max-width: 430px; }
-    .cd > div { text-align: center; border-right: 1px dashed rgba(216,184,106,.35); padding: 2px 4px; }
+    .cd > div { text-align: center; border-right: 1px dashed rgba(110,70,40,.25); padding: 2px 4px; }
     .cd > div:last-child { border-right: 0; }
     .cd strong { display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(26px, 6vw, 40px);
-      color: var(--gold-soft); font-variant-numeric: tabular-nums; line-height: 1.05; }
-    .cd span { font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase; color: rgba(236,230,218,.55); }
-    .cd-cap { margin-top: 9px; font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--gold); }
+      color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.05; }
+    .cd span { font-size: 9.5px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
+    .cd-cap { margin-top: 9px; font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--rose-text); }
     #s-next .btn { margin-top: 28px; }
     /* ambient music toggle (hidden until #ambient has a source) */
     .music-btn {
       position: fixed; right: 18px; bottom: 18px; z-index: 60; width: 48px; height: 48px; border-radius: 50%;
       display: none; place-items: center; cursor: pointer;
-      background: rgba(11,15,13,.55); backdrop-filter: blur(6px);
-      border: 1px solid rgba(216,184,106,.55); color: var(--gold-soft);
+      background: rgba(251,249,244,.65); backdrop-filter: blur(6px);
+      border: 1px solid var(--line); color: var(--gold-deep);
       transition: background .3s var(--ease), color .3s var(--ease), transform .3s var(--ease);
     }
     .music-btn.show { display: grid; }
     .music-btn:hover { transform: translateY(-2px); }
-    .music-btn.playing { background: var(--gold); color: var(--night1); }
+    .music-btn.playing { background: var(--sage-deep); border-color: var(--sage-deep); color: var(--ivory); }
     /* gallery lightbox */
     .gtile { cursor: zoom-in; }
     /* fit-content (not auto): a modal dialog has inset:0, so auto would
@@ -599,12 +603,12 @@
     dialog.panel.lightbox .panel-close {
       position: absolute; top: -14px; right: -14px; background: var(--ivory); border-color: var(--ivory);
     }
-    .footer-note { z-index: 10; position: relative; text-align: center; padding: 40px 24px 64px; background: var(--night1); color: rgba(236,230,218,.5); }
-    .footer-note .mono { width: 46px; height: 46px; color: var(--gold); margin: 0 auto 12px; }
-    .footer-note .tag { font-family: var(--script); font-size: 30px; color: var(--gold-soft); }
-    .footer-note .hash { font-size: 13px; letter-spacing: .2em; margin-top: 6px; color: var(--gold); }
+    .footer-note { z-index: 10; position: relative; text-align: center; padding: 40px 24px 64px; background: var(--ivory); color: var(--muted); }
+    .footer-note .mono { width: 46px; height: 46px; color: var(--gold-deep); margin: 0 auto 12px; }
+    .footer-note .tag { font-family: var(--script); font-size: 30px; color: var(--gold-deep); }
+    .footer-note .hash { font-size: 13px; letter-spacing: .2em; margin-top: 6px; color: var(--gold-deep); }
     .footer-note small { display: block; margin-top: 16px; font-size: 12px; letter-spacing: .08em; }
-    .footer-note a.back { color: rgba(236,230,218,.7); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid rgba(216,184,106,.4); padding-bottom: 2px; }
+    .footer-note a.back { color: var(--soft); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid rgba(184,150,78,.5); padding-bottom: 2px; }
 
     /* ============ Panels (dialog) ============ */
     dialog.panel {
@@ -804,7 +808,7 @@
   <svg width="0" height="0" aria-hidden="true" style="position:absolute">
     <defs>
       <linearGradient id="goldgrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#e6cd95"/><stop offset="1" stop-color="#b8964e"/>
+        <stop offset="0" stop-color="#cf9a93"/><stop offset="1" stop-color="#b27c75"/>
       </linearGradient>
     </defs>
     <symbol id="ic-mono" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="currentColor" stroke-width="1.4"/><text x="60" y="74" font-family="Fraunces,Georgia,serif" font-size="44" fill="currentColor" text-anchor="middle">TJ</text></symbol>
@@ -1897,7 +1901,7 @@
         // Occluder sphere (dark) so back dots read dimmer
         const core = new THREE.Mesh(
           new THREE.SphereGeometry(0.985, 48, 48),
-          new THREE.MeshBasicMaterial({ color: 0x0c161c }) /* deep ocean teal */
+          new THREE.MeshBasicMaterial({ color: 0xecead9 }) /* pale paper-sage ocean */
         );
         group.add(core);
 
@@ -1932,14 +1936,14 @@
         }
         const dotGeo = new THREE.BufferGeometry();
         dotGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        const dotMat = new THREE.PointsMaterial({ color: 0xd8b86a, size: 0.0155, sizeAttenuation: true, transparent: true, opacity: 0.35 });
+        const dotMat = new THREE.PointsMaterial({ color: 0x788869, size: 0.0155, sizeAttenuation: true, transparent: true, opacity: 0.6 });
         const dots = new THREE.Points(dotGeo, dotMat);
         group.add(dots);
 
         // Wireframe halo
         const wire = new THREE.LineSegments(
           new THREE.WireframeGeometry(new THREE.SphereGeometry(1.003, 14, 10)),
-          new THREE.LineBasicMaterial({ color: 0xd8b86a, transparent: true, opacity: 0.06 })
+          new THREE.LineBasicMaterial({ color: 0x788869, transparent: true, opacity: 0.1 })
         );
         group.add(wire);
 
@@ -1950,7 +1954,7 @@
         const pinTex = makeGlowTexture(THREE);
         const pins = pinDefs.map(([lat, lon]) => {
           const p = latLonToVec(THREE, lat, lon, 1.02);
-          const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0xe6cd95, transparent: true, opacity: 0.9, depthWrite: false }));
+          const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0xb27c75, transparent: true, opacity: 0.9, depthWrite: false }));
           s.position.copy(p); s.scale.setScalar(0.16); group.add(s); return s;
         });
 
@@ -1968,14 +1972,14 @@
         }
         const end = routePts[routePts.length - 1].clone();
         const routeGeo = new THREE.BufferGeometry().setFromPoints(routePts);
-        const routeMat = new THREE.LineBasicMaterial({ color: 0xe6cd95, transparent: true, opacity: 0.9 });
+        const routeMat = new THREE.LineBasicMaterial({ color: 0xb27c75, transparent: true, opacity: 0.9 });
         const route = new THREE.Line(routeGeo, routeMat);
         routeGeo.setDrawRange(0, 0);
         group.add(route);
-        const dest = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0xffe9c2, transparent: true, opacity: 0, depthWrite: false }));
+        const dest = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0x945a52, transparent: true, opacity: 0, depthWrite: false }));
         dest.position.copy(end); dest.scale.setScalar(0.22); group.add(dest);
         // the bright head of the route - a little golden traveller you can follow
-        const ship = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0xfff3d0, transparent: true, opacity: 0, depthWrite: false }));
+        const ship = new THREE.Sprite(new THREE.SpriteMaterial({ map: pinTex, color: 0xb27c75, transparent: true, opacity: 0, depthWrite: false }));
         ship.scale.setScalar(0.13); group.add(ship);
 
         const amb = new THREE.AmbientLight(0xffffff, 0.6); scene.add(amb);
@@ -1990,8 +1994,8 @@
 
         // Atmosphere rim glow (always faces camera) + deep starfield for parallax depth
         const atmo = new THREE.Sprite(new THREE.SpriteMaterial({
-          map: makeRingTexture(THREE), color: 0xd8b86a, transparent: true, opacity: 0.16,
-          blending: THREE.AdditiveBlending, depthWrite: false
+          map: makeRingTexture(THREE), color: 0x788869, transparent: true, opacity: 0.22,
+          blending: THREE.NormalBlending, depthWrite: false
         }));
         atmo.scale.setScalar(3.6); scene.add(atmo);
         const S_COUNT = MOBILE ? 450 : 900;
@@ -2004,7 +2008,7 @@
         const starGeo = new THREE.BufferGeometry();
         starGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
         const starField = new THREE.Points(starGeo, new THREE.PointsMaterial({
-          color: 0xfff6e0, size: 0.045, sizeAttenuation: true, transparent: true, opacity: 0.55, depthWrite: false
+          color: 0xb8964e, size: 0.045, sizeAttenuation: true, transparent: true, opacity: 0.2, depthWrite: false
         }));
         scene.add(starField);
 
@@ -2017,7 +2021,7 @@
           const ps = new THREE.QuadraticBezierCurve3(s0, m0, e0).getPoints(50);
           const g0 = new THREE.BufferGeometry().setFromPoints(ps);
           g0.setDrawRange(0, 0);
-          group.add(new THREE.Line(g0, new THREE.LineBasicMaterial({ color: 0xe6cd95, transparent: true, opacity: 0.5 })));
+          group.add(new THREE.Line(g0, new THREE.LineBasicMaterial({ color: 0xb27c75, transparent: true, opacity: 0.45 })));
           arcs.push({ geo: g0, n: ps.length, lit: 0 });
         }
 
@@ -2171,11 +2175,11 @@
         const c = document.createElement('canvas'); c.width = c.height = 128;
         const g = c.getContext('2d');
         const grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
-        grd.addColorStop(0, 'rgba(216,184,106,0)');
-        grd.addColorStop(0.46, 'rgba(216,184,106,0)');
-        grd.addColorStop(0.58, 'rgba(230,205,149,0.5)');
-        grd.addColorStop(0.74, 'rgba(216,184,106,0.16)');
-        grd.addColorStop(1, 'rgba(216,184,106,0)');
+        grd.addColorStop(0, 'rgba(255,255,255,0)');
+        grd.addColorStop(0.46, 'rgba(255,255,255,0)');
+        grd.addColorStop(0.58, 'rgba(255,255,255,0.5)');
+        grd.addColorStop(0.74, 'rgba(255,255,255,0.16)');
+        grd.addColorStop(1, 'rgba(255,255,255,0)');
         g.fillStyle = grd; g.fillRect(0, 0, 128, 128);
         return new THREE.CanvasTexture(c);
       }
@@ -2183,9 +2187,9 @@
         const c = document.createElement('canvas'); c.width = c.height = 64;
         const g = c.getContext('2d');
         const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-        grd.addColorStop(0, 'rgba(255,240,200,1)');
-        grd.addColorStop(0.25, 'rgba(230,205,149,0.9)');
-        grd.addColorStop(1, 'rgba(216,184,106,0)');
+        grd.addColorStop(0, 'rgba(255,255,255,1)');
+        grd.addColorStop(0.25, 'rgba(255,255,255,0.9)');
+        grd.addColorStop(1, 'rgba(255,255,255,0)');
         g.fillStyle = grd; g.fillRect(0, 0, 64, 64);
         const t = new THREE.CanvasTexture(c); return t;
       }
