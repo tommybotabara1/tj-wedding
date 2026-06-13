@@ -239,10 +239,8 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
 #arcs{ position:absolute; inset:0; width:100%; height:100%; }
 #arcs path{
   fill:none; stroke:#eebfa6; stroke-width:2.2; stroke-linecap:round;
-  stroke-dasharray:1; stroke-dashoffset:1;
 }
 #arcs .glow{ stroke:rgba(255,186,140,.5); stroke-width:9; filter:blur(5px); }
-html.reduced #arcs path, html:not(.js-anim) #arcs path{ stroke-dashoffset:0; }
 #merge-glow{
   position:absolute; left:50%; top:42%; width:200px; height:200px; transform:translate(-50%,-50%);
   border-radius:50%; pointer-events:none;
@@ -250,13 +248,20 @@ html.reduced #arcs path, html:not(.js-anim) #arcs path{ stroke-dashoffset:0; }
 }
 .chip{
   position:absolute; transform:translate(-50%,-50%);
-  display:inline-flex; align-items:center; gap:9px;
-  background:rgba(20,15,26,.55); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
-  border:1px solid rgba(244,237,221,.22); border-radius:999px; padding:9px 20px;
-  font-size:11.5px; font-weight:500; letter-spacing:.28em; text-transform:uppercase; color:var(--moon);
-  box-shadow:0 0 26px rgba(207,130,110,.2); white-space:nowrap;
+  display:flex; flex-direction:column; align-items:center; gap:9px;
+  font-size:12px; font-weight:500; letter-spacing:.3em; text-transform:uppercase; color:var(--moon);
+  text-shadow:0 0 20px rgba(255,205,150,.7), 0 2px 16px rgba(0,0,0,.65);
+  white-space:nowrap; pointer-events:none;
 }
-.chip i{ width:7px; height:7px; border-radius:50%; background:var(--ember); box-shadow:0 0 12px 3px rgba(255,205,150,.8); }
+.chip i{
+  display:block; width:20px; height:28px;
+  border-radius:45% 45% 50% 50% / 35% 35% 60% 60%;
+  background:radial-gradient(circle at 50% 68%, #fff3d2, #f3bc83 70%, #d98f5e);
+  box-shadow:0 0 24px 9px rgba(255,200,130,.65), 0 0 64px 20px rgba(207,130,110,.3);
+}
+html:not(.reduced) .chip i{ animation:floaty 4.5s ease-in-out infinite; }
+.tracer{ opacity:0; }
+html.reduced .tracer, html:not(.js-anim) .tracer{ display:none; }
 .pcaps{ position:absolute; left:0; right:0; bottom:11vh; bottom:11svh; text-align:center; padding:0 24px; pointer-events:none; }
 .pcap{
   position:absolute; left:0; right:0; margin:0 auto; max-width:640px;
@@ -269,25 +274,27 @@ html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:16p
 /* ============================================================
    PHOTO BRIDGE
    ============================================================ */
-#bridge{ padding:clamp(70px,10vw,130px) 20px; }
-.bridge-frame{
-  max-width:1180px; margin:0 auto;
-  background:rgba(252,248,240,.04);
-  border:1px solid var(--line-night); border-radius:20px; padding:clamp(12px,2vw,22px);
-  box-shadow:0 0 80px rgba(207,130,110,.12), var(--shadow); position:relative;
+#bridge{
+  position:relative; min-height:100vh; min-height:100svh; padding:0; overflow:clip;
+  display:flex; align-items:flex-end; justify-content:center;
 }
-.bridge-img{ border-radius:12px; overflow:clip; position:relative; }
-.bridge-img img{ width:100%; height:clamp(320px,60vh,580px); object-fit:cover; }
-.bridge-img::after{ content:""; position:absolute; inset:0; box-shadow:inset 0 0 90px rgba(10,6,14,.5); border-radius:12px; }
-.bridge-tab{
-  position:absolute; top:-15px; left:50%; transform:translateX(-50%);
-  background:var(--rose); color:#fff; border-radius:999px; padding:8px 24px;
-  font-size:10px; font-weight:500; letter-spacing:.3em; text-transform:uppercase;
-  box-shadow:0 0 26px rgba(207,130,110,.5);
+.bridge-photo{
+  position:absolute; left:0; right:0; top:-12%; width:100%; height:124%;
+  object-fit:cover;
 }
-.bridge-cap{ text-align:center; padding:26px 16px 10px; }
-.bridge-cap .accent{ width:46px; height:1px; background:var(--gold-light); margin:0 auto 16px; opacity:.7; }
-.bridge-cap p{ font-family:var(--serif); font-style:italic; font-size:clamp(21px,3.2vw,30px); color:var(--moon-soft); margin:0; }
+.bridge-veil{
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(180deg, rgba(18,14,26,.94) 0%, rgba(18,14,26,0) 26%, rgba(18,14,26,0) 60%, rgba(18,14,26,.92) 100%),
+    radial-gradient(90% 55% at 50% 108%, rgba(18,14,26,.55), transparent 70%);
+}
+.bridge-copy{ position:relative; z-index:2; text-align:center; padding:0 24px 12vh; }
+.bridge-copy .script-accent{ text-shadow:0 2px 22px rgba(0,0,0,.7); }
+.bridge-copy .accent{ width:46px; height:1px; background:var(--gold-light); margin:14px auto 16px; opacity:.8; }
+.bridge-copy p{
+  font-family:var(--serif); font-style:italic; font-size:clamp(24px,3.8vw,38px);
+  color:var(--ivory); margin:0; text-shadow:0 2px 30px rgba(0,0,0,.75);
+}
 
 /* ============================================================
    THE DAY — golden-hour vignette
@@ -409,10 +416,10 @@ html.reduced .b-lan{ animation:none; opacity:.85; }
 }
 .ticket-strip::before,.ticket-strip::after{ content:""; width:36px; height:1px; background:rgba(216,188,130,.5); }
 .tiles{
-  position:relative; max-width:1180px; margin:0 auto;
+  position:relative; max-width:1080px; margin:0 auto;
   display:grid; grid-template-columns:repeat(2,1fr); gap:20px;
 }
-@media (min-width:840px){ .tiles{ grid-template-columns:repeat(4,1fr); } }
+@media (min-width:840px){ .tiles{ grid-template-columns:repeat(3,1fr); } }
 .tile{
   position:relative; padding:10px 10px 40px; border-radius:12px;
   background:var(--paper); text-align:left; width:100%;
@@ -423,7 +430,7 @@ html.reduced .b-lan{ animation:none; opacity:.85; }
 .tile:nth-child(even){ transform:rotate(.6deg); }
 .tile:hover{ transform:translateY(-7px) rotate(0deg); box-shadow:0 0 0 1px rgba(255,240,220,.16), 0 0 70px rgba(207,130,110,.3), var(--shadow); }
 .tile img{ width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:6px; }
-.tile.wide{ grid-column:span 2; }
+.tile.wide{ grid-column:1 / -1; }
 .tile.wide img{ aspect-ratio:16/9; }
 .tile figcaption{
   position:absolute; left:14px; right:14px; bottom:11px;
@@ -492,12 +499,30 @@ dialog.lb::backdrop{ background:rgba(10,7,14,.86); backdrop-filter:blur(7px); }
 .pin .ic svg{ width:25px; height:25px; }
 .pin .ic .ring{ position:absolute; inset:-7px; border-radius:50%; pointer-events:none; }
 .pin .ic .ring circle{
-  fill:none; stroke:var(--ember); stroke-width:1.4; stroke-dasharray:1; stroke-dashoffset:1;
+  fill:none; stroke:var(--ember); stroke-width:1.4; stroke-dasharray:214; stroke-dashoffset:214;
   transition:stroke-dashoffset .7s var(--ease);
 }
 .pin:hover .ic .ring circle, .pin:focus-visible .ic .ring circle{ stroke-dashoffset:0; }
 .pin b{ font-size:12.5px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--moon); }
 .pin span{ font-size:11.5px; color:var(--moon-faint); }
+
+/* desktop: pins scatter across a night map joined by a dashed route */
+.route-net{ display:none; }
+@media (min-width:880px){
+  .pins.map-area{ display:block; height:620px; }
+  .route-net{ display:block; position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .pins.map-area .pin{
+    position:absolute; translate:-50% -50%; width:auto; min-width:0;
+    background:transparent; border:0; box-shadow:none;
+    backdrop-filter:none; -webkit-backdrop-filter:none; padding:10px 14px; gap:9px;
+  }
+  .pins.map-area .pin:hover{ box-shadow:none; border-color:transparent; }
+  .pins.map-area .pin b, .pins.map-area .pin span{ text-shadow:0 2px 16px rgba(0,0,0,.78); }
+  .pins.map-area .pin .ic{
+    background:radial-gradient(circle at 50% 62%, rgba(255,214,160,.32), rgba(255,205,150,.06) 72%);
+    box-shadow:0 0 28px rgba(255,196,150,.4);
+  }
+}
 
 /* Panels (dialogs) — lit paper against the night */
 dialog.panel{
@@ -689,6 +714,11 @@ dialog.panel::backdrop{ background:rgba(10,7,14,.78); backdrop-filter:blur(6px);
   position:absolute; inset:0;
   background:radial-gradient(75% 60% at 50% 50%, rgba(18,14,26,.05), rgba(18,14,26,.9) 92%);
 }
+/* the scene dissolves into the night sky above and below */
+#promise .pr-img, #promise .scrim{
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  mask-image:linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+}
 #promise .pr-copy{ position:relative; text-align:center; z-index:3; }
 #promise .pr-kicker{ font-family:var(--serif); font-style:italic; font-size:clamp(17px,2.2vw,21px); color:#cdb98c; }
 #promise h2{ color:var(--ivory); font-size:clamp(44px,7.6vw,84px); font-weight:400; margin-top:16px; text-shadow:0 0 60px rgba(0,0,0,.6); }
@@ -718,10 +748,8 @@ html.reduced .sky-warm, html:not(.js-anim) .sky-warm{ opacity:1; }
 html.reduced #dawn-cap, html:not(.js-anim) #dawn-cap{ display:none; }
 #next-lans{ position:absolute; inset:0; pointer-events:none; }
 #route-svg{ position:absolute; inset:0; width:100%; height:100%; }
-#route-path{ fill:none; stroke:var(--rose); stroke-width:2; stroke-linecap:round; stroke-dasharray:1; stroke-dashoffset:1; }
-#route-glow{ fill:none; stroke:rgba(207,154,147,.45); stroke-width:7; filter:blur(4px); stroke-dasharray:1; stroke-dashoffset:1; }
-html.reduced #route-path, html.reduced #route-glow,
-html:not(.js-anim) #route-path, html:not(.js-anim) #route-glow{ stroke-dashoffset:0; }
+#route-path{ fill:none; stroke:var(--rose); stroke-width:2; stroke-linecap:round; }
+#route-glow{ fill:none; stroke:rgba(207,154,147,.45); stroke-width:7; filter:blur(4px); }
 #plane{ position:absolute; top:0; left:0; width:34px; height:34px; color:var(--rose-deep); }
 html.reduced #plane, html:not(.js-anim) #plane{ display:none; }
 #nlanT,#nlanJ{ position:absolute; bottom:-150px; }
@@ -869,12 +897,34 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   <section id="path" class="tall" aria-label="The lantern path — a sky of drifting lights slowly finding one route">
     <div class="stick">
       <svg id="arcs" viewBox="0 0 1000 1400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <path class="glow" id="arcLg" d="M 180 1350 C 120 1000, 260 760, 470 645" pathLength="1"/>
-        <path class="glow" id="arcRg" d="M 830 1350 C 880 1000, 740 760, 530 645" pathLength="1"/>
-        <path class="glow" id="arcMg" d="M 500 632 C 545 480, 458 330, 500 140" pathLength="1"/>
-        <path id="arcL" d="M 180 1350 C 120 1000, 260 760, 470 645" pathLength="1"/>
-        <path id="arcR" d="M 830 1350 C 880 1000, 740 760, 530 645" pathLength="1"/>
-        <path id="arcM" d="M 500 632 C 545 480, 458 330, 500 140" pathLength="1"/>
+        <defs>
+          <radialGradient id="tGlow">
+            <stop offset="0" stop-color="#fff6dd" stop-opacity=".95"/>
+            <stop offset=".35" stop-color="#ffcf96" stop-opacity=".55"/>
+            <stop offset="1" stop-color="#cf826e" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <path class="glow" id="arcLg" d="M 165 1380 C 130 1020, 290 780, 498 648"/>
+        <path class="glow" id="arcRg" d="M 835 1380 C 870 1020, 710 780, 502 648"/>
+        <path class="glow" id="arcMg" d="M 500 646 C 528 520, 472 350, 500 130"/>
+        <path id="arcL" d="M 165 1380 C 130 1020, 290 780, 498 648"/>
+        <path id="arcR" d="M 835 1380 C 870 1020, 710 780, 502 648"/>
+        <path id="arcM" d="M 500 646 C 528 520, 472 350, 500 130"/>
+        <g id="tracerL" class="tracer">
+          <circle r="38" fill="url(#tGlow)"/>
+          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#ffe9bf"/>
+          <circle cy="9" r="4" fill="#fff8e8"/>
+        </g>
+        <g id="tracerR" class="tracer">
+          <circle r="38" fill="url(#tGlow)"/>
+          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#ffe9bf"/>
+          <circle cy="9" r="4" fill="#fff8e8"/>
+        </g>
+        <g id="tracerM" class="tracer">
+          <circle r="52" fill="url(#tGlow)"/>
+          <rect x="-10" y="-15" width="20" height="29" rx="9" fill="#fff0ca"/>
+          <circle cy="11" r="5" fill="#fff"/>
+        </g>
       </svg>
       <div id="merge-glow" class="scrub-hide" aria-hidden="true"></div>
 
@@ -894,18 +944,15 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     </div>
   </section>
 
-  <!-- PHOTO BRIDGE -->
+  <!-- PHOTO BRIDGE — full-bleed -->
   <section id="bridge" aria-label="A keepsake from the journey">
-    <div class="bridge-frame rv">
-      <span class="bridge-tab">Traces of light</span>
-      <div class="bridge-img">
-        <img src="images/journey-wide.webp" loading="lazy" decoding="async"
-          alt="Tommy and Jeyan beneath strings of warm festival lights at dusk" />
-      </div>
-      <div class="bridge-cap">
-        <div class="accent" aria-hidden="true"></div>
-        <p>Every journey leaves traces of light.</p>
-      </div>
+    <img class="bridge-photo" src="images/journey-wide.webp" loading="lazy" decoding="async"
+      alt="Tommy and Jeyan beneath strings of warm festival lights at dusk" />
+    <div class="bridge-veil" aria-hidden="true"></div>
+    <div class="bridge-copy rv">
+      <span class="script-accent">traces of light</span>
+      <div class="accent" aria-hidden="true"></div>
+      <p>Every journey leaves traces of light.</p>
     </div>
   </section>
 
@@ -986,47 +1033,54 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="ticket-strip rv" aria-hidden="true">TJ · 27 DEC · GATE 26</div>
     </div>
     <div class="tiles">
-      <figure class="tile wide rv">
-        <button class="tile-open" type="button" data-full="images/journey-07.webp" data-cap="Between skies"
-          aria-label="View photo: between skies" style="all:unset; display:block; cursor:zoom-in">
-          <img src="images/journey-07.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan on a lakeside dock as soft lanterns float over the water" />
-        </button>
-        <figcaption>Between skies <small>No. 01</small></figcaption>
-      </figure>
       <figure class="tile rv">
         <button class="tile-open" type="button" data-full="images/journey-01.webp" data-cap="Quiet joy"
           aria-label="View photo: quiet joy" style="all:unset; display:block; cursor:zoom-in">
-          <img src="images/journey-01.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan smiling together" />
+          <img src="images/journey-01.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan smiling side by side among soft blue festival lights" />
         </button>
-        <figcaption>Quiet joy <small>No. 02</small></figcaption>
+        <figcaption>Quiet joy <small>No. 01</small></figcaption>
+      </figure>
+      <figure class="tile rv">
+        <button class="tile-open" type="button" data-full="images/hero.webp" data-cap="Soft detours"
+          aria-label="View photo: soft detours" style="all:unset; display:block; cursor:zoom-in">
+          <img src="images/hero.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan laughing, dressed in white among soft lights" />
+        </button>
+        <figcaption>Soft detours <small>No. 02</small></figcaption>
       </figure>
       <figure class="tile rv">
         <button class="tile-open" type="button" data-full="images/journey-09.webp" data-cap="Little lights"
           aria-label="View photo: little lights" style="all:unset; display:block; cursor:zoom-in">
-          <img src="images/journey-09.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan holding hands beneath strings of paper lanterns" />
+          <img src="images/journey-09.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan holding hands beneath strings of glowing paper lanterns" />
         </button>
         <figcaption>Little lights <small>No. 03</small></figcaption>
       </figure>
       <figure class="tile rv">
-        <button class="tile-open" type="button" data-full="images/journey-05.webp" data-cap="Soft detours"
-          aria-label="View photo: soft detours" style="all:unset; display:block; cursor:zoom-in">
-          <img src="images/journey-05.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan laughing together" />
+        <button class="tile-open" type="button" data-full="images/journey-07.webp" data-cap="Between skies"
+          aria-label="View photo: between skies" style="all:unset; display:block; cursor:zoom-in">
+          <img src="images/journey-07.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan sitting together on a lakeside dock surrounded by floating lanterns" />
         </button>
-        <figcaption>Soft detours <small>No. 04</small></figcaption>
+        <figcaption>Between skies <small>No. 04</small></figcaption>
       </figure>
       <figure class="tile rv">
-        <button class="tile-open" type="button" data-full="images/journey-06.webp" data-cap="Almost home"
+        <button class="tile-open" type="button" data-full="images/journey-08.webp" data-cap="Almost home"
           aria-label="View photo: almost home" style="all:unset; display:block; cursor:zoom-in">
-          <img src="images/journey-06.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan with their foreheads gently together" />
+          <img src="images/journey-08.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan laughing in a field of softly glowing blue roses" />
         </button>
         <figcaption>Almost home <small>No. 05</small></figcaption>
       </figure>
-      <figure class="tile wide rv">
+      <figure class="tile rv">
         <button class="tile-open" type="button" data-full="images/journey-10.webp" data-cap="Same horizon"
           aria-label="View photo: same horizon" style="all:unset; display:block; cursor:zoom-in">
-          <img src="images/journey-10.webp" loading="lazy" decoding="async" alt="Black and white photo of Tommy and Jeyan walking hand in hand" />
+          <img src="images/journey-10.webp" loading="lazy" decoding="async" alt="Jeyan leading Tommy by the hand, sunglasses on, in black and white" />
         </button>
         <figcaption>Same horizon <small>No. 06</small></figcaption>
+      </figure>
+      <figure class="tile wide rv">
+        <button class="tile-open" type="button" data-full="images/savethedate.webp" data-cap="The next chapter"
+          aria-label="View photo: the next chapter" style="all:unset; display:block; cursor:zoom-in">
+          <img src="images/savethedate.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan, Save the Date, December 27, 2026" />
+        </button>
+        <figcaption>The next chapter <small>No. 07</small></figcaption>
       </figure>
     </div>
   </section>
@@ -1052,37 +1106,45 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <h2 class="rv">Our World</h2>
       <p class="rv">Everything you need for the day, mapped out. Tap a marker to open it.</p>
     </div>
-    <div class="pins">
-      <button class="pin rv" type="button" data-panel="p-entourage">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-users"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
+    <div class="pins map-area">
+      <svg class="route-net" viewBox="0 0 1100 620" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M 132 112 C 230 70, 330 48, 418 62 C 520 78, 640 70, 726 99 C 830 134, 930 130, 968 186 C 1010 320, 480 260, 154 360 C 220 430, 350 465, 440 459 C 560 451, 650 410, 726 384 C 830 350, 940 430, 968 508"
+          fill="none" stroke="rgba(216,188,130,.32)" stroke-width="1.4" stroke-dasharray="3 9" stroke-linecap="round"/>
+        <g fill="rgba(255,205,150,.75)">
+          <circle cx="132" cy="112" r="3"/><circle cx="418" cy="62" r="3"/><circle cx="726" cy="99" r="3"/><circle cx="968" cy="186" r="3"/>
+          <circle cx="154" cy="360" r="3"/><circle cx="440" cy="459" r="3"/><circle cx="726" cy="384" r="3"/><circle cx="968" cy="508" r="3"/>
+        </g>
+      </svg>
+      <button class="pin rv" type="button" data-panel="p-entourage" style="left:12%; top:18%">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-users"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Entourage</b><span>Who walks with us</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-rsvp">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-mail"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-rsvp" style="left:38%; top:10%">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-mail"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>RSVP</b><span>Reserve your seat</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-attire">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-attire" style="left:66%; top:16%">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Attire Guide</b><span>What to wear</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-itinerary">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-clock"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-itinerary" style="left:88%; top:30%">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-clock"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Itinerary</b><span>How the day flows</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-directions">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-pin"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-directions" style="left:14%; top:58%">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-pin"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Directions</b><span>Finding the way</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-gift">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-gift"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-gift" style="left:40%; top:74%">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-gift"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Gift Fund</b><span>Our first journey</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-faq">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-help"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-faq" style="left:66%; top:62%">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-help"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>FAQs</b><span>Good questions</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-contact">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-phone"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-contact" style="left:88%; top:82%">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-phone"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Contact</b><span>Help desk</span>
       </button>
     </div>
@@ -1109,8 +1171,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <p id="dawn-cap" aria-hidden="true">Dawn breaks.</p>
 
       <svg id="route-svg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <path id="route-glow" d="M 130 940 C 240 760, 300 600, 430 430 S 560 240, 500 150" pathLength="1"/>
-        <path id="route-path" d="M 130 940 C 240 760, 300 600, 430 430 S 560 240, 500 150" pathLength="1"/>
+        <path id="route-glow" d="M 130 940 C 240 760, 300 600, 430 430 S 560 240, 500 150"/>
+        <path id="route-path" d="M 130 940 C 240 760, 300 600, 430 430 S 560 240, 500 150"/>
       </svg>
       <svg id="plane" viewBox="0 0 34 34" aria-hidden="true"><use href="#ic-paperplane"/></svg>
 
@@ -2054,6 +2116,15 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   })();
 
   if (ANIM) {
+    /* prime stroke-draw paths with their real measured lengths */
+    function primeDraw(ids) {
+      ids.forEach(function (id) {
+        var p = $(id), L = p.getTotalLength();
+        p.style.strokeDasharray = L;
+        p.style.strokeDashoffset = L;
+      });
+    }
+
     /* generic reveals */
     gsap.utils.toArray('.rv').forEach(function (el) {
       gsap.to(el, {
@@ -2069,22 +2140,43 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       });
       var chips = gsap.utils.toArray('#path .chip');
       var caps = gsap.utils.toArray('#path .pcap');
+      primeDraw(['arcL', 'arcR', 'arcM', 'arcLg', 'arcRg', 'arcMg']);
+      /* two lights rise together, tracing their own lines... */
       tl.to(['#arcL', '#arcLg'], { strokeDashoffset: 0, ease: 'none', duration: 5.2 }, 0.4)
-        .to(['#arcR', '#arcRg'], { strokeDashoffset: 0, ease: 'none', duration: 5.2 }, 0.8)
-        .to(['#arcM', '#arcMg'], { strokeDashoffset: 0, ease: 'none', duration: 3.4 }, 5.8)
-        .to('#merge-glow', { opacity: 1, duration: 1.2 }, 5.6)
-        .to('#merge-glow', { opacity: 0, duration: 1.4 }, 8.2);
-      var chipTimes = [0.8, 1.9, 3.2, 4.4, 6.2, 8.0];
+        .to(['#arcR', '#arcRg'], { strokeDashoffset: 0, ease: 'none', duration: 5.2 }, 0.4)
+        /* ...meet... */
+        .to('#merge-glow', { opacity: 1, duration: 0.8 }, 5.3)
+        .to('#merge-glow', { opacity: 0, duration: 1.2 }, 6.6)
+        /* ...and continue as one. */
+        .to(['#arcM', '#arcMg'], { strokeDashoffset: 0, ease: 'none', duration: 3.4 }, 5.8);
+      if (window.MotionPathPlugin) {
+        tl.to('#tracerL', { opacity: 1, duration: 0.3 }, 0.4)
+          .to('#tracerL', { motionPath: { path: '#arcL', align: '#arcL', alignOrigin: [0.5, 0.5] }, ease: 'none', duration: 5.2 }, 0.4)
+          .to('#tracerR', { opacity: 1, duration: 0.3 }, 0.4)
+          .to('#tracerR', { motionPath: { path: '#arcR', align: '#arcR', alignOrigin: [0.5, 0.5] }, ease: 'none', duration: 5.2 }, 0.4)
+          .to(['#tracerL', '#tracerR'], { opacity: 0, duration: 0.3 }, 5.6)
+          .to('#tracerM', { opacity: 1, duration: 0.25 }, 5.65)
+          .to('#tracerM', { motionPath: { path: '#arcM', align: '#arcM', alignOrigin: [0.5, 0.5] }, ease: 'none', duration: 3.4 }, 5.8)
+          .to('#tracerM', { opacity: 0, duration: 0.5 }, 9.3);
+      }
+      /* word-lanterns light up as the tracers pass their altitude */
+      var chipTimes = [1.3, 1.7, 2.9, 3.4, 6.7, 8.3];
       chips.forEach(function (chip, i) {
         tl.to(chip, { opacity: 1, duration: 0.5 }, chipTimes[i])
           .to(chip, { y: -16, duration: 1.6, ease: 'none' }, chipTimes[i]);
       });
-      var capTimes = [[0.6, 2.4], [2.8, 4.6], [5.0, 6.8], [7.2, null]];
+      var capTimes = [[0.5, 2.4], [2.6, 4.4], [4.6, 6.4], [6.8, null]];
       caps.forEach(function (cap, i) {
         tl.to(cap, { opacity: 1, duration: 0.6 }, capTimes[i][0]);
         if (capTimes[i][1] !== null) tl.to(cap, { opacity: 0, duration: 0.6 }, capTimes[i][1]);
       });
     })();
+
+    /* Photo bridge — slow parallax drift */
+    gsap.fromTo('.bridge-photo', { yPercent: -8 }, {
+      yPercent: 8, ease: 'none',
+      scrollTrigger: { trigger: '#bridge', start: 'top bottom', end: 'bottom top', scrub: true }
+    });
 
     /* The Promise — gentle settle */
     gsap.fromTo('#promise .pr-img img', { scale: 1.06 }, {
@@ -2096,6 +2188,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     (function () {
       var stick = document.querySelector('#next .stick');
       var W = function () { return stick.clientWidth; };
+      primeDraw(['route-path', 'route-glow']);
       var tl = gsap.timeline({
         scrollTrigger: { trigger: '#next', start: 'top top', end: 'bottom bottom', scrub: 0.6 }
       });
