@@ -948,6 +948,11 @@
         <div class="rsvp-card reveal d1">
           <div class="success" id="rsvp-success" role="status" aria-live="polite"></div>
           <form id="rsvp-form" novalidate>
+            <!-- Honeypot: hidden from people, irresistible to bots. Must stay empty. -->
+            <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
+              <label for="rsvp-website">Website</label>
+              <input id="rsvp-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
             <div class="field">
               <label for="rsvp-name">Your name *</label>
               <input id="rsvp-name" name="name" autocomplete="name" placeholder="Full name" required />
@@ -1315,7 +1320,7 @@
       if (!attendingValue) { errorEl.textContent = 'Please let us know if you can join us.'; return; }
       const guests = [];
       for (let i = 2; i <= partySize; i++) { const inp = $(`guest-${i}`); if (inp && inp.value.trim()) guests.push(inp.value.trim()); }
-      const payload = { name: nameVal, email: emailVal, attending: attendingValue, party_size: attendingValue === 'yes' ? partySize : 1, guests, notes: notesVal };
+      const payload = { name: nameVal, email: emailVal, attending: attendingValue, party_size: attendingValue === 'yes' ? partySize : 1, guests, notes: notesVal, website: $('rsvp-website').value };
       btn.disabled = true; btn.textContent = 'Sending...';
       try {
         const res = await fetch(RSVP_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });

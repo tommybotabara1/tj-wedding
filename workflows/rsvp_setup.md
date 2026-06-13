@@ -87,13 +87,68 @@ Visit your Web App URL in a browser. You should see:
 
 ## Updating the deployment
 
-If you change the Apps Script code, you must **create a new deployment** for changes to take effect:
+> ⚠️ **The #1 gotcha — pasting + saving code does NOT update the live site.**
+> A web app keeps serving the *deployed version* until you bump it. Editing,
+> saving (Ctrl+S), running a function, or re-authorizing scopes changes nothing
+> the public `/exec` URL sees. You must update the **existing** deployment to a
+> new version. Do **not** click "New deployment" — that mints a *different* URL
+> and leaves the old one (the one the site uses) on the old code.
+
+To push code changes live:
 1. Click **Deploy** → **Manage deployments**.
-2. Click the pencil icon on the active deployment.
-3. Change the version to **New version**.
+2. On the **existing** deployment (the one whose URL matches `RSVP_ENDPOINT`
+   in the HTML), click the **pencil ✏️ (Edit)** icon.
+3. Open the **Version** dropdown → choose **New version**.
 4. Click **Deploy**.
 
-The URL stays the same — no need to update `invitation.html`.
+The URL stays the same — no need to touch the HTML.
+
+**How to tell whether your redeploy actually took effect:** submit a test RSVP
+with the honeypot tripped (see below). If a spam row still lands in the Sheet,
+or no notification email arrives, you're still on the old version — redo the
+steps above on the *existing* deployment.
+
+> First redeploy after adding email: Google will prompt you to re-authorize
+> because the script now needs the *send email as you* scope. Approve it. (A
+> "Security alert: you allowed TJ Wedding RSVP access…" email is normal.)
+
+---
+
+## What the backend does (current behaviour)
+
+On each POST the Apps Script (`tools/apps_script_rsvp.js`):
+1. **Honeypot check** — the forms include a hidden `website` field that humans
+   never see. If it arrives non-empty, the request is treated as a bot: the
+   script returns `{status:"ok"}` (so the bot doesn't retry) but writes nothing
+   and emails no one.
+2. **Writes the row** to the `RSVPs` tab (this is the critical, first step).
+3. **Emails the couple** a summary → `tjbo.4824@gmail.com`, BCC
+   `tommybotabara@gmail.com` (reply-to is set to the guest's address).
+4. **Confirms to the guest** — if they gave an email, sends a short branded
+   "we've received your RSVP" note.
+
+Email is best-effort: it runs *after* the row is saved and inside its own
+try/catch, so a mail hiccup can never lose an RSVP or cause a duplicate.
+
+---
+
+## Reconciling RSVPs against the guest list
+
+`tools/reconcile_rsvps.py` cross-references RSVP responses against the real
+guest list (the `Guest List` tab of the planner workbook) and reports: matched,
+uncertain (likely typos), unknown (no match), not-yet-replied, and possible
+duplicates. Test rows (names starting with `__`) are skipped automatically.
+
+**One-time setup:** share the **TJ Weddings RSVPs** Google Sheet (Viewer is
+enough) with the service account:
+`tj-wedding-bot@river-karma-489806-i7.iam.gserviceaccount.com`
+
+**Run:**
+```
+python tools/reconcile_rsvps.py
+```
+The RSVP Sheet ID defaults to the live sheet; override with `RSVP_SHEET_ID` in
+`.env` if it ever changes.
 
 ---
 

@@ -22,11 +22,11 @@
    TOKENS
    ============================================================ */
 :root{
-  /* night world */
-  --night-deep:#120e1a;
-  --night:#1b1626;
-  --dusk:#2b2240;
-  --plum:#4d3553;
+  /* night world — warm espresso / rosewood dusk (no violet) */
+  --night-deep:#140f0d;
+  --night:#1e1715;
+  --dusk:#3e2a2c;
+  --plum:#6c4540;
   /* dawn / paper world */
   --ivory:#fbf9f4;
   --cream:#f3ede2;
@@ -285,8 +285,8 @@ html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:16p
 .bridge-veil{
   position:absolute; inset:0; pointer-events:none;
   background:
-    linear-gradient(180deg, rgba(18,14,26,.94) 0%, rgba(18,14,26,0) 26%, rgba(18,14,26,0) 60%, rgba(18,14,26,.92) 100%),
-    radial-gradient(90% 55% at 50% 108%, rgba(18,14,26,.55), transparent 70%);
+    linear-gradient(180deg, rgba(22,15,12,.94) 0%, rgba(22,15,12,0) 26%, rgba(22,15,12,0) 60%, rgba(22,15,12,.92) 100%),
+    radial-gradient(90% 55% at 50% 108%, rgba(22,15,12,.55), transparent 70%);
 }
 .bridge-copy{ position:relative; z-index:2; text-align:center; padding:0 24px 12vh; }
 .bridge-copy .script-accent{ text-shadow:0 2px 22px rgba(0,0,0,.7); }
@@ -311,7 +311,7 @@ html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:16p
   position:relative; height:64vh; height:64svh; min-height:440px; overflow:clip;
   border-radius:20px; border:1px solid rgba(244,237,221,.18);
   box-shadow:0 0 90px rgba(217,138,90,.18), var(--shadow);
-  background:linear-gradient(180deg, #3c2b48 0%, #74445a 24%, #c4766a 40%, #eda173 47%, transparent 47%);
+  background:linear-gradient(180deg, #3a2826 0%, #74454a 24%, #c4766a 40%, #eda173 47%, transparent 47%);
 }
 .beach .sun{
   position:absolute; top:33%; left:50%; width:130px; height:130px; transform:translateX(-50%);
@@ -444,7 +444,7 @@ dialog.lb{
   border:0; padding:0; background:transparent; max-width:min(94vw,1080px); width:auto;
   margin:auto; overflow:visible;
 }
-dialog.lb::backdrop{ background:rgba(10,7,14,.86); backdrop-filter:blur(7px); }
+dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
 .lb-card{
   position:relative; background:var(--paper); border-radius:14px; padding:12px 12px 52px;
   box-shadow:0 0 120px rgba(207,130,110,.25), 0 30px 80px -20px rgba(0,0,0,.6);
@@ -483,7 +483,7 @@ dialog.lb::backdrop{ background:rgba(10,7,14,.86); backdrop-filter:blur(7px); }
 @media (min-width:760px){ .pins{ grid-template-columns:repeat(4,1fr); } }
 .pin{
   display:flex; flex-direction:column; align-items:center; gap:12px;
-  background:rgba(24,18,30,.6); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+  background:rgba(30,22,18,.6); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
   border:1px solid rgba(244,237,221,.16); border-radius:18px;
   padding:28px 14px 24px; min-height:44px; width:100%;
   transition:transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
@@ -506,14 +506,12 @@ dialog.lb::backdrop{ background:rgba(10,7,14,.86); backdrop-filter:blur(7px); }
 .pin b{ font-size:12.5px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--moon); }
 .pin span{ font-size:11.5px; color:var(--moon-faint); }
 
-/* pins scatter across a night map joined by a dashed route — a wandering
-   flight path you follow stop by stop. Portrait on phones, wide on desktop. */
-.route-net{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
-.route-net.is-wide{ display:none; }
-.route-net.is-tall{ display:block; }
+/* Our World — an ordered flight path you follow stop by stop, 1 → 7. One
+   centred portrait route at every width, numbered so the sequence is clear. */
+.route-net{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; display:block; }
 .pins.map-area{
-  display:block; position:relative; max-width:520px;
-  height:clamp(720px, 196vw, 820px); margin:0 auto;
+  display:block; position:relative; max-width:560px;
+  height:clamp(680px, 150vw, 780px); margin:0 auto;
 }
 .pins.map-area .pin{
   position:absolute; left:calc(var(--mx,50) * 1%); top:calc(var(--my,50) * 1%);
@@ -528,11 +526,12 @@ dialog.lb::backdrop{ background:rgba(10,7,14,.86); backdrop-filter:blur(7px); }
   background:radial-gradient(circle at 50% 62%, rgba(255,214,160,.32), rgba(255,205,150,.06) 72%);
   box-shadow:0 0 28px rgba(255,196,150,.4); transition:transform .4s var(--ease), box-shadow .4s var(--ease);
 }
-@media (min-width:880px){
-  .route-net.is-wide{ display:block; }
-  .route-net.is-tall{ display:none; }
-  .pins.map-area{ max-width:1080px; height:620px; }
-  .pins.map-area .pin{ left:calc(var(--dx,50) * 1%); top:calc(var(--dy,50) * 1%); padding:10px 14px; }
+/* step number, so the route reads in order */
+.pin-num{
+  position:absolute; top:-3px; right:-3px; width:19px; height:19px; border-radius:50%;
+  display:grid; place-items:center; font-family:var(--sans); font-style:normal;
+  font-size:10px; font-weight:600; color:var(--night-deep); background:var(--ember);
+  box-shadow:0 2px 7px rgba(0,0,0,.45);
 }
 
 /* Panels (dialogs) — lit paper against the night */
@@ -541,7 +540,7 @@ dialog.panel{
   width:min(94vw, 720px); max-height:86vh; max-height:86svh; margin:auto;
   box-shadow:0 0 140px rgba(207,130,110,.3), 0 40px 90px -24px rgba(0,0,0,.55);
 }
-dialog.panel::backdrop{ background:rgba(10,7,14,.78); backdrop-filter:blur(6px); }
+dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); }
 .panel-inner{ padding:clamp(24px,4vw,40px); overflow-y:auto; max-height:86vh; max-height:86svh; }
 .panel-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:14px; }
 .panel-head h3{ font-size:clamp(27px,3.5vw,36px); margin-top:2px; color:var(--ink); }
@@ -723,7 +722,7 @@ dialog.panel::backdrop{ background:rgba(10,7,14,.78); backdrop-filter:blur(6px);
 }
 #promise .scrim{
   position:absolute; inset:0;
-  background:radial-gradient(75% 60% at 50% 50%, rgba(18,14,26,.05), rgba(18,14,26,.9) 92%);
+  background:radial-gradient(75% 60% at 50% 50%, rgba(22,15,12,.05), rgba(22,15,12,.9) 92%);
 }
 /* the scene dissolves into the night sky above and below */
 #promise .pr-img, #promise .scrim{
@@ -741,7 +740,7 @@ dialog.panel::backdrop{ background:rgba(10,7,14,.78); backdrop-filter:blur(6px);
 #next .stick{ display:block; }
 .sky-dawn{
   position:absolute; inset:0; opacity:0;
-  background:linear-gradient(180deg, #6d5a72 0%, #a37a7a 45%, #d9a08c 78%, #eec2a0 100%);
+  background:linear-gradient(180deg, #6f5a55 0%, #a87e76 45%, #d9a08c 78%, #eec2a0 100%);
 }
 .sky-warm{
   position:absolute; inset:0; opacity:0;
@@ -808,10 +807,10 @@ footer a{ color:var(--sage-deep); }
    ============================================================ */
 #music-btn{
   position:fixed; right:18px; bottom:18px; z-index:50;
-  display:none; align-items:center; gap:9px; min-height:46px; padding:11px 18px;
-  border-radius:999px; border:1px solid rgba(244,237,221,.28);
-  background:rgba(22,17,29,.62); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  color:var(--moon); font-size:11px; font-weight:500; letter-spacing:.18em; text-transform:uppercase;
+  display:none; align-items:center; justify-content:center; width:46px; height:46px; padding:0;
+  border-radius:50%; border:1px solid rgba(244,237,221,.28);
+  background:rgba(28,21,17,.62); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  color:var(--moon);
   box-shadow:0 0 28px rgba(207,130,110,.2);
 }
 #music-btn.show{ display:inline-flex; }
@@ -1115,56 +1114,44 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     <div class="head">
       <span class="script-accent rv">chart your course</span>
       <h2 class="rv">Our World</h2>
-      <p class="rv">Everything you need for the day, mapped out. Tap a marker to open it.</p>
+      <p class="rv">Everything you need for the day, in order. Follow the lights, stop by stop.</p>
     </div>
     <div class="pins map-area">
-      <svg class="route-net is-wide" viewBox="0 0 1100 620" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M 132 112 C 230 70, 330 48, 418 62 C 520 78, 640 70, 726 99 C 830 134, 930 130, 968 186 C 1010 320, 480 260, 154 360 C 220 430, 350 465, 440 459 C 560 451, 650 410, 726 384 C 830 350, 940 430, 968 508"
-          fill="none" stroke="rgba(216,188,130,.32)" stroke-width="1.4" stroke-dasharray="3 9" stroke-linecap="round"/>
-        <g fill="rgba(255,205,150,.75)">
-          <circle cx="132" cy="112" r="3"/><circle cx="418" cy="62" r="3"/><circle cx="726" cy="99" r="3"/><circle cx="968" cy="186" r="3"/>
-          <circle cx="154" cy="360" r="3"/><circle cx="440" cy="459" r="3"/><circle cx="726" cy="384" r="3"/><circle cx="968" cy="508" r="3"/>
-        </g>
-      </svg>
-      <svg class="route-net is-tall" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M 26 5 C 66 8, 14 22, 30 28 C 48 33, 80 33, 66 40 C 52 47, 8 47, 27 52 C 46 57, 82 58, 66 64 C 50 70, 14 70, 32 76 C 50 81, 80 84, 66 90"
+      <svg class="route-net" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M 30 6 C 50 9, 58 16, 68 20 C 80 25, 18 30, 30 34 C 44 38, 56 44, 68 48 C 82 53, 16 58, 30 62 C 44 66, 56 72, 68 76 C 82 81, 18 86, 30 90"
           fill="none" stroke="rgba(216,188,130,.34)" stroke-width="1.3" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
         <g fill="rgba(255,205,150,.75)">
-          <circle cx="26" cy="5" r="1"/><circle cx="66" cy="16" r="1"/><circle cx="30" cy="28" r="1"/><circle cx="66" cy="40" r="1"/>
-          <circle cx="27" cy="52" r="1"/><circle cx="66" cy="64" r="1"/><circle cx="32" cy="76" r="1"/><circle cx="66" cy="90" r="1"/>
+          <circle cx="30" cy="6" r="1"/><circle cx="68" cy="20" r="1"/><circle cx="30" cy="34" r="1"/><circle cx="68" cy="48" r="1"/>
+          <circle cx="30" cy="62" r="1"/><circle cx="68" cy="76" r="1"/><circle cx="30" cy="90" r="1"/>
         </g>
       </svg>
-      <button class="pin rv" type="button" data-panel="p-entourage" style="--dx:12;--dy:18;--mx:26;--my:5">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-users"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
-        <b>Entourage</b><span>Who walks with us</span>
-      </button>
-      <button class="pin rv" type="button" data-panel="p-rsvp" style="--dx:38;--dy:10;--mx:66;--my:16">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-mail"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-rsvp" style="--mx:30;--my:6">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-mail"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">1</i></span>
         <b>RSVP</b><span>Reserve your seat</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-attire" style="--dx:66;--dy:16;--mx:30;--my:28">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
-        <b>Attire Guide</b><span>What to wear</span>
-      </button>
-      <button class="pin rv" type="button" data-panel="p-itinerary" style="--dx:88;--dy:30;--mx:66;--my:40">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-clock"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-itinerary" style="--mx:68;--my:20">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-clock"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">2</i></span>
         <b>Itinerary</b><span>How the day flows</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-directions" style="--dx:14;--dy:58;--mx:27;--my:52">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-pin"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-directions" style="--mx:30;--my:34">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-pin"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">3</i></span>
         <b>Directions</b><span>Finding the way</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-gift" style="--dx:40;--dy:74;--mx:66;--my:64">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-gift"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
+      <button class="pin rv" type="button" data-panel="p-attire" style="--mx:68;--my:48">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">4</i></span>
+        <b>Attire Guide</b><span>What to wear</span>
+      </button>
+      <button class="pin rv" type="button" data-panel="p-entourage" style="--mx:30;--my:62">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-users"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">5</i></span>
+        <b>Entourage</b><span>Who walks with us</span>
+      </button>
+      <button class="pin rv" type="button" data-panel="p-gift" style="--mx:68;--my:76">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-gift"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">6</i></span>
         <b>Gift Fund</b><span>Our first journey</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-faq" style="--dx:66;--dy:62;--mx:32;--my:76">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-help"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
-        <b>FAQs</b><span>Good questions</span>
-      </button>
-      <button class="pin rv" type="button" data-panel="p-contact" style="--dx:88;--dy:82;--mx:68;--my:90">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-phone"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
-        <b>Contact</b><span>Help desk</span>
+      <button class="pin rv" type="button" data-panel="p-faq" style="--mx:30;--my:90">
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-help"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">7</i></span>
+        <b>FAQ &amp; Contact</b><span>Questions &amp; help desk</span>
       </button>
     </div>
   </section>
@@ -1284,6 +1271,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     <p>Kindly respond by <strong>November 30, 2026</strong> so we can finalize seats with Savoy Hotel Manila. A confirmed RSVP secures your place at the reception.</p>
     <div class="success" id="rsvp-success" role="status" aria-live="polite"></div>
     <form id="rsvp-form" novalidate>
+      <!-- Honeypot: hidden from people, irresistible to bots. Must stay empty. -->
+      <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
+        <label for="rsvp-website">Website</label>
+        <input id="rsvp-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
       <div class="field"><label for="rsvp-name">Your name *</label><input id="rsvp-name" name="name" autocomplete="name" placeholder="Full name" required /></div>
       <div class="field"><label for="rsvp-email">Email</label><input id="rsvp-email" name="email" type="email" autocomplete="email" placeholder="your@email.com (optional)" /></div>
       <div class="field">
@@ -1433,10 +1425,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 </dialog>
 
 <!-- FAQs -->
-<dialog class="panel" id="p-faq" aria-label="Frequently asked questions">
+<dialog class="panel" id="p-faq" aria-label="FAQ and contact">
   <div class="panel-inner">
     <div class="panel-head">
-      <div><span class="panel-kicker">good questions</span><h3>FAQs</h3></div>
+      <div><span class="panel-kicker">questions &amp; help desk</span><h3>FAQ &amp; Contact</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
     <details class="faq"><summary>Can I bring a plus one?</summary><p>Our guest list is by name, so the seats reserved for you are shown when you RSVP. If you're unsure how many seats are yours, message us and we'll gladly confirm.</p></details>
@@ -1444,16 +1436,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     <details class="faq"><summary>Where can I park?</summary><p>On-site parking is available at both St. Therese Parish and Savoy Hotel Manila. Both are in Newport City, minutes from NAIA Terminal 3, so ride-hailing is easy too.</p></details>
     <details class="faq"><summary>What time should I arrive?</summary><p>The ceremony begins at 1:30 PM sharp. We suggest being seated by 1:00 PM so you can settle in before the doors close for the processional.</p></details>
     <details class="faq"><summary>Are children invited?</summary><p>We love your little ones. Seats are limited, so please include everyone joining you by name in your RSVP so we can plan their places with care.</p></details>
-  </div>
-</dialog>
-
-<!-- Contact / Help Desk -->
-<dialog class="panel" id="p-contact" aria-label="Contact and help desk">
-  <div class="panel-inner">
-    <div class="panel-head">
-      <div><span class="panel-kicker">help desk</span><h3>Contact</h3></div>
-      <button class="panel-close" type="button" aria-label="Close">&times;</button>
-    </div>
+    <div class="divider-sm">Still need us? The help desk</div>
     <p>Questions about seats, directions, or the day itself? Our crew is happy to help.</p>
     <div class="contact-cards">
       <!-- Placeholder contacts — swap in names & numbers when the coordination team is final -->
@@ -1484,7 +1467,6 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     <circle cx="6.8" cy="18" r="2.4" fill="currentColor"/><circle cx="15.8" cy="16" r="2.4" fill="currentColor"/>
   </svg>
   <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
-  <span id="music-label">Sound Off</span>
 </button>
 
 <!-- ============================================================
@@ -1527,13 +1509,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     var px = 0, py = 0, tx = 0, ty = 0;   // pointer parallax
     var running = false;
 
-    /* sky color keyframes across full document scroll: dusk → deep night */
+    /* sky color keyframes across full document scroll: warm champagne dusk → deep
+       espresso night. Red >= green >= blue at every stop keeps it warm, never violet. */
     var STOPS = [
-      { p: 0.00, top: [43, 34, 64],  mid: [77, 53, 83],   bot: [120, 70, 86],  horizon: 0.55 },
-      { p: 0.22, top: [30, 24, 48],  mid: [52, 38, 64],   bot: [80, 52, 70],   horizon: 0.30 },
-      { p: 0.50, top: [21, 16, 33],  mid: [35, 26, 46],   bot: [52, 36, 52],   horizon: 0.16 },
-      { p: 0.80, top: [16, 12, 24],  mid: [26, 19, 33],   bot: [38, 27, 40],   horizon: 0.10 },
-      { p: 1.00, top: [14, 10, 20],  mid: [22, 16, 28],   bot: [33, 24, 36],   horizon: 0.08 }
+      { p: 0.00, top: [62, 42, 44],  mid: [118, 74, 66],  bot: [190, 128, 92], horizon: 0.55 },
+      { p: 0.22, top: [44, 31, 31],  mid: [84, 56, 50],   bot: [134, 88, 70],  horizon: 0.32 },
+      { p: 0.50, top: [33, 24, 23],  mid: [58, 42, 38],   bot: [92, 64, 54],   horizon: 0.17 },
+      { p: 0.80, top: [25, 19, 17],  mid: [40, 30, 27],   bot: [60, 44, 39],   horizon: 0.10 },
+      { p: 1.00, top: [20, 15, 13],  mid: [30, 23, 21],   bot: [46, 34, 30],   horizon: 0.07 }
     ];
     function lerp(a, b, t) { return a + (b - a) * t; }
     function mix(c1, c2, t) {
@@ -1752,12 +1735,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   })();
 
   /* ---------- ambient music ---------- */
-  var audio = $('ambient'), musicBtn = $('music-btn'), musicLabel = $('music-label');
+  var audio = $('ambient'), musicBtn = $('music-btn');
   function setMusicState(on) {
     musicBtn.classList.toggle('playing', on);
     musicBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     musicBtn.setAttribute('aria-label', on ? 'Pause ambient music' : 'Play ambient music');
-    musicLabel.textContent = on ? 'Sound On' : 'Sound Off';
   }
   function startMusic() {
     try {
@@ -1933,7 +1915,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       var payload = {
         name: nameVal, email: emailVal, attending: attendingValue,
         party_size: attendingValue === 'yes' ? partySize : 1, guests: guests,
-        notes: (parts ? parts + ' ' : '') + notesVal
+        notes: (parts ? parts + ' ' : '') + notesVal,
+        website: $('rsvp-website').value
       };
       btn.disabled = true; btn.textContent = 'Sending...';
       fetch(RSVP_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) })
