@@ -11,7 +11,8 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://tommybotabara1.github.io/tj-wedding/lanterns.html" />
 <meta property="og:image" content="https://tommybotabara1.github.io/tj-wedding/images/og-image.jpg" />
-<meta name="theme-color" content="#fbf9f4" />
+<meta name="theme-color" content="#16121f" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2316121f'/%3E%3Cellipse cx='16' cy='15' rx='8' ry='10' fill='%23f6dcbe'/%3E%3Cellipse cx='16' cy='24' rx='3' ry='2.4' fill='%23ffefc9'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -21,11 +22,22 @@
    TOKENS
    ============================================================ */
 :root{
+  /* night world */
+  --night-deep:#120e1a;
+  --night:#1b1626;
+  --dusk:#2b2240;
+  --plum:#4d3553;
+  /* dawn / paper world */
   --ivory:#fbf9f4;
   --cream:#f3ede2;
   --paper:#fffdfa;
   --ink:#2e2b27;
   --soft:#5f584f;
+  /* moonlit text on night */
+  --moon:#f4eddd;
+  --moon-soft:rgba(244,237,221,.82);
+  --moon-faint:rgba(244,237,221,.6);
+  /* accents */
   --sage-light:#9caa8f;
   --sage:#788869;
   --sage-deep:#566848;
@@ -33,174 +45,160 @@
   --rose:#b27c75;
   --rose-deep:#945a52;
   --gold:#b8964e;
+  --gold-light:#d8bc82;
+  --ember:#ffd9a3;
   --serif:'Cormorant Garamond', Georgia, serif;
   --sans:'Montserrat', 'Helvetica Neue', Arial, sans-serif;
   --ease:cubic-bezier(.22,.61,.36,1);
   --line:rgba(46,43,39,.12);
-  --shadow:0 18px 50px -18px rgba(46,43,39,.18);
-  --shadow-sm:0 8px 26px -12px rgba(46,43,39,.16);
-  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  --line-night:rgba(244,237,221,.16);
+  --shadow:0 18px 50px -18px rgba(0,0,0,.5);
+  --shadow-sm:0 8px 26px -12px rgba(0,0,0,.45);
+  --glow-rose:0 0 34px rgba(207,154,147,.34);
 }
 
 /* ============================================================
    BASE
    ============================================================ */
 *,*::before,*::after{ box-sizing:border-box; }
-html{ overflow-x:clip; width:100%; scroll-behavior:smooth; }
+html{ overflow-x:clip; width:100%; scroll-behavior:smooth; background:var(--night-deep); }
 body{
   margin:0; overflow-x:clip; width:100%; max-width:100%;
-  background:var(--ivory); color:var(--ink);
+  background:var(--night-deep); color:var(--moon);
   font-family:var(--sans); font-weight:300; font-size:16px; line-height:1.7;
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
 }
-main{ overflow-x:clip; position:relative; }
+main{ overflow-x:clip; position:relative; z-index:1; }
 body.gated{ overflow:hidden; height:100vh; height:100svh; }
+body.gated main, body.gated footer{ visibility:hidden; }
 img{ max-width:100%; display:block; }
-h1,h2,h3,h4{ font-family:var(--serif); font-weight:400; color:var(--ink); line-height:1.15; margin:0; }
+h1,h2,h3,h4{ font-family:var(--serif); font-weight:400; line-height:1.12; margin:0; }
 p{ margin:0 0 1em; }
-a{ color:var(--sage-deep); }
+a{ color:var(--rose-light); }
 button{ font-family:var(--sans); cursor:pointer; }
-:focus-visible{ outline:2px solid var(--sage); outline-offset:3px; border-radius:4px; }
-.visually-hidden{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+:focus-visible{ outline:2px solid var(--rose-light); outline-offset:3px; border-radius:4px; }
 
-.eyebrow{
-  display:inline-block; font-family:var(--sans); font-size:11px; font-weight:500;
-  letter-spacing:.32em; text-transform:uppercase; color:var(--rose-deep);
+#sky{ position:fixed; inset:0; z-index:0; width:100%; height:100%; display:block; }
+
+.script-accent{
+  font-family:var(--serif); font-style:italic; font-weight:400;
+  color:var(--rose-light); font-size:clamp(19px,2.6vw,26px); letter-spacing:.02em;
 }
-.eyebrow.sage{ color:var(--sage-deep); }
-.eyebrow.gold{ color:var(--gold); }
-.hairline{ width:64px; height:1px; background:var(--sage-light); border:0; margin:22px auto; }
+.hairline{ width:64px; height:1px; background:var(--sage-light); border:0; margin:22px auto; opacity:.7; }
 .btn{
   display:inline-flex; align-items:center; justify-content:center; gap:10px;
-  min-height:48px; padding:13px 34px; border-radius:999px;
-  border:1px solid var(--ink); background:var(--ink); color:var(--ivory);
+  min-height:50px; padding:14px 36px; border-radius:999px;
+  border:1px solid var(--rose-light); background:var(--rose); color:#fff;
   font-size:13px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
   transition:transform .35s var(--ease), box-shadow .35s var(--ease), background .35s var(--ease);
+  box-shadow:0 0 0 rgba(207,154,147,0);
 }
-.btn:hover{ transform:translateY(-2px); box-shadow:var(--shadow-sm); background:#3c382f; }
-.btn.ghost{ background:transparent; color:var(--ink); border-color:rgba(46,43,39,.35); }
-.btn.ghost:hover{ background:rgba(46,43,39,.05); }
+.btn:hover{ transform:translateY(-2px); background:var(--rose-deep); box-shadow:0 6px 30px rgba(207,154,147,.45); }
+.btn.ghost{ background:rgba(244,237,221,.06); color:var(--moon); border-color:rgba(244,237,221,.4); }
+.btn.ghost:hover{ background:rgba(244,237,221,.14); box-shadow:0 6px 26px rgba(207,154,147,.3); }
+.btn.dark{ background:var(--ink); border-color:var(--ink); color:var(--ivory); }
+.btn.dark:hover{ background:#3c382f; box-shadow:var(--shadow-sm); }
 
-/* Sections shell */
 section{ position:relative; }
 .copy-center{ text-align:center; max-width:680px; margin:0 auto; padding:0 24px; width:100%; }
 .tall{ height:320vh; height:320svh; }
-.tall-200{ height:200vh; height:200svh; }
+.tall-200{ height:220vh; height:220svh; }
 .stick{
   position:sticky; top:0; height:100vh; height:100svh;
   overflow:clip; display:flex; align-items:center; justify-content:center;
 }
 
-/* Animated-only initial states (kept visible without JS / with reduced motion) */
-.js-anim .rv{ opacity:0; transform:translateY(26px); }
+.js-anim .rv{ opacity:0; transform:translateY(30px); }
 .js-anim .scrub-hide{ opacity:0; }
 html.reduced .rv, html.reduced .scrub-hide{ opacity:1 !important; transform:none !important; }
 
 /* ============================================================
-   LANTERN (shared component)
+   LANTERN (DOM component — gate + finale heroes)
    ============================================================ */
-.lantern{ position:relative; display:block; width:74px; height:104px; pointer-events:none; }
+.lantern{ position:relative; display:block; width:84px; height:118px; pointer-events:none; }
 .lantern .body{
-  position:absolute; inset:0 6px 18px 6px; border-radius:30% 30% 36% 36% / 22% 22% 42% 42%;
-  border:1px solid rgba(148,90,82,.28);
-  background:
-    radial-gradient(60% 46% at 50% 64%, #fff4e0, #f6dcbe 52%, #ddab8d 100%);
+  position:absolute; inset:0 7px 20px 7px; border-radius:30% 30% 36% 36% / 22% 22% 42% 42%;
+  border:1px solid rgba(148,90,82,.35);
+  background:radial-gradient(60% 46% at 50% 64%, #fff3da, #f6d8ae 52%, #d99a6c 100%);
   box-shadow:
-    0 0 24px 6px rgba(207,154,147,.45),
-    0 0 64px 18px rgba(207,154,147,.22),
-    inset 0 -10px 20px rgba(148,90,82,.30),
-    inset 0 6px 10px rgba(255,255,255,.6);
+    0 0 30px 10px rgba(255,196,150,.5),
+    0 0 90px 30px rgba(207,130,110,.32),
+    0 0 180px 60px rgba(178,96,90,.18),
+    inset 0 -10px 22px rgba(148,70,52,.35),
+    inset 0 6px 10px rgba(255,255,255,.55);
 }
-.lantern .body::before{ /* paper ribs */
+.lantern .body::before{
   content:""; position:absolute; inset:0; border-radius:inherit;
-  background:repeating-linear-gradient(180deg, transparent 0 12px, rgba(148,90,82,.07) 12px 13px);
+  background:repeating-linear-gradient(180deg, transparent 0 13px, rgba(148,80,62,.1) 13px 14px);
 }
 .lantern .crown{
-  position:absolute; top:-4px; left:50%; width:26px; height:7px; transform:translateX(-50%);
-  background:var(--rose-deep); border-radius:4px; opacity:.55;
+  position:absolute; top:-4px; left:50%; width:28px; height:7px; transform:translateX(-50%);
+  background:#7d4a3e; border-radius:4px;
 }
 .lantern .base{
-  position:absolute; bottom:12px; left:50%; width:34px; height:6px; transform:translateX(-50%);
-  background:var(--rose-deep); border-radius:4px; opacity:.45;
+  position:absolute; bottom:14px; left:50%; width:38px; height:6px; transform:translateX(-50%);
+  background:#7d4a3e; border-radius:4px;
 }
 .lantern .flame{
-  position:absolute; bottom:2px; left:50%; width:10px; height:10px; transform:translateX(-50%);
+  position:absolute; bottom:2px; left:50%; width:12px; height:12px; transform:translateX(-50%);
   border-radius:50%;
-  background:radial-gradient(circle, #fff 0%, rgba(255,238,210,.9) 45%, rgba(207,154,147,0) 75%);
-  box-shadow:0 0 16px 6px rgba(255,231,200,.55);
+  background:radial-gradient(circle, #fff 0%, #ffe9bd 45%, rgba(255,200,150,0) 75%);
+  box-shadow:0 0 22px 9px rgba(255,214,160,.75);
 }
+html:not(.reduced) .lantern .flame{ animation:flick 2.8s ease-in-out infinite; }
+@keyframes flick{ 0%,100%{ opacity:.85 } 30%{ opacity:1 } 60%{ opacity:.7 } }
 .lantern .mono{
-  position:absolute; inset:0 6px 18px 6px; display:flex; align-items:center; justify-content:center;
-  font-family:var(--serif); font-size:38px; font-weight:500; color:var(--rose-deep);
-  text-shadow:0 1px 0 rgba(255,255,255,.5);
+  position:absolute; inset:0 7px 20px 7px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:44px; font-weight:500; color:#8a4636;
+  text-shadow:0 1px 0 rgba(255,255,255,.45);
 }
 
 /* ============================================================
    ACT 0 — THE GATE
    ============================================================ */
-#gate{
-  position:fixed; inset:0; z-index:60; overflow:clip;
-  background:
-    radial-gradient(120% 90% at 50% 112%, rgba(207,154,147,.22), transparent 58%),
-    linear-gradient(180deg, #eef0ef 0%, var(--ivory) 38%, #f6efe4 72%, #f2e3d6 100%);
-}
-#gate::after{ content:""; position:absolute; inset:0; background-image:var(--grain); opacity:.05; pointer-events:none; }
+#gate{ position:fixed; inset:0; z-index:60; overflow:clip; }
 #gate-warm{
   position:absolute; inset:0; opacity:0; pointer-events:none;
-  background:radial-gradient(85% 70% at 50% 60%, rgba(207,154,147,.30), rgba(184,150,78,.08) 55%, transparent 75%);
+  background:radial-gradient(85% 70% at 50% 58%, rgba(207,130,110,.34), rgba(184,150,78,.1) 55%, transparent 78%);
   transition:opacity .5s linear;
 }
-.gate-stars{ position:absolute; inset:0; pointer-events:none; }
-.gate-stars i{
-  position:absolute; width:3px; height:3px; border-radius:50%;
-  background:rgba(255,255,255,.9); box-shadow:0 0 6px 1px rgba(255,250,240,.8);
-  animation:twinkle 4.5s ease-in-out infinite;
-}
-@keyframes twinkle{ 0%,100%{ opacity:.18 } 50%{ opacity:.75 } }
-.gate-cloud{
-  position:absolute; width:46vw; min-width:340px; height:18vh; border-radius:50%;
-  background:radial-gradient(50% 60% at 50% 50%, rgba(255,255,255,.7), transparent 70%);
-  filter:blur(18px); opacity:.6; pointer-events:none;
-  animation:drift 36s linear infinite;
-}
-@keyframes drift{ from{ transform:translateX(-12vw) } to{ transform:translateX(12vw) } }
-.gate-bg-lan{ position:absolute; transform:scale(.36); opacity:.4; filter:blur(1.5px); }
-.gate-bg-lan .body{ box-shadow:0 0 18px 5px rgba(207,154,147,.3); }
-
 #thread-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
-#threadGlow{ fill:none; stroke:rgba(207,154,147,.5); stroke-width:6; stroke-linecap:round; filter:blur(6px); opacity:0; }
-#threadPath{ fill:none; stroke:var(--rose); stroke-width:1.6; stroke-linecap:round; stroke-dasharray:5 7; opacity:0; }
+#threadGlow{ fill:none; stroke:rgba(255,196,150,.55); stroke-width:8; stroke-linecap:round; filter:blur(7px); opacity:0; }
+#threadPath{ fill:none; stroke:#f5c9a8; stroke-width:1.8; stroke-linecap:round; stroke-dasharray:5 7; opacity:0; }
 
 .gate-lan{
-  position:absolute; top:50%; margin-top:-52px; width:74px; height:104px;
+  position:absolute; top:50%; margin-top:-59px; width:84px; height:118px;
   padding:0; border:0; background:transparent; touch-action:none; cursor:grab;
-  border-radius:24px;
+  border-radius:28px;
 }
 .gate-lan:active{ cursor:grabbing; }
 .gate-lan .lantern{ width:100%; height:100%; }
 #lanT{ left:14%; }
 #lanJ{ right:14%; }
-@media (max-width:640px){ #lanT{ left:7%; } #lanJ{ right:7%; } }
+@media (max-width:640px){ #lanT{ left:6%; } #lanJ{ right:6%; } }
 html:not(.reduced) .gate-lan .lantern{ animation:floaty 5.2s ease-in-out infinite; }
 #lanJ .lantern{ animation-delay:-2.6s; }
-@keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(-1.2deg) } 50%{ transform:translateY(-12px) rotate(1.2deg) } }
+@keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(-1.2deg) } 50%{ transform:translateY(-13px) rotate(1.2deg) } }
 
 .gate-copy{
-  position:absolute; left:0; right:0; bottom:9vh; bottom:9svh; text-align:center; padding:0 24px; pointer-events:none;
+  position:absolute; left:0; right:0; bottom:8vh; bottom:8svh; text-align:center; padding:0 24px; pointer-events:none;
 }
-.gate-copy h1{ font-size:clamp(26px,4.6vw,40px); font-weight:400; letter-spacing:.02em; }
-.gate-copy p{ font-size:12px; letter-spacing:.3em; text-transform:uppercase; color:var(--soft); margin-top:10px; }
-.gate-copy .hint{ font-size:11px; letter-spacing:.12em; text-transform:none; color:var(--soft); opacity:.75; margin-top:14px; }
+.gate-copy h1{
+  font-size:clamp(30px,5.2vw,52px); font-weight:400; letter-spacing:.02em; color:var(--moon);
+  text-shadow:0 0 40px rgba(207,154,147,.35);
+}
+.gate-copy p{ font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:var(--moon-soft); margin-top:12px; }
+.gate-copy .hint{ font-size:11.5px; letter-spacing:.1em; text-transform:none; color:var(--moon-faint); margin-top:14px; }
 #connect-btn{ pointer-events:auto; margin-top:20px; }
 
 .gate-spark{
-  position:absolute; width:5px; height:5px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, #fff 0%, var(--rose-light) 55%, transparent 80%);
-  box-shadow:0 0 8px 2px rgba(207,154,147,.6);
+  position:absolute; width:6px; height:6px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, #fff 0%, #ffd9a3 50%, transparent 80%);
+  box-shadow:0 0 10px 3px rgba(255,205,150,.7);
 }
 #bloom{
-  position:absolute; width:340px; height:340px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, rgba(255,252,246,.95) 0%, rgba(207,154,147,.5) 38%, transparent 70%);
+  position:absolute; width:420px; height:420px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(255,243,222,.95) 0%, rgba(255,180,140,.5) 36%, transparent 70%);
   transform:translate(-50%,-50%) scale(0); opacity:0;
 }
 
@@ -210,227 +208,226 @@ html:not(.reduced) .gate-lan .lantern{ animation:floaty 5.2s ease-in-out infinit
 #curtain{
   min-height:100vh; min-height:100svh;
   display:flex; align-items:center; justify-content:center; text-align:center;
-  background:
-    radial-gradient(110% 80% at 50% 115%, rgba(207,154,147,.14), transparent 55%),
-    linear-gradient(180deg, var(--ivory), #f7f1e6);
   overflow:clip;
 }
 #curtain .inner{ padding:40px 24px; width:100%; }
 #curtain .w-line{ overflow:hidden; }
 #curtain .w{
-  display:block; font-family:var(--serif); color:var(--ink);
-  font-size:clamp(44px,9vw,104px); line-height:1.06; font-weight:400; letter-spacing:.01em;
+  display:block; font-family:var(--serif); color:var(--moon);
+  font-size:clamp(46px,9.4vw,96px); line-height:1.08; font-weight:400; letter-spacing:.01em;
+  text-shadow:0 0 60px rgba(207,154,147,.4);
 }
-#curtain .w.small{ font-size:clamp(22px,4vw,40px); font-style:italic; color:var(--soft); }
-.js-anim #curtain .w{ transform:translateY(110%); }
+#curtain .w.small{ font-size:clamp(22px,4vw,40px); font-style:italic; color:var(--rose-light); text-shadow:none; }
+.js-anim #curtain .w{ transform:translateY(112%); }
 html.reduced #curtain .w{ transform:none !important; }
-#curtain .rule{ width:0; height:1px; background:var(--sage-light); margin:30px auto 22px; }
-html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:72px; }
-#curtain .meta{ font-size:11px; letter-spacing:.34em; text-transform:uppercase; color:var(--soft); }
+#curtain .rule{ width:0; height:1px; background:var(--gold-light); margin:32px auto 24px; opacity:.8; }
+html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
+#curtain .meta{ font-size:11.5px; letter-spacing:.36em; text-transform:uppercase; color:var(--moon-soft); }
 #curtain .scrollcue{
-  position:absolute; bottom:30px; left:50%; transform:translateX(-50%);
-  font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--soft); opacity:.7;
+  position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+  font-size:10px; letter-spacing:.32em; text-transform:uppercase; color:var(--moon-faint);
 }
 #curtain .scrollcue::after{
-  content:""; display:block; width:1px; height:34px; margin:10px auto 0;
-  background:linear-gradient(var(--sage-light), transparent);
+  content:""; display:block; width:1px; height:38px; margin:10px auto 0;
+  background:linear-gradient(rgba(216,188,130,.8), transparent);
 }
-.curtain-spark{
-  position:absolute; width:4px; height:4px; border-radius:50%;
-  background:radial-gradient(circle,#fff,rgba(207,154,147,.7) 60%, transparent);
-  opacity:.5; animation:rise-spark 11s linear infinite;
-}
-@keyframes rise-spark{ from{ transform:translateY(16vh); opacity:0 } 12%{ opacity:.55 } 80%{ opacity:.4 } to{ transform:translateY(-90vh); opacity:0 } }
-html.reduced .curtain-spark{ animation:none; opacity:.25; }
 
 /* ============================================================
-   SECTION 1 — LANTERN PATH
+   SECTION 1 — THE LANTERN PATH
    ============================================================ */
-#path .stick{
-  background:linear-gradient(180deg, #d9d4cd 0%, #e9e2d6 30%, #f4ecdf 62%, var(--ivory) 100%);
-  display:block;
-}
-#path-bright{
-  position:absolute; inset:0; opacity:0; pointer-events:none;
-  background:linear-gradient(180deg, rgba(251,249,244,.0), rgba(251,249,244,.85));
-}
-.path-layer{ position:absolute; inset:-10% 0; pointer-events:none; }
-.path-layer.far{ filter:blur(.5px); }
-.path-layer.near{ filter:blur(2.5px); }
-.path-lan{ position:absolute; }
+#path .stick{ display:block; }
 #arcs{ position:absolute; inset:0; width:100%; height:100%; }
 #arcs path{
-  fill:none; stroke:var(--rose-light); stroke-width:2; stroke-linecap:round;
-  stroke-dasharray:1; stroke-dashoffset:1; opacity:.8;
+  fill:none; stroke:#eebfa6; stroke-width:2.2; stroke-linecap:round;
+  stroke-dasharray:1; stroke-dashoffset:1;
 }
-#arcs .glow{ stroke:rgba(207,154,147,.35); stroke-width:7; filter:blur(4px); }
+#arcs .glow{ stroke:rgba(255,186,140,.5); stroke-width:9; filter:blur(5px); }
 html.reduced #arcs path, html:not(.js-anim) #arcs path{ stroke-dashoffset:0; }
+#merge-glow{
+  position:absolute; left:50%; top:42%; width:200px; height:200px; transform:translate(-50%,-50%);
+  border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(255,224,180,.55), rgba(207,130,110,.25) 45%, transparent 70%);
+}
 .chip{
   position:absolute; transform:translate(-50%,-50%);
-  display:inline-flex; align-items:center; gap:8px;
-  background:rgba(255,253,250,.85); backdrop-filter:blur(4px);
-  border:1px solid var(--line); border-radius:999px; padding:8px 18px;
-  font-size:11px; font-weight:500; letter-spacing:.26em; text-transform:uppercase; color:var(--sage-deep);
-  box-shadow:var(--shadow-sm); white-space:nowrap;
+  display:inline-flex; align-items:center; gap:9px;
+  background:rgba(20,15,26,.55); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+  border:1px solid rgba(244,237,221,.22); border-radius:999px; padding:9px 20px;
+  font-size:11.5px; font-weight:500; letter-spacing:.28em; text-transform:uppercase; color:var(--moon);
+  box-shadow:0 0 26px rgba(207,130,110,.2); white-space:nowrap;
 }
-.chip i{ width:6px; height:6px; border-radius:50%; background:var(--rose-light); box-shadow:0 0 8px 2px rgba(207,154,147,.5); }
-.pcaps{ position:absolute; left:0; right:0; bottom:12vh; bottom:12svh; text-align:center; padding:0 24px; pointer-events:none; }
+.chip i{ width:7px; height:7px; border-radius:50%; background:var(--ember); box-shadow:0 0 12px 3px rgba(255,205,150,.8); }
+.pcaps{ position:absolute; left:0; right:0; bottom:11vh; bottom:11svh; text-align:center; padding:0 24px; pointer-events:none; }
 .pcap{
-  position:absolute; left:0; right:0; margin:0 auto; max-width:620px;
-  font-family:var(--serif); font-style:italic; font-size:clamp(21px,3.4vw,32px); color:var(--soft);
+  position:absolute; left:0; right:0; margin:0 auto; max-width:640px;
+  font-family:var(--serif); font-style:italic; font-size:clamp(23px,3.8vw,36px); color:var(--moon-soft);
+  text-shadow:0 0 30px rgba(0,0,0,.5);
 }
-html.reduced .pcaps, html:not(.js-anim) .pcaps{ position:static; padding:40px 24px 70px; }
-html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:14px; }
+html.reduced .pcaps, html:not(.js-anim) .pcaps{ position:static; padding:50px 24px 80px; }
+html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:16px; }
 
 /* ============================================================
    PHOTO BRIDGE
    ============================================================ */
-#bridge{ background:var(--ivory); padding:clamp(64px,10vw,120px) 20px; }
+#bridge{ padding:clamp(70px,10vw,130px) 20px; }
 .bridge-frame{
-  max-width:1180px; margin:0 auto; background:var(--paper);
-  border:1px solid var(--line); border-radius:18px; padding:clamp(12px,2vw,22px);
-  box-shadow:var(--shadow); position:relative;
+  max-width:1180px; margin:0 auto;
+  background:rgba(252,248,240,.04);
+  border:1px solid var(--line-night); border-radius:20px; padding:clamp(12px,2vw,22px);
+  box-shadow:0 0 80px rgba(207,130,110,.12), var(--shadow); position:relative;
 }
-.bridge-frame::before{ content:""; position:absolute; inset:0; border-radius:18px; background-image:var(--grain); opacity:.04; pointer-events:none; }
-.bridge-img{ border-radius:10px; overflow:clip; position:relative; }
-.bridge-img img{ width:100%; height:clamp(300px,58vh,560px); object-fit:cover; }
-.bridge-img::after{ content:""; position:absolute; inset:0; box-shadow:inset 0 0 60px rgba(46,43,39,.12); border-radius:10px; }
+.bridge-img{ border-radius:12px; overflow:clip; position:relative; }
+.bridge-img img{ width:100%; height:clamp(320px,60vh,580px); object-fit:cover; }
+.bridge-img::after{ content:""; position:absolute; inset:0; box-shadow:inset 0 0 90px rgba(10,6,14,.5); border-radius:12px; }
 .bridge-tab{
-  position:absolute; top:-14px; left:50%; transform:translateX(-50%);
-  background:var(--rose); color:#fff; border-radius:999px; padding:7px 22px;
-  font-size:10px; font-weight:500; letter-spacing:.3em; text-transform:uppercase; box-shadow:var(--shadow-sm);
+  position:absolute; top:-15px; left:50%; transform:translateX(-50%);
+  background:var(--rose); color:#fff; border-radius:999px; padding:8px 24px;
+  font-size:10px; font-weight:500; letter-spacing:.3em; text-transform:uppercase;
+  box-shadow:0 0 26px rgba(207,130,110,.5);
 }
-.bridge-cap{ text-align:center; padding:24px 16px 8px; }
-.bridge-cap .accent{ width:46px; height:1px; background:var(--sage-light); margin:0 auto 16px; }
-.bridge-cap p{ font-family:var(--serif); font-style:italic; font-size:clamp(20px,3vw,28px); color:var(--soft); margin:0; }
+.bridge-cap{ text-align:center; padding:26px 16px 10px; }
+.bridge-cap .accent{ width:46px; height:1px; background:var(--gold-light); margin:0 auto 16px; opacity:.7; }
+.bridge-cap p{ font-family:var(--serif); font-style:italic; font-size:clamp(21px,3.2vw,30px); color:var(--moon-soft); margin:0; }
 
 /* ============================================================
-   THE DAY — beach scene
+   THE DAY — golden-hour vignette
    ============================================================ */
-#day{ background:var(--ivory); }
+#day{ padding-bottom:clamp(72px,9vw,120px); }
+#day .copy-center{ padding-top:clamp(64px,9vw,110px); }
+#day h2{ font-size:clamp(42px,6.6vw,72px); color:var(--moon); text-shadow:0 0 50px rgba(207,154,147,.35); }
+#day .sub{ font-family:var(--serif); font-style:italic; font-size:clamp(20px,2.8vw,27px); color:var(--moon-soft); margin-top:12px; }
+
+.beach-frame{
+  max-width:1180px; margin:46px auto 0; padding:0 20px;
+}
 .beach{
-  position:relative; height:72vh; height:72svh; min-height:480px; overflow:clip;
-  background:linear-gradient(180deg, #f4e8d8 0%, #f2ddc9 34%, #ecd2bd 46%, transparent 46%);
+  position:relative; height:64vh; height:64svh; min-height:440px; overflow:clip;
+  border-radius:20px; border:1px solid rgba(244,237,221,.18);
+  box-shadow:0 0 90px rgba(217,138,90,.18), var(--shadow);
+  background:linear-gradient(180deg, #3c2b48 0%, #74445a 24%, #c4766a 40%, #eda173 47%, transparent 47%);
 }
 .beach .sun{
-  position:absolute; top:16%; left:50%; width:140px; height:140px; transform:translateX(-50%);
+  position:absolute; top:33%; left:50%; width:130px; height:130px; transform:translateX(-50%);
   border-radius:50%;
-  background:radial-gradient(circle, rgba(255,250,240,.95) 0%, rgba(244,214,180,.75) 45%, transparent 72%);
-  box-shadow:0 0 80px 30px rgba(244,214,180,.5);
+  background:radial-gradient(circle, #fff3da 0%, #ffcf96 45%, transparent 72%);
+  box-shadow:0 0 100px 40px rgba(255,190,120,.55);
 }
 .beach .cloud{
-  position:absolute; height:30px; border-radius:999px; filter:blur(7px);
-  background:rgba(255,255,255,.75); opacity:.8; animation:drift 40s linear infinite alternate;
+  position:absolute; height:26px; border-radius:999px; filter:blur(8px);
+  background:rgba(255,210,180,.4); animation:drift 40s linear infinite alternate;
 }
-html.reduced .beach .cloud, html.reduced .gate-cloud{ animation:none; }
+@keyframes drift{ from{ transform:translateX(-10%) } to{ transform:translateX(10%) } }
+html.reduced .beach .cloud{ animation:none; }
 .beach .sea{
-  position:absolute; left:0; right:0; top:46%; height:32%;
-  background:linear-gradient(180deg, #a8bfae 0%, #8fa896 38%, #7e9a88 100%);
+  position:absolute; left:0; right:0; top:47%; height:33%;
+  background:linear-gradient(180deg, #c97f63 0%, #5c6e66 26%, #33493f 70%, #243530 100%);
 }
-.beach .sea::after{ /* lantern reflections */
-  content:""; position:absolute; inset:0; opacity:.5;
+.beach .sea::after{
+  content:""; position:absolute; inset:0; opacity:.8;
   background:
-    radial-gradient(3px 38px at 22% 30%, rgba(231,180,168,.8), transparent 70%),
-    radial-gradient(3px 50px at 64% 42%, rgba(231,180,168,.7), transparent 70%),
-    radial-gradient(2px 30px at 80% 26%, rgba(255,235,210,.7), transparent 70%),
-    radial-gradient(2px 42px at 38% 55%, rgba(255,235,210,.55), transparent 70%);
+    radial-gradient(4px 60px at 50% 12%, rgba(255,214,150,.9), transparent 70%),
+    radial-gradient(3px 46px at 24% 30%, rgba(255,170,130,.7), transparent 70%),
+    radial-gradient(3px 52px at 66% 40%, rgba(255,170,130,.6), transparent 70%),
+    radial-gradient(2px 36px at 82% 24%, rgba(255,214,150,.6), transparent 70%),
+    radial-gradient(2px 44px at 38% 56%, rgba(255,214,150,.45), transparent 70%);
   filter:blur(1px);
 }
 .beach .glints{
-  position:absolute; left:0; right:0; top:47%; height:7%;
+  position:absolute; left:0; right:0; top:48%; height:7%;
   background:
-    radial-gradient(46% 90% at 30% 50%, rgba(255,253,246,.5), transparent 70%),
-    radial-gradient(40% 80% at 68% 40%, rgba(255,253,246,.4), transparent 70%);
-  filter:blur(4px); opacity:.7; animation:glint 7s ease-in-out infinite alternate;
+    radial-gradient(46% 90% at 38% 50%, rgba(255,224,170,.5), transparent 70%),
+    radial-gradient(40% 80% at 62% 40%, rgba(255,224,170,.4), transparent 70%);
+  filter:blur(4px); opacity:.8; animation:glint 7s ease-in-out infinite alternate;
 }
 @keyframes glint{ from{ transform:translateX(-14px) } to{ transform:translateX(14px) } }
 html.reduced .glints{ animation:none; }
 .beach .sand{
-  position:absolute; left:0; right:0; bottom:0; height:24%;
-  background:linear-gradient(180deg, #efe5d2, var(--cream));
+  position:absolute; left:0; right:0; bottom:0; height:20%;
+  background:linear-gradient(180deg, #8a6c54, #5d4736);
 }
 .beach .foam{
-  position:absolute; left:-4%; right:-4%; top:76.5%; height:22px;
+  position:absolute; left:-4%; right:-4%; top:78.5%; height:20px;
   border-radius:50%;
-  background:radial-gradient(60% 100% at 50% 0%, rgba(255,255,255,.85), transparent 75%);
+  background:radial-gradient(60% 100% at 50% 0%, rgba(255,236,210,.6), transparent 75%);
   filter:blur(3px); animation:swash 6.5s ease-in-out infinite;
 }
-@keyframes swash{ 0%,100%{ transform:translateY(0) scaleY(1); opacity:.8 } 50%{ transform:translateY(9px) scaleY(.7); opacity:.45 } }
+@keyframes swash{ 0%,100%{ transform:translateY(0) scaleY(1); opacity:.7 } 50%{ transform:translateY(8px) scaleY(.7); opacity:.4 } }
 html.reduced .foam{ animation:none; }
-.beach svg.palm{ position:absolute; bottom:13%; left:4%; width:clamp(130px,20vw,230px); height:auto; color:#5d6b52; }
+.beach svg.palm{ position:absolute; bottom:9%; left:4%; width:clamp(130px,20vw,230px); height:auto; color:#1d150f; }
 .beach .palm .sway{ transform-origin:18% 96%; animation:sway 7s ease-in-out infinite alternate; }
 @keyframes sway{ from{ transform:rotate(-1.6deg) } to{ transform:rotate(1.8deg) } }
 html.reduced .palm .sway{ animation:none; }
-.beach svg.bird{ position:absolute; width:34px; height:auto; color:rgba(86,104,72,.55); animation:fly 26s linear infinite; }
-.beach svg.bird.b2{ width:24px; animation-duration:34s; animation-delay:-12s; }
-@keyframes fly{ from{ transform:translateX(-10vw) translateY(0) } 50%{ transform:translateX(45vw) translateY(-26px) } to{ transform:translateX(105vw) translateY(-8px) } }
+.beach svg.bird{ position:absolute; width:32px; height:auto; color:rgba(30,20,30,.65); animation:fly 26s linear infinite; }
+.beach svg.bird.b2{ width:22px; animation-duration:34s; animation-delay:-12s; }
+@keyframes fly{ from{ transform:translateX(-10vw) } 50%{ transform:translateX(38vw) translateY(-26px) } to{ transform:translateX(92vw) translateY(-8px) } }
 html.reduced svg.bird{ animation:none; left:60%; }
-.beach svg.guitar{ position:absolute; bottom:4%; right:14%; width:clamp(60px,8vw,100px); height:auto; color:rgba(94,77,60,.7); transform:rotate(-12deg); }
-.beach svg.shades{ position:absolute; bottom:9%; right:32%; width:clamp(34px,4vw,52px); height:auto; color:rgba(46,43,39,.6); transform:rotate(9deg); }
-
-#day .copy-center{ padding-top:clamp(56px,8vw,96px); }
-#day h2{ font-size:clamp(38px,6vw,64px); }
-#day .sub{ font-family:var(--serif); font-style:italic; font-size:clamp(19px,2.6vw,25px); color:var(--soft); margin-top:12px; }
+.beach svg.guitar{ position:absolute; bottom:3%; right:13%; width:clamp(60px,8vw,96px); height:auto; color:#241a12; transform:rotate(-12deg); }
+.beach svg.shades{ position:absolute; bottom:8%; right:32%; width:clamp(32px,4vw,48px); height:auto; color:#1d1410; transform:rotate(9deg); }
+.beach .b-lan{
+  position:absolute; width:16px; height:22px; border-radius:45% 45% 50% 50%/35% 35% 60% 60%;
+  background:radial-gradient(circle at 50% 65%, #ffefc9, #f0b27a);
+  box-shadow:0 0 18px 6px rgba(255,200,130,.7); animation:b-rise 13s linear infinite;
+}
+@keyframes b-rise{ from{ transform:translateY(40vh) scale(.7); opacity:0 } 12%{ opacity:1 } to{ transform:translateY(-30vh) scale(1); opacity:0 } }
+html.reduced .b-lan{ animation:none; opacity:.85; }
 
 .dcards{
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px;
-  max-width:1180px; margin:0 auto; padding:clamp(36px,5vw,64px) 20px clamp(72px,9vw,120px);
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px;
+  max-width:1180px; margin:0 auto; padding:clamp(36px,5vw,60px) 20px 0;
 }
 .dcard{
-  background:var(--paper); border:1px solid var(--line); border-radius:16px;
-  padding:30px 26px; text-align:center; box-shadow:var(--shadow-sm); position:relative; width:100%;
+  background:var(--paper); color:var(--ink); border-radius:16px;
+  padding:32px 26px; text-align:center; position:relative; width:100%;
+  box-shadow:0 0 0 1px rgba(255,240,220,.12), 0 0 44px rgba(207,130,110,.14), var(--shadow-sm);
 }
-.dcard::before{ content:""; position:absolute; top:0; left:24px; right:24px; height:2px; border-radius:2px; background:var(--sage-light); opacity:.7; }
+.dcard::before{ content:""; position:absolute; top:0; left:24px; right:24px; height:2px; border-radius:2px; background:var(--sage-light); }
 .dcard.rose::before{ background:var(--rose-light); }
 .dcard .k{ font-size:10px; font-weight:500; letter-spacing:.32em; text-transform:uppercase; color:var(--soft); }
-.dcard h3{ font-size:clamp(23px,2.6vw,28px); margin:10px 0 6px; }
+.dcard h3{ font-size:clamp(24px,2.7vw,30px); margin:10px 0 6px; color:var(--ink); }
 .dcard p{ font-size:13.5px; color:var(--soft); margin:0; line-height:1.75; }
 .dcard .big{ font-family:var(--serif); font-size:21px; color:var(--ink); }
 
 /* ============================================================
    PIECES OF US — gallery
    ============================================================ */
-#pieces{
-  background:
-    radial-gradient(1.5px 1.5px at 18% 22%, rgba(120,136,105,.4), transparent 100%),
-    radial-gradient(1.5px 1.5px at 76% 64%, rgba(120,136,105,.4), transparent 100%),
-    radial-gradient(1.5px 1.5px at 58% 18%, rgba(178,124,117,.45), transparent 100%),
-    var(--cream);
-  padding:clamp(72px,10vw,130px) 20px;
-  position:relative;
-}
+#pieces{ padding:clamp(80px,11vw,140px) 20px; position:relative; }
 #pieces::before{
-  content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
+  content:""; position:absolute; inset:0; opacity:.35; pointer-events:none;
   background-image:
-    linear-gradient(rgba(120,136,105,.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(120,136,105,.06) 1px, transparent 1px);
-  background-size:96px 96px;
+    linear-gradient(rgba(156,170,143,.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(156,170,143,.1) 1px, transparent 1px);
+  background-size:110px 110px;
+  mask-image:radial-gradient(75% 75% at 50% 50%, #000, transparent);
+  -webkit-mask-image:radial-gradient(75% 75% at 50% 50%, #000, transparent);
 }
-#pieces .head{ position:relative; text-align:center; max-width:620px; margin:0 auto clamp(40px,5vw,64px); }
-#pieces h2{ font-size:clamp(34px,5.4vw,56px); }
-#pieces .head p{ color:var(--soft); font-size:14px; margin-top:14px; }
+#pieces .head{ position:relative; text-align:center; max-width:640px; margin:0 auto clamp(44px,5vw,68px); }
+#pieces h2{ font-size:clamp(38px,5.8vw,62px); color:var(--moon); text-shadow:0 0 50px rgba(207,154,147,.3); }
+#pieces .head p{ color:var(--moon-soft); font-size:14px; margin-top:14px; }
 .ticket-strip{
-  display:inline-flex; gap:14px; align-items:center; margin-top:16px;
-  font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--sage-deep);
+  display:inline-flex; gap:14px; align-items:center; margin-top:18px;
+  font-size:10px; letter-spacing:.28em; text-transform:uppercase; color:var(--gold-light);
 }
-.ticket-strip::before,.ticket-strip::after{ content:""; width:34px; height:1px; background:var(--sage-light); }
+.ticket-strip::before,.ticket-strip::after{ content:""; width:36px; height:1px; background:rgba(216,188,130,.5); }
 .tiles{
   position:relative; max-width:1180px; margin:0 auto;
-  display:grid; grid-template-columns:repeat(2,1fr); gap:18px;
+  display:grid; grid-template-columns:repeat(2,1fr); gap:20px;
 }
 @media (min-width:840px){ .tiles{ grid-template-columns:repeat(4,1fr); } }
 .tile{
-  position:relative; padding:10px 10px 38px; border:1px solid var(--line); border-radius:12px;
-  background:var(--paper); box-shadow:var(--shadow-sm); text-align:left; width:100%;
+  position:relative; padding:10px 10px 40px; border-radius:12px;
+  background:var(--paper); text-align:left; width:100%;
+  box-shadow:0 0 0 1px rgba(255,240,220,.1), 0 0 36px rgba(207,130,110,.12), var(--shadow-sm);
   transition:transform .45s var(--ease), box-shadow .45s var(--ease);
 }
-.tile:hover{ transform:translateY(-5px) rotate(-.4deg); box-shadow:var(--shadow); }
+.tile:nth-child(odd){ transform:rotate(-.7deg); }
+.tile:nth-child(even){ transform:rotate(.6deg); }
+.tile:hover{ transform:translateY(-7px) rotate(0deg); box-shadow:0 0 0 1px rgba(255,240,220,.16), 0 0 70px rgba(207,130,110,.3), var(--shadow); }
 .tile img{ width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:6px; }
 .tile.wide{ grid-column:span 2; }
 .tile.wide img{ aspect-ratio:16/9; }
 .tile figcaption{
-  position:absolute; left:14px; right:14px; bottom:10px;
-  font-family:var(--serif); font-style:italic; font-size:16px; color:var(--soft);
+  position:absolute; left:14px; right:14px; bottom:11px;
+  font-family:var(--serif); font-style:italic; font-size:16.5px; color:var(--soft);
   display:flex; justify-content:space-between; align-items:baseline; gap:8px;
 }
 .tile figcaption small{ font-family:var(--sans); font-style:normal; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--sage); }
@@ -440,22 +437,20 @@ dialog.lb{
   border:0; padding:0; background:transparent; max-width:min(94vw,1080px); width:auto;
   margin:auto; overflow:visible;
 }
-dialog.lb::backdrop{ background:rgba(36,32,28,.78); backdrop-filter:blur(6px); }
+dialog.lb::backdrop{ background:rgba(10,7,14,.86); backdrop-filter:blur(7px); }
 .lb-card{
-  position:relative; background:var(--paper); border-radius:14px; padding:12px 12px 50px;
-  box-shadow:0 30px 80px -20px rgba(0,0,0,.5);
+  position:relative; background:var(--paper); border-radius:14px; padding:12px 12px 52px;
+  box-shadow:0 0 120px rgba(207,130,110,.25), 0 30px 80px -20px rgba(0,0,0,.6);
 }
 .lb-card img{
-  border-radius:8px; max-width:calc(94vw - 24px); max-height:76vh; max-height:76svh;
+  border-radius:8px; max-width:calc(94vw - 24px); max-height:74vh; max-height:74svh;
   width:auto; height:auto; object-fit:contain; margin:0 auto;
 }
 .lb-card figcaption{
-  position:absolute; left:18px; bottom:14px; font-family:var(--serif); font-style:italic;
+  position:absolute; left:18px; bottom:15px; font-family:var(--serif); font-style:italic;
   font-size:18px; color:var(--soft);
 }
-.lb-nav{
-  position:absolute; bottom:8px; right:12px; display:flex; gap:6px;
-}
+.lb-nav{ position:absolute; bottom:8px; right:12px; display:flex; gap:6px; }
 .lb-nav button, .panel-close{
   width:44px; height:44px; border-radius:50%; border:1px solid var(--line);
   background:var(--paper); color:var(--ink); font-size:18px; line-height:1;
@@ -466,17 +461,14 @@ dialog.lb::backdrop{ background:rgba(36,32,28,.78); backdrop-filter:blur(6px); }
 .lb-close{ position:absolute; top:-16px; right:-12px; box-shadow:var(--shadow-sm); }
 
 /* ============================================================
-   OUR WORLD — map + pins
+   OUR WORLD — night map + glowing pins
    ============================================================ */
-#world{
-  background:var(--cream); position:relative; overflow:clip;
-  padding:clamp(72px,10vw,130px) 20px clamp(84px,11vw,150px);
-}
-#world .map-bg{ position:absolute; inset:0; pointer-events:none; opacity:.55; }
+#world{ position:relative; overflow:clip; padding:clamp(80px,11vw,140px) 20px clamp(90px,12vw,160px); }
+#world .map-bg{ position:absolute; inset:0; pointer-events:none; opacity:.5; }
 #world .map-bg svg{ width:100%; height:100%; }
-#world .head{ position:relative; text-align:center; max-width:640px; margin:0 auto clamp(44px,6vw,72px); }
-#world h2{ font-size:clamp(34px,5.4vw,56px); }
-#world .head p{ color:var(--soft); font-size:14px; margin-top:14px; }
+#world .head{ position:relative; text-align:center; max-width:660px; margin:0 auto clamp(48px,6vw,76px); }
+#world h2{ font-size:clamp(38px,5.8vw,62px); color:var(--moon); text-shadow:0 0 50px rgba(207,154,147,.3); }
+#world .head p{ color:var(--moon-soft); font-size:14px; margin-top:14px; }
 .pins{
   position:relative; max-width:1080px; margin:0 auto;
   display:grid; grid-template-columns:repeat(2,1fr); gap:16px;
@@ -484,40 +476,42 @@ dialog.lb::backdrop{ background:rgba(36,32,28,.78); backdrop-filter:blur(6px); }
 @media (min-width:760px){ .pins{ grid-template-columns:repeat(4,1fr); } }
 .pin{
   display:flex; flex-direction:column; align-items:center; gap:12px;
-  background:var(--paper); border:1px solid var(--line); border-radius:16px;
-  padding:26px 14px 22px; min-height:44px; width:100%;
-  transition:transform .4s var(--ease), box-shadow .4s var(--ease);
-  box-shadow:var(--shadow-sm);
+  background:rgba(24,18,30,.6); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
+  border:1px solid rgba(244,237,221,.16); border-radius:18px;
+  padding:28px 14px 24px; min-height:44px; width:100%;
+  transition:transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
 }
-.pin:hover{ transform:translateY(-4px); box-shadow:var(--shadow); }
+.pin:hover{ transform:translateY(-5px); border-color:rgba(255,200,150,.45); box-shadow:0 0 50px rgba(207,130,110,.3); }
 .pin .ic{
-  width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  border:1px solid rgba(120,136,105,.4); color:var(--sage-deep); position:relative;
-  transition:box-shadow .4s var(--ease), border-color .4s var(--ease);
+  width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(255,205,150,.4); color:var(--ember); position:relative;
+  background:radial-gradient(circle at 50% 60%, rgba(255,205,150,.16), transparent 70%);
+  transition:box-shadow .4s var(--ease);
 }
-.pin:hover .ic{ box-shadow:0 0 0 5px rgba(207,154,147,.16), 0 0 22px rgba(207,154,147,.35); border-color:var(--rose-light); }
-.pin .ic svg{ width:24px; height:24px; }
-.pin .ic .ring{
-  position:absolute; inset:-7px; border-radius:50%; pointer-events:none;
-}
+.pin:hover .ic{ box-shadow:0 0 0 6px rgba(255,196,150,.1), 0 0 30px rgba(255,196,150,.5); }
+.pin .ic svg{ width:25px; height:25px; }
+.pin .ic .ring{ position:absolute; inset:-7px; border-radius:50%; pointer-events:none; }
 .pin .ic .ring circle{
-  fill:none; stroke:var(--rose-light); stroke-width:1.4; stroke-dasharray:1; stroke-dashoffset:1;
+  fill:none; stroke:var(--ember); stroke-width:1.4; stroke-dasharray:1; stroke-dashoffset:1;
   transition:stroke-dashoffset .7s var(--ease);
 }
 .pin:hover .ic .ring circle, .pin:focus-visible .ic .ring circle{ stroke-dashoffset:0; }
-.pin b{ font-size:12px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--ink); }
-.pin span{ font-size:11px; color:var(--soft); }
+.pin b{ font-size:12.5px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--moon); }
+.pin span{ font-size:11.5px; color:var(--moon-faint); }
 
-/* Panels (dialogs) */
+/* Panels (dialogs) — lit paper against the night */
 dialog.panel{
-  border:0; border-radius:20px; padding:0; background:var(--paper); color:var(--ink);
+  border:0; border-radius:22px; padding:0; background:var(--paper); color:var(--ink);
   width:min(94vw, 720px); max-height:86vh; max-height:86svh; margin:auto;
-  box-shadow:0 40px 90px -24px rgba(0,0,0,.4);
+  box-shadow:0 0 140px rgba(207,130,110,.3), 0 40px 90px -24px rgba(0,0,0,.55);
 }
-dialog.panel::backdrop{ background:rgba(36,32,28,.6); backdrop-filter:blur(5px); }
+dialog.panel::backdrop{ background:rgba(10,7,14,.78); backdrop-filter:blur(6px); }
 .panel-inner{ padding:clamp(24px,4vw,40px); overflow-y:auto; max-height:86vh; max-height:86svh; }
 .panel-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:14px; }
-.panel-head h3{ font-size:clamp(26px,3.4vw,34px); margin-top:4px; }
+.panel-head h3{ font-size:clamp(27px,3.5vw,36px); margin-top:2px; color:var(--ink); }
+.panel-kicker{
+  font-family:var(--serif); font-style:italic; font-size:17px; color:var(--rose-deep);
+}
 .panel-inner > p{ color:var(--soft); font-size:14px; }
 .divider-sm{
   display:flex; align-items:center; gap:12px; margin:18px 0;
@@ -545,15 +539,13 @@ dialog.panel::backdrop{ background:rgba(36,32,28,.6); backdrop-filter:blur(5px);
 .ent-tk b{ display:block; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--rose-deep); margin-bottom:4px; font-weight:500; }
 .ent-tk span{ display:block; }
 .ent-sponsors{ display:flex; flex-wrap:wrap; gap:8px; }
-.ent-sponsors span{
-  font-size:12.5px; border:1px solid var(--line); border-radius:999px; padding:6px 14px; background:var(--ivory);
-}
+.ent-sponsors span{ font-size:12.5px; border:1px solid var(--line); border-radius:999px; padding:6px 14px; background:var(--ivory); }
 
 /* Forms */
 .field{ margin-bottom:16px; }
 .field label{ display:block; font-size:11px; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--soft); margin-bottom:7px; }
 .field input,.field select,.field textarea{
-  width:100%; min-height:48px; padding:12px 16px; border-radius:10px; border:1px solid rgba(46,43,39,.2);
+  width:100%; min-height:48px; padding:12px 16px; border-radius:10px; border:1px solid rgba(46,43,39,.22);
   background:var(--ivory); color:var(--ink); font-family:var(--sans); font-size:15px;
 }
 .field textarea{ min-height:96px; resize:vertical; }
@@ -574,15 +566,13 @@ dialog.panel::backdrop{ background:rgba(36,32,28,.6); backdrop-filter:blur(5px);
 .form-error{ color:var(--rose-deep); font-size:13.5px; margin:6px 0 12px; min-height:1em; }
 .success{
   display:none; background:rgba(156,170,143,.16); border:1px solid var(--sage-light);
-  border-radius:12px; padding:18px 20px; font-size:14.5px; margin-bottom:16px;
+  border-radius:12px; padding:18px 20px; font-size:14.5px; margin-bottom:16px; color:var(--ink);
 }
 
 /* Itinerary / boarding passes */
 .passes{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 @media (max-width:620px){ .passes{ grid-template-columns:1fr; } }
-.pass{
-  position:relative; background:var(--ivory); border:1px solid var(--line); border-radius:14px; overflow:clip;
-}
+.pass{ position:relative; background:var(--ivory); border:1px solid var(--line); border-radius:14px; overflow:clip; }
 .pass .ph{
   display:flex; justify-content:space-between; align-items:center; padding:11px 18px;
   background:var(--sage); color:#fff; font-size:10px; letter-spacing:.26em; text-transform:uppercase;
@@ -602,9 +592,7 @@ dialog.panel::backdrop{ background:rgba(36,32,28,.6); backdrop-filter:blur(5px);
 .pass .map svg{ width:15px; height:15px; }
 .pass .map:hover{ color:var(--rose-deep); }
 .timeline{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-top:18px; }
-.timeline .stop{
-  border:1px dashed rgba(120,136,105,.5); border-radius:10px; padding:12px; text-align:center; background:var(--ivory);
-}
+.timeline .stop{ border:1px dashed rgba(120,136,105,.5); border-radius:10px; padding:12px; text-align:center; background:var(--ivory); }
 .timeline .stop b{ display:block; font-family:var(--serif); font-size:18px; font-weight:500; }
 .timeline .stop span{ font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft); }
 
@@ -613,12 +601,12 @@ dialog.panel::backdrop{ background:rgba(36,32,28,.6); backdrop-filter:blur(5px);
 @media (max-width:560px){ .attire-cards{ grid-template-columns:1fr; } }
 .acard{ border:1px solid var(--line); border-radius:14px; padding:18px; background:var(--ivory); }
 .acard h4{ font-size:21px; margin:2px 0 4px; }
-.acard .code{ display:block; font-size:11px; font-style:italic; font-family:var(--serif); color:var(--gold); margin-bottom:8px; }
+.acard .code{ display:block; font-size:13px; font-style:italic; font-family:var(--serif); color:var(--gold); margin-bottom:8px; }
 .acard p{ font-size:13.5px; color:var(--soft); margin:0; }
 .ag-frame{ display:block; width:100%; border:1px solid var(--line); border-radius:12px; overflow:clip; padding:0; background:none; position:relative; }
 .ag-frame img{ width:100%; }
 .ag-zoom{
-  position:absolute; right:10px; bottom:10px; background:rgba(255,253,250,.9); border-radius:999px;
+  position:absolute; right:10px; bottom:10px; background:rgba(255,253,250,.92); border-radius:999px;
   font-size:10px; letter-spacing:.18em; text-transform:uppercase; padding:7px 14px; color:var(--ink);
 }
 .swatches{ display:flex; flex-wrap:wrap; gap:14px; margin-top:16px; }
@@ -658,7 +646,7 @@ dialog.panel::backdrop{ background:rgba(36,32,28,.6); backdrop-filter:blur(5px);
 }
 .qr-img img{ width:100%; height:100%; object-fit:contain; }
 .qr-img.missing::after{ content:"QR to follow"; font-size:11px; color:var(--soft); }
-.qr figcaption{ font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; margin-top:8px; }
+.qr figcaption{ font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; margin-top:8px; color:var(--ink); }
 .qr-cap{ display:block; font-size:10.5px; color:var(--soft); }
 
 /* Directions */
@@ -670,7 +658,7 @@ dialog.panel::backdrop{ background:rgba(36,32,28,.6); backdrop-filter:blur(5px);
 .faq{ border-bottom:1px solid var(--line); padding:4px 0; }
 .faq summary{
   list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px;
-  font-family:var(--serif); font-size:19px; padding:14px 2px; min-height:44px;
+  font-family:var(--serif); font-size:19px; padding:14px 2px; min-height:44px; color:var(--ink);
 }
 .faq summary::-webkit-details-marker{ display:none; }
 .faq summary::after{ content:"+"; font-family:var(--sans); color:var(--sage-deep); font-size:20px; transition:transform .3s var(--ease); }
@@ -688,103 +676,91 @@ dialog.panel::backdrop{ background:rgba(36,32,28,.6); backdrop-filter:blur(5px);
    INTERLUDE — THE PROMISE
    ============================================================ */
 #promise{
-  position:relative; background:#191512; color:var(--cream);
+  position:relative; color:var(--cream);
   padding:clamp(120px,18vh,200px) 20px;
   display:flex; align-items:center; justify-content:center; min-height:100vh; min-height:100svh;
   overflow:clip;
 }
-#promise::before{ /* ivory→dark transition */
-  content:""; position:absolute; top:-1px; left:0; right:0; height:160px;
-  background:linear-gradient(180deg, var(--ivory), rgba(25,21,18,0) 100%);
-  z-index:2; pointer-events:none;
-}
-#promise .pr-img{
-  position:absolute; inset:0;
-}
+#promise .pr-img{ position:absolute; inset:0; }
 #promise .pr-img img{
   width:100%; height:100%; object-fit:cover; filter:grayscale(1) brightness(.5) contrast(1.05);
 }
 #promise .scrim{
   position:absolute; inset:0;
-  background:radial-gradient(75% 60% at 50% 50%, rgba(25,21,18,.1), rgba(25,21,18,.85) 90%);
+  background:radial-gradient(75% 60% at 50% 50%, rgba(18,14,26,.05), rgba(18,14,26,.9) 92%);
 }
-#promise .grain{ position:absolute; inset:0; background-image:var(--grain); opacity:.08; mix-blend-mode:normal; }
 #promise .pr-copy{ position:relative; text-align:center; z-index:3; }
-#promise .pr-copy .eyebrow{ color:#cdb98c; }
-#promise h2{ color:var(--ivory); font-size:clamp(40px,7vw,76px); font-weight:400; margin-top:16px; }
-#promise .sub{ font-family:var(--serif); font-style:italic; color:rgba(243,237,226,.75); font-size:clamp(18px,2.6vw,24px); margin-top:12px; }
+#promise .pr-kicker{ font-family:var(--serif); font-style:italic; font-size:clamp(17px,2.2vw,21px); color:#cdb98c; }
+#promise h2{ color:var(--ivory); font-size:clamp(44px,7.6vw,84px); font-weight:400; margin-top:16px; text-shadow:0 0 60px rgba(0,0,0,.6); }
+#promise .sub{ font-family:var(--serif); font-style:italic; color:rgba(243,237,226,.8); font-size:clamp(18px,2.6vw,25px); margin-top:12px; }
 
 /* ============================================================
-   NEXT CHAPTER — finale
+   NEXT CHAPTER — dawn finale
    ============================================================ */
-#next .stick{ display:block; background:#1d1916; }
+#next .stick{ display:block; }
 .sky-dawn{
-  position:absolute; inset:0;
-  background:linear-gradient(180deg, #9aa0a8 0%, #c9c5bb 36%, #efe6d6 68%, var(--ivory) 100%);
+  position:absolute; inset:0; opacity:0;
+  background:linear-gradient(180deg, #6d5a72 0%, #a37a7a 45%, #d9a08c 78%, #eec2a0 100%);
 }
 .sky-warm{
   position:absolute; inset:0; opacity:0;
   background:
-    radial-gradient(90% 60% at 50% 88%, rgba(207,154,147,.34), transparent 65%),
-    linear-gradient(180deg, #e9e9e4 0%, var(--ivory) 55%, #f8f0e2 100%);
+    radial-gradient(90% 60% at 50% 88%, rgba(231,178,150,.5), transparent 65%),
+    linear-gradient(180deg, #ddd7cd 0%, var(--ivory) 52%, #f8edda 100%);
 }
+html.reduced .sky-dawn, html:not(.js-anim) .sky-dawn{ opacity:0; }
 html.reduced .sky-warm, html:not(.js-anim) .sky-warm{ opacity:1; }
 #dawn-cap{
-  position:absolute; top:14%; left:0; right:0; text-align:center;
-  font-family:var(--serif); font-style:italic; font-size:clamp(22px,3.6vw,34px); color:var(--soft);
+  position:absolute; top:13%; left:0; right:0; text-align:center;
+  font-family:var(--serif); font-style:italic; font-size:clamp(24px,4vw,38px); color:var(--moon);
+  text-shadow:0 0 36px rgba(0,0,0,.4);
 }
 html.reduced #dawn-cap, html:not(.js-anim) #dawn-cap{ display:none; }
 #next-lans{ position:absolute; inset:0; pointer-events:none; }
 #route-svg{ position:absolute; inset:0; width:100%; height:100%; }
-#route-path{
-  fill:none; stroke:var(--rose); stroke-width:2; stroke-linecap:round; stroke-dasharray:1; stroke-dashoffset:1;
-}
-#route-glow{ fill:none; stroke:rgba(207,154,147,.4); stroke-width:7; filter:blur(4px); stroke-dasharray:1; stroke-dashoffset:1; }
+#route-path{ fill:none; stroke:var(--rose); stroke-width:2; stroke-linecap:round; stroke-dasharray:1; stroke-dashoffset:1; }
+#route-glow{ fill:none; stroke:rgba(207,154,147,.45); stroke-width:7; filter:blur(4px); stroke-dasharray:1; stroke-dashoffset:1; }
 html.reduced #route-path, html.reduced #route-glow,
 html:not(.js-anim) #route-path, html:not(.js-anim) #route-glow{ stroke-dashoffset:0; }
 #plane{ position:absolute; top:0; left:0; width:34px; height:34px; color:var(--rose-deep); }
 html.reduced #plane, html:not(.js-anim) #plane{ display:none; }
-#nlanT,#nlanJ{ position:absolute; bottom:-140px; }
+#nlanT,#nlanJ{ position:absolute; bottom:-150px; }
 #nlanT{ left:10%; } #nlanJ{ right:10%; }
-html.reduced #nlanT, html:not(.js-anim) #nlanT{ bottom:auto; top:18%; left:34%; }
-html.reduced #nlanJ, html:not(.js-anim) #nlanJ{ bottom:auto; top:18%; right:34%; }
+html.reduced #nlanT, html:not(.js-anim) #nlanT{ bottom:auto; top:15%; left:32%; }
+html.reduced #nlanJ, html:not(.js-anim) #nlanJ{ bottom:auto; top:15%; right:32%; }
 #dest{
-  position:absolute; top:13%; left:50%; transform:translateX(-50%);
+  position:absolute; top:12%; left:50%; transform:translateX(-50%);
   width:14px; height:14px; border-radius:50%;
   background:radial-gradient(circle, #fff, var(--rose-light) 60%);
-  box-shadow:0 0 0 6px rgba(207,154,147,.2), 0 0 26px 8px rgba(207,154,147,.5);
+  box-shadow:0 0 0 6px rgba(207,154,147,.22), 0 0 28px 9px rgba(207,154,147,.55);
 }
 .next-copy{
-  position:absolute; left:0; right:0; top:50%; transform:translateY(-46%);
-  text-align:center; padding:0 24px;
+  position:absolute; left:0; right:0; top:50%; transform:translateY(-45%);
+  text-align:center; padding:0 24px; color:var(--ink);
 }
-html.reduced .next-copy, html:not(.js-anim) .next-copy{ position:relative; top:auto; transform:none; padding:120px 24px 90px; }
+html.reduced .next-copy, html:not(.js-anim) .next-copy{ position:relative; top:auto; transform:none; padding:130px 24px 100px; }
 .next-copy .micro{
-  font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); margin-bottom:18px;
+  font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); margin-bottom:18px; font-weight:500;
 }
 .next-copy .micro .sep{ color:var(--soft); padding:0 8px; }
-.next-copy h2{ font-size:clamp(32px,5.6vw,58px); max-width:760px; margin:0 auto; }
-.next-copy .join{ font-family:var(--serif); font-style:italic; font-size:clamp(19px,2.8vw,26px); color:var(--soft); margin-top:14px; }
-.next-copy .date-stamp{
-  font-family:var(--serif); font-size:clamp(24px,3.6vw,34px); color:var(--ink); margin-top:22px; letter-spacing:.04em;
-}
-.cd{
-  display:flex; justify-content:center; gap:clamp(14px,4vw,38px); margin-top:24px;
-  font-variant-numeric:tabular-nums;
-}
+.next-copy h2{ font-size:clamp(34px,5.8vw,62px); max-width:780px; margin:0 auto; color:var(--ink); }
+.next-copy .join{ font-family:var(--serif); font-style:italic; font-size:clamp(19px,2.8vw,27px); color:var(--soft); margin-top:14px; }
+.next-copy .date-stamp{ font-family:var(--serif); font-size:clamp(25px,3.8vw,36px); color:var(--ink); margin-top:24px; letter-spacing:.04em; }
+.cd{ display:flex; justify-content:center; gap:clamp(14px,4vw,40px); margin-top:26px; font-variant-numeric:tabular-nums; }
 .cd > div{ min-width:64px; }
-.cd strong{ display:block; font-family:var(--serif); font-weight:500; font-size:clamp(30px,5vw,48px); }
+.cd strong{ display:block; font-family:var(--serif); font-weight:500; font-size:clamp(32px,5.4vw,54px); color:var(--ink); }
 .cd span{ font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--soft); }
-.cd-cap{ font-family:var(--serif); font-style:italic; color:var(--rose-deep); font-size:18px; margin-top:8px; }
-#rsvp-cta{ margin-top:26px; }
+.cd-cap{ font-family:var(--serif); font-style:italic; color:var(--rose-deep); font-size:19px; margin-top:8px; }
+#rsvp-cta{ margin-top:28px; }
 
-/* Footer */
+/* Footer — morning after */
 footer{
-  background:var(--ivory); text-align:center; padding:60px 24px 80px; border-top:1px solid var(--line);
+  position:relative; z-index:1; background:var(--ivory); color:var(--ink);
+  text-align:center; padding:64px 24px 84px; border-top:1px solid var(--line);
 }
-footer .names{ font-family:var(--serif); font-size:clamp(26px,4vw,36px); }
+footer .names{ font-family:var(--serif); font-size:clamp(28px,4.4vw,40px); }
 footer .hash{ font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--rose-deep); margin-top:10px; }
-footer .tag{ font-family:var(--serif); font-style:italic; color:var(--soft); margin-top:6px; font-size:17px; }
+footer .tag{ font-family:var(--serif); font-style:italic; color:var(--soft); margin-top:6px; font-size:18px; }
 footer small{ display:block; margin-top:18px; font-size:11.5px; color:var(--soft); }
 footer a{ color:var(--sage-deep); }
 
@@ -794,15 +770,15 @@ footer a{ color:var(--sage-deep); }
 #music-btn{
   position:fixed; right:18px; bottom:18px; z-index:50;
   display:none; align-items:center; gap:9px; min-height:46px; padding:11px 18px;
-  border-radius:999px; border:1px solid rgba(46,43,39,.16);
-  background:rgba(255,253,250,.66); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  color:var(--ink); font-size:11px; font-weight:500; letter-spacing:.18em; text-transform:uppercase;
-  box-shadow:var(--shadow-sm);
+  border-radius:999px; border:1px solid rgba(244,237,221,.28);
+  background:rgba(22,17,29,.62); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  color:var(--moon); font-size:11px; font-weight:500; letter-spacing:.18em; text-transform:uppercase;
+  box-shadow:0 0 28px rgba(207,130,110,.2);
 }
 #music-btn.show{ display:inline-flex; }
 #music-btn svg{ width:16px; height:16px; }
 #music-btn .eq{ display:none; gap:2.5px; align-items:flex-end; height:14px; }
-#music-btn .eq i{ width:2.5px; background:var(--rose); border-radius:2px; animation:eq 1s ease-in-out infinite; }
+#music-btn .eq i{ width:2.5px; background:var(--ember); border-radius:2px; animation:eq 1s ease-in-out infinite; }
 #music-btn .eq i:nth-child(1){ height:6px; } #music-btn .eq i:nth-child(2){ height:13px; animation-delay:.15s; } #music-btn .eq i:nth-child(3){ height:9px; animation-delay:.3s; }
 @keyframes eq{ 0%,100%{ transform:scaleY(.5) } 50%{ transform:scaleY(1) } }
 #music-btn.playing .eq{ display:inline-flex; }
@@ -814,14 +790,14 @@ html.reduced #music-btn .eq i{ animation:none; }
    ============================================================ */
 html.reduced .tall, html:not(.js-anim) .tall{ height:auto; }
 html.reduced .stick, html:not(.js-anim) .stick{ position:relative; height:auto; min-height:100vh; min-height:100svh; }
-html.reduced #path .stick, html:not(.js-anim) #path .stick{ padding:90px 0 0; }
-html.reduced .lantern{ animation:none !important; }
-@media (prefers-reduced-motion: reduce){
-  html{ scroll-behavior:auto; }
-}
+html.reduced #path .stick, html:not(.js-anim) #path .stick{ padding:100px 0 0; }
+html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !important; }
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
 </style>
 </head>
 <body class="gated">
+
+<canvas id="sky" aria-hidden="true"></canvas>
 
 <!-- SVG icon sprite -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -844,11 +820,6 @@ html.reduced .lantern{ animation:none !important; }
      ACT 0 — THE GATE : "TWO LIGHTS"
      ============================================================ -->
 <div id="gate" role="region" aria-label="Welcome gate. Bring the two lanterns together to enter the site.">
-  <div class="gate-stars" aria-hidden="true"></div>
-  <div class="gate-cloud" style="top:12%; left:6%;" aria-hidden="true"></div>
-  <div class="gate-cloud" style="top:30%; right:2%; animation-delay:-18s;" aria-hidden="true"></div>
-  <div class="gate-cloud" style="bottom:24%; left:24%; animation-duration:48s;" aria-hidden="true"></div>
-  <div id="gate-bg-lans" aria-hidden="true"></div>
   <div id="gate-warm" aria-hidden="true"></div>
 
   <svg id="thread-svg" aria-hidden="true">
@@ -882,14 +853,8 @@ html.reduced .lantern{ animation:none !important; }
 
 <main id="main">
 
-  <!-- ============================================================
-       TITLE CURTAIN
-       ============================================================ -->
+  <!-- TITLE CURTAIN -->
   <section id="curtain" aria-label="Welcome to Our Journey">
-    <div class="curtain-spark" style="left:16%; animation-delay:-2s" aria-hidden="true"></div>
-    <div class="curtain-spark" style="left:38%; animation-delay:-7s" aria-hidden="true"></div>
-    <div class="curtain-spark" style="left:64%; animation-delay:-4s" aria-hidden="true"></div>
-    <div class="curtain-spark" style="left:84%; animation-delay:-9s" aria-hidden="true"></div>
     <div class="inner">
       <div class="w-line"><span class="w">Welcome</span></div>
       <div class="w-line"><span class="w small">to</span></div>
@@ -900,12 +865,9 @@ html.reduced .lantern{ animation:none !important; }
     <div class="scrollcue" aria-hidden="true">Scroll</div>
   </section>
 
-  <!-- ============================================================
-       SECTION 1 — THE LANTERN PATH
-       ============================================================ -->
+  <!-- SECTION 1 — THE LANTERN PATH -->
   <section id="path" class="tall" aria-label="The lantern path — a sky of drifting lights slowly finding one route">
     <div class="stick">
-      <div class="path-layer far" id="lan-far" aria-hidden="true"></div>
       <svg id="arcs" viewBox="0 0 1000 1400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <path class="glow" id="arcLg" d="M 180 1350 C 120 1000, 260 760, 470 645" pathLength="1"/>
         <path class="glow" id="arcRg" d="M 830 1350 C 880 1000, 740 760, 530 645" pathLength="1"/>
@@ -914,8 +876,7 @@ html.reduced .lantern{ animation:none !important; }
         <path id="arcR" d="M 830 1350 C 880 1000, 740 760, 530 645" pathLength="1"/>
         <path id="arcM" d="M 500 632 C 545 480, 458 330, 500 140" pathLength="1"/>
       </svg>
-      <div class="path-layer mid" id="lan-mid" aria-hidden="true"></div>
-      <div class="path-layer near" id="lan-near" aria-hidden="true"></div>
+      <div id="merge-glow" class="scrub-hide" aria-hidden="true"></div>
 
       <span class="chip scrub-hide" style="left:17%; top:76%"><i></i>Timing</span>
       <span class="chip scrub-hide" style="left:82%; top:71%"><i></i>Courage</span>
@@ -930,18 +891,14 @@ html.reduced .lantern{ animation:none !important; }
         <p class="pcap scrub-hide">Some journeys are not meant to be rushed.</p>
         <p class="pcap scrub-hide">Until two lights finally find the same sky.</p>
       </div>
-      <div id="path-bright" aria-hidden="true"></div>
     </div>
   </section>
 
-  <!-- ============================================================
-       PHOTO BRIDGE
-       ============================================================ -->
+  <!-- PHOTO BRIDGE -->
   <section id="bridge" aria-label="A keepsake from the journey">
     <div class="bridge-frame rv">
       <span class="bridge-tab">Traces of light</span>
       <div class="bridge-img">
-        <!-- Prenup photo — swap for final selection when ready -->
         <img src="images/journey-wide.webp" loading="lazy" decoding="async"
           alt="Tommy and Jeyan beneath strings of warm festival lights at dusk" />
       </div>
@@ -952,41 +909,44 @@ html.reduced .lantern{ animation:none !important; }
     </div>
   </section>
 
-  <!-- ============================================================
-       THE DAY — beach scene + details
-       ============================================================ -->
+  <!-- THE DAY -->
   <section id="day" aria-label="The Day — wedding details">
     <div class="copy-center">
-      <span class="eyebrow sage rv">December 27, 2026</span>
+      <span class="script-accent rv">where the sky meets the sea</span>
       <h2 class="rv">The Day</h2>
       <p class="sub rv">The journey continues here.</p>
     </div>
 
-    <div class="beach" aria-hidden="true" style="margin-top:42px">
-      <div class="sun"></div>
-      <div class="cloud" style="top:14%; left:12%; width:180px"></div>
-      <div class="cloud" style="top:24%; right:16%; width:240px; animation-delay:-16s"></div>
-      <div class="cloud" style="top:8%; right:38%; width:120px; animation-delay:-30s"></div>
-      <svg class="bird" style="top:18%" viewBox="0 0 34 14"><path d="M1 9 Q8 1 17 8 Q26 1 33 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      <svg class="bird b2" style="top:27%" viewBox="0 0 34 14"><path d="M1 9 Q8 1 17 8 Q26 1 33 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      <div class="sea"></div>
-      <div class="glints"></div>
-      <div class="foam"></div>
-      <div class="sand"></div>
-      <svg class="palm" viewBox="0 0 220 260">
-        <g class="sway" fill="currentColor">
-          <path d="M104 250c-2-60 0-110 8-150l8 2c-9 42-10 90-6 148z"/>
-          <path d="M115 102c-28-26-60-30-92-16 36-4 64 6 88 26zM115 100c-10-36 2-66 28-86-14 28-18 56-16 84zM116 102c22-30 52-42 88-36-32 4-60 18-80 44zM115 103c34-12 64-6 90 16-30-12-60-12-86-4zM114 103c-34-8-62 2-84 26 28-16 56-20 80-14z"/>
-          <circle cx="112" cy="104" r="7"/><circle cx="124" cy="110" r="6"/><circle cx="104" cy="112" r="6"/>
-        </g>
-      </svg>
-      <svg class="guitar" viewBox="0 0 100 130" fill="currentColor">
-        <path d="M48 4h6l-2 50c10 1 18 6 22 15 6 13 0 28-10 35-12 8-28 6-37-4-8-9-9-22-3-32 4-7 11-11 19-12L45 4z" opacity=".85"/>
-        <circle cx="46" cy="86" r="9" fill="var(--cream)"/>
-      </svg>
-      <svg class="shades" viewBox="0 0 60 22" fill="none" stroke="currentColor" stroke-width="2.4">
-        <circle cx="14" cy="13" r="8"/><circle cx="44" cy="13" r="8"/><path d="M22 12q7-5 14 0M2 8l4 2M58 8l-4 2" stroke-linecap="round"/>
-      </svg>
+    <div class="beach-frame rv">
+      <div class="beach" aria-hidden="true">
+        <div class="sun"></div>
+        <div class="cloud" style="top:16%; left:12%; width:180px"></div>
+        <div class="cloud" style="top:26%; right:16%; width:240px; animation-delay:-16s"></div>
+        <div class="cloud" style="top:10%; right:38%; width:120px; animation-delay:-30s"></div>
+        <svg class="bird" style="top:20%" viewBox="0 0 34 14"><path d="M1 9 Q8 1 17 8 Q26 1 33 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <svg class="bird b2" style="top:29%" viewBox="0 0 34 14"><path d="M1 9 Q8 1 17 8 Q26 1 33 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <div class="sea"></div>
+        <div class="glints"></div>
+        <div class="foam"></div>
+        <div class="sand"></div>
+        <span class="b-lan" style="left:30%; top:30%; animation-delay:-2s"></span>
+        <span class="b-lan" style="left:58%; top:36%; animation-delay:-7s"></span>
+        <span class="b-lan" style="left:74%; top:26%; animation-delay:-11s"></span>
+        <svg class="palm" viewBox="0 0 220 260">
+          <g class="sway" fill="currentColor">
+            <path d="M104 250c-2-60 0-110 8-150l8 2c-9 42-10 90-6 148z"/>
+            <path d="M115 102c-28-26-60-30-92-16 36-4 64 6 88 26zM115 100c-10-36 2-66 28-86-14 28-18 56-16 84zM116 102c22-30 52-42 88-36-32 4-60 18-80 44zM115 103c34-12 64-6 90 16-30-12-60-12-86-4zM114 103c-34-8-62 2-84 26 28-16 56-20 80-14z"/>
+            <circle cx="112" cy="104" r="7"/><circle cx="124" cy="110" r="6"/><circle cx="104" cy="112" r="6"/>
+          </g>
+        </svg>
+        <svg class="guitar" viewBox="0 0 100 130" fill="currentColor">
+          <path d="M48 4h6l-2 50c10 1 18 6 22 15 6 13 0 28-10 35-12 8-28 6-37-4-8-9-9-22-3-32 4-7 11-11 19-12L45 4z" opacity=".9"/>
+          <circle cx="46" cy="86" r="9" fill="#8a6c54"/>
+        </svg>
+        <svg class="shades" viewBox="0 0 60 22" fill="none" stroke="currentColor" stroke-width="2.4">
+          <circle cx="14" cy="13" r="8"/><circle cx="44" cy="13" r="8"/><path d="M22 12q7-5 14 0M2 8l4 2M58 8l-4 2" stroke-linecap="round"/>
+        </svg>
+      </div>
     </div>
 
     <div class="dcards">
@@ -1017,14 +977,12 @@ html.reduced .lantern{ animation:none !important; }
     </div>
   </section>
 
-  <!-- ============================================================
-       PIECES OF US — keepsake gallery
-       ============================================================ -->
+  <!-- PIECES OF US -->
   <section id="pieces" aria-label="Pieces of us — photo keepsakes">
     <div class="head">
-      <span class="eyebrow rv">Keepsakes</span>
+      <span class="script-accent rv">small stills from a long flight</span>
       <h2 class="rv">Pieces of Us</h2>
-      <p class="rv">Small stills from a long flight. No spoilers — the full story boards on the day itself.</p>
+      <p class="rv">No spoilers. The full story boards on the day itself.</p>
       <div class="ticket-strip rv" aria-hidden="true">TJ · 27 DEC · GATE 26</div>
     </div>
     <div class="tiles">
@@ -1073,85 +1031,78 @@ html.reduced .lantern{ animation:none !important; }
     </div>
   </section>
 
-  <!-- ============================================================
-       OUR WORLD — map of everything you need
-       ============================================================ -->
+  <!-- OUR WORLD -->
   <section id="world" aria-label="Our world — wedding information">
     <div class="map-bg" aria-hidden="true">
       <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-        <g fill="none" stroke="rgba(120,136,105,.25)" stroke-width="1">
+        <g fill="none" stroke="rgba(156,170,143,.3)" stroke-width="1">
           <path d="M-40 620 C 240 480, 420 700, 700 560 S 1100 420, 1280 520" stroke-dasharray="3 8"/>
           <path d="M-40 220 C 200 320, 520 140, 820 240 S 1120 320, 1280 220" stroke-dasharray="3 8"/>
           <path d="M120 -20 C 80 240, 280 420, 180 820" stroke-dasharray="2 9"/>
-          <circle cx="240" cy="350" r="3" fill="rgba(178,124,117,.5)" stroke="none"/>
-          <circle cx="860" cy="480" r="3" fill="rgba(178,124,117,.5)" stroke="none"/>
-          <circle cx="620" cy="170" r="3" fill="rgba(120,136,105,.5)" stroke="none"/>
+          <circle cx="240" cy="350" r="3" fill="rgba(255,205,150,.7)" stroke="none"/>
+          <circle cx="860" cy="480" r="3" fill="rgba(255,205,150,.7)" stroke="none"/>
+          <circle cx="620" cy="170" r="3" fill="rgba(156,170,143,.6)" stroke="none"/>
         </g>
-        <g transform="translate(1080,80)" color="rgba(120,136,105,.6)"><use href="#ic-compass" width="60" height="60"/></g>
-        <g transform="translate(120,640) rotate(-14)" color="rgba(178,124,117,.55)"><use href="#ic-paperplane" width="40" height="40"/></g>
+        <g transform="translate(1080,80)" color="rgba(216,188,130,.55)"><use href="#ic-compass" width="60" height="60"/></g>
+        <g transform="translate(120,640) rotate(-14)" color="rgba(207,154,147,.6)"><use href="#ic-paperplane" width="40" height="40"/></g>
       </svg>
     </div>
     <div class="head">
-      <span class="eyebrow sage rv">Chart your course</span>
+      <span class="script-accent rv">chart your course</span>
       <h2 class="rv">Our World</h2>
       <p class="rv">Everything you need for the day, mapped out. Tap a marker to open it.</p>
     </div>
     <div class="pins">
       <button class="pin rv" type="button" data-panel="p-entourage">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-users"/></svg><svg class="ring" viewBox="0 0 68 68" aria-hidden="true"><circle cx="34" cy="34" r="32" pathLength="1"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-users"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
         <b>Entourage</b><span>Who walks with us</span>
       </button>
       <button class="pin rv" type="button" data-panel="p-rsvp">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-mail"/></svg><svg class="ring" viewBox="0 0 68 68" aria-hidden="true"><circle cx="34" cy="34" r="32" pathLength="1"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-mail"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
         <b>RSVP</b><span>Reserve your seat</span>
       </button>
       <button class="pin rv" type="button" data-panel="p-attire">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><svg class="ring" viewBox="0 0 68 68" aria-hidden="true"><circle cx="34" cy="34" r="32" pathLength="1"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
         <b>Attire Guide</b><span>What to wear</span>
       </button>
       <button class="pin rv" type="button" data-panel="p-itinerary">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-clock"/></svg><svg class="ring" viewBox="0 0 68 68" aria-hidden="true"><circle cx="34" cy="34" r="32" pathLength="1"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-clock"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
         <b>Itinerary</b><span>How the day flows</span>
       </button>
       <button class="pin rv" type="button" data-panel="p-directions">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-pin"/></svg><svg class="ring" viewBox="0 0 68 68" aria-hidden="true"><circle cx="34" cy="34" r="32" pathLength="1"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-pin"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
         <b>Directions</b><span>Finding the way</span>
       </button>
       <button class="pin rv" type="button" data-panel="p-gift">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-gift"/></svg><svg class="ring" viewBox="0 0 68 68" aria-hidden="true"><circle cx="34" cy="34" r="32" pathLength="1"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-gift"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
         <b>Gift Fund</b><span>Our first journey</span>
       </button>
       <button class="pin rv" type="button" data-panel="p-faq">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-help"/></svg><svg class="ring" viewBox="0 0 68 68" aria-hidden="true"><circle cx="34" cy="34" r="32" pathLength="1"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-help"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
         <b>FAQs</b><span>Good questions</span>
       </button>
       <button class="pin rv" type="button" data-panel="p-contact">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-phone"/></svg><svg class="ring" viewBox="0 0 68 68" aria-hidden="true"><circle cx="34" cy="34" r="32" pathLength="1"/></svg></span>
+        <span class="ic"><svg aria-hidden="true"><use href="#ic-phone"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34" pathLength="1"/></svg></span>
         <b>Contact</b><span>Help desk</span>
       </button>
     </div>
   </section>
 
-  <!-- ============================================================
-       INTERLUDE — THE PROMISE
-       ============================================================ -->
+  <!-- INTERLUDE — THE PROMISE -->
   <section id="promise" aria-label="The promise">
     <div class="pr-img" aria-hidden="true">
       <img src="images/promise.webp" width="1240" height="2204" loading="lazy" decoding="async" alt="" />
     </div>
     <div class="scrim" aria-hidden="true"></div>
-    <div class="grain" aria-hidden="true"></div>
     <div class="pr-copy">
-      <span class="eyebrow rv">Quietly, surely</span>
+      <span class="pr-kicker rv">quietly, surely</span>
       <h2 class="rv">The promise.</h2>
       <p class="sub rv">Quietly made. Deeply kept.</p>
     </div>
   </section>
 
-  <!-- ============================================================
-       SECTION 4 — NEXT CHAPTER : TWO LANTERNS RISE
-       ============================================================ -->
-  <section id="next" class="tall tall-200" aria-label="The next chapter — two lanterns rise">
+  <!-- NEXT CHAPTER — DAWN -->
+  <section id="next" class="tall tall-200" aria-label="The next chapter — two lanterns rise into dawn">
     <div class="stick">
       <div class="sky-dawn" aria-hidden="true"></div>
       <div class="sky-warm" aria-hidden="true"></div>
@@ -1184,7 +1135,7 @@ html.reduced .lantern{ animation:none !important; }
           <div><strong id="cd-s">--</strong><span>Seconds</span></div>
         </div>
         <p class="cd-cap scrub-hide">until forever</p>
-        <button class="btn scrub-hide" id="rsvp-cta" type="button" data-panel="p-rsvp">RSVP to the Journey</button>
+        <button class="btn dark scrub-hide" id="rsvp-cta" type="button" data-panel="p-rsvp">RSVP to the Journey</button>
       </div>
     </div>
   </section>
@@ -1207,7 +1158,7 @@ html.reduced .lantern{ animation:none !important; }
 <dialog class="panel" id="p-entourage" aria-label="Our entourage">
   <div class="panel-inner">
     <div class="panel-head">
-      <div><span class="eyebrow sage">Travelling party</span><h3>Our Entourage</h3></div>
+      <div><span class="panel-kicker">travelling party</span><h3>Our Entourage</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
     <p>The family and friends who walk beside us as our next chapter takes flight.</p>
@@ -1246,7 +1197,7 @@ html.reduced .lantern{ animation:none !important; }
 <dialog class="panel" id="p-rsvp" aria-label="RSVP">
   <div class="panel-inner">
     <div class="panel-head">
-      <div><span class="eyebrow">Save a seat</span><h3>RSVP</h3></div>
+      <div><span class="panel-kicker">save a seat</span><h3>RSVP</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
     <p>Kindly respond by <strong>November 30, 2026</strong> so we can finalize seats with Savoy Hotel Manila. A confirmed RSVP secures your place at the reception.</p>
@@ -1280,7 +1231,7 @@ html.reduced .lantern{ animation:none !important; }
       </div>
       <div class="field"><label for="rsvp-notes">Meal notes or a message for us</label><textarea id="rsvp-notes" name="notes" placeholder="Allergies, dietary needs, or a message for the couple"></textarea></div>
       <div class="form-error" id="form-error" role="alert"></div>
-      <button class="btn" id="submit-btn" type="submit" style="width:100%">Send RSVP</button>
+      <button class="btn dark" id="submit-btn" type="submit" style="width:100%">Send RSVP</button>
     </form>
   </div>
 </dialog>
@@ -1289,13 +1240,13 @@ html.reduced .lantern{ animation:none !important; }
 <dialog class="panel" id="p-attire" aria-label="Attire guide">
   <div class="panel-inner">
     <div class="panel-head">
-      <div><span class="eyebrow sage">Dress for the sky</span><h3>Attire Guide</h3></div>
+      <div><span class="panel-kicker">dress for the sky</span><h3>Attire Guide</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
     <p>Our palette is dreamy minimalist — cream, ivory, champagne beige, sage green, dusty rose, and soft taupe.</p>
     <div class="attire-cards">
-      <article class="acard"><span class="role">Our Guests</span><h4>Smart Formal</h4><span class="code">Come dressed to soar</span><p>Polished suits, barong, long dresses, or elegant cocktail attire, in soft, celebratory tones.</p></article>
-      <article class="acard"><span class="role" style="color:var(--rose-deep)">The Entourage</span><h4>Formal · in our colours</h4><span class="code">The wedding party leads the runway</span><p>Long gowns and formal menswear in the wedding palette below.</p></article>
+      <article class="acard"><span class="role">Our Guests</span><h4>Smart Formal</h4><span class="code">come dressed to soar</span><p>Polished suits, barong, long dresses, or elegant cocktail attire, in soft, celebratory tones.</p></article>
+      <article class="acard"><span class="role" style="color:var(--rose-deep)">The Entourage</span><h4>Formal · in our colours</h4><span class="code">the wedding party leads the runway</span><p>Long gowns and formal menswear in the wedding palette below.</p></article>
     </div>
     <figure class="attire-guide" style="margin:0">
       <button type="button" class="ag-frame" id="attire-zoom" aria-label="Enlarge the attire guide">
@@ -1311,7 +1262,7 @@ html.reduced .lantern{ animation:none !important; }
       <div class="swatch"><span class="dot" style="background:#cf9a93"></span>Dusty Rose</div>
       <div class="swatch"><span class="dot" style="background:#b1a394"></span>Soft Taupe</div>
     </div>
-    <p class="attire-no">Kindly skip loud colours, heavy black, neon, and overly casual wear — let the sky stay soft.</p>
+    <p class="attire-no">Kindly skip loud colours, heavy black, neon, and overly casual wear. Let the sky stay soft.</p>
   </div>
 </dialog>
 
@@ -1319,7 +1270,7 @@ html.reduced .lantern{ animation:none !important; }
 <dialog class="panel" id="p-itinerary" aria-label="Itinerary">
   <div class="panel-inner">
     <div class="panel-head">
-      <div><span class="eyebrow">The line-up</span><h3>Itinerary</h3></div>
+      <div><span class="panel-kicker">the line-up</span><h3>Itinerary</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
     <div class="passes">
@@ -1356,7 +1307,7 @@ html.reduced .lantern{ animation:none !important; }
 <dialog class="panel" id="p-directions" aria-label="Directions">
   <div class="panel-inner">
     <div class="panel-head">
-      <div><span class="eyebrow sage">Finding the way</span><h3>Directions</h3></div>
+      <div><span class="panel-kicker">finding the way</span><h3>Directions</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
     <p>Everything happens within <strong>Newport City, Pasay</strong>, just across from NAIA Terminal 3. Tap a venue for live directions.</p>
@@ -1378,7 +1329,7 @@ html.reduced .lantern{ animation:none !important; }
 <dialog class="panel" id="p-gift" aria-label="Our First Journey Fund">
   <div class="panel-inner">
     <div class="panel-head">
-      <div><span class="eyebrow">A small blessing</span><h3>Our First Journey Fund</h3></div>
+      <div><span class="panel-kicker">a small blessing</span><h3>Our First Journey Fund</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
     <div class="gift-pass">
@@ -1404,11 +1355,11 @@ html.reduced .lantern{ animation:none !important; }
 <dialog class="panel" id="p-faq" aria-label="Frequently asked questions">
   <div class="panel-inner">
     <div class="panel-head">
-      <div><span class="eyebrow sage">Good questions</span><h3>FAQs</h3></div>
+      <div><span class="panel-kicker">good questions</span><h3>FAQs</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
     <details class="faq"><summary>Can I bring a plus one?</summary><p>Our guest list is by name, so the seats reserved for you are shown when you RSVP. If you're unsure how many seats are yours, message us and we'll gladly confirm.</p></details>
-    <details class="faq"><summary>What should I wear?</summary><p>Smart formal in soft, dreamy tones — cream, ivory, champagne, sage, dusty rose, soft taupe. See the Attire Guide for the full palette. Kindly skip loud colours, heavy black, and neon.</p></details>
+    <details class="faq"><summary>What should I wear?</summary><p>Smart formal in soft, dreamy tones: cream, ivory, champagne, sage, dusty rose, soft taupe. See the Attire Guide for the full palette. Kindly skip loud colours, heavy black, and neon.</p></details>
     <details class="faq"><summary>Where can I park?</summary><p>On-site parking is available at both St. Therese Parish and Savoy Hotel Manila. Both are in Newport City, minutes from NAIA Terminal 3, so ride-hailing is easy too.</p></details>
     <details class="faq"><summary>What time should I arrive?</summary><p>The ceremony begins at 1:30 PM sharp. We suggest being seated by 1:00 PM so you can settle in before the doors close for the processional.</p></details>
     <details class="faq"><summary>Are children invited?</summary><p>We love your little ones. Seats are limited, so please include everyone joining you by name in your RSVP so we can plan their places with care.</p></details>
@@ -1419,7 +1370,7 @@ html.reduced .lantern{ animation:none !important; }
 <dialog class="panel" id="p-contact" aria-label="Contact and help desk">
   <div class="panel-inner">
     <div class="panel-head">
-      <div><span class="eyebrow">Help desk</span><h3>Contact</h3></div>
+      <div><span class="panel-kicker">help desk</span><h3>Contact</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
     <p>Questions about seats, directions, or the day itself? Our crew is happy to help.</p>
@@ -1432,7 +1383,7 @@ html.reduced .lantern{ animation:none !important; }
   </div>
 </dialog>
 
-<!-- Attire image lightbox + gallery lightbox -->
+<!-- Lightbox -->
 <dialog class="lb" id="lb" aria-label="Photo viewer">
   <figure class="lb-card" style="margin:0">
     <button class="panel-close lb-close" type="button" aria-label="Close photo">&times;</button>
@@ -1480,6 +1431,245 @@ html.reduced .lantern{ animation:none !important; }
   }
   if (ANIM) docEl.classList.add('js-anim');
 
+  /* =========================================================
+     THE NIGHT SKY — canvas lantern field
+     ========================================================= */
+  var Sky = (function () {
+    var canvas = $('sky');
+    if (!canvas || !canvas.getContext) return { liftoff: function () {} };
+    var ctx = canvas.getContext('2d');
+    var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    var W = 0, H = 0;
+    var lanterns = [], stars = [];
+    var lift = 0;                 // liftoff boost (decays to 0)
+    var shoot = null, nextShoot = 6000;
+    var px = 0, py = 0, tx = 0, ty = 0;   // pointer parallax
+    var running = false;
+
+    /* sky color keyframes across full document scroll: dusk → deep night */
+    var STOPS = [
+      { p: 0.00, top: [43, 34, 64],  mid: [77, 53, 83],   bot: [120, 70, 86],  horizon: 0.55 },
+      { p: 0.22, top: [30, 24, 48],  mid: [52, 38, 64],   bot: [80, 52, 70],   horizon: 0.30 },
+      { p: 0.50, top: [21, 16, 33],  mid: [35, 26, 46],   bot: [52, 36, 52],   horizon: 0.16 },
+      { p: 0.80, top: [16, 12, 24],  mid: [26, 19, 33],   bot: [38, 27, 40],   horizon: 0.10 },
+      { p: 1.00, top: [14, 10, 20],  mid: [22, 16, 28],   bot: [33, 24, 36],   horizon: 0.08 }
+    ];
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function mix(c1, c2, t) {
+      return 'rgb(' + Math.round(lerp(c1[0], c2[0], t)) + ',' + Math.round(lerp(c1[1], c2[1], t)) + ',' + Math.round(lerp(c1[2], c2[2], t)) + ')';
+    }
+    function skyAt(p) {
+      var a = STOPS[0], b = STOPS[STOPS.length - 1];
+      for (var i = 0; i < STOPS.length - 1; i++) {
+        if (p >= STOPS[i].p && p <= STOPS[i + 1].p) { a = STOPS[i]; b = STOPS[i + 1]; break; }
+      }
+      var t = (p - a.p) / Math.max(0.0001, b.p - a.p);
+      return {
+        top: mix(a.top, b.top, t), mid: mix(a.mid, b.mid, t), bot: mix(a.bot, b.bot, t),
+        horizon: lerp(a.horizon, b.horizon, t)
+      };
+    }
+
+    /* pre-rendered lantern sprites: [far, mid, near] */
+    var sprites = [];
+    function makeSprite(core, glowR) {
+      var s = document.createElement('canvas');
+      var size = glowR * 2;
+      s.width = size; s.height = size;
+      var c = s.getContext('2d');
+      var cx = glowR, cy = glowR;
+      /* halo */
+      var halo = c.createRadialGradient(cx, cy, core * 0.2, cx, cy, glowR);
+      halo.addColorStop(0, 'rgba(255,214,160,.85)');
+      halo.addColorStop(0.25, 'rgba(255,178,130,.4)');
+      halo.addColorStop(0.6, 'rgba(207,124,108,.14)');
+      halo.addColorStop(1, 'rgba(207,124,108,0)');
+      c.fillStyle = halo;
+      c.fillRect(0, 0, size, size);
+      /* paper body */
+      var bw = core * 1.15, bh = core * 1.55;
+      var bx = cx - bw / 2, by = cy - bh / 2;
+      var body = c.createLinearGradient(0, by, 0, by + bh);
+      body.addColorStop(0, '#f3c690');
+      body.addColorStop(0.45, '#ffe9bf');
+      body.addColorStop(1, '#e89a64');
+      c.fillStyle = body;
+      c.beginPath();
+      if (c.roundRect) c.roundRect(bx, by, bw, bh, [bw * 0.42, bw * 0.42, bw * 0.34, bw * 0.34]);
+      else c.rect(bx, by, bw, bh);
+      c.fill();
+      /* glow core near base */
+      var fl = c.createRadialGradient(cx, by + bh * 0.78, 0, cx, by + bh * 0.78, core * 0.7);
+      fl.addColorStop(0, 'rgba(255,248,225,.95)');
+      fl.addColorStop(1, 'rgba(255,248,225,0)');
+      c.fillStyle = fl;
+      c.fillRect(bx, by, bw, bh);
+      return s;
+    }
+    function buildSprites() {
+      sprites = [
+        makeSprite(7, 22),    /* far  */
+        makeSprite(13, 44),   /* mid  */
+        makeSprite(24, 86)    /* near */
+      ];
+    }
+
+    function spawn(tier, fromBottom) {
+      var spr = sprites[tier];
+      return {
+        tier: tier,
+        x: Math.random() * W,
+        y: fromBottom ? H + spr.height : Math.random() * H * 1.2 - H * 0.1,
+        vy: (tier === 0 ? 5 : tier === 1 ? 10 : 17) * (0.7 + Math.random() * 0.6),  /* px per second */
+        sway: 6 + Math.random() * 14,
+        phase: Math.random() * Math.PI * 2,
+        spin: 0.25 + Math.random() * 0.45,
+        flick: Math.random() * Math.PI * 2,
+        alpha: tier === 0 ? 0.55 : tier === 1 ? 0.8 : 0.95
+      };
+    }
+    function populate() {
+      lanterns.length = 0; stars.length = 0;
+      var area = (W * H) / (DPR * DPR);
+      var base = Math.round(area / 16000);          /* ~80 on 1440x900, ~45 on phone */
+      base = Math.max(36, Math.min(120, base));
+      for (var i = 0; i < base; i++) {
+        var r = Math.random();
+        lanterns.push(spawn(r < 0.55 ? 0 : r < 0.88 ? 1 : 2, false));
+      }
+      var ns = Math.round(area / 14000) + 50;
+      for (var j = 0; j < ns; j++) {
+        stars.push({ x: Math.random() * W, y: Math.random() * H * 0.8, r: (0.5 + Math.random() * 1.1) * DPR, tw: Math.random() * Math.PI * 2, sp: 0.4 + Math.random() * 1.1 });
+      }
+    }
+
+    function resize() {
+      W = Math.round(canvas.clientWidth * DPR);
+      H = Math.round(canvas.clientHeight * DPR);
+      canvas.width = W; canvas.height = H;
+      buildSprites();
+      populate();
+      if (REDUCED) drawFrame(0, 0);
+    }
+
+    function progress() {
+      var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      return Math.min(1, Math.max(0, window.scrollY / max));
+    }
+
+    var lastT = 0;
+    function drawFrame(t, dt) {
+      var p = progress();
+      var sky = skyAt(p);
+      var g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, sky.top); g.addColorStop(0.55, sky.mid); g.addColorStop(1, sky.bot);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      /* dusk horizon ember */
+      if (sky.horizon > 0.02) {
+        var hg = ctx.createRadialGradient(W * 0.5, H * 1.1, 0, W * 0.5, H * 1.1, H * 0.85);
+        hg.addColorStop(0, 'rgba(214,120,90,' + (sky.horizon * 0.55).toFixed(3) + ')');
+        hg.addColorStop(0.5, 'rgba(178,96,90,' + (sky.horizon * 0.22).toFixed(3) + ')');
+        hg.addColorStop(1, 'rgba(178,96,90,0)');
+        ctx.fillStyle = hg;
+        ctx.fillRect(0, 0, W, H);
+      }
+      /* stars */
+      ctx.fillStyle = '#fff7ea';
+      for (var i = 0; i < stars.length; i++) {
+        var st = stars[i];
+        var a = 0.18 + 0.5 * (0.5 + 0.5 * Math.sin(t * 0.001 * st.sp + st.tw));
+        ctx.globalAlpha = a;
+        ctx.fillRect(st.x, st.y, st.r, st.r);
+      }
+      ctx.globalAlpha = 1;
+      /* shooting star */
+      if (shoot) {
+        shoot.life -= dt;
+        shoot.x += shoot.vx * dt / 1000; shoot.y += shoot.vy * dt / 1000;
+        if (shoot.life <= 0) { shoot = null; }
+        else {
+          var sa = Math.min(1, shoot.life / 400);
+          ctx.strokeStyle = 'rgba(255,240,214,' + (0.7 * sa).toFixed(3) + ')';
+          ctx.lineWidth = 1.4 * DPR;
+          ctx.beginPath();
+          ctx.moveTo(shoot.x, shoot.y);
+          ctx.lineTo(shoot.x - shoot.vx * 0.16, shoot.y - shoot.vy * 0.16);
+          ctx.stroke();
+        }
+      } else if (!REDUCED) {
+        nextShoot -= dt;
+        if (nextShoot <= 0) {
+          nextShoot = 9000 + Math.random() * 10000;
+          shoot = { x: W * (0.15 + Math.random() * 0.7), y: H * (0.05 + Math.random() * 0.25), vx: (Math.random() < 0.5 ? -1 : 1) * (W * 0.4), vy: H * 0.12, life: 900 };
+        }
+      }
+      /* pointer parallax easing */
+      px += (tx - px) * 0.04; py += (ty - py) * 0.04;
+      /* lanterns by depth */
+      var liftBoost = 1 + lift * 7;
+      for (var k = 0; k < lanterns.length; k++) {
+        var L = lanterns[k];
+        var spr = sprites[L.tier];
+        L.y -= L.vy * DPR * liftBoost * dt / 1000;
+        var sx = L.x + Math.sin(t * 0.0005 * L.spin + L.phase) * L.sway * DPR;
+        if (L.y < -spr.height) { lanterns[k] = spawn(L.tier, true); continue; }
+        var flk = 0.86 + 0.14 * Math.sin(t * 0.003 + L.flick);
+        ctx.globalAlpha = L.alpha * flk;
+        var par = (L.tier + 1) / 3;
+        ctx.drawImage(spr, sx - spr.width / 2 + px * par, L.y - spr.height / 2 + py * par);
+      }
+      ctx.globalAlpha = 1;
+      if (lift > 0) lift = Math.max(0, lift - dt / 3500);
+    }
+
+    function loop(t) {
+      if (!running) return;
+      var dt = Math.min(50, t - lastT || 16);
+      lastT = t;
+      drawFrame(t, dt);
+      requestAnimationFrame(loop);
+    }
+    function start() {
+      if (REDUCED) { drawFrame(0, 0); return; }
+      if (running) return;
+      running = true;
+      lastT = performance.now();
+      requestAnimationFrame(loop);
+    }
+    function stop() { running = false; }
+
+    window.addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop(); else start();
+    });
+    if (!REDUCED && window.matchMedia('(pointer:fine)').matches) {
+      window.addEventListener('pointermove', function (e) {
+        tx = (e.clientX / window.innerWidth - 0.5) * 26 * DPR;
+        ty = (e.clientY / window.innerHeight - 0.5) * 16 * DPR;
+      }, { passive: true });
+    }
+
+    resize();
+    start();
+
+    return {
+      liftoff: function () {
+        lift = 1;
+        if (REDUCED) return;
+        /* burst of fresh lanterns from below */
+        for (var i = 0; i < 26; i++) {
+          var tier = Math.random() < 0.5 ? 1 : 2;
+          var L = spawn(tier, true);
+          L.y = H + Math.random() * H * 0.6;
+          lanterns.push(L);
+        }
+        /* trim back down later so the count doesn't grow forever */
+        setTimeout(function () { lanterns.splice(0, Math.max(0, lanterns.length - 130)); }, 9000);
+      }
+    };
+  })();
+
   /* ---------- ambient music ---------- */
   var audio = $('ambient'), musicBtn = $('music-btn'), musicLabel = $('music-label');
   function setMusicState(on) {
@@ -1499,7 +1689,7 @@ html.reduced .lantern{ animation:none !important; }
   });
   audio.addEventListener('error', function () { musicBtn.classList.remove('show'); }, true);
 
-  /* ---------- Lenis smooth scroll (progressive enhancement) ---------- */
+  /* ---------- Lenis smooth scroll ---------- */
   var lenisStarted = false;
   function initLenis() {
     if (lenisStarted || REDUCED) return;
@@ -1535,7 +1725,7 @@ html.reduced .lantern{ animation:none !important; }
     setInterval(tick, 1000);
   })();
 
-  /* ---------- dialogs (panels) ---------- */
+  /* ---------- dialogs ---------- */
   var lastTrigger = null;
   function hydrate(dlg) {
     dlg.querySelectorAll('[data-src]').forEach(function (el) {
@@ -1550,7 +1740,7 @@ html.reduced .lantern{ animation:none !important; }
     dlg.setAttribute('data-lenis-prevent', '');
     if (window.__lenis) window.__lenis.stop();
     if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
-    // NB: never tween the <dialog> itself — transforms demote it from the top layer
+    /* NB: never tween the <dialog> itself — transforms demote it from the top layer */
     var inner = dlg.querySelector('.panel-inner, .lb-card');
     if (ANIM && inner) {
       gsap.fromTo(inner, { y: 30, opacity: 0, scale: 0.985 }, { y: 0, opacity: 1, scale: 1, duration: 0.55, ease: 'power3.out', clearProps: 'transform,opacity' });
@@ -1610,7 +1800,6 @@ html.reduced .lantern{ animation:none !important; }
       if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1); }
       if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1); }
     });
-    // Attire-guide zoom reuses the lightbox
     var az = $('attire-zoom');
     if (az) az.addEventListener('click', function () {
       lastTrigger = az;
@@ -1685,41 +1874,18 @@ html.reduced .lantern{ animation:none !important; }
     });
   })();
 
-  /* ---------- gate decorations ---------- */
-  (function () {
-    var stars = document.querySelector('.gate-stars');
-    for (var i = 0; i < 26; i++) {
-      var s = document.createElement('i');
-      s.style.left = (Math.random() * 100) + '%';
-      s.style.top = (Math.random() * 70) + '%';
-      s.style.animationDelay = (-Math.random() * 5) + 's';
-      s.style.transform = 'scale(' + (0.5 + Math.random()) + ')';
-      stars.appendChild(s);
-    }
-    var bg = $('gate-bg-lans');
-    for (var j = 0; j < 6; j++) {
-      var l = document.createElement('div');
-      l.className = 'lantern gate-bg-lan';
-      l.style.left = (6 + Math.random() * 88) + '%';
-      l.style.top = (8 + Math.random() * 50) + '%';
-      l.innerHTML = '<span class="body"></span><span class="flame"></span>';
-      bg.appendChild(l);
-    }
-  })();
-
   /* ---------- title curtain ---------- */
   function playCurtain(instant) {
     if (!ANIM || instant) {
-      if (HAS_GSAP) gsap.set('#curtain .w, #curtain .meta', { clearProps: 'all', opacity: 1, y: 0 });
       document.querySelectorAll('#curtain .w').forEach(function (w) { w.style.transform = 'none'; });
-      document.querySelector('#curtain .rule').style.width = '72px';
+      document.querySelector('#curtain .rule').style.width = '84px';
       var meta = document.querySelector('#curtain .meta');
       meta.style.opacity = 1; meta.style.transform = 'none';
       return;
     }
-    var tl = gsap.timeline({ delay: 0.15 });
-    tl.to('#curtain .w', { y: 0, duration: 1.1, ease: 'power3.out', stagger: 0.22 })
-      .to('#curtain .rule', { width: 72, duration: 0.8, ease: 'power2.out' }, '-=0.5')
+    var tl = gsap.timeline({ delay: 0.2 });
+    tl.to('#curtain .w', { y: 0, duration: 1.2, ease: 'power3.out', stagger: 0.24 })
+      .to('#curtain .rule', { width: 84, duration: 0.9, ease: 'power2.out' }, '-=0.5')
       .to('#curtain .meta', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4');
   }
 
@@ -1737,7 +1903,7 @@ html.reduced .lantern{ animation:none !important; }
         gate.remove();
         playCurtain(true);
       } else {
-        gsap.to(gate, { opacity: 0, duration: 1.1, ease: 'power2.inOut', onComplete: function () { gate.remove(); } });
+        gsap.to(gate, { opacity: 0, duration: 1.2, ease: 'power2.inOut', onComplete: function () { gate.remove(); } });
         playCurtain(false);
       }
       if (HAS_GSAP) requestAnimationFrame(function () { ScrollTrigger.refresh(); });
@@ -1763,10 +1929,10 @@ html.reduced .lantern{ animation:none !important; }
       s.style.left = x + 'px'; s.style.top = y + 'px';
       sparksHost.appendChild(s);
       var ang = Math.random() * Math.PI * 2;
-      var dist = burst ? 60 + Math.random() * 120 : 14 + Math.random() * 26;
-      var dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - (burst ? 30 : 18);
+      var dist = burst ? 70 + Math.random() * 150 : 14 + Math.random() * 28;
+      var dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - (burst ? 40 : 18);
       if (HAS_GSAP) {
-        gsap.to(s, { x: dx, y: dy, opacity: 0, scale: burst ? 1.6 : 0.6, duration: burst ? 1.2 : 0.9, ease: 'power2.out', onComplete: function () { s.remove(); } });
+        gsap.to(s, { x: dx, y: dy, opacity: 0, scale: burst ? 1.7 : 0.6, duration: burst ? 1.3 : 0.9, ease: 'power2.out', onComplete: function () { s.remove(); } });
       } else {
         s.style.transition = 'transform .9s ease-out, opacity .9s ease-out';
         requestAnimationFrame(function () { s.style.transform = 'translate(' + dx + 'px,' + dy + 'px)'; s.style.opacity = '0'; });
@@ -1782,9 +1948,9 @@ html.reduced .lantern{ animation:none !important; }
       var sag = 30 + (1 - p) * 60;
       var d = 'M ' + a.x + ' ' + a.y + ' Q ' + ((a.x + b.x) / 2) + ' ' + ((a.y + b.y) / 2 + sag) + ' ' + b.x + ' ' + b.y;
       thread.setAttribute('d', d); threadGlow.setAttribute('d', d);
-      thread.style.opacity = (p * 0.95).toFixed(2);
-      threadGlow.style.opacity = (p * 0.8).toFixed(2);
-      warm.style.opacity = (p * 0.85).toFixed(2);
+      thread.style.opacity = (0.25 + p * 0.75).toFixed(2);
+      threadGlow.style.opacity = (p * 0.9).toFixed(2);
+      warm.style.opacity = (p * 0.9).toFixed(2);
       var now = performance.now();
       if (p > 0.45 && now - lastSpark > (520 - p * 380)) {
         lastSpark = now;
@@ -1808,16 +1974,17 @@ html.reduced .lantern{ animation:none !important; }
       var bloom = $('bloom');
       bloom.style.left = mx + 'px'; bloom.style.top = my + 'px';
       thread.style.opacity = 0; threadGlow.style.opacity = 0;
-      for (var i = 0; i < 26; i++) spark(mx, my, true);
+      for (var i = 0; i < 32; i++) spark(mx, my, true);
       startMusic();
+      Sky.liftoff();
       if (ANIM) {
         var tl = gsap.timeline({ onComplete: function () { unlock(false); } });
-        tl.to(T, { x: '+=' + ((mx - 46) - a.x), y: '+=' + (my - a.y), duration: 0.5, ease: 'power2.inOut' }, 0)
-          .to(J, { x: '+=' + ((mx + 46) - b.x), y: '+=' + (my - b.y), duration: 0.5, ease: 'power2.inOut' }, 0)
+        tl.to(T, { x: '+=' + ((mx - 50) - a.x), y: '+=' + (my - a.y), duration: 0.5, ease: 'power2.inOut' }, 0)
+          .to(J, { x: '+=' + ((mx + 50) - b.x), y: '+=' + (my - b.y), duration: 0.5, ease: 'power2.inOut' }, 0)
           .to(bloom, { opacity: 1, scale: 1, duration: 0.5, ease: 'power2.out' }, 0.25)
-          .to(bloom, { opacity: 0, scale: 1.8, duration: 0.9, ease: 'power2.in' }, 0.75)
-          .to('.gate-bg-lan', { y: '-=140', opacity: 0, duration: 1.4, ease: 'power1.in', stagger: 0.07 }, 0.3)
-          .to([T, J], { y: '-=60', duration: 1.2, ease: 'power1.in' }, 0.8);
+          .to(bloom, { opacity: 0, scale: 1.9, duration: 1, ease: 'power2.in' }, 0.8)
+          .to([T, J], { y: '-=' + (window.innerHeight * 0.4), duration: 1.6, ease: 'power1.in' }, 0.8)
+          .to([T, J], { opacity: 0, duration: 0.5 }, 1.9);
       } else {
         bloom.style.transition = 'opacity .5s, transform .5s';
         bloom.style.opacity = '1'; bloom.style.transform = 'translate(-50%,-50%) scale(1)';
@@ -1825,7 +1992,6 @@ html.reduced .lantern{ animation:none !important; }
       }
     }
 
-    /* drag — GSAP Draggable with raw-pointer fallback */
     var dragT = null, dragJ = null;
     if (HAS_GSAP && window.Draggable) {
       var opts = { type: 'x,y', bounds: gate, dragClickables: true };
@@ -1848,7 +2014,6 @@ html.reduced .lantern{ animation:none !important; }
       });
     }
 
-    /* keyboard support */
     [T, J].forEach(function (el) {
       el.addEventListener('keydown', function (e) {
         var step = 16, dx = 0, dy = 0;
@@ -1872,26 +2037,10 @@ html.reduced .lantern{ animation:none !important; }
     $('connect-btn').addEventListener('click', connect);
   })();
 
-  /* ---------- scroll-driven scenes ---------- */
-  function buildLanterns(host, n, opts) {
-    for (var i = 0; i < n; i++) {
-      var l = document.createElement('div');
-      l.className = 'lantern path-lan';
-      l.innerHTML = '<span class="body"></span><span class="flame"></span>';
-      l.style.left = (4 + Math.random() * 90) + '%';
-      l.style.top = (opts.topMin + Math.random() * (opts.topMax - opts.topMin)) + '%';
-      var sc = opts.sMin + Math.random() * (opts.sMax - opts.sMin);
-      l.style.transform = 'scale(' + sc.toFixed(2) + ')';
-      l.style.opacity = opts.op;
-      host.appendChild(l);
-    }
-  }
-  buildLanterns($('lan-far'), 9, { topMin: 0, topMax: 110, sMin: 0.18, sMax: 0.34, op: 0.5 });
-  buildLanterns($('lan-mid'), 7, { topMin: 0, topMax: 110, sMin: 0.4, sMax: 0.6, op: 0.7 });
-  buildLanterns($('lan-near'), 4, { topMin: 10, topMax: 115, sMin: 0.85, sMax: 1.15, op: 0.85 });
+  /* ---------- finale background lanterns (DOM, above dawn overlays) ---------- */
   (function () {
     var host = $('next-lans');
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 9; i++) {
       var l = document.createElement('div');
       l.className = 'lantern';
       l.innerHTML = '<span class="body"></span><span class="flame"></span>';
@@ -1899,7 +2048,7 @@ html.reduced .lantern{ animation:none !important; }
       l.style.left = (5 + Math.random() * 88) + '%';
       l.style.top = (100 + Math.random() * 40) + '%';
       l.style.transform = 'scale(' + (0.2 + Math.random() * 0.4).toFixed(2) + ')';
-      l.style.opacity = 0.55;
+      l.style.opacity = 0.6;
       host.appendChild(l);
     }
   })();
@@ -1920,23 +2069,16 @@ html.reduced .lantern{ animation:none !important; }
       });
       var chips = gsap.utils.toArray('#path .chip');
       var caps = gsap.utils.toArray('#path .pcap');
-      // layers drift upward at different depths
-      tl.to('#lan-far',  { yPercent: -14, ease: 'none', duration: 10 }, 0)
-        .to('#lan-mid',  { yPercent: -30, ease: 'none', duration: 10 }, 0)
-        .to('#lan-near', { yPercent: -48, ease: 'none', duration: 10 }, 0)
-        // two arcs draw, then merge into one
-        .to(['#arcL', '#arcLg'], { strokeDashoffset: 0, ease: 'none', duration: 5.2 }, 0.4)
+      tl.to(['#arcL', '#arcLg'], { strokeDashoffset: 0, ease: 'none', duration: 5.2 }, 0.4)
         .to(['#arcR', '#arcRg'], { strokeDashoffset: 0, ease: 'none', duration: 5.2 }, 0.8)
         .to(['#arcM', '#arcMg'], { strokeDashoffset: 0, ease: 'none', duration: 3.4 }, 5.8)
-        // sky brightens at the end
-        .to('#path-bright', { opacity: 1, ease: 'none', duration: 1.6 }, 8.4);
-      // caption chips, in order along the route
+        .to('#merge-glow', { opacity: 1, duration: 1.2 }, 5.6)
+        .to('#merge-glow', { opacity: 0, duration: 1.4 }, 8.2);
       var chipTimes = [0.8, 1.9, 3.2, 4.4, 6.2, 8.0];
       chips.forEach(function (chip, i) {
         tl.to(chip, { opacity: 1, duration: 0.5 }, chipTimes[i])
           .to(chip, { y: -16, duration: 1.6, ease: 'none' }, chipTimes[i]);
       });
-      // caption lines crossfade
       var capTimes = [[0.6, 2.4], [2.8, 4.6], [5.0, 6.8], [7.2, null]];
       caps.forEach(function (cap, i) {
         tl.to(cap, { opacity: 1, duration: 0.6 }, capTimes[i][0]);
@@ -1958,15 +2100,13 @@ html.reduced .lantern{ animation:none !important; }
         scrollTrigger: { trigger: '#next', start: 'top top', end: 'bottom bottom', scrub: 0.6 }
       });
       tl.fromTo('#dawn-cap', { opacity: 0 }, { opacity: 1, duration: 0.7 }, 0.1)
-        .to('#dawn-cap', { opacity: 0, duration: 0.7 }, 1.6)
-        .to('.sky-warm', { opacity: 1, ease: 'none', duration: 7 }, 1)
-        // background lanterns rise
+        .to('#dawn-cap', { opacity: 0, duration: 0.7 }, 1.8)
+        .to('.sky-dawn', { opacity: 1, ease: 'none', duration: 3.4 }, 0.6)
+        .to('.sky-warm', { opacity: 1, ease: 'none', duration: 4 }, 4.4)
         .to('#next-lans .lantern', { y: -window.innerHeight * 1.3, ease: 'none', duration: 9, stagger: 0.35 }, 0.4)
-        // T and J rise from opposite corners, then travel side by side
         .to('#nlanT', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return W() * 0.18; }, ease: 'power1.inOut', duration: 6 }, 0.6)
         .to('#nlanJ', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return -W() * 0.18; }, ease: 'power1.inOut', duration: 6 }, 0.6)
         .to(['#nlanT', '#nlanJ'], { y: '-=' + window.innerHeight * 0.14, ease: 'power1.out', duration: 3 }, 6.6)
-        // route draws; paper plane follows it
         .to(['#route-path', '#route-glow'], { strokeDashoffset: 0, ease: 'none', duration: 5.5 }, 1.6);
       if (window.MotionPathPlugin) {
         tl.to('#plane', {
@@ -1984,9 +2124,6 @@ html.reduced .lantern{ animation:none !important; }
         .to(['#next-date', '#cd', '.cd-cap', '#rsvp-cta'], { opacity: 1, duration: 0.8, stagger: 0.18 }, 8.6);
     })();
   }
-
-  /* if the gate was skipped via sessionStorage, body class is already correct;
-     otherwise everything above waits behind the fixed gate overlay. */
 })();
 </script>
 </body>
