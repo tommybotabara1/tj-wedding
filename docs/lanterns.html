@@ -421,7 +421,7 @@ html.reduced .b-lan{ animation:none; opacity:.85; }
 }
 @media (min-width:840px){ .tiles{ grid-template-columns:repeat(3,1fr); } }
 .tile{
-  position:relative; padding:10px 10px 40px; border-radius:12px;
+  position:relative; margin:0; padding:10px 10px 40px; border-radius:12px;
   background:var(--paper); text-align:left; width:100%;
   box-shadow:0 0 0 1px rgba(255,240,220,.1), 0 0 36px rgba(207,130,110,.12), var(--shadow-sm);
   transition:transform .45s var(--ease), box-shadow .45s var(--ease);
@@ -506,22 +506,33 @@ dialog.lb::backdrop{ background:rgba(10,7,14,.86); backdrop-filter:blur(7px); }
 .pin b{ font-size:12.5px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--moon); }
 .pin span{ font-size:11.5px; color:var(--moon-faint); }
 
-/* desktop: pins scatter across a night map joined by a dashed route */
-.route-net{ display:none; }
+/* pins scatter across a night map joined by a dashed route — a wandering
+   flight path you follow stop by stop. Portrait on phones, wide on desktop. */
+.route-net{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+.route-net.is-wide{ display:none; }
+.route-net.is-tall{ display:block; }
+.pins.map-area{
+  display:block; position:relative; max-width:520px;
+  height:clamp(720px, 196vw, 820px); margin:0 auto;
+}
+.pins.map-area .pin{
+  position:absolute; left:calc(var(--mx,50) * 1%); top:calc(var(--my,50) * 1%);
+  translate:-50% -50%; width:auto; min-width:0; gap:9px; padding:8px 12px;
+  background:transparent; border:0; box-shadow:none;
+  backdrop-filter:none; -webkit-backdrop-filter:none;
+}
+.pins.map-area .pin:hover{ transform:none; box-shadow:none; border-color:transparent; }
+.pins.map-area .pin:hover .ic{ transform:translateY(-4px); }
+.pins.map-area .pin b, .pins.map-area .pin span{ text-shadow:0 2px 16px rgba(0,0,0,.78); }
+.pins.map-area .pin .ic{
+  background:radial-gradient(circle at 50% 62%, rgba(255,214,160,.32), rgba(255,205,150,.06) 72%);
+  box-shadow:0 0 28px rgba(255,196,150,.4); transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+}
 @media (min-width:880px){
-  .pins.map-area{ display:block; height:620px; }
-  .route-net{ display:block; position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
-  .pins.map-area .pin{
-    position:absolute; translate:-50% -50%; width:auto; min-width:0;
-    background:transparent; border:0; box-shadow:none;
-    backdrop-filter:none; -webkit-backdrop-filter:none; padding:10px 14px; gap:9px;
-  }
-  .pins.map-area .pin:hover{ box-shadow:none; border-color:transparent; }
-  .pins.map-area .pin b, .pins.map-area .pin span{ text-shadow:0 2px 16px rgba(0,0,0,.78); }
-  .pins.map-area .pin .ic{
-    background:radial-gradient(circle at 50% 62%, rgba(255,214,160,.32), rgba(255,205,150,.06) 72%);
-    box-shadow:0 0 28px rgba(255,196,150,.4);
-  }
+  .route-net.is-wide{ display:block; }
+  .route-net.is-tall{ display:none; }
+  .pins.map-area{ max-width:1080px; height:620px; }
+  .pins.map-area .pin{ left:calc(var(--dx,50) * 1%); top:calc(var(--dy,50) * 1%); padding:10px 14px; }
 }
 
 /* Panels (dialogs) — lit paper against the night */
@@ -629,7 +640,7 @@ dialog.panel::backdrop{ background:rgba(10,7,14,.78); backdrop-filter:blur(6px);
 .acard .code{ display:block; font-size:13px; font-style:italic; font-family:var(--serif); color:var(--gold); margin-bottom:8px; }
 .acard p{ font-size:13.5px; color:var(--soft); margin:0; }
 .ag-frame{ display:block; width:100%; border:1px solid var(--line); border-radius:12px; overflow:clip; padding:0; background:none; position:relative; }
-.ag-frame img{ width:100%; }
+.ag-frame img{ display:block; width:100%; height:auto; }
 .ag-zoom{
   position:absolute; right:10px; bottom:10px; background:rgba(255,253,250,.92); border-radius:999px;
   font-size:10px; letter-spacing:.18em; text-transform:uppercase; padding:7px 14px; color:var(--ink);
@@ -1107,7 +1118,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <p class="rv">Everything you need for the day, mapped out. Tap a marker to open it.</p>
     </div>
     <div class="pins map-area">
-      <svg class="route-net" viewBox="0 0 1100 620" preserveAspectRatio="none" aria-hidden="true">
+      <svg class="route-net is-wide" viewBox="0 0 1100 620" preserveAspectRatio="none" aria-hidden="true">
         <path d="M 132 112 C 230 70, 330 48, 418 62 C 520 78, 640 70, 726 99 C 830 134, 930 130, 968 186 C 1010 320, 480 260, 154 360 C 220 430, 350 465, 440 459 C 560 451, 650 410, 726 384 C 830 350, 940 430, 968 508"
           fill="none" stroke="rgba(216,188,130,.32)" stroke-width="1.4" stroke-dasharray="3 9" stroke-linecap="round"/>
         <g fill="rgba(255,205,150,.75)">
@@ -1115,35 +1126,43 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           <circle cx="154" cy="360" r="3"/><circle cx="440" cy="459" r="3"/><circle cx="726" cy="384" r="3"/><circle cx="968" cy="508" r="3"/>
         </g>
       </svg>
-      <button class="pin rv" type="button" data-panel="p-entourage" style="left:12%; top:18%">
+      <svg class="route-net is-tall" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M 26 5 C 66 8, 14 22, 30 28 C 48 33, 80 33, 66 40 C 52 47, 8 47, 27 52 C 46 57, 82 58, 66 64 C 50 70, 14 70, 32 76 C 50 81, 80 84, 66 90"
+          fill="none" stroke="rgba(216,188,130,.34)" stroke-width="1.3" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+        <g fill="rgba(255,205,150,.75)">
+          <circle cx="26" cy="5" r="1"/><circle cx="66" cy="16" r="1"/><circle cx="30" cy="28" r="1"/><circle cx="66" cy="40" r="1"/>
+          <circle cx="27" cy="52" r="1"/><circle cx="66" cy="64" r="1"/><circle cx="32" cy="76" r="1"/><circle cx="66" cy="90" r="1"/>
+        </g>
+      </svg>
+      <button class="pin rv" type="button" data-panel="p-entourage" style="--dx:12;--dy:18;--mx:26;--my:5">
         <span class="ic"><svg aria-hidden="true"><use href="#ic-users"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Entourage</b><span>Who walks with us</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-rsvp" style="left:38%; top:10%">
+      <button class="pin rv" type="button" data-panel="p-rsvp" style="--dx:38;--dy:10;--mx:66;--my:16">
         <span class="ic"><svg aria-hidden="true"><use href="#ic-mail"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>RSVP</b><span>Reserve your seat</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-attire" style="left:66%; top:16%">
+      <button class="pin rv" type="button" data-panel="p-attire" style="--dx:66;--dy:16;--mx:30;--my:28">
         <span class="ic"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Attire Guide</b><span>What to wear</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-itinerary" style="left:88%; top:30%">
+      <button class="pin rv" type="button" data-panel="p-itinerary" style="--dx:88;--dy:30;--mx:66;--my:40">
         <span class="ic"><svg aria-hidden="true"><use href="#ic-clock"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Itinerary</b><span>How the day flows</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-directions" style="left:14%; top:58%">
+      <button class="pin rv" type="button" data-panel="p-directions" style="--dx:14;--dy:58;--mx:27;--my:52">
         <span class="ic"><svg aria-hidden="true"><use href="#ic-pin"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Directions</b><span>Finding the way</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-gift" style="left:40%; top:74%">
+      <button class="pin rv" type="button" data-panel="p-gift" style="--dx:40;--dy:74;--mx:66;--my:64">
         <span class="ic"><svg aria-hidden="true"><use href="#ic-gift"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Gift Fund</b><span>Our first journey</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-faq" style="left:66%; top:62%">
+      <button class="pin rv" type="button" data-panel="p-faq" style="--dx:66;--dy:62;--mx:32;--my:76">
         <span class="ic"><svg aria-hidden="true"><use href="#ic-help"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>FAQs</b><span>Good questions</span>
       </button>
-      <button class="pin rv" type="button" data-panel="p-contact" style="left:88%; top:82%">
+      <button class="pin rv" type="button" data-panel="p-contact" style="--dx:88;--dy:82;--mx:68;--my:90">
         <span class="ic"><svg aria-hidden="true"><use href="#ic-phone"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg></span>
         <b>Contact</b><span>Help desk</span>
       </button>
