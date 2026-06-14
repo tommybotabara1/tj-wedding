@@ -246,20 +246,47 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
   border-radius:50%; pointer-events:none;
   background:radial-gradient(circle, rgba(255,224,180,.55), rgba(207,130,110,.25) 45%, transparent 70%);
 }
+/* Each word is a real paper lantern (same build as the T/J lanterns at the
+   gate & finale) — crown, ribbed glowing body, base and a flickering flame —
+   with the word lit inside where the monogram sits. */
 .chip{
   position:absolute; transform:translate(-50%,-50%);
-  display:flex; flex-direction:column; align-items:center; gap:9px;
-  font-size:12px; font-weight:500; letter-spacing:.3em; text-transform:uppercase; color:var(--moon);
-  text-shadow:0 0 20px rgba(255,205,150,.7), 0 2px 16px rgba(0,0,0,.65);
-  white-space:nowrap; pointer-events:none;
+  width:116px; height:158px; pointer-events:none;
 }
-.chip i{
-  display:block; width:20px; height:28px;
-  border-radius:45% 45% 50% 50% / 35% 35% 60% 60%;
-  background:radial-gradient(circle at 50% 68%, #fff3d2, #f3bc83 70%, #d98f5e);
-  box-shadow:0 0 24px 9px rgba(255,200,130,.65), 0 0 64px 20px rgba(207,130,110,.3);
+.chip .body{
+  position:absolute; inset:6px 10px 27px 10px;
+  display:flex; align-items:center; justify-content:center; text-align:center; padding:0 6px;
+  border-radius:32% 32% 38% 38% / 24% 24% 46% 46%;
+  border:1px solid rgba(148,90,82,.4);
+  background:radial-gradient(60% 48% at 50% 62%, #fff3da, #f6d8ae 52%, #d99a6c 100%);
+  box-shadow:
+    0 0 30px 10px rgba(255,196,150,.5),
+    0 0 90px 30px rgba(207,130,110,.32),
+    0 0 170px 56px rgba(178,96,90,.16),
+    inset 0 -10px 22px rgba(148,70,52,.35),
+    inset 0 6px 10px rgba(255,255,255,.55);
+  font-family:var(--sans); font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:#7a3f30; text-shadow:0 1px 0 rgba(255,247,228,.55);
 }
-html:not(.reduced) .chip i{ animation:floaty 4.5s ease-in-out infinite; }
+.chip .body::before{
+  content:""; position:absolute; inset:0; border-radius:inherit;
+  background:repeating-linear-gradient(180deg, transparent 0 11px, rgba(148,80,62,.1) 11px 12px);
+}
+.chip .crown{
+  position:absolute; top:0; left:50%; width:38px; height:6px; transform:translateX(-50%);
+  background:#7d4a3e; border-radius:4px;
+}
+.chip .base{
+  position:absolute; bottom:18px; left:50%; width:50px; height:6px; transform:translateX(-50%);
+  background:#7d4a3e; border-radius:4px;
+}
+.chip .flame{
+  position:absolute; bottom:3px; left:50%; width:13px; height:13px; transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(circle, #fff 0%, #ffe9bd 45%, rgba(255,200,150,0) 75%);
+  box-shadow:0 0 22px 9px rgba(255,214,160,.75);
+}
+html:not(.reduced) .chip .flame{ animation:flick 2.8s ease-in-out infinite; }
 .tracer{ opacity:0; }
 html.reduced .tracer, html:not(.js-anim) .tracer{ display:none; }
 .pcaps{ position:absolute; left:0; right:0; bottom:11vh; bottom:11svh; text-align:center; padding:0 24px; pointer-events:none; }
@@ -311,15 +338,22 @@ html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:16p
 #day h2{ font-size:clamp(42px,6.6vw,72px); color:var(--moon); text-shadow:0 0 50px rgba(207,154,147,.35); }
 #day .sub{ font-family:var(--serif); font-style:italic; font-size:clamp(20px,2.8vw,27px); color:var(--moon-soft); margin-top:12px; }
 
+/* full-bleed beach band with the heading and detail cards overlaid on the graphic */
 .beach-frame{
-  max-width:1180px; margin:46px auto 0; padding:0 20px;
+  position:relative; width:100%; margin:0; padding:0; overflow:clip;
+  min-height:clamp(660px, 96vh, 960px);
+  display:flex; flex-direction:column; justify-content:space-between; align-items:center;
+  border-top:1px solid rgba(244,237,221,.12); border-bottom:1px solid rgba(244,237,221,.12);
 }
 .beach{
-  position:relative; height:64vh; height:64svh; min-height:440px; overflow:clip;
-  border-radius:20px; border:1px solid rgba(244,237,221,.18);
-  box-shadow:0 0 90px rgba(217,138,90,.18), var(--shadow);
+  position:absolute; inset:0; overflow:clip;
   background:linear-gradient(180deg, #3a2826 0%, #74454a 24%, #c4766a 40%, #eda173 47%, transparent 47%);
 }
+.beach-scrim{
+  position:absolute; inset:0; z-index:2; pointer-events:none;
+  background:linear-gradient(180deg, rgba(18,11,9,.5) 0%, rgba(18,11,9,.12) 20%, transparent 40%, transparent 52%, rgba(18,11,9,.4) 76%, rgba(18,11,9,.7) 100%);
+}
+#day .copy-center.day-head{ position:relative; z-index:3; padding:clamp(44px,7vh,88px) 24px 0; margin:0 auto; }
 .beach .sun{
   position:absolute; top:33%; left:50%; width:130px; height:130px; transform:translateX(-50%);
   border-radius:50%;
@@ -367,7 +401,7 @@ html.reduced .glints{ animation:none; }
 }
 @keyframes swash{ 0%,100%{ transform:translateY(0) scaleY(1); opacity:.7 } 50%{ transform:translateY(8px) scaleY(.7); opacity:.4 } }
 html.reduced .foam{ animation:none; }
-.beach svg.palm{ position:absolute; bottom:9%; left:4%; width:clamp(130px,20vw,230px); height:auto; color:#1d150f; }
+.beach svg.palm{ position:absolute; bottom:3%; left:-2%; width:clamp(200px,27vw,340px); height:auto; color:#1d150f; z-index:1; }
 .beach .palm .sway{ transform-origin:18% 96%; animation:sway 7s ease-in-out infinite alternate; }
 @keyframes sway{ from{ transform:rotate(-1.6deg) } to{ transform:rotate(1.8deg) } }
 html.reduced .palm .sway{ animation:none; }
@@ -375,7 +409,7 @@ html.reduced .palm .sway{ animation:none; }
 .beach svg.bird.b2{ width:22px; animation-duration:34s; animation-delay:-12s; }
 @keyframes fly{ from{ transform:translateX(-10vw) } 50%{ transform:translateX(38vw) translateY(-26px) } to{ transform:translateX(92vw) translateY(-8px) } }
 html.reduced svg.bird{ animation:none; left:60%; }
-.beach svg.guitar{ position:absolute; bottom:3%; right:13%; width:clamp(60px,8vw,96px); height:auto; color:#241a12; transform:rotate(-12deg); }
+.beach svg.guitar{ position:absolute; bottom:4%; right:2%; width:clamp(64px,8vw,104px); height:auto; color:#241a12; transform:rotate(-12deg); z-index:1; }
 .beach svg.shades{ position:absolute; bottom:8%; right:32%; width:clamp(32px,4vw,48px); height:auto; color:#1d1410; transform:rotate(9deg); }
 .beach .b-lan{
   position:absolute; width:16px; height:22px; border-radius:45% 45% 50% 50%/35% 35% 60% 60%;
@@ -385,21 +419,27 @@ html.reduced svg.bird{ animation:none; left:60%; }
 @keyframes b-rise{ from{ transform:translateY(40vh) scale(.7); opacity:0 } 12%{ opacity:1 } to{ transform:translateY(-30vh) scale(1); opacity:0 } }
 html.reduced .b-lan{ animation:none; opacity:.85; }
 
+/* cards overlaid on the lower beach — frosted warm glass instead of white */
 .dcards{
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px;
-  max-width:1180px; margin:0 auto; padding:clamp(36px,5vw,60px) 20px 0;
+  position:relative; z-index:3; width:100%; max-width:1040px; margin:0 auto;
+  display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
+  padding:0 clamp(16px,3vw,28px) clamp(92px,16vh,180px);
 }
+@media (max-width:860px){ .dcards{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:520px){ .dcards{ grid-template-columns:1fr; max-width:420px; } }
 .dcard{
-  background:var(--paper); color:var(--ink); border-radius:16px;
-  padding:32px 26px; text-align:center; position:relative; width:100%;
-  box-shadow:0 0 0 1px rgba(255,240,220,.12), 0 0 44px rgba(207,130,110,.14), var(--shadow-sm);
+  background:rgba(40,23,21,.42); color:var(--moon); border-radius:16px;
+  -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  border:1px solid rgba(255,226,192,.22);
+  padding:26px 22px; text-align:center; position:relative; width:100%;
+  box-shadow:0 20px 46px -20px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,240,220,.14);
 }
-.dcard::before{ content:""; position:absolute; top:0; left:24px; right:24px; height:2px; border-radius:2px; background:var(--sage-light); }
+.dcard::before{ content:""; position:absolute; top:0; left:24px; right:24px; height:2px; border-radius:2px; background:var(--gold-light); opacity:.85; }
 .dcard.rose::before{ background:var(--rose-light); }
-.dcard .k{ font-size:10px; font-weight:500; letter-spacing:.32em; text-transform:uppercase; color:var(--soft); }
-.dcard h3{ font-size:clamp(24px,2.7vw,30px); margin:10px 0 6px; color:var(--ink); }
-.dcard p{ font-size:13.5px; color:var(--soft); margin:0; line-height:1.75; }
-.dcard .big{ font-family:var(--serif); font-size:21px; color:var(--ink); }
+.dcard .k{ font-size:10px; font-weight:500; letter-spacing:.32em; text-transform:uppercase; color:var(--gold-light); }
+.dcard h3{ font-size:clamp(23px,2.7vw,30px); margin:10px 0 6px; color:var(--moon); }
+.dcard p{ font-size:13.5px; color:var(--moon-soft); margin:0; line-height:1.75; }
+.dcard .big{ font-family:var(--serif); font-size:21px; color:var(--ember); }
 
 /* ============================================================
    PIECES OF US — gallery
@@ -484,119 +524,125 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
 #world h2{ font-size:clamp(38px,5.8vw,62px); color:var(--moon); text-shadow:0 0 50px rgba(207,154,147,.3); }
 #world .head p{ color:var(--moon-soft); font-size:14px; margin-top:14px; }
 /* ------------------------------------------------------------------
-   Our World — an aged-paper chart glowing against the night. Pins are
-   scattered organically and a wandering golden route threads them in
-   order, 1 → 6 (the journey "Pieces of us" map, dressed for the dark).
+   Our World — a celestial flight-chart drawn on the night. Glowing
+   lantern-points are scattered across a dark sky-chart and a luminous
+   golden route threads them in order, 1 → 6.
    ------------------------------------------------------------------ */
 .world-map{
   position:relative; width:100%; max-width:940px; margin:0 auto;
   aspect-ratio:3 / 4.6; border-radius:16px; overflow:hidden;
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(255,253,247,.96), transparent 55%),
-    radial-gradient(70% 50% at 18% 22%, rgba(156,170,143,.14), transparent 70%),
-    radial-gradient(60% 45% at 84% 66%, rgba(207,154,147,.12), transparent 70%),
-    radial-gradient(140% 110% at 50% 110%, rgba(196,168,110,.16), transparent 60%),
-    linear-gradient(165deg, #fdfaf3 0%, #f6efdf 58%, #f1e7d3 100%);
-  border:1px solid rgba(216,188,130,.5);
-  box-shadow:0 30px 70px -20px rgba(0,0,0,.6), 0 0 70px rgba(207,130,110,.16), inset 0 0 80px rgba(140,105,60,.08);
+    radial-gradient(120% 80% at 50% 8%, rgba(58,42,44,.5), transparent 58%),
+    radial-gradient(90% 60% at 18% 26%, rgba(120,136,105,.12), transparent 68%),
+    radial-gradient(80% 60% at 84% 70%, rgba(207,130,110,.16), transparent 70%),
+    radial-gradient(140% 100% at 50% 112%, rgba(184,150,78,.16), transparent 60%),
+    linear-gradient(168deg, rgba(24,18,16,.72) 0%, rgba(14,10,9,.82) 100%);
+  border:1px solid rgba(216,188,130,.26);
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.7), 0 0 90px rgba(207,130,110,.12), inset 0 0 90px rgba(0,0,0,.45);
+  -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);
 }
-.world-map::before{ /* aged-paper grain */
-  content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.5;
+.world-map::before{ /* faint star dust */
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.7;
   background-image:
-    radial-gradient(rgba(120,95,60,.05) 1px, transparent 1.4px),
-    radial-gradient(rgba(120,95,60,.04) 1px, transparent 1.4px);
-  background-size:90px 90px, 57px 57px; background-position:0 0, 31px 47px;
+    radial-gradient(rgba(244,237,221,.55) .7px, transparent 1.3px),
+    radial-gradient(rgba(255,214,160,.4) .7px, transparent 1.3px);
+  background-size:62px 62px, 39px 41px; background-position:0 0, 21px 29px;
 }
-.world-map::after{ /* fine inner chart frame */
+.world-map::after{ /* fine inner chart frame, glowing gold hairline */
   content:""; position:absolute; inset:11px; z-index:0; pointer-events:none;
-  border:1px solid rgba(196,168,110,.4); border-radius:8px;
+  border:1px solid rgba(216,188,130,.16); border-radius:8px;
 }
 .map-decor{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
-.map-compass{ position:absolute; top:22px; right:22px; width:60px; z-index:1; pointer-events:none; opacity:.9; }
+.map-compass{ position:absolute; top:22px; right:22px; width:60px; z-index:1; pointer-events:none; opacity:.85; filter:drop-shadow(0 0 8px rgba(216,188,130,.35)); }
 .map-script{
   position:absolute; left:24px; bottom:16px; z-index:1; pointer-events:none;
-  font-family:var(--serif); font-style:italic; font-size:21px; color:#566848; opacity:.85;
+  font-family:var(--serif); font-style:italic; font-size:21px; color:rgba(244,237,221,.5);
+  text-shadow:0 0 14px rgba(0,0,0,.6);
 }
 .map-cartouche{
   position:absolute; top:13px; left:50%; transform:translateX(-50%); z-index:1; pointer-events:none;
-  text-align:center; padding:7px 20px 9px; border-radius:3px;
-  background:rgba(253,250,243,.92); border:1px solid rgba(196,168,110,.55);
-  box-shadow:inset 0 0 0 3px rgba(253,250,243,.9), inset 0 0 0 4px rgba(196,168,110,.35);
+  text-align:center; padding:7px 22px 9px; border-radius:3px;
+  background:rgba(18,13,11,.5); border:1px solid rgba(216,188,130,.4);
+  box-shadow:0 0 26px rgba(207,130,110,.18), inset 0 0 0 3px rgba(18,13,11,.45);
+  -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
 }
-.map-cartouche span{ display:block; font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:#8a6a4a; }
-.map-cartouche b{ font-family:var(--serif); font-size:20px; font-weight:500; color:var(--ink); line-height:1.15; }
+.map-cartouche span{ display:block; font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--gold-light); }
+.map-cartouche b{ font-family:var(--serif); font-size:20px; font-weight:500; color:var(--moon); line-height:1.15; }
 .map-legend{
   position:absolute; right:14px; bottom:14px; z-index:1; pointer-events:none;
   display:inline-flex; align-items:center; gap:6px;
-  font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#8a6a4a;
-  background:rgba(253,250,243,.88); border:1px solid rgba(196,168,110,.4); padding:6px 11px; border-radius:20px;
+  font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--moon-soft);
+  background:rgba(18,13,11,.5); border:1px solid rgba(216,188,130,.3); padding:6px 11px; border-radius:20px;
+  -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
 }
-.map-legend svg{ width:13px; height:13px; color:#9a7a39; }
+.map-legend svg{ width:13px; height:13px; color:var(--gold-light); }
 .map-sea{
   position:absolute; right:7%; bottom:21%; z-index:1; pointer-events:none; transform:rotate(-4deg);
-  font-family:var(--serif); font-style:italic; font-size:15px; letter-spacing:.28em; color:#a98e62; opacity:.75; white-space:nowrap;
+  font-family:var(--serif); font-style:italic; font-size:15px; letter-spacing:.28em; color:rgba(216,188,130,.5); white-space:nowrap;
+  text-shadow:0 0 12px rgba(0,0,0,.5);
 }
 .map-lines{ position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
-.map-lines .route-glow{ fill:none; stroke:rgba(216,184,106,.18); stroke-width:7; stroke-linecap:round; }
-.map-lines .route{ fill:none; stroke:#9a7a39; stroke-width:2.4; stroke-linecap:round; stroke-dasharray:.1 10.5; opacity:.62; }
-.route-plane{ color:#9a7a39; opacity:.92; }
+.map-lines .route-glow{ fill:none; stroke:rgba(255,205,150,.22); stroke-width:8; stroke-linecap:round; }
+.map-lines .route{ fill:none; stroke:var(--gold-light); stroke-width:2.4; stroke-linecap:round; stroke-dasharray:.1 10.5; opacity:.9; filter:drop-shadow(0 0 5px rgba(255,196,150,.6)); }
+.route-plane{ color:var(--ember); opacity:.95; filter:drop-shadow(0 0 6px rgba(255,196,150,.7)); }
 .map-pin{
   position:absolute; left:calc(var(--mx,50) * 1%); top:calc(var(--my,50) * 1%);
   transform:translate(-50%,-50%); z-index:2;
   appearance:none; background:none; border:none; cursor:pointer; padding:0;
-  display:flex; flex-direction:column; align-items:center; gap:7px; width:104px;
+  display:flex; flex-direction:column; align-items:center; gap:8px; width:104px;
   transition:transform .35s var(--ease);
 }
-.pin-dot{
+.pin-dot{ /* a glowing lantern-point in the night sky */
   position:relative; width:54px; height:54px; border-radius:50%; display:grid; place-items:center;
-  background:radial-gradient(circle at 36% 30%, #fffdf8 0%, #f8f2e5 70%, #f1e7d3 100%);
-  border:1px solid rgba(196,168,110,.6);
-  box-shadow:0 0 0 3px rgba(255,253,248,.9), 0 0 0 4px rgba(196,168,110,.42), 0 12px 26px rgba(80,60,40,.18);
+  background:radial-gradient(circle at 50% 44%, #fff4d6 0%, #ffd9a3 42%, rgba(255,176,120,.32) 74%, transparent 100%);
+  border:1px solid rgba(255,205,150,.5);
+  box-shadow:0 0 0 4px rgba(255,200,150,.07), 0 0 24px rgba(255,196,150,.5), 0 0 56px rgba(207,130,110,.32);
   transition:background .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease);
 }
-.pin-dot svg{ width:26px; height:26px; color:#566848; transition:color .35s var(--ease); }
+.pin-dot svg{ width:25px; height:25px; color:#4a2e26; transition:color .35s var(--ease); }
 .pin-dot::after{
-  content:""; position:absolute; inset:-8px; border-radius:50%;
-  border:1px solid rgba(184,150,78,.55); opacity:0; animation:pinpulse 3.8s var(--ease) infinite;
+  content:""; position:absolute; inset:-9px; border-radius:50%;
+  border:1px solid rgba(255,205,150,.5); opacity:0; animation:pinpulse 3.8s var(--ease) infinite;
 }
 .map-pin:nth-child(odd) .pin-dot::after{ animation-delay:1.2s; }
 .map-pin:nth-child(3n) .pin-dot::after{ animation-delay:2.2s; }
-@keyframes pinpulse{ 0%{ transform:scale(.82); opacity:.7; } 70%{ transform:scale(1.45); opacity:0; } 100%{ opacity:0; } }
+@keyframes pinpulse{ 0%{ transform:scale(.82); opacity:.7; } 70%{ transform:scale(1.5); opacity:0; } 100%{ opacity:0; } }
 .pin-num{
   position:absolute; top:-5px; right:-5px; width:19px; height:19px; border-radius:50%;
   display:grid; place-items:center; font-style:normal; font-family:var(--sans);
-  font-size:10px; font-weight:600; color:#fffdf8; background:#9a7a39; box-shadow:0 2px 6px rgba(80,60,40,.3);
+  font-size:10px; font-weight:600; color:var(--night-deep); background:var(--ember);
+  box-shadow:0 2px 7px rgba(0,0,0,.5), 0 0 12px rgba(255,196,150,.5);
 }
 .pin-label{
   font-family:var(--serif); font-style:italic; font-weight:500;
-  font-size:18px; line-height:1.1; color:var(--ink); white-space:nowrap;
-  text-shadow:0 1px 0 rgba(253,250,243,.95), 0 0 8px rgba(253,250,243,.95), 0 0 16px rgba(253,250,243,.85);
+  font-size:18px; line-height:1.1; color:var(--moon); white-space:nowrap;
+  text-shadow:0 2px 16px rgba(0,0,0,.9), 0 0 10px rgba(0,0,0,.7);
   transition:color .3s var(--ease);
 }
 .pin-place{
-  font-family:var(--serif); font-style:italic; font-size:12.5px; line-height:1; margin-top:-2px;
-  color:#8a6a4a; white-space:nowrap; text-shadow:0 1px 0 rgba(253,250,243,.95), 0 0 8px rgba(253,250,243,.9);
+  font-family:var(--serif); font-style:italic; font-size:12.5px; line-height:1; margin-top:-3px;
+  color:rgba(216,188,130,.82); white-space:nowrap; text-shadow:0 2px 14px rgba(0,0,0,.9), 0 0 8px rgba(0,0,0,.7);
 }
 .map-pin:nth-child(3n) .pin-label{ transform:rotate(-1.6deg); }
 .map-pin:nth-child(3n+1) .pin-label{ transform:rotate(1.3deg); }
 .map-pin:hover, .map-pin:focus-visible{ transform:translate(-50%,-50%) scale(1.06); outline:none; }
 .map-pin:hover .pin-dot, .map-pin:focus-visible .pin-dot{
-  background:radial-gradient(circle at 36% 30%, #d8a86f 0%, var(--rose) 78%);
-  box-shadow:0 0 0 3px rgba(255,253,248,.9), 0 0 0 4px rgba(148,90,82,.55), 0 16px 32px rgba(80,40,30,.3), 0 0 40px rgba(207,130,110,.45);
+  background:radial-gradient(circle at 50% 44%, #ffe9c4 0%, var(--rose-light) 48%, rgba(148,90,82,.4) 80%, transparent 100%);
+  box-shadow:0 0 0 4px rgba(255,200,150,.12), 0 0 34px rgba(255,196,150,.6), 0 0 70px rgba(207,130,110,.55);
   transform:translateY(-3px);
 }
-.map-pin:hover .pin-dot svg, .map-pin:focus-visible .pin-dot svg{ color:#fff; }
-.map-pin:hover .pin-label, .map-pin:focus-visible .pin-label{ color:var(--rose-deep); }
+.map-pin:hover .pin-dot svg, .map-pin:focus-visible .pin-dot svg{ color:#3a1f1b; }
+.map-pin:hover .pin-label, .map-pin:focus-visible .pin-label{ color:var(--ember); }
 .map-hint{ position:relative; text-align:center; margin:22px auto 0; font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--moon-faint); }
 @media (max-width:719px){
   .map-pin{ width:88px; }
   .pin-label{ font-size:15px; }
   .pin-place{ font-size:11.5px; }
   .pin-dot{ width:48px; height:48px; }
-  .pin-dot svg{ width:23px; height:23px; }
+  .pin-dot svg{ width:22px; height:22px; }
   .map-compass{ width:46px; top:18px; right:18px; }
   .map-script{ font-size:17px; left:18px; bottom:12px; }
-  .map-cartouche{ padding:5px 14px 7px; }
+  .map-cartouche{ padding:5px 16px 7px; }
   .map-cartouche span{ font-size:8px; } .map-cartouche b{ font-size:16px; }
   .map-sea{ font-size:12.5px; letter-spacing:.2em; }
   .map-legend{ display:none; }
@@ -892,15 +938,23 @@ footer a{ color:var(--sage-deep); }
 /* ============================================================
    MUSIC TOGGLE
    ============================================================ */
-#music-btn{
+.ctrls{
   position:fixed; right:18px; bottom:18px; z-index:50;
-  display:none; align-items:center; justify-content:center; width:46px; height:46px; padding:0;
+  display:flex; flex-direction:column; gap:12px; align-items:flex-end;
+  opacity:0; transform:translateY(10px); pointer-events:none;
+  transition:opacity .6s var(--ease), transform .6s var(--ease);
+}
+.ctrls.show{ opacity:1; transform:none; pointer-events:auto; }
+.ctrl-row{ display:flex; align-items:center; gap:10px; }
+.ctrl-btn{
+  display:inline-flex; align-items:center; justify-content:center; width:46px; height:46px; padding:0;
   border-radius:50%; border:1px solid rgba(244,237,221,.28);
   background:rgba(28,21,17,.62); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  color:var(--moon);
-  box-shadow:0 0 28px rgba(207,130,110,.2);
+  color:var(--moon); box-shadow:0 0 28px rgba(207,130,110,.2);
+  transition:border-color .3s var(--ease), box-shadow .3s var(--ease), color .3s var(--ease);
 }
-#music-btn.show{ display:inline-flex; }
+.ctrl-btn:hover{ border-color:rgba(255,205,150,.5); box-shadow:0 0 34px rgba(255,196,150,.34); }
+.ctrl-btn svg{ width:18px; height:18px; }
 #music-btn svg{ width:16px; height:16px; }
 #music-btn .eq{ display:none; gap:2.5px; align-items:flex-end; height:14px; }
 #music-btn .eq i{ width:2.5px; background:var(--ember); border-radius:2px; animation:eq 1s ease-in-out infinite; }
@@ -909,6 +963,18 @@ footer a{ color:var(--sage-deep); }
 #music-btn.playing .eq{ display:inline-flex; }
 #music-btn.playing .note{ display:none; }
 html.reduced #music-btn .eq i{ animation:none; }
+.as-pause{ display:none; }
+#autoscroll-btn.on{ color:var(--ember); border-color:rgba(255,205,150,.55); box-shadow:0 0 34px rgba(255,196,150,.4); }
+#autoscroll-btn.on .as-pause{ display:block; }
+#autoscroll-btn.on .as-play{ display:none; }
+.ctrl-hint{
+  font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--moon);
+  background:rgba(28,21,17,.72); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  border:1px solid rgba(244,237,221,.2); border-radius:999px; padding:7px 13px; white-space:nowrap;
+  opacity:0; transform:translateX(8px); pointer-events:none;
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
+.ctrls.hint-show .ctrl-hint{ opacity:1; transform:none; }
 
 /* ============================================================
    REDUCED MOTION — collapse cinematic sections
@@ -1025,12 +1091,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       </svg>
       <div id="merge-glow" class="scrub-hide" aria-hidden="true"></div>
 
-      <span class="chip scrub-hide" style="left:17%; top:76%"><i></i>Timing</span>
-      <span class="chip scrub-hide" style="left:82%; top:71%"><i></i>Courage</span>
-      <span class="chip scrub-hide" style="left:23%; top:55%"><i></i>Growth</span>
-      <span class="chip scrub-hide" style="left:76%; top:49%"><i></i>Laughter</span>
-      <span class="chip scrub-hide" style="left:38%; top:33%"><i></i>Trust</span>
-      <span class="chip scrub-hide" style="left:55%; top:15%"><i></i>Home</span>
+      <span class="chip scrub-hide" style="left:17%; top:76%"><span class="crown"></span><span class="body">Timing</span><span class="base"></span><span class="flame"></span></span>
+      <span class="chip scrub-hide" style="left:82%; top:71%"><span class="crown"></span><span class="body">Courage</span><span class="base"></span><span class="flame"></span></span>
+      <span class="chip scrub-hide" style="left:23%; top:55%"><span class="crown"></span><span class="body">Growth</span><span class="base"></span><span class="flame"></span></span>
+      <span class="chip scrub-hide" style="left:76%; top:49%"><span class="crown"></span><span class="body">Laughter</span><span class="base"></span><span class="flame"></span></span>
+      <span class="chip scrub-hide" style="left:38%; top:33%"><span class="crown"></span><span class="body">Trust</span><span class="base"></span><span class="flame"></span></span>
+      <span class="chip scrub-hide" style="left:55%; top:15%"><span class="crown"></span><span class="body">Home</span><span class="base"></span><span class="flame"></span></span>
 
       <div class="pcaps" aria-live="off">
         <p class="pcap scrub-hide">Some lights drift quietly.</p>
@@ -1055,12 +1121,6 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
   <!-- THE DAY -->
   <section id="day" aria-label="The Day — wedding details">
-    <div class="copy-center">
-      <span class="script-accent rv">where the sky meets the sea</span>
-      <h2 class="rv">The Day</h2>
-      <p class="sub rv">The journey continues here.</p>
-    </div>
-
     <div class="beach-frame rv">
       <div class="beach" aria-hidden="true">
         <div class="sun"></div>
@@ -1083,17 +1143,35 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
             <circle cx="112" cy="104" r="7"/><circle cx="124" cy="110" r="6"/><circle cx="104" cy="112" r="6"/>
           </g>
         </svg>
-        <svg class="guitar" viewBox="0 0 100 130" fill="currentColor">
-          <path d="M48 4h6l-2 50c10 1 18 6 22 15 6 13 0 28-10 35-12 8-28 6-37-4-8-9-9-22-3-32 4-7 11-11 19-12L45 4z" opacity=".9"/>
-          <circle cx="46" cy="86" r="9" fill="#8a6c54"/>
+        <svg class="guitar" viewBox="0 0 70 182" fill="currentColor">
+          <!-- headstock + tuning pegs -->
+          <path d="M29 3h12a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H29a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z"/>
+          <circle cx="25" cy="9" r="1.5"/><circle cx="25" cy="18" r="1.5"/><circle cx="45" cy="9" r="1.5"/><circle cx="45" cy="18" r="1.5"/>
+          <!-- neck -->
+          <rect x="31" y="23" width="8" height="70" rx="2.5"/>
+          <!-- body (figure-8 with a waist) -->
+          <path d="M35 90c-11 0-16 9-16 17 0 6-4 7-5 12-2 7-2 13 0 20 3 17 11 30 21 30s18-13 21-30c2-7 2-13 0-20-1-5-5-6-5-12 0-8-5-17-16-17z"/>
+          <!-- rosette + sound hole -->
+          <circle cx="35" cy="130" r="8" fill="#7c5a40"/>
+          <circle cx="35" cy="130" r="5" fill="#1a120c"/>
+          <!-- bridge -->
+          <rect x="28" y="145" width="14" height="4" rx="1.5" fill="#7c5a40"/>
+          <!-- strings -->
+          <g stroke="#d8b890" stroke-width=".5" opacity=".5"><path d="M33 24v122M35 24v122M37 24v122"/></g>
         </svg>
         <svg class="shades" viewBox="0 0 60 22" fill="none" stroke="currentColor" stroke-width="2.4">
           <circle cx="14" cy="13" r="8"/><circle cx="44" cy="13" r="8"/><path d="M22 12q7-5 14 0M2 8l4 2M58 8l-4 2" stroke-linecap="round"/>
         </svg>
       </div>
-    </div>
+      <div class="beach-scrim" aria-hidden="true"></div>
 
-    <div class="dcards">
+      <div class="copy-center day-head">
+        <span class="script-accent rv">where the sky meets the sea</span>
+        <h2 class="rv">The Day</h2>
+        <p class="sub rv">The journey continues here.</p>
+      </div>
+
+      <div class="dcards">
       <article class="dcard rv">
         <span class="k">Date</span>
         <h3>Sunday</h3>
@@ -1118,6 +1196,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <p class="big">Smart Formal</p>
         <p>Cream, sage, dusty rose, and soft neutrals</p>
       </article>
+      </div>
     </div>
   </section>
 
@@ -1183,7 +1262,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   </section>
 
   <!-- OUR WORLD -->
-  <section id="world" aria-label="Our world — wedding information">
+  <section id="world" aria-label="Our constellation — wedding information">
     <div class="map-bg" aria-hidden="true">
       <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
         <g fill="none" stroke="rgba(156,170,143,.3)" stroke-width="1">
@@ -1199,38 +1278,32 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       </svg>
     </div>
     <div class="head">
-      <span class="script-accent rv">chart your course</span>
-      <h2 class="rv">Our World</h2>
-      <p class="rv">Everything you need for the day, in order. Follow the lights, stop by stop.</p>
+      <span class="script-accent rv">chart your course by starlight</span>
+      <h2 class="rv">Our Constellation</h2>
+      <p class="rv">Everything you need for the day, written in the stars — follow the lantern, star to star.</p>
     </div>
     <div class="world-map rv" id="world-map">
-      <!-- decorative chart layer: contours, graticule, tiny terrain -->
+      <!-- decorative sky-chart layer: graticule, constellations, scattered stars -->
       <svg class="map-decor" aria-hidden="true" viewBox="0 0 1000 1300" preserveAspectRatio="none">
-        <g stroke="#9caa8f" fill="none" stroke-opacity=".34" vector-effect="non-scaling-stroke">
-          <path vector-effect="non-scaling-stroke" d="M120,260 C140,180 290,150 330,230 C370,310 270,380 190,350 C130,330 105,300 120,260 Z"/>
-          <path vector-effect="non-scaling-stroke" d="M165,265 C180,210 280,195 305,250 C330,305 260,345 205,325 C170,310 155,295 165,265 Z"/>
-          <path vector-effect="non-scaling-stroke" d="M205,265 C215,235 270,230 282,262 C292,290 250,308 222,296 C208,290 200,280 205,265 Z" fill="rgba(156,170,143,.07)"/>
-          <path vector-effect="non-scaling-stroke" d="M760,560 C800,480 940,490 960,580 C980,670 880,730 800,700 C745,680 735,615 760,560 Z"/>
-          <path vector-effect="non-scaling-stroke" d="M800,575 C828,520 910,530 925,590 C940,650 870,690 820,668 C785,652 782,615 800,575 Z"/>
-          <path vector-effect="non-scaling-stroke" d="M180,1020 C200,950 330,940 360,1010 C390,1080 300,1140 225,1115 C175,1098 162,1060 180,1020 Z"/>
-          <path vector-effect="non-scaling-stroke" d="M222,1025 C238,980 320,975 338,1022 C355,1068 295,1105 245,1086 C215,1074 210,1052 222,1025 Z"/>
+        <g stroke="#d8bc82" stroke-opacity=".1" vector-effect="non-scaling-stroke">
+          <path vector-effect="non-scaling-stroke" stroke-dasharray="2 14" d="M0,330 H1000 M0,650 H1000 M0,975 H1000"/>
+          <path vector-effect="non-scaling-stroke" stroke-dasharray="2 14" d="M250,0 V1300 M500,0 V1300 M750,0 V1300"/>
         </g>
-        <g stroke="#7a6446" stroke-opacity=".14" vector-effect="non-scaling-stroke">
-          <path vector-effect="non-scaling-stroke" stroke-dasharray="2 12" d="M0,330 H1000 M0,650 H1000 M0,975 H1000"/>
-          <path vector-effect="non-scaling-stroke" stroke-dasharray="2 12" d="M250,0 V1300 M500,0 V1300 M750,0 V1300"/>
+        <g stroke="rgba(244,237,221,.2)" fill="none" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke">
+          <path vector-effect="non-scaling-stroke" d="M150,200 L260,150 L340,250 L300,360 L190,330 Z"/>
+          <path vector-effect="non-scaling-stroke" d="M720,520 L820,470 L900,560 L840,650 L740,620"/>
+          <path vector-effect="non-scaling-stroke" d="M200,980 L300,930 L380,1010 L320,1110"/>
         </g>
-        <g stroke="#b8964e" stroke-opacity=".32" stroke-linecap="round" vector-effect="non-scaling-stroke">
-          <path vector-effect="non-scaling-stroke" d="M520,180 h16 M528,172 v16"/>
-          <path vector-effect="non-scaling-stroke" d="M120,620 h16 M128,612 v16"/>
-          <path vector-effect="non-scaling-stroke" d="M880,930 h16 M888,922 v16"/>
+        <g fill="#fff6e2">
+          <circle cx="150" cy="200" r="2.4"/><circle cx="260" cy="150" r="2.8"/><circle cx="340" cy="250" r="2.2"/><circle cx="300" cy="360" r="2.6"/><circle cx="190" cy="330" r="2.2"/>
+          <circle cx="720" cy="520" r="2.6"/><circle cx="820" cy="470" r="2.2"/><circle cx="900" cy="560" r="2.8"/><circle cx="840" cy="650" r="2.2"/><circle cx="740" cy="620" r="2.4"/>
+          <circle cx="200" cy="980" r="2.4"/><circle cx="300" cy="930" r="2.8"/><circle cx="380" cy="1010" r="2.2"/><circle cx="320" cy="1110" r="2.6"/>
         </g>
-        <g stroke="#8a936f" fill="none" stroke-opacity=".4" stroke-linecap="round" stroke-linejoin="round">
-          <path vector-effect="non-scaling-stroke" d="M600,260 l13,-20 9,13 7,-10 12,17"/>
-          <path vector-effect="non-scaling-stroke" d="M150,790 l12,-18 8,12 6,-9 11,15"/>
-        </g>
-        <g stroke="#a98e62" fill="none" stroke-opacity=".4" stroke-linecap="round">
-          <path vector-effect="non-scaling-stroke" d="M730,1130 q9,-7 18,0 q9,7 18,0"/>
-          <path vector-effect="non-scaling-stroke" d="M700,1200 q9,-7 18,0 q9,7 18,0"/>
+        <g fill="#f4eddd">
+          <circle cx="500" cy="120" r="1.4" opacity=".7"/><circle cx="620" cy="240" r="1" opacity=".5"/><circle cx="880" cy="180" r="1.6" opacity=".8"/>
+          <circle cx="430" cy="520" r="1.2" opacity=".6"/><circle cx="560" cy="640" r="1" opacity=".5"/><circle cx="120" cy="540" r="1.5" opacity=".7"/>
+          <circle cx="660" cy="860" r="1.3" opacity=".6"/><circle cx="500" cy="1020" r="1" opacity=".5"/><circle cx="860" cy="980" r="1.5" opacity=".7"/>
+          <circle cx="620" cy="1180" r="1.2" opacity=".6"/><circle cx="160" cy="760" r="1" opacity=".5"/><circle cx="940" cy="720" r="1.3" opacity=".6"/>
         </g>
       </svg>
       <svg class="map-compass" aria-hidden="true" viewBox="0 0 64 64">
@@ -1240,23 +1313,27 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <path d="M32,58 L36,34 L28,34 Z" fill="#b8964e" fill-opacity=".3"/>
         <path d="M8,34 L32,30 L32,38 Z" fill="#b8964e" fill-opacity=".3"/>
         <path d="M56,34 L32,30 L32,38 Z" fill="#b8964e" fill-opacity=".3"/>
-        <text x="32" y="7.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="11" fill="#945a52">N</text>
+        <text x="32" y="7.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="11" fill="#d8bc82">N</text>
       </svg>
-      <div class="map-script" aria-hidden="true">our little world</div>
-      <div class="map-cartouche" aria-hidden="true"><span>The World of</span><b>T &amp; J</b></div>
-      <div class="map-legend" aria-hidden="true"><svg aria-hidden="true"><use href="#ic-plane"/></svg> our route &middot; tap a marker</div>
-      <div class="map-sea" aria-hidden="true">Sea of Someday</div>
+      <div class="map-script" aria-hidden="true">our little sky</div>
+      <div class="map-cartouche" aria-hidden="true"><span>The Sky of</span><b>T &amp; J</b></div>
+      <div class="map-legend" aria-hidden="true"><svg aria-hidden="true"><use href="#ic-plane"/></svg> the lantern&rsquo;s path &middot; tap a star</div>
+      <div class="map-sea" aria-hidden="true">a sky of someday</div>
       <svg class="map-lines" id="map-lines" aria-hidden="true" preserveAspectRatio="none">
         <path class="route-glow" d="" />
         <path class="route" d="" />
-        <g class="route-plane" id="route-plane" style="display:none"><use href="#ic-plane" width="20" height="20" x="-10" y="-10"/></g>
+        <g class="route-plane" id="route-plane" style="display:none">
+          <ellipse cx="0" cy="-9" rx="3" ry="1.3" fill="#9a7a39"/>
+          <path d="M-6 0 C-6 -5 6 -5 6 0 C6 5 4 9 0 9 C-4 9 -6 5 -6 0 Z" fill="#ffd9a3"/>
+          <circle cx="0" cy="5.4" r="1.5" fill="#fff3d2"/>
+        </g>
       </svg>
-      <button class="map-pin" type="button" data-panel="p-itinerary" style="--mx:26;--my:12;--x:12;--y:32" aria-label="Stop 1, Hourglass Bay: itinerary"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-clock"/></svg><i class="pin-num">1</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Hourglass Bay</span></button>
-      <button class="map-pin" type="button" data-panel="p-directions" style="--mx:68;--my:24;--x:30;--y:64" aria-label="Stop 2, Wayfarer's Cross: directions"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-pin"/></svg><i class="pin-num">2</i></span><span class="pin-label">Directions</span><span class="pin-place">Wayfarer&rsquo;s Cross</span></button>
-      <button class="map-pin" type="button" data-panel="p-attire" style="--mx:30;--my:40;--x:46;--y:26" aria-label="Stop 3, Linen Shores: attire guide"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><i class="pin-num">3</i></span><span class="pin-label">Attire Guide</span><span class="pin-place">Linen Shores</span></button>
-      <button class="map-pin" type="button" data-panel="p-entourage" style="--mx:70;--my:56;--x:62;--y:66" aria-label="Stop 4, Company Cove: entourage"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-users"/></svg><i class="pin-num">4</i></span><span class="pin-label">Entourage</span><span class="pin-place">Company Cove</span></button>
-      <button class="map-pin" type="button" data-panel="p-gift" style="--mx:32;--my:72;--x:80;--y:30" aria-label="Stop 5, Cape of Beginnings: gift fund"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-gift"/></svg><i class="pin-num">5</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">Cape of Beginnings</span></button>
-      <button class="map-pin" type="button" data-panel="p-faq" style="--mx:66;--my:86;--x:90;--y:68" aria-label="Stop 6, Lantern Light: FAQ and contact"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-help"/></svg><i class="pin-num">6</i></span><span class="pin-label">FAQ &amp; Contact</span><span class="pin-place">Lantern Light</span></button>
+      <button class="map-pin" type="button" data-panel="p-itinerary" style="--mx:42;--my:11;--x:12;--y:62" aria-label="Stop 1, Hourglass Bay: itinerary"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-clock"/></svg><i class="pin-num">1</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Hourglass Bay</span></button>
+      <button class="map-pin" type="button" data-panel="p-directions" style="--mx:58;--my:26;--x:30;--y:44" aria-label="Stop 2, Wayfarer's Cross: directions"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-pin"/></svg><i class="pin-num">2</i></span><span class="pin-label">Directions</span><span class="pin-place">Wayfarer&rsquo;s Cross</span></button>
+      <button class="map-pin" type="button" data-panel="p-attire" style="--mx:44;--my:41;--x:47;--y:35" aria-label="Stop 3, Linen Shores: attire guide"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><i class="pin-num">3</i></span><span class="pin-label">Attire Guide</span><span class="pin-place">Linen Shores</span></button>
+      <button class="map-pin" type="button" data-panel="p-entourage" style="--mx:60;--my:56;--x:63;--y:35" aria-label="Stop 4, Company Cove: entourage"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-users"/></svg><i class="pin-num">4</i></span><span class="pin-label">Entourage</span><span class="pin-place">Company Cove</span></button>
+      <button class="map-pin" type="button" data-panel="p-gift" style="--mx:44;--my:71;--x:79;--y:45" aria-label="Stop 5, Cape of Beginnings: gift fund"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-gift"/></svg><i class="pin-num">5</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">Cape of Beginnings</span></button>
+      <button class="map-pin" type="button" data-panel="p-faq" style="--mx:57;--my:87;--x:89;--y:62" aria-label="Stop 6, Lantern Light: FAQ and contact"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-help"/></svg><i class="pin-num">6</i></span><span class="pin-label">FAQ &amp; Contact</span><span class="pin-place">Lantern Light</span></button>
     </div>
     <p class="map-hint rv">Follow stops 1&ndash;6 &middot; tap any marker</p>
   </section>
@@ -1562,13 +1639,25 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 </dialog>
 
 <audio id="ambient" loop preload="none" src="audio/enchanting-romantic-lofi.mp3"></audio>
-<button id="music-btn" type="button" aria-pressed="false" aria-label="Play ambient music">
-  <svg class="note" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M9 18V6l9-2v12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="6.8" cy="18" r="2.4" fill="currentColor"/><circle cx="15.8" cy="16" r="2.4" fill="currentColor"/>
-  </svg>
-  <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
-</button>
+<div id="ctrls" class="ctrls">
+  <div class="ctrl-row">
+    <span class="ctrl-hint">Play the story</span>
+    <button id="autoscroll-btn" class="ctrl-btn" type="button" aria-pressed="false" aria-label="Auto-scroll the story">
+      <svg class="as-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5l6 6 6-6M6 13l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="as-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="5.5" width="3.6" height="13" rx="1.3" fill="currentColor"/><rect x="13.4" y="5.5" width="3.6" height="13" rx="1.3" fill="currentColor"/></svg>
+    </button>
+  </div>
+  <div class="ctrl-row">
+    <span class="ctrl-hint">Ambient music</span>
+    <button id="music-btn" class="ctrl-btn" type="button" aria-pressed="false" aria-label="Play ambient music">
+      <svg class="note" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 18V6l9-2v12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="6.8" cy="18" r="2.4" fill="currentColor"/><circle cx="15.8" cy="16" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+    </button>
+  </div>
+</div>
 
 <!-- ============================================================
      SCRIPTS
@@ -1606,18 +1695,16 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     var W = 0, H = 0;
     var lanterns = [], stars = [];
     var lift = 0;                 // liftoff boost (decays to 0)
-    var shoot = null, nextShoot = 6000;
+    var shoot = null, nextShoot = 1600;
     var px = 0, py = 0, tx = 0, ty = 0;   // pointer parallax
     var running = false;
 
     /* sky color keyframes across full document scroll: warm champagne dusk → deep
        espresso night. Red >= green >= blue at every stop keeps it warm, never violet. */
     var STOPS = [
-      { p: 0.00, top: [31, 21, 22],  mid: [60, 37, 33],   bot: [96, 65, 46],   horizon: 0.32 },
-      { p: 0.22, top: [22, 16, 16],  mid: [42, 28, 25],   bot: [68, 45, 35],   horizon: 0.18 },
-      { p: 0.50, top: [17, 12, 12],  mid: [30, 21, 19],   bot: [46, 32, 27],   horizon: 0.10 },
-      { p: 0.80, top: [13, 9, 9],    mid: [20, 15, 14],   bot: [30, 22, 19],   horizon: 0.06 },
-      { p: 1.00, top: [10, 8, 7],    mid: [15, 11, 11],   bot: [23, 17, 15],   horizon: 0.04 }
+      { p: 0.00, top: [12, 10, 9],   mid: [17, 13, 12],   bot: [23, 18, 15],   horizon: 0.06 },
+      { p: 0.50, top: [10, 8, 7],    mid: [14, 11, 10],   bot: [20, 15, 13],   horizon: 0.04 },
+      { p: 1.00, top: [8, 6, 6],     mid: [12, 9, 9],     bot: [17, 13, 11],   horizon: 0.03 }
     ];
     function lerp(a, b, t) { return a + (b - a) * t; }
     function mix(c1, c2, t) {
@@ -1702,9 +1789,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         var r = Math.random();
         lanterns.push(spawn(r < 0.55 ? 0 : r < 0.88 ? 1 : 2, false));
       }
-      var ns = Math.round(area / 14000) + 50;
+      var ns = Math.round(area / 6500) + 120;
       for (var j = 0; j < ns; j++) {
-        stars.push({ x: Math.random() * W, y: Math.random() * H * 0.8, r: (0.5 + Math.random() * 1.1) * DPR, tw: Math.random() * Math.PI * 2, sp: 0.4 + Math.random() * 1.1 });
+        stars.push({ x: Math.random() * W, y: Math.random() * H * 0.92, r: (0.35 + Math.random() * 1.15) * DPR, tw: Math.random() * Math.PI * 2, sp: 0.4 + Math.random() * 1.1 });
       }
     }
 
@@ -1765,8 +1852,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       } else if (!REDUCED) {
         nextShoot -= dt;
         if (nextShoot <= 0) {
-          nextShoot = 9000 + Math.random() * 10000;
-          shoot = { x: W * (0.15 + Math.random() * 0.7), y: H * (0.05 + Math.random() * 0.25), vx: (Math.random() < 0.5 ? -1 : 1) * (W * 0.4), vy: H * 0.12, life: 900 };
+          nextShoot = 2200 + Math.random() * 3200;
+          shoot = { x: W * (0.1 + Math.random() * 0.8), y: H * (0.04 + Math.random() * 0.34), vx: (Math.random() < 0.5 ? -1 : 1) * (W * (0.34 + Math.random() * 0.22)), vy: H * (0.1 + Math.random() * 0.08), life: 850 + Math.random() * 300 };
         }
       }
       /* pointer parallax easing */
@@ -1835,7 +1922,62 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     };
   })();
 
-  /* ---------- ambient music ---------- */
+  /* ---------- experience controls (auto-scroll + ambient music) ---------- */
+  var ctrls = $('ctrls');
+
+  /* one-time hint labels beside the buttons, shown just after the welcome */
+  var hintTimer = 0;
+  function showHints(delay) {
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(function () {
+      ctrls.classList.add('hint-show');
+      hintTimer = setTimeout(hideHints, 5200);
+    }, delay);
+  }
+  function hideHints() { clearTimeout(hintTimer); ctrls.classList.remove('hint-show'); }
+
+  /* auto-scroll the story — time-based so the pace is the same on any display */
+  var autoBtn = $('autoscroll-btn');
+  var rootEl = document.documentElement;
+  var autoOn = false, autoRAF = 0, autoLastTs = 0, AUTO_PPS = 150; /* px per second */
+  function autoStep(ts) {
+    if (!autoOn) return;
+    if (!autoLastTs) autoLastTs = ts;
+    var dt = Math.min(0.05, (ts - autoLastTs) / 1000); autoLastTs = ts;
+    var max = rootEl.scrollHeight - window.innerHeight;
+    if (window.scrollY >= max - 2) { stopAuto(); return; }
+    var next = window.scrollY + AUTO_PPS * dt;
+    /* Lenis (desktop) drives the scroll itself; on touch we scroll natively —
+       scroll-behavior is forced to auto below so each frame applies instantly. */
+    if (window.__lenis) window.__lenis.scrollTo(next, { immediate: true }); else window.scrollTo(0, next);
+    autoRAF = requestAnimationFrame(autoStep);
+  }
+  function onUserScroll() { stopAuto(); }
+  function bindCancel(add) {
+    /* touchstart, not touchmove: a finger on the screen takes back control, and
+       it can't be tripped by a stray move during the button tap itself */
+    ['wheel', 'touchstart', 'keydown'].forEach(function (ev) {
+      if (add) window.addEventListener(ev, onUserScroll, { passive: true });
+      else window.removeEventListener(ev, onUserScroll);
+    });
+  }
+  function startAuto() {
+    if (autoOn) return;
+    autoOn = true; autoLastTs = 0;
+    autoBtn.classList.add('on'); autoBtn.setAttribute('aria-pressed', 'true');
+    rootEl.style.scrollBehavior = 'auto';
+    autoRAF = requestAnimationFrame(autoStep);
+    /* attach cancel handlers a beat later so the starting tap doesn't kill it */
+    setTimeout(function () { if (autoOn) bindCancel(true); }, 500);
+  }
+  function stopAuto() {
+    if (!autoOn) return;
+    autoOn = false; autoBtn.classList.remove('on'); autoBtn.setAttribute('aria-pressed', 'false');
+    cancelAnimationFrame(autoRAF); bindCancel(false); rootEl.style.scrollBehavior = '';
+  }
+  autoBtn.addEventListener('click', function () { hideHints(); autoOn ? stopAuto() : startAuto(); });
+
+  /* ambient music */
   var audio = $('ambient'), musicBtn = $('music-btn');
   function setMusicState(on) {
     musicBtn.classList.toggle('playing', on);
@@ -1849,9 +1991,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     } catch (e) { /* fail silently */ }
   }
   musicBtn.addEventListener('click', function () {
+    hideHints();
     if (audio.paused) { startMusic(); } else { audio.pause(); setMusicState(false); }
   });
-  audio.addEventListener('error', function () { musicBtn.classList.remove('show'); }, true);
+  audio.addEventListener('error', function () { var r = musicBtn.closest('.ctrl-row'); if (r) r.style.display = 'none'; }, true);
 
   /* ---------- Lenis smooth scroll ---------- */
   var lenisStarted = false;
@@ -1944,10 +2087,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       try { len = route.getTotalLength(); } catch (e) {}
       if (len > 0) {
         var p = route.getPointAtLength(prog * len);
-        var q = route.getPointAtLength(Math.min(len, prog * len + 2));
-        var ang = Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI;
         plane.style.display = '';
-        plane.setAttribute('transform', 'translate(' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) + ') rotate(' + (ang + 90).toFixed(1) + ')');
+        /* a lantern drifts the route — stays upright (no heading rotation) */
+        plane.setAttribute('transform', 'translate(' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) + ')');
       }
       requestAnimationFrame(fly);
     }
@@ -2138,7 +2280,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     function unlock(skipAnimations) {
       try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
       document.body.classList.remove('gated');
-      musicBtn.classList.add('show');
+      ctrls.classList.add('show');
+      showHints(skipAnimations ? 700 : 1700);
       initLenis();
       if (skipAnimations || !ANIM) {
         gate.remove();
