@@ -251,11 +251,11 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
    with the word lit inside where the monogram sits. */
 .chip{
   position:absolute; transform:translate(-50%,-50%);
-  width:116px; height:158px; pointer-events:none;
+  width:90px; height:120px; pointer-events:none;
 }
 .chip .body{
-  position:absolute; inset:6px 10px 27px 10px;
-  display:flex; align-items:center; justify-content:center; text-align:center; padding:0 6px;
+  position:absolute; inset:5px 8px 21px 8px;
+  display:flex; align-items:center; justify-content:center; text-align:center; padding:0 4px;
   border-radius:32% 32% 38% 38% / 24% 24% 46% 46%;
   border:1px solid rgba(148,90,82,.4);
   background:radial-gradient(60% 48% at 50% 62%, #fff3da, #f6d8ae 52%, #d99a6c 100%);
@@ -265,7 +265,7 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
     0 0 170px 56px rgba(178,96,90,.16),
     inset 0 -10px 22px rgba(148,70,52,.35),
     inset 0 6px 10px rgba(255,255,255,.55);
-  font-family:var(--sans); font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  font-family:var(--sans); font-size:8.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
   color:#7a3f30; text-shadow:0 1px 0 rgba(255,247,228,.55);
 }
 .chip .body::before{
@@ -273,15 +273,15 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
   background:repeating-linear-gradient(180deg, transparent 0 11px, rgba(148,80,62,.1) 11px 12px);
 }
 .chip .crown{
-  position:absolute; top:0; left:50%; width:38px; height:6px; transform:translateX(-50%);
+  position:absolute; top:0; left:50%; width:30px; height:5px; transform:translateX(-50%);
   background:#7d4a3e; border-radius:4px;
 }
 .chip .base{
-  position:absolute; bottom:18px; left:50%; width:50px; height:6px; transform:translateX(-50%);
+  position:absolute; bottom:14px; left:50%; width:40px; height:5px; transform:translateX(-50%);
   background:#7d4a3e; border-radius:4px;
 }
 .chip .flame{
-  position:absolute; bottom:3px; left:50%; width:13px; height:13px; transform:translateX(-50%);
+  position:absolute; bottom:2px; left:50%; width:11px; height:11px; transform:translateX(-50%);
   border-radius:50%;
   background:radial-gradient(circle, #fff 0%, #ffe9bd 45%, rgba(255,200,150,0) 75%);
   box-shadow:0 0 22px 9px rgba(255,214,160,.75);
@@ -505,6 +505,7 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
   font-size:18px; color:var(--soft);
 }
 .lb-nav{ position:absolute; bottom:8px; right:12px; display:flex; gap:6px; }
+.lb.solo .lb-nav{ display:none; } /* standalone image (e.g. attire guide) — no gallery arrows */
 .lb-nav button, .panel-close{
   width:44px; height:44px; border-radius:50%; border:1px solid var(--line);
   background:var(--paper); color:var(--ink); font-size:18px; line-height:1;
@@ -553,6 +554,13 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
   border:1px solid rgba(216,188,130,.16); border-radius:8px;
 }
 .map-decor{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+/* the couple's zodiac constellations, sketched faintly on the chart */
+.map-const{ position:absolute; z-index:0; pointer-events:none; }
+.const-gem{ top:7%; left:4%; width:clamp(86px,15%,150px); }
+.const-lib{ bottom:9%; right:4%; width:clamp(78px,13%,128px); }
+.map-const .cline{ fill:none; stroke:rgba(244,237,221,.26); stroke-width:1; stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+.map-const .cstar{ fill:#fff6e2; }
+.map-const .cname{ font-family:var(--serif); font-style:italic; fill:rgba(216,188,130,.6); }
 .map-compass{ position:absolute; top:22px; right:22px; width:60px; z-index:1; pointer-events:none; opacity:.85; filter:drop-shadow(0 0 8px rgba(216,188,130,.35)); }
 .map-script{
   position:absolute; left:24px; bottom:16px; z-index:1; pointer-events:none;
@@ -635,16 +643,17 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
 .map-pin:hover .pin-label, .map-pin:focus-visible .pin-label{ color:var(--ember); }
 .map-hint{ position:relative; text-align:center; margin:22px auto 0; font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--moon-faint); }
 @media (max-width:719px){
-  .map-pin{ width:88px; }
-  .pin-label{ font-size:15px; }
-  .pin-place{ font-size:11.5px; }
-  .pin-dot{ width:48px; height:48px; }
-  .pin-dot svg{ width:22px; height:22px; }
-  .map-compass{ width:46px; top:18px; right:18px; }
-  .map-script{ font-size:17px; left:18px; bottom:12px; }
-  .map-cartouche{ padding:5px 16px 7px; }
-  .map-cartouche span{ font-size:8px; } .map-cartouche b{ font-size:16px; }
-  .map-sea{ font-size:12.5px; letter-spacing:.2em; }
+  .world-map{ aspect-ratio:3 / 5.4; }   /* taller on phones so stops don't crowd */
+  .map-pin{ width:78px; gap:6px; }
+  .pin-label{ font-size:13.5px; }
+  .pin-place{ font-size:10.5px; }
+  .pin-dot{ width:44px; height:44px; }
+  .pin-dot svg{ width:20px; height:20px; }
+  .map-compass{ width:42px; top:16px; right:16px; }
+  .map-script{ font-size:15px; left:16px; bottom:10px; }
+  .map-cartouche{ padding:5px 14px 7px; }
+  .map-cartouche span{ font-size:8px; } .map-cartouche b{ font-size:15px; }
+  .map-sea{ font-size:11.5px; letter-spacing:.18em; }
   .map-legend{ display:none; }
 }
 @media (min-width:720px){
@@ -1306,6 +1315,23 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           <circle cx="620" cy="1180" r="1.2" opacity=".6"/><circle cx="160" cy="760" r="1" opacity=".5"/><circle cx="940" cy="720" r="1.3" opacity=".6"/>
         </g>
       </svg>
+      <!-- the couple's zodiac constellations -->
+      <svg class="map-const const-gem" aria-hidden="true" viewBox="0 0 120 178">
+        <path class="cline" d="M38,18 L82,26 M38,18 L46,62 L42,108 L26,158 M42,108 L52,150 M82,26 L88,68 L92,114 L74,160 M92,114 L104,152 M46,62 L88,68"/>
+        <g class="cstar">
+          <circle cx="38" cy="18" r="3"/><circle cx="82" cy="26" r="3"/>
+          <circle cx="46" cy="62" r="2.2"/><circle cx="42" cy="108" r="2.2"/><circle cx="26" cy="158" r="2"/><circle cx="52" cy="150" r="2"/>
+          <circle cx="88" cy="68" r="2.2"/><circle cx="92" cy="114" r="2.2"/><circle cx="74" cy="160" r="2"/><circle cx="104" cy="152" r="2"/>
+        </g>
+        <text class="cname" x="60" y="176" text-anchor="middle" font-size="13">Gemini</text>
+      </svg>
+      <svg class="map-const const-lib" aria-hidden="true" viewBox="0 0 120 128">
+        <path class="cline" d="M58,16 L24,52 L56,88 L94,46 L58,16 M24,52 L18,98 M94,46 L100,86"/>
+        <g class="cstar">
+          <circle cx="58" cy="16" r="3"/><circle cx="24" cy="52" r="2.4"/><circle cx="94" cy="46" r="2.4"/><circle cx="56" cy="88" r="2.2"/><circle cx="18" cy="98" r="2"/><circle cx="100" cy="86" r="2"/>
+        </g>
+        <text class="cname" x="60" y="122" text-anchor="middle" font-size="13">Libra</text>
+      </svg>
       <svg class="map-compass" aria-hidden="true" viewBox="0 0 64 64">
         <circle cx="32" cy="34" r="26" fill="none" stroke="#b8964e" stroke-opacity=".55"/>
         <circle cx="32" cy="34" r="2.2" fill="#b8964e"/>
@@ -1328,12 +1354,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           <circle cx="0" cy="5.4" r="1.5" fill="#fff3d2"/>
         </g>
       </svg>
-      <button class="map-pin" type="button" data-panel="p-itinerary" style="--mx:42;--my:11;--x:12;--y:62" aria-label="Stop 1, Hourglass Bay: itinerary"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-clock"/></svg><i class="pin-num">1</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Hourglass Bay</span></button>
-      <button class="map-pin" type="button" data-panel="p-directions" style="--mx:58;--my:26;--x:30;--y:44" aria-label="Stop 2, Wayfarer's Cross: directions"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-pin"/></svg><i class="pin-num">2</i></span><span class="pin-label">Directions</span><span class="pin-place">Wayfarer&rsquo;s Cross</span></button>
-      <button class="map-pin" type="button" data-panel="p-attire" style="--mx:44;--my:41;--x:47;--y:35" aria-label="Stop 3, Linen Shores: attire guide"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><i class="pin-num">3</i></span><span class="pin-label">Attire Guide</span><span class="pin-place">Linen Shores</span></button>
-      <button class="map-pin" type="button" data-panel="p-entourage" style="--mx:60;--my:56;--x:63;--y:35" aria-label="Stop 4, Company Cove: entourage"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-users"/></svg><i class="pin-num">4</i></span><span class="pin-label">Entourage</span><span class="pin-place">Company Cove</span></button>
-      <button class="map-pin" type="button" data-panel="p-gift" style="--mx:44;--my:71;--x:79;--y:45" aria-label="Stop 5, Cape of Beginnings: gift fund"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-gift"/></svg><i class="pin-num">5</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">Cape of Beginnings</span></button>
-      <button class="map-pin" type="button" data-panel="p-faq" style="--mx:57;--my:87;--x:89;--y:62" aria-label="Stop 6, Lantern Light: FAQ and contact"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-help"/></svg><i class="pin-num">6</i></span><span class="pin-label">FAQ &amp; Contact</span><span class="pin-place">Lantern Light</span></button>
+      <button class="map-pin" type="button" data-panel="p-itinerary" style="--mx:29;--my:9;--x:12;--y:62" aria-label="Stop 1, Hourglass Bay: itinerary"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-clock"/></svg><i class="pin-num">1</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Hourglass Bay</span></button>
+      <button class="map-pin" type="button" data-panel="p-directions" style="--mx:71;--my:23;--x:30;--y:44" aria-label="Stop 2, Wayfarer's Cross: directions"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-pin"/></svg><i class="pin-num">2</i></span><span class="pin-label">Directions</span><span class="pin-place">Wayfarer&rsquo;s Cross</span></button>
+      <button class="map-pin" type="button" data-panel="p-attire" style="--mx:29;--my:40;--x:47;--y:35" aria-label="Stop 3, Linen Shores: attire guide"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><i class="pin-num">3</i></span><span class="pin-label">Attire Guide</span><span class="pin-place">Linen Shores</span></button>
+      <button class="map-pin" type="button" data-panel="p-entourage" style="--mx:71;--my:55;--x:63;--y:35" aria-label="Stop 4, Company Cove: entourage"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-users"/></svg><i class="pin-num">4</i></span><span class="pin-label">Entourage</span><span class="pin-place">Company Cove</span></button>
+      <button class="map-pin" type="button" data-panel="p-gift" style="--mx:29;--my:70;--x:79;--y:45" aria-label="Stop 5, Cape of Beginnings: gift fund"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-gift"/></svg><i class="pin-num">5</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">Cape of Beginnings</span></button>
+      <button class="map-pin" type="button" data-panel="p-faq" style="--mx:70;--my:86;--x:89;--y:62" aria-label="Stop 6, Lantern Light: FAQ and contact"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-help"/></svg><i class="pin-num">6</i></span><span class="pin-label">FAQ &amp; Contact</span><span class="pin-place">Lantern Light</span></button>
     </div>
     <p class="map-hint rv">Follow stops 1&ndash;6 &middot; tap any marker</p>
   </section>
@@ -2169,6 +2195,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     tiles.forEach(function (t, i) {
       t.addEventListener('click', function () {
         lastTrigger = t;
+        lb.classList.remove('solo');
         show(i);
         if (window.__lenis) window.__lenis.stop();
         lb.setAttribute('data-lenis-prevent', '');
@@ -2179,12 +2206,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     $('lb-prev').addEventListener('click', function () { show(current - 1); });
     $('lb-next').addEventListener('click', function () { show(current + 1); });
     lb.addEventListener('keydown', function (e) {
+      if (lb.classList.contains('solo')) return;
       if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1); }
       if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1); }
     });
     var az = $('attire-zoom');
     if (az) az.addEventListener('click', function () {
       lastTrigger = az;
+      lb.classList.add('solo');
       lbImg.src = 'images/attire-guide.webp?v=2';
       lbImg.alt = 'Attire guide, enlarged';
       lbCap.textContent = 'The palette';
