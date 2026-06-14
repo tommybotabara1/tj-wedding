@@ -476,62 +476,127 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
 #world .head{ position:relative; text-align:center; max-width:660px; margin:0 auto clamp(48px,6vw,76px); }
 #world h2{ font-size:clamp(38px,5.8vw,62px); color:var(--moon); text-shadow:0 0 50px rgba(207,154,147,.3); }
 #world .head p{ color:var(--moon-soft); font-size:14px; margin-top:14px; }
-.pins{
-  position:relative; max-width:1080px; margin:0 auto;
-  display:grid; grid-template-columns:repeat(2,1fr); gap:16px;
+/* ------------------------------------------------------------------
+   Our World — an aged-paper chart glowing against the night. Pins are
+   scattered organically and a wandering golden route threads them in
+   order, 1 → 6 (the journey "Pieces of us" map, dressed for the dark).
+   ------------------------------------------------------------------ */
+.world-map{
+  position:relative; width:100%; max-width:940px; margin:0 auto;
+  aspect-ratio:3 / 4.6; border-radius:16px; overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(255,253,247,.96), transparent 55%),
+    radial-gradient(70% 50% at 18% 22%, rgba(156,170,143,.14), transparent 70%),
+    radial-gradient(60% 45% at 84% 66%, rgba(207,154,147,.12), transparent 70%),
+    radial-gradient(140% 110% at 50% 110%, rgba(196,168,110,.16), transparent 60%),
+    linear-gradient(165deg, #fdfaf3 0%, #f6efdf 58%, #f1e7d3 100%);
+  border:1px solid rgba(216,188,130,.5);
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.6), 0 0 70px rgba(207,130,110,.16), inset 0 0 80px rgba(140,105,60,.08);
 }
-@media (min-width:760px){ .pins{ grid-template-columns:repeat(4,1fr); } }
-.pin{
-  display:flex; flex-direction:column; align-items:center; gap:12px;
-  background:rgba(30,22,18,.6); backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px);
-  border:1px solid rgba(244,237,221,.16); border-radius:18px;
-  padding:28px 14px 24px; min-height:44px; width:100%;
-  transition:transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
+.world-map::before{ /* aged-paper grain */
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.5;
+  background-image:
+    radial-gradient(rgba(120,95,60,.05) 1px, transparent 1.4px),
+    radial-gradient(rgba(120,95,60,.04) 1px, transparent 1.4px);
+  background-size:90px 90px, 57px 57px; background-position:0 0, 31px 47px;
 }
-.pin:hover{ transform:translateY(-5px); border-color:rgba(255,200,150,.45); box-shadow:0 0 50px rgba(207,130,110,.3); }
-.pin .ic{
-  width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-  border:1px solid rgba(255,205,150,.4); color:var(--ember); position:relative;
-  background:radial-gradient(circle at 50% 60%, rgba(255,205,150,.16), transparent 70%);
-  transition:box-shadow .4s var(--ease);
+.world-map::after{ /* fine inner chart frame */
+  content:""; position:absolute; inset:11px; z-index:0; pointer-events:none;
+  border:1px solid rgba(196,168,110,.4); border-radius:8px;
 }
-.pin:hover .ic{ box-shadow:0 0 0 6px rgba(255,196,150,.1), 0 0 30px rgba(255,196,150,.5); }
-.pin .ic svg{ width:25px; height:25px; }
-.pin .ic .ring{ position:absolute; inset:-7px; border-radius:50%; pointer-events:none; }
-.pin .ic .ring circle{
-  fill:none; stroke:var(--ember); stroke-width:1.4; stroke-dasharray:214; stroke-dashoffset:214;
-  transition:stroke-dashoffset .7s var(--ease);
+.map-decor{ position:absolute; inset:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+.map-compass{ position:absolute; top:22px; right:22px; width:60px; z-index:1; pointer-events:none; opacity:.9; }
+.map-script{
+  position:absolute; left:24px; bottom:16px; z-index:1; pointer-events:none;
+  font-family:var(--serif); font-style:italic; font-size:21px; color:#566848; opacity:.85;
 }
-.pin:hover .ic .ring circle, .pin:focus-visible .ic .ring circle{ stroke-dashoffset:0; }
-.pin b{ font-size:12.5px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--moon); }
-.pin span{ font-size:11.5px; color:var(--moon-faint); }
-
-/* Our World — an ordered flight path you follow stop by stop, 1 → 7. One
-   centred portrait route at every width, numbered so the sequence is clear. */
-.route-net{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; display:block; }
-.pins.map-area{
-  display:block; position:relative; max-width:560px;
-  height:clamp(680px, 150vw, 780px); margin:0 auto;
+.map-cartouche{
+  position:absolute; top:13px; left:50%; transform:translateX(-50%); z-index:1; pointer-events:none;
+  text-align:center; padding:7px 20px 9px; border-radius:3px;
+  background:rgba(253,250,243,.92); border:1px solid rgba(196,168,110,.55);
+  box-shadow:inset 0 0 0 3px rgba(253,250,243,.9), inset 0 0 0 4px rgba(196,168,110,.35);
 }
-.pins.map-area .pin{
+.map-cartouche span{ display:block; font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:#8a6a4a; }
+.map-cartouche b{ font-family:var(--serif); font-size:20px; font-weight:500; color:var(--ink); line-height:1.15; }
+.map-legend{
+  position:absolute; right:14px; bottom:14px; z-index:1; pointer-events:none;
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:#8a6a4a;
+  background:rgba(253,250,243,.88); border:1px solid rgba(196,168,110,.4); padding:6px 11px; border-radius:20px;
+}
+.map-legend svg{ width:13px; height:13px; color:#9a7a39; }
+.map-sea{
+  position:absolute; right:7%; bottom:21%; z-index:1; pointer-events:none; transform:rotate(-4deg);
+  font-family:var(--serif); font-style:italic; font-size:15px; letter-spacing:.28em; color:#a98e62; opacity:.75; white-space:nowrap;
+}
+.map-lines{ position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
+.map-lines .route-glow{ fill:none; stroke:rgba(216,184,106,.18); stroke-width:7; stroke-linecap:round; }
+.map-lines .route{ fill:none; stroke:#9a7a39; stroke-width:2.4; stroke-linecap:round; stroke-dasharray:.1 10.5; opacity:.62; }
+.route-plane{ color:#9a7a39; opacity:.92; }
+.map-pin{
   position:absolute; left:calc(var(--mx,50) * 1%); top:calc(var(--my,50) * 1%);
-  translate:-50% -50%; width:auto; min-width:0; gap:9px; padding:8px 12px;
-  background:transparent; border:0; box-shadow:none;
-  backdrop-filter:none; -webkit-backdrop-filter:none;
+  transform:translate(-50%,-50%); z-index:2;
+  appearance:none; background:none; border:none; cursor:pointer; padding:0;
+  display:flex; flex-direction:column; align-items:center; gap:7px; width:104px;
+  transition:transform .35s var(--ease);
 }
-.pins.map-area .pin:hover{ transform:none; box-shadow:none; border-color:transparent; }
-.pins.map-area .pin:hover .ic{ transform:translateY(-4px); }
-.pins.map-area .pin b, .pins.map-area .pin span{ text-shadow:0 2px 16px rgba(0,0,0,.78); }
-.pins.map-area .pin .ic{
-  background:radial-gradient(circle at 50% 62%, rgba(255,214,160,.32), rgba(255,205,150,.06) 72%);
-  box-shadow:0 0 28px rgba(255,196,150,.4); transition:transform .4s var(--ease), box-shadow .4s var(--ease);
+.pin-dot{
+  position:relative; width:54px; height:54px; border-radius:50%; display:grid; place-items:center;
+  background:radial-gradient(circle at 36% 30%, #fffdf8 0%, #f8f2e5 70%, #f1e7d3 100%);
+  border:1px solid rgba(196,168,110,.6);
+  box-shadow:0 0 0 3px rgba(255,253,248,.9), 0 0 0 4px rgba(196,168,110,.42), 0 12px 26px rgba(80,60,40,.18);
+  transition:background .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease);
 }
-/* step number, so the route reads in order */
+.pin-dot svg{ width:26px; height:26px; color:#566848; transition:color .35s var(--ease); }
+.pin-dot::after{
+  content:""; position:absolute; inset:-8px; border-radius:50%;
+  border:1px solid rgba(184,150,78,.55); opacity:0; animation:pinpulse 3.8s var(--ease) infinite;
+}
+.map-pin:nth-child(odd) .pin-dot::after{ animation-delay:1.2s; }
+.map-pin:nth-child(3n) .pin-dot::after{ animation-delay:2.2s; }
+@keyframes pinpulse{ 0%{ transform:scale(.82); opacity:.7; } 70%{ transform:scale(1.45); opacity:0; } 100%{ opacity:0; } }
 .pin-num{
-  position:absolute; top:-3px; right:-3px; width:19px; height:19px; border-radius:50%;
-  display:grid; place-items:center; font-family:var(--sans); font-style:normal;
-  font-size:10px; font-weight:600; color:var(--night-deep); background:var(--ember);
-  box-shadow:0 2px 7px rgba(0,0,0,.45);
+  position:absolute; top:-5px; right:-5px; width:19px; height:19px; border-radius:50%;
+  display:grid; place-items:center; font-style:normal; font-family:var(--sans);
+  font-size:10px; font-weight:600; color:#fffdf8; background:#9a7a39; box-shadow:0 2px 6px rgba(80,60,40,.3);
+}
+.pin-label{
+  font-family:var(--serif); font-style:italic; font-weight:500;
+  font-size:18px; line-height:1.1; color:var(--ink); white-space:nowrap;
+  text-shadow:0 1px 0 rgba(253,250,243,.95), 0 0 8px rgba(253,250,243,.95), 0 0 16px rgba(253,250,243,.85);
+  transition:color .3s var(--ease);
+}
+.pin-place{
+  font-family:var(--serif); font-style:italic; font-size:12.5px; line-height:1; margin-top:-2px;
+  color:#8a6a4a; white-space:nowrap; text-shadow:0 1px 0 rgba(253,250,243,.95), 0 0 8px rgba(253,250,243,.9);
+}
+.map-pin:nth-child(3n) .pin-label{ transform:rotate(-1.6deg); }
+.map-pin:nth-child(3n+1) .pin-label{ transform:rotate(1.3deg); }
+.map-pin:hover, .map-pin:focus-visible{ transform:translate(-50%,-50%) scale(1.06); outline:none; }
+.map-pin:hover .pin-dot, .map-pin:focus-visible .pin-dot{
+  background:radial-gradient(circle at 36% 30%, #d8a86f 0%, var(--rose) 78%);
+  box-shadow:0 0 0 3px rgba(255,253,248,.9), 0 0 0 4px rgba(148,90,82,.55), 0 16px 32px rgba(80,40,30,.3), 0 0 40px rgba(207,130,110,.45);
+  transform:translateY(-3px);
+}
+.map-pin:hover .pin-dot svg, .map-pin:focus-visible .pin-dot svg{ color:#fff; }
+.map-pin:hover .pin-label, .map-pin:focus-visible .pin-label{ color:var(--rose-deep); }
+.map-hint{ position:relative; text-align:center; margin:22px auto 0; font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--moon-faint); }
+@media (max-width:719px){
+  .map-pin{ width:88px; }
+  .pin-label{ font-size:15px; }
+  .pin-place{ font-size:11.5px; }
+  .pin-dot{ width:48px; height:48px; }
+  .pin-dot svg{ width:23px; height:23px; }
+  .map-compass{ width:46px; top:18px; right:18px; }
+  .map-script{ font-size:17px; left:18px; bottom:12px; }
+  .map-cartouche{ padding:5px 14px 7px; }
+  .map-cartouche span{ font-size:8px; } .map-cartouche b{ font-size:16px; }
+  .map-sea{ font-size:12.5px; letter-spacing:.2em; }
+  .map-legend{ display:none; }
+}
+@media (min-width:720px){
+  .world-map{ aspect-ratio:16 / 9.4; }
+  .map-pin{ left:calc(var(--x,50) * 1%); top:calc(var(--y,50) * 1%); }
 }
 
 /* Panels (dialogs) — lit paper against the night */
@@ -605,8 +670,19 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 }
 
 /* Itinerary / boarding passes */
-.passes{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-@media (max-width:620px){ .passes{ grid-template-columns:1fr; } }
+/* Venue cards share a grid so the two cards sit in one row and stretch to
+   equal height regardless of address length; the maps sit in the row below. */
+.passes{
+  display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch;
+  grid-template-areas:"carda cardb" "mapa mapb";
+}
+.passes .pass.is-a{ grid-area:carda; } .passes .pass.is-b{ grid-area:cardb; }
+.passes .map-embed.is-a{ grid-area:mapa; } .passes .map-embed.is-b{ grid-area:mapb; }
+.passes .pass{ display:flex; flex-direction:column; }
+.passes .pass .pb{ flex:1; }
+@media (max-width:620px){
+  .passes{ grid-template-columns:1fr; grid-template-areas:"carda" "mapa" "cardb" "mapb"; }
+}
 .pass{ position:relative; background:var(--ivory); border:1px solid var(--line); border-radius:14px; overflow:clip; }
 .pass .ph{
   display:flex; justify-content:space-between; align-items:center; padding:11px 18px;
@@ -673,7 +749,12 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
   border:1px solid var(--line); top:50%;
 }
 .gift-pass::before{ left:-12px; } .gift-pass::after{ right:-12px; }
-.qr-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:14px; }
+.qr-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:14px; }
+/* desktop: all gift QR codes on a single row (wider panel keeps them scannable) */
+@media (min-width:600px){
+  .qr-grid{ grid-template-columns:repeat(5,1fr); gap:12px; }
+  #p-gift{ width:min(95vw,820px); }
+}
 .qr{ margin:0; text-align:center; }
 .qr-img{
   aspect-ratio:1; border:1px solid var(--line); border-radius:12px; background:#fff;
@@ -687,7 +768,6 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 /* Directions */
 .map-embed{ border:1px solid var(--line); border-radius:12px; overflow:clip; margin-top:10px; aspect-ratio:4/3; background:var(--cream); }
 .map-embed iframe{ width:100%; height:100%; border:0; display:block; }
-.pass-col{ display:flex; flex-direction:column; }
 
 /* FAQ */
 .faq{ border-bottom:1px solid var(--line); padding:4px 0; }
@@ -1116,44 +1196,62 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <h2 class="rv">Our World</h2>
       <p class="rv">Everything you need for the day, in order. Follow the lights, stop by stop.</p>
     </div>
-    <div class="pins map-area">
-      <svg class="route-net" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M 30 6 C 50 9, 58 16, 68 20 C 80 25, 18 30, 30 34 C 44 38, 56 44, 68 48 C 82 53, 16 58, 30 62 C 44 66, 56 72, 68 76 C 82 81, 18 86, 30 90"
-          fill="none" stroke="rgba(216,188,130,.34)" stroke-width="1.3" stroke-dasharray="2 7" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-        <g fill="rgba(255,205,150,.75)">
-          <circle cx="30" cy="6" r="1"/><circle cx="68" cy="20" r="1"/><circle cx="30" cy="34" r="1"/><circle cx="68" cy="48" r="1"/>
-          <circle cx="30" cy="62" r="1"/><circle cx="68" cy="76" r="1"/><circle cx="30" cy="90" r="1"/>
+    <div class="world-map rv" id="world-map">
+      <!-- decorative chart layer: contours, graticule, tiny terrain -->
+      <svg class="map-decor" aria-hidden="true" viewBox="0 0 1000 1300" preserveAspectRatio="none">
+        <g stroke="#9caa8f" fill="none" stroke-opacity=".34" vector-effect="non-scaling-stroke">
+          <path vector-effect="non-scaling-stroke" d="M120,260 C140,180 290,150 330,230 C370,310 270,380 190,350 C130,330 105,300 120,260 Z"/>
+          <path vector-effect="non-scaling-stroke" d="M165,265 C180,210 280,195 305,250 C330,305 260,345 205,325 C170,310 155,295 165,265 Z"/>
+          <path vector-effect="non-scaling-stroke" d="M205,265 C215,235 270,230 282,262 C292,290 250,308 222,296 C208,290 200,280 205,265 Z" fill="rgba(156,170,143,.07)"/>
+          <path vector-effect="non-scaling-stroke" d="M760,560 C800,480 940,490 960,580 C980,670 880,730 800,700 C745,680 735,615 760,560 Z"/>
+          <path vector-effect="non-scaling-stroke" d="M800,575 C828,520 910,530 925,590 C940,650 870,690 820,668 C785,652 782,615 800,575 Z"/>
+          <path vector-effect="non-scaling-stroke" d="M180,1020 C200,950 330,940 360,1010 C390,1080 300,1140 225,1115 C175,1098 162,1060 180,1020 Z"/>
+          <path vector-effect="non-scaling-stroke" d="M222,1025 C238,980 320,975 338,1022 C355,1068 295,1105 245,1086 C215,1074 210,1052 222,1025 Z"/>
+        </g>
+        <g stroke="#7a6446" stroke-opacity=".14" vector-effect="non-scaling-stroke">
+          <path vector-effect="non-scaling-stroke" stroke-dasharray="2 12" d="M0,330 H1000 M0,650 H1000 M0,975 H1000"/>
+          <path vector-effect="non-scaling-stroke" stroke-dasharray="2 12" d="M250,0 V1300 M500,0 V1300 M750,0 V1300"/>
+        </g>
+        <g stroke="#b8964e" stroke-opacity=".32" stroke-linecap="round" vector-effect="non-scaling-stroke">
+          <path vector-effect="non-scaling-stroke" d="M520,180 h16 M528,172 v16"/>
+          <path vector-effect="non-scaling-stroke" d="M120,620 h16 M128,612 v16"/>
+          <path vector-effect="non-scaling-stroke" d="M880,930 h16 M888,922 v16"/>
+        </g>
+        <g stroke="#8a936f" fill="none" stroke-opacity=".4" stroke-linecap="round" stroke-linejoin="round">
+          <path vector-effect="non-scaling-stroke" d="M600,260 l13,-20 9,13 7,-10 12,17"/>
+          <path vector-effect="non-scaling-stroke" d="M150,790 l12,-18 8,12 6,-9 11,15"/>
+        </g>
+        <g stroke="#a98e62" fill="none" stroke-opacity=".4" stroke-linecap="round">
+          <path vector-effect="non-scaling-stroke" d="M730,1130 q9,-7 18,0 q9,7 18,0"/>
+          <path vector-effect="non-scaling-stroke" d="M700,1200 q9,-7 18,0 q9,7 18,0"/>
         </g>
       </svg>
-      <button class="pin rv" type="button" data-panel="p-rsvp" style="--mx:30;--my:6">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-mail"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">1</i></span>
-        <b>RSVP</b><span>Reserve your seat</span>
-      </button>
-      <button class="pin rv" type="button" data-panel="p-itinerary" style="--mx:68;--my:20">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-clock"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">2</i></span>
-        <b>Itinerary</b><span>How the day flows</span>
-      </button>
-      <button class="pin rv" type="button" data-panel="p-directions" style="--mx:30;--my:34">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-pin"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">3</i></span>
-        <b>Directions</b><span>Finding the way</span>
-      </button>
-      <button class="pin rv" type="button" data-panel="p-attire" style="--mx:68;--my:48">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">4</i></span>
-        <b>Attire Guide</b><span>What to wear</span>
-      </button>
-      <button class="pin rv" type="button" data-panel="p-entourage" style="--mx:30;--my:62">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-users"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">5</i></span>
-        <b>Entourage</b><span>Who walks with us</span>
-      </button>
-      <button class="pin rv" type="button" data-panel="p-gift" style="--mx:68;--my:76">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-gift"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">6</i></span>
-        <b>Gift Fund</b><span>Our first journey</span>
-      </button>
-      <button class="pin rv" type="button" data-panel="p-faq" style="--mx:30;--my:90">
-        <span class="ic"><svg aria-hidden="true"><use href="#ic-help"/></svg><svg class="ring" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="34"/></svg><i class="pin-num">7</i></span>
-        <b>FAQ &amp; Contact</b><span>Questions &amp; help desk</span>
-      </button>
+      <svg class="map-compass" aria-hidden="true" viewBox="0 0 64 64">
+        <circle cx="32" cy="34" r="26" fill="none" stroke="#b8964e" stroke-opacity=".55"/>
+        <circle cx="32" cy="34" r="2.2" fill="#b8964e"/>
+        <path d="M32,10 L36,34 L32,42 L28,34 Z" fill="#b8964e" fill-opacity=".85"/>
+        <path d="M32,58 L36,34 L28,34 Z" fill="#b8964e" fill-opacity=".3"/>
+        <path d="M8,34 L32,30 L32,38 Z" fill="#b8964e" fill-opacity=".3"/>
+        <path d="M56,34 L32,30 L32,38 Z" fill="#b8964e" fill-opacity=".3"/>
+        <text x="32" y="7.5" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="11" fill="#945a52">N</text>
+      </svg>
+      <div class="map-script" aria-hidden="true">our little world</div>
+      <div class="map-cartouche" aria-hidden="true"><span>The World of</span><b>T &amp; J</b></div>
+      <div class="map-legend" aria-hidden="true"><svg aria-hidden="true"><use href="#ic-plane"/></svg> our route &middot; tap a marker</div>
+      <div class="map-sea" aria-hidden="true">Sea of Someday</div>
+      <svg class="map-lines" id="map-lines" aria-hidden="true" preserveAspectRatio="none">
+        <path class="route-glow" d="" />
+        <path class="route" d="" />
+        <g class="route-plane" id="route-plane" style="display:none"><use href="#ic-plane" width="20" height="20" x="-10" y="-10"/></g>
+      </svg>
+      <button class="map-pin" type="button" data-panel="p-itinerary" style="--mx:26;--my:12;--x:12;--y:32" aria-label="Stop 1, Hourglass Bay: itinerary"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-clock"/></svg><i class="pin-num">1</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Hourglass Bay</span></button>
+      <button class="map-pin" type="button" data-panel="p-directions" style="--mx:68;--my:24;--x:30;--y:64" aria-label="Stop 2, Wayfarer's Cross: directions"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-pin"/></svg><i class="pin-num">2</i></span><span class="pin-label">Directions</span><span class="pin-place">Wayfarer&rsquo;s Cross</span></button>
+      <button class="map-pin" type="button" data-panel="p-attire" style="--mx:30;--my:40;--x:46;--y:26" aria-label="Stop 3, Linen Shores: attire guide"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><i class="pin-num">3</i></span><span class="pin-label">Attire Guide</span><span class="pin-place">Linen Shores</span></button>
+      <button class="map-pin" type="button" data-panel="p-entourage" style="--mx:70;--my:56;--x:62;--y:66" aria-label="Stop 4, Company Cove: entourage"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-users"/></svg><i class="pin-num">4</i></span><span class="pin-label">Entourage</span><span class="pin-place">Company Cove</span></button>
+      <button class="map-pin" type="button" data-panel="p-gift" style="--mx:32;--my:72;--x:80;--y:30" aria-label="Stop 5, Cape of Beginnings: gift fund"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-gift"/></svg><i class="pin-num">5</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">Cape of Beginnings</span></button>
+      <button class="map-pin" type="button" data-panel="p-faq" style="--mx:66;--my:86;--x:90;--y:68" aria-label="Stop 6, Lantern Light: FAQ and contact"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-help"/></svg><i class="pin-num">6</i></span><span class="pin-label">FAQ &amp; Contact</span><span class="pin-place">Lantern Light</span></button>
     </div>
+    <p class="map-hint rv">Follow stops 1&ndash;6 &middot; tap any marker</p>
   </section>
 
   <!-- INTERLUDE — THE PROMISE -->
@@ -1385,14 +1483,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     </div>
     <p>Everything happens within <strong>Newport City, Pasay</strong>, just across from NAIA Terminal 3. Tap a venue for live directions.</p>
     <div class="passes" style="margin-top:14px">
-      <div class="pass-col">
-        <article class="pass"><div class="ph"><span>Ceremony</span><svg aria-hidden="true"><use href="#ic-pin"/></svg></div><div class="pb"><h4>St. Therese Parish</h4><p class="addr">Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Get directions</a></div></article>
-        <div class="map-embed"><iframe title="Map to St. Therese Parish, Newport City, Pasay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="https://maps.google.com/maps?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay&amp;z=16&amp;output=embed"></iframe></div>
-      </div>
-      <div class="pass-col">
-        <article class="pass rose"><div class="ph"><span>Reception</span><svg aria-hidden="true"><use href="#ic-pin"/></svg></div><div class="pb"><h4>Savoy Hotel Manila</h4><p class="addr">Andrews Avenue, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Get directions</a></div></article>
-        <div class="map-embed"><iframe title="Map to Savoy Hotel Manila, Newport City, Pasay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="https://maps.google.com/maps?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay&amp;z=16&amp;output=embed"></iframe></div>
-      </div>
+      <article class="pass is-a"><div class="ph"><span>Ceremony</span><svg aria-hidden="true"><use href="#ic-pin"/></svg></div><div class="pb"><h4>St. Therese Parish</h4><p class="addr">Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Get directions</a></div></article>
+      <article class="pass rose is-b"><div class="ph"><span>Reception</span><svg aria-hidden="true"><use href="#ic-pin"/></svg></div><div class="pb"><h4>Savoy Hotel Manila</h4><p class="addr">Andrews Avenue, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Get directions</a></div></article>
+      <div class="map-embed is-a"><iframe title="Map to St. Therese Parish, Newport City, Pasay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="https://maps.google.com/maps?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay&amp;z=16&amp;output=embed"></iframe></div>
+      <div class="map-embed is-b"><iframe title="Map to Savoy Hotel Manila, Newport City, Pasay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="https://maps.google.com/maps?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay&amp;z=16&amp;output=embed"></iframe></div>
     </div>
     <p style="margin-top:16px; font-size:13.5px">On-site parking is available at both the church and the hotel. Both venues sit minutes from NAIA Terminal 3 by car or ride-hail.</p>
   </div>
@@ -1756,6 +1850,13 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   var lenisStarted = false;
   function initLenis() {
     if (lenisStarted || REDUCED) return;
+    /* Lenis runs a rAF loop that forces window scroll to its own target every
+       frame. It only updates that target from wheel input — with syncTouch off
+       (the default) touch gestures never feed it, so on phones/tablets every
+       finger-scroll is yanked straight back and the page appears frozen.
+       Touch devices already have smooth native momentum scrolling and
+       ScrollTrigger works fine on native scroll, so skip Lenis there. */
+    if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
     lenisStarted = true;
     import('https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.mjs').then(function (m) {
       var Lenis = m.default || m.Lenis;
@@ -1786,6 +1887,75 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     }
     tick();
     setInterval(tick, 1000);
+  })();
+
+  /* ---------- Our World — draw the wandering dotted route between pins ---------- */
+  (function () {
+    var map = $('world-map'), svg = $('map-lines');
+    if (!map || !svg) return;
+    var route = svg.querySelector('.route');
+    var glow = svg.querySelector('.route-glow');
+    var plane = svg.querySelector('.route-plane');
+    var pins = Array.prototype.slice.call(map.querySelectorAll('.map-pin'));
+
+    /* Smooth Catmull-Rom curve through the pin centres: a wandering route. */
+    function smoothPath(pts) {
+      if (pts.length < 2) return '';
+      var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
+      for (var i = 0; i < pts.length - 1; i++) {
+        var p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+        var c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+        var c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        d += ' C' + c1[0].toFixed(1) + ' ' + c1[1].toFixed(1) + ' ' + c2[0].toFixed(1) + ' ' + c2[1].toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
+      }
+      return d;
+    }
+    function draw() {
+      var mr = map.getBoundingClientRect();
+      if (!mr.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + mr.width + ' ' + mr.height);
+      var pts = pins.map(function (p) {
+        var r = p.querySelector('.pin-dot').getBoundingClientRect();
+        return [r.left + r.width / 2 - mr.left, r.top + r.height / 2 - mr.top];
+      });
+      var d = smoothPath(pts);
+      route.setAttribute('d', d); glow.setAttribute('d', d);
+    }
+    draw();
+    window.addEventListener('resize', draw);
+    window.addEventListener('load', draw);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+
+    /* a small plane drifts along the route while the map is on screen */
+    var visible = false, flying = false, prog = 0, lastT = 0;
+    var LOOP_S = 26;
+    function fly(now) {
+      if (!visible || document.hidden || REDUCED) { flying = false; plane.style.display = 'none'; return; }
+      if (lastT) prog = (prog + (now - lastT) / 1000 / LOOP_S) % 1;
+      lastT = now;
+      var len = 0;
+      try { len = route.getTotalLength(); } catch (e) {}
+      if (len > 0) {
+        var p = route.getPointAtLength(prog * len);
+        var q = route.getPointAtLength(Math.min(len, prog * len + 2));
+        var ang = Math.atan2(q.y - p.y, q.x - p.x) * 180 / Math.PI;
+        plane.style.display = '';
+        plane.setAttribute('transform', 'translate(' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) + ') rotate(' + (ang + 90).toFixed(1) + ')');
+      }
+      requestAnimationFrame(fly);
+    }
+    function startFly() { if (flying || REDUCED) return; flying = true; lastT = 0; requestAnimationFrame(fly); }
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          visible = e.isIntersecting;
+          if (visible) { draw(); setTimeout(draw, 350); startFly(); }
+        });
+      }, { threshold: 0.15 });
+      io.observe(map);
+    } else { setTimeout(draw, 400); }
+    document.addEventListener('visibilitychange', function () { if (!document.hidden && visible) startFly(); });
   })();
 
   /* ---------- dialogs ---------- */
