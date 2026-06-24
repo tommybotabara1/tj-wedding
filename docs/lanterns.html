@@ -684,6 +684,14 @@ dialog.panel{
 }
 dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); }
 .panel-inner{ padding:clamp(24px,4vw,40px); overflow-y:auto; max-height:86vh; max-height:86svh; }
+/* "Back to menu" affordance, shown only when a panel was opened from the Menu */
+.panel-back{
+  display:inline-flex; align-items:center; gap:6px; margin:-4px 0 14px; padding:6px 0;
+  background:none; border:0; cursor:pointer; color:var(--rose-deep);
+  font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
+}
+.panel-back svg{ width:16px; height:16px; }
+.panel-back:hover{ color:var(--rose); }
 .panel-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:14px; }
 .panel-head h3{ font-size:clamp(27px,3.5vw,36px); margin-top:2px; color:var(--ink); }
 .panel-kicker{
@@ -1028,6 +1036,16 @@ html.reduced #music-btn .eq i{ animation:none; }
 .ctrl-pill:hover{ border-color:rgba(var(--lan-glow),.5); box-shadow:0 0 34px rgba(var(--lan-glow),.34); transform:translateY(-1px); }
 .ctrl-pill.rsvp{ background:var(--rose); border-color:var(--rose-light); color:#fff; box-shadow:0 0 30px rgba(178,124,117,.4); }
 .ctrl-pill.rsvp:hover{ background:var(--rose-deep); box-shadow:0 6px 30px rgba(178,124,117,.5); }
+/* phones: shrink the floating dock so it doesn't crowd the screen */
+@media (max-width:560px){
+  .ctrls{ right:12px; bottom:12px; gap:8px; }
+  .ctrl-btn{ width:38px; height:38px; }
+  .ctrl-btn svg{ width:15px; height:15px; }
+  #music-btn svg{ width:14px; height:14px; }
+  .ctrl-pill{ min-height:38px; padding:0 14px; font-size:11px; letter-spacing:.1em; gap:7px; }
+  .ctrl-pill svg{ width:14px; height:14px; }
+  .ctrl-hint{ font-size:9.5px; padding:6px 11px; }
+}
 
 /* Menu panel — big tappable rows to every section */
 .menu-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
@@ -2077,7 +2095,13 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     if (window.__lenis) window.__lenis.scrollTo(next, { immediate: true }); else window.scrollTo(0, next);
     autoRAF = requestAnimationFrame(autoStep);
   }
-  function onUserScroll() { stopAuto(); }
+  function onUserScroll(e) {
+    /* a tap on the control dock (e.g. the Stop button itself) must not be
+       treated as "user took over scrolling" — otherwise it stops then the
+       button's click handler immediately restarts it. */
+    if (e && e.target && e.target.closest && e.target.closest('#ctrls')) return;
+    stopAuto();
+  }
   function bindCancel(add) {
     /* touchstart, not touchmove: a finger on the screen takes back control, and
        it can't be tripped by a stray move during the button tap itself */
@@ -2243,6 +2267,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     var dlg = $(id);
     if (!dlg || dlg.open) return;
     lastTrigger = trigger || null;
+    var pb = dlg.querySelector('.panel-back'); if (pb) pb.hidden = true; /* default: no back button */
     hydrate(dlg);
     dlg.setAttribute('data-lenis-prevent', '');
     if (window.__lenis) window.__lenis.stop();
@@ -2282,11 +2307,30 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
      to its section (close the menu first so we never stack two dialogs). */
   var menuBtn = $('menu-btn');
   if (menuBtn) menuBtn.addEventListener('click', function () { openPanel('p-menu', menuBtn); });
+
+  /* Give every panel (except the menu itself) a hidden "Back to menu" button,
+     revealed only when that panel was opened from the Menu. */
+  document.querySelectorAll('dialog.panel:not(#p-menu) .panel-inner').forEach(function (inner) {
+    var back = document.createElement('button');
+    back.type = 'button'; back.className = 'panel-back'; back.hidden = true;
+    back.setAttribute('aria-label', 'Back to menu');
+    back.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Back to menu';
+    back.addEventListener('click', function () {
+      var dlg = inner.closest('dialog');
+      if (dlg) dlg.close();
+      openPanel('p-menu', menuBtn);
+    });
+    inner.insertBefore(back, inner.firstChild);
+  });
+
   document.querySelectorAll('#p-menu [data-go]').forEach(function (b) {
     b.addEventListener('click', function () {
       var menuDlg = $('p-menu');
       if (menuDlg && menuDlg.open) menuDlg.close();
-      openPanel(b.getAttribute('data-go'), menuBtn);
+      var target = b.getAttribute('data-go');
+      openPanel(target, menuBtn);
+      var bk = $(target).querySelector('.panel-back');
+      if (bk) bk.hidden = false; /* opened from the Menu → offer a way back */
     });
   });
 
@@ -2694,14 +2738,22 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         tl.to('#plane', { opacity: 1, duration: 0.4 }, 1.4)
           .to('#plane', { opacity: 0, duration: 0.5 }, 4.6);
       }
-      /* Reveal the arrival copy well before the section unpins, then hold it
-         fully visible for the last stretch of scroll so it's easy to read. */
-      tl.to('#dest', { opacity: 1, duration: 0.7 }, 5.0)
-        .to('#next-micro', { opacity: 1, y: 0, duration: 0.5 }, 5.3)
-        .to('#arr1', { opacity: 1, duration: 0.7 }, 5.6)
-        .to('#arr2', { opacity: 1, duration: 0.6 }, 6.2)
-        .to(['#next-date', '#cd', '.cd-cap', '#rsvp-cta'], { opacity: 1, duration: 0.7, stagger: 0.16 }, 6.6)
-        .to('#cd', { opacity: 1, duration: 3 }); /* hold — keeps everything on screen while still pinned */
+      /* Arrival copy is NOT tied to the scrub — a fast flick (especially on
+         phones) could otherwise blow past its reveal window and leave it blank.
+         Instead it plays a normal entrance the moment the finale is in view, and
+         replays whenever you scroll back into it. */
+      var copyEls = ['#dest', '#next-micro', '#arr1', '#arr2', '#next-date', '#cd', '.cd-cap', '#rsvp-cta'];
+      var riseEls = ['#next-micro', '#arr1', '#arr2', '#next-date', '#cd', '.cd-cap', '#rsvp-cta'];
+      gsap.set(copyEls, { opacity: 0 });
+      gsap.set(riseEls, { y: 20 });
+      gsap.timeline({
+        scrollTrigger: { trigger: '#next', start: 'top top-=38%', toggleActions: 'play none none reverse' }
+      })
+        .to('#dest', { opacity: 1, duration: 0.5 })
+        .to('#next-micro', { opacity: 1, y: 0, duration: 0.5 }, '-=0.2')
+        .to('#arr1', { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' }, '-=0.15')
+        .to('#arr2', { opacity: 1, y: 0, duration: 0.6 }, '-=0.35')
+        .to(['#next-date', '#cd', '.cd-cap', '#rsvp-cta'], { opacity: 1, y: 0, duration: 0.6, stagger: 0.14 }, '-=0.2');
     })();
   }
 })();
