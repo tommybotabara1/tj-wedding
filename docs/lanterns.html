@@ -46,7 +46,13 @@
   --rose-deep:#945a52;
   --gold:#b8964e;
   --gold-light:#d8bc82;
-  --ember:#ffd9a3;
+  --ember:#ffe7c8;
+  /* lantern light — neutral warm-white (~4500K), not candle-amber */
+  --lan-core:#fffaf2;        /* near-white center            */
+  --lan-mid:#ffe9cf;         /* soft warm cream              */
+  --lan-edge:#ecccac;        /* muted warm beige (low orange) */
+  --lan-glow:255,228,204;    /* warm-white halo (use in rgba) */
+  --lan-halo:206,176,150;    /* neutral-warm outer halo      */
   --serif:'Cormorant Garamond', Georgia, serif;
   --sans:'Montserrat', 'Helvetica Neue', Arial, sans-serif;
   --ease:cubic-bezier(.22,.61,.36,1);
@@ -118,14 +124,14 @@ html.reduced .rv, html.reduced .scrub-hide{ opacity:1 !important; transform:none
 .lantern{ position:relative; display:block; width:84px; height:118px; pointer-events:none; }
 .lantern .body{
   position:absolute; inset:0 7px 20px 7px; border-radius:30% 30% 36% 36% / 22% 22% 42% 42%;
-  border:1px solid rgba(148,90,82,.35);
-  background:radial-gradient(60% 46% at 50% 64%, #fff3da, #f6d8ae 52%, #d99a6c 100%);
+  border:1px solid rgba(150,120,96,.32);
+  background:radial-gradient(60% 46% at 50% 64%, var(--lan-core), var(--lan-mid) 52%, var(--lan-edge) 100%);
   box-shadow:
-    0 0 30px 10px rgba(255,196,150,.5),
-    0 0 90px 30px rgba(207,130,110,.32),
-    0 0 180px 60px rgba(178,96,90,.18),
-    inset 0 -10px 22px rgba(148,70,52,.35),
-    inset 0 6px 10px rgba(255,255,255,.55);
+    0 0 30px 10px rgba(var(--lan-glow),.5),
+    0 0 90px 30px rgba(var(--lan-halo),.3),
+    0 0 180px 60px rgba(var(--lan-halo),.16),
+    inset 0 -10px 22px rgba(150,118,92,.32),
+    inset 0 6px 10px rgba(255,255,255,.6);
 }
 .lantern .body::before{
   content:""; position:absolute; inset:0; border-radius:inherit;
@@ -142,15 +148,15 @@ html.reduced .rv, html.reduced .scrub-hide{ opacity:1 !important; transform:none
 .lantern .flame{
   position:absolute; bottom:2px; left:50%; width:12px; height:12px; transform:translateX(-50%);
   border-radius:50%;
-  background:radial-gradient(circle, #fff 0%, #ffe9bd 45%, rgba(255,200,150,0) 75%);
-  box-shadow:0 0 22px 9px rgba(255,214,160,.75);
+  background:radial-gradient(circle, #fff 0%, #fff4dc 45%, rgba(255,228,204,0) 75%);
+  box-shadow:0 0 22px 9px rgba(var(--lan-glow),.72);
 }
 html:not(.reduced) .lantern .flame{ animation:flick 2.8s ease-in-out infinite; }
 @keyframes flick{ 0%,100%{ opacity:.85 } 30%{ opacity:1 } 60%{ opacity:.7 } }
 .lantern .mono{
   position:absolute; inset:0 7px 20px 7px; display:flex; align-items:center; justify-content:center;
-  font-family:var(--serif); font-size:44px; font-weight:500; color:#8a4636;
-  text-shadow:0 1px 0 rgba(255,255,255,.45);
+  font-family:var(--serif); font-size:44px; font-weight:500; color:#8a5440;
+  text-shadow:0 1px 0 rgba(255,255,255,.5);
 }
 
 /* ============================================================
@@ -159,12 +165,12 @@ html:not(.reduced) .lantern .flame{ animation:flick 2.8s ease-in-out infinite; }
 #gate{ position:fixed; inset:0; z-index:60; overflow:clip; }
 #gate-warm{
   position:absolute; inset:0; opacity:0; pointer-events:none;
-  background:radial-gradient(85% 70% at 50% 58%, rgba(207,130,110,.34), rgba(184,150,78,.1) 55%, transparent 78%);
+  background:radial-gradient(85% 70% at 50% 58%, rgba(var(--lan-glow),.34), rgba(var(--lan-halo),.1) 55%, transparent 78%);
   transition:opacity .5s linear;
 }
 #thread-svg{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
-#threadGlow{ fill:none; stroke:rgba(255,196,150,.55); stroke-width:8; stroke-linecap:round; filter:blur(7px); opacity:0; }
-#threadPath{ fill:none; stroke:#f5c9a8; stroke-width:1.8; stroke-linecap:round; stroke-dasharray:5 7; opacity:0; }
+#threadGlow{ fill:none; stroke:rgba(var(--lan-glow),.55); stroke-width:8; stroke-linecap:round; filter:blur(7px); opacity:0; }
+#threadPath{ fill:none; stroke:var(--lan-mid); stroke-width:1.8; stroke-linecap:round; stroke-dasharray:5 7; opacity:0; }
 
 .gate-lan{
   position:absolute; top:50%; margin-top:-59px; width:84px; height:118px;
@@ -190,15 +196,22 @@ html:not(.reduced) .gate-lan .lantern{ animation:floaty 5.2s ease-in-out infinit
 .gate-copy p{ font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:var(--moon-soft); margin-top:12px; }
 .gate-copy .hint{ font-size:11.5px; letter-spacing:.1em; text-transform:none; color:var(--moon-faint); margin-top:14px; }
 #connect-btn{ pointer-events:auto; margin-top:20px; }
+/* After a short wait, the Enter button breathes so no one gets stuck at the gate */
+#connect-btn.nudge{ animation:gatepulse 1.8s var(--ease) infinite; }
+@keyframes gatepulse{
+  0%,100%{ transform:translateY(0); box-shadow:0 0 0 rgba(var(--lan-glow),0); }
+  50%{ transform:translateY(-2px); box-shadow:0 8px 34px rgba(var(--lan-glow),.55); }
+}
+html.reduced #connect-btn.nudge{ animation:none; }
 
 .gate-spark{
   position:absolute; width:6px; height:6px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, #fff 0%, #ffd9a3 50%, transparent 80%);
-  box-shadow:0 0 10px 3px rgba(255,205,150,.7);
+  background:radial-gradient(circle, #fff 0%, var(--ember) 50%, transparent 80%);
+  box-shadow:0 0 10px 3px rgba(var(--lan-glow),.7);
 }
 #bloom{
   position:absolute; width:420px; height:420px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, rgba(255,243,222,.95) 0%, rgba(255,180,140,.5) 36%, transparent 70%);
+  background:radial-gradient(circle, rgba(255,250,242,.95) 0%, rgba(var(--lan-glow),.5) 36%, transparent 70%);
   transform:translate(-50%,-50%) scale(0); opacity:0;
 }
 
@@ -223,6 +236,8 @@ html.reduced #curtain .w{ transform:none !important; }
 #curtain .rule{ width:0; height:1px; background:var(--gold-light); margin:32px auto 24px; opacity:.8; }
 html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
 #curtain .meta{ font-size:11.5px; letter-spacing:.36em; text-transform:uppercase; color:var(--moon-soft); }
+#curtain .signpost{ max-width:440px; margin:18px auto 0; font-size:12.5px; line-height:1.6; color:var(--moon-faint); }
+#curtain .signpost b{ color:var(--moon-soft); font-weight:500; }
 #curtain .scrollcue{
   position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
   font-size:10px; letter-spacing:.32em; text-transform:uppercase; color:var(--moon-faint);
@@ -238,13 +253,13 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
 #path .stick{ display:block; }
 #arcs{ position:absolute; inset:0; width:100%; height:100%; }
 #arcs path{
-  fill:none; stroke:#eebfa6; stroke-width:2.2; stroke-linecap:round;
+  fill:none; stroke:var(--lan-mid); stroke-width:2.2; stroke-linecap:round;
 }
-#arcs .glow{ stroke:rgba(255,186,140,.5); stroke-width:9; filter:blur(5px); }
+#arcs .glow{ stroke:rgba(var(--lan-glow),.5); stroke-width:9; filter:blur(5px); }
 #merge-glow{
   position:absolute; left:50%; top:42%; width:200px; height:200px; transform:translate(-50%,-50%);
   border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, rgba(255,224,180,.55), rgba(207,130,110,.25) 45%, transparent 70%);
+  background:radial-gradient(circle, rgba(var(--lan-glow),.55), rgba(var(--lan-halo),.25) 45%, transparent 70%);
 }
 /* Each word is a real paper lantern (same build as the T/J lanterns at the
    gate & finale) — crown, ribbed glowing body, base and a flickering flame —
@@ -257,16 +272,16 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
   position:absolute; inset:5px 8px 21px 8px;
   display:flex; align-items:center; justify-content:center; text-align:center; padding:0 4px;
   border-radius:32% 32% 38% 38% / 24% 24% 46% 46%;
-  border:1px solid rgba(148,90,82,.4);
-  background:radial-gradient(60% 48% at 50% 62%, #fff3da, #f6d8ae 52%, #d99a6c 100%);
+  border:1px solid rgba(150,120,96,.36);
+  background:radial-gradient(60% 48% at 50% 62%, var(--lan-core), var(--lan-mid) 52%, var(--lan-edge) 100%);
   box-shadow:
-    0 0 30px 10px rgba(255,196,150,.5),
-    0 0 90px 30px rgba(207,130,110,.32),
-    0 0 170px 56px rgba(178,96,90,.16),
-    inset 0 -10px 22px rgba(148,70,52,.35),
-    inset 0 6px 10px rgba(255,255,255,.55);
+    0 0 30px 10px rgba(var(--lan-glow),.5),
+    0 0 90px 30px rgba(var(--lan-halo),.3),
+    0 0 170px 56px rgba(var(--lan-halo),.16),
+    inset 0 -10px 22px rgba(150,118,92,.32),
+    inset 0 6px 10px rgba(255,255,255,.6);
   font-family:var(--sans); font-size:8.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
-  color:#7a3f30; text-shadow:0 1px 0 rgba(255,247,228,.55);
+  color:#7a4a38; text-shadow:0 1px 0 rgba(255,250,240,.6);
 }
 .chip .body::before{
   content:""; position:absolute; inset:0; border-radius:inherit;
@@ -283,8 +298,8 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
 .chip .flame{
   position:absolute; bottom:2px; left:50%; width:11px; height:11px; transform:translateX(-50%);
   border-radius:50%;
-  background:radial-gradient(circle, #fff 0%, #ffe9bd 45%, rgba(255,200,150,0) 75%);
-  box-shadow:0 0 22px 9px rgba(255,214,160,.75);
+  background:radial-gradient(circle, #fff 0%, #fff4dc 45%, rgba(255,228,204,0) 75%);
+  box-shadow:0 0 22px 9px rgba(var(--lan-glow),.72);
 }
 html:not(.reduced) .chip .flame{ animation:flick 2.8s ease-in-out infinite; }
 .tracer{ opacity:0; }
@@ -413,8 +428,8 @@ html.reduced svg.bird{ animation:none; left:60%; }
 .beach svg.shades{ position:absolute; bottom:8%; right:32%; width:clamp(32px,4vw,48px); height:auto; color:#1d1410; transform:rotate(9deg); }
 .beach .b-lan{
   position:absolute; width:16px; height:22px; border-radius:45% 45% 50% 50%/35% 35% 60% 60%;
-  background:radial-gradient(circle at 50% 65%, #ffefc9, #f0b27a);
-  box-shadow:0 0 18px 6px rgba(255,200,130,.7); animation:b-rise 13s linear infinite;
+  background:radial-gradient(circle at 50% 65%, var(--lan-mid), var(--lan-edge));
+  box-shadow:0 0 18px 6px rgba(var(--lan-glow),.65); animation:b-rise 13s linear infinite;
 }
 @keyframes b-rise{ from{ transform:translateY(40vh) scale(.7); opacity:0 } 12%{ opacity:1 } to{ transform:translateY(-30vh) scale(1); opacity:0 } }
 html.reduced .b-lan{ animation:none; opacity:.85; }
@@ -590,9 +605,9 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
   text-shadow:0 0 12px rgba(0,0,0,.5);
 }
 .map-lines{ position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none; }
-.map-lines .route-glow{ fill:none; stroke:rgba(255,205,150,.22); stroke-width:8; stroke-linecap:round; }
-.map-lines .route{ fill:none; stroke:var(--gold-light); stroke-width:2.4; stroke-linecap:round; stroke-dasharray:.1 10.5; opacity:.9; filter:drop-shadow(0 0 5px rgba(255,196,150,.6)); }
-.route-plane{ color:var(--ember); opacity:.95; filter:drop-shadow(0 0 6px rgba(255,196,150,.7)); }
+.map-lines .route-glow{ fill:none; stroke:rgba(var(--lan-glow),.22); stroke-width:8; stroke-linecap:round; }
+.map-lines .route{ fill:none; stroke:var(--gold-light); stroke-width:2.4; stroke-linecap:round; stroke-dasharray:.1 10.5; opacity:.9; filter:drop-shadow(0 0 5px rgba(var(--lan-glow),.6)); }
+.route-plane{ color:var(--ember); opacity:.95; filter:drop-shadow(0 0 6px rgba(var(--lan-glow),.7)); }
 .map-pin{
   position:absolute; left:calc(var(--mx,50) * 1%); top:calc(var(--my,50) * 1%);
   transform:translate(-50%,-50%); z-index:2;
@@ -602,15 +617,15 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
 }
 .pin-dot{ /* a glowing lantern-point in the night sky */
   position:relative; width:54px; height:54px; border-radius:50%; display:grid; place-items:center;
-  background:radial-gradient(circle at 50% 44%, #fff4d6 0%, #ffd9a3 42%, rgba(255,176,120,.32) 74%, transparent 100%);
-  border:1px solid rgba(255,205,150,.5);
-  box-shadow:0 0 0 4px rgba(255,200,150,.07), 0 0 24px rgba(255,196,150,.5), 0 0 56px rgba(207,130,110,.32);
+  background:radial-gradient(circle at 50% 44%, var(--lan-core) 0%, var(--ember) 42%, rgba(var(--lan-halo),.32) 74%, transparent 100%);
+  border:1px solid rgba(var(--lan-glow),.5);
+  box-shadow:0 0 0 4px rgba(var(--lan-glow),.07), 0 0 24px rgba(var(--lan-glow),.5), 0 0 56px rgba(var(--lan-halo),.32);
   transition:background .35s var(--ease), box-shadow .35s var(--ease), transform .35s var(--ease);
 }
 .pin-dot svg{ width:25px; height:25px; color:#4a2e26; transition:color .35s var(--ease); }
 .pin-dot::after{
   content:""; position:absolute; inset:-9px; border-radius:50%;
-  border:1px solid rgba(255,205,150,.5); opacity:0; animation:pinpulse 3.8s var(--ease) infinite;
+  border:1px solid rgba(var(--lan-glow),.5); opacity:0; animation:pinpulse 3.8s var(--ease) infinite;
 }
 .map-pin:nth-child(odd) .pin-dot::after{ animation-delay:1.2s; }
 .map-pin:nth-child(3n) .pin-dot::after{ animation-delay:2.2s; }
@@ -619,24 +634,24 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
   position:absolute; top:-5px; right:-5px; width:19px; height:19px; border-radius:50%;
   display:grid; place-items:center; font-style:normal; font-family:var(--sans);
   font-size:10px; font-weight:600; color:var(--night-deep); background:var(--ember);
-  box-shadow:0 2px 7px rgba(0,0,0,.5), 0 0 12px rgba(255,196,150,.5);
+  box-shadow:0 2px 7px rgba(0,0,0,.5), 0 0 12px rgba(var(--lan-glow),.5);
 }
 .pin-label{
-  font-family:var(--serif); font-style:italic; font-weight:500;
+  font-family:var(--serif); font-style:normal; font-weight:600;
   font-size:18px; line-height:1.1; color:var(--moon); white-space:nowrap;
-  text-shadow:0 2px 16px rgba(0,0,0,.9), 0 0 10px rgba(0,0,0,.7);
+  text-shadow:0 2px 16px rgba(0,0,0,.95), 0 0 10px rgba(0,0,0,.8);
   transition:color .3s var(--ease);
 }
-.pin-place{
-  font-family:var(--serif); font-style:italic; font-size:12.5px; line-height:1; margin-top:-3px;
-  color:rgba(216,188,130,.82); white-space:nowrap; text-shadow:0 2px 14px rgba(0,0,0,.9), 0 0 8px rgba(0,0,0,.7);
+.pin-place{ /* whimsical place-name, kept as a faint flavour line under the plain label */
+  font-family:var(--serif); font-style:italic; font-size:11px; line-height:1; margin-top:-2px;
+  color:rgba(216,188,130,.6); white-space:nowrap; text-shadow:0 2px 14px rgba(0,0,0,.9), 0 0 8px rgba(0,0,0,.7);
 }
 .map-pin:nth-child(3n) .pin-label{ transform:rotate(-1.6deg); }
 .map-pin:nth-child(3n+1) .pin-label{ transform:rotate(1.3deg); }
 .map-pin:hover, .map-pin:focus-visible{ transform:translate(-50%,-50%) scale(1.06); outline:none; }
 .map-pin:hover .pin-dot, .map-pin:focus-visible .pin-dot{
   background:radial-gradient(circle at 50% 44%, #ffe9c4 0%, var(--rose-light) 48%, rgba(148,90,82,.4) 80%, transparent 100%);
-  box-shadow:0 0 0 4px rgba(255,200,150,.12), 0 0 34px rgba(255,196,150,.6), 0 0 70px rgba(207,130,110,.55);
+  box-shadow:0 0 0 4px rgba(var(--lan-glow),.12), 0 0 34px rgba(var(--lan-glow),.6), 0 0 70px rgba(var(--lan-halo),.5);
   transform:translateY(-3px);
 }
 .map-pin:hover .pin-dot svg, .map-pin:focus-visible .pin-dot svg{ color:#3a1f1b; }
@@ -764,10 +779,23 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 }
 .pass .map svg{ width:15px; height:15px; }
 .pass .map:hover{ color:var(--rose-deep); }
-.timeline{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin-top:18px; }
-.timeline .stop{ border:1px dashed rgba(120,136,105,.5); border-radius:10px; padding:12px; text-align:center; background:var(--ivory); }
-.timeline .stop b{ display:block; font-family:var(--serif); font-size:18px; font-weight:500; }
-.timeline .stop span{ font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft); }
+/* Vertical timeline — a lit rail with a dot per stop, time and label in a row */
+.timeline{ position:relative; margin-top:22px; padding-left:26px; }
+.timeline::before{
+  content:""; position:absolute; left:7px; top:9px; bottom:9px; width:2px; border-radius:2px;
+  background:linear-gradient(var(--sage), var(--rose)); opacity:.55;
+}
+.timeline .stop{
+  position:relative; display:flex; align-items:baseline; gap:14px; padding:9px 0;
+  border:0; border-radius:0; background:none; text-align:left;
+}
+.timeline .stop + .stop{ border-top:1px dashed var(--line); }
+.timeline .stop::before{
+  content:""; position:absolute; left:-23px; top:14px; width:10px; height:10px; border-radius:50%;
+  background:var(--rose); box-shadow:0 0 0 3px var(--paper), 0 0 10px rgba(178,124,117,.55);
+}
+.timeline .stop b{ flex:none; min-width:74px; font-family:var(--serif); font-size:18px; font-weight:500; color:var(--ink); }
+.timeline .stop span{ font-size:13.5px; letter-spacing:.01em; text-transform:none; color:var(--soft); }
 
 /* Attire */
 .attire-cards{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
@@ -843,7 +871,9 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 .faq p{ font-size:14px; color:var(--soft); padding:0 2px 16px; margin:0; }
 
 /* Contact */
-.contact-cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
+.contact-cards{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.contact-cards .ccard:last-child{ grid-column:1 / -1; max-width:60%; margin:0 auto; } /* lone third card centers under the two above */
+@media (max-width:520px){ .contact-cards{ grid-template-columns:1fr; } .contact-cards .ccard:last-child{ max-width:none; } }
 .ccard{ border:1px solid var(--line); border-radius:14px; padding:18px; background:var(--ivory); text-align:center; }
 .ccard .role{ margin-bottom:6px; }
 .ccard h4{ font-size:20px; }
@@ -985,6 +1015,39 @@ html.reduced #music-btn .eq i{ animation:none; }
 }
 .ctrls.hint-show .ctrl-hint{ opacity:1; transform:none; }
 
+/* Always-labelled pills so non-tech guests can reach Menu / RSVP at any time */
+.ctrl-pill{
+  display:inline-flex; align-items:center; gap:8px; min-height:46px; padding:0 18px;
+  border-radius:999px; border:1px solid rgba(244,237,221,.28);
+  background:rgba(28,21,17,.62); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  color:var(--moon); font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+  box-shadow:0 0 28px rgba(207,130,110,.2);
+  transition:border-color .3s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease), transform .3s var(--ease);
+}
+.ctrl-pill svg{ width:16px; height:16px; flex:none; }
+.ctrl-pill:hover{ border-color:rgba(var(--lan-glow),.5); box-shadow:0 0 34px rgba(var(--lan-glow),.34); transform:translateY(-1px); }
+.ctrl-pill.rsvp{ background:var(--rose); border-color:var(--rose-light); color:#fff; box-shadow:0 0 30px rgba(178,124,117,.4); }
+.ctrl-pill.rsvp:hover{ background:var(--rose-deep); box-shadow:0 6px 30px rgba(178,124,117,.5); }
+
+/* Menu panel — big tappable rows to every section */
+.menu-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px; }
+@media (max-width:520px){ .menu-grid{ grid-template-columns:1fr; } }
+.menu-link{
+  display:flex; align-items:center; gap:14px; width:100%; min-height:62px;
+  padding:16px 18px; border-radius:14px; border:1px solid var(--line);
+  background:var(--ivory); color:var(--ink); font-family:var(--sans); font-size:16px; letter-spacing:.01em;
+  text-align:left; cursor:pointer;
+  transition:background .3s var(--ease), border-color .3s var(--ease), transform .2s var(--ease);
+}
+.menu-link:hover{ background:var(--cream); border-color:var(--rose-light); transform:translateY(-2px); }
+.menu-link svg{ width:23px; height:23px; color:var(--rose-deep); flex:none; }
+.menu-link small{ display:block; font-size:11px; color:var(--soft); letter-spacing:0; margin-top:2px; }
+.menu-link.wide{ grid-column:1 / -1; }
+.menu-link.primary{ background:var(--rose); border-color:var(--rose); color:#fff; }
+.menu-link.primary small{ color:rgba(255,255,255,.85); }
+.menu-link.primary svg{ color:#fff; }
+.menu-link.primary:hover{ background:var(--rose-deep); border-color:var(--rose-deep); }
+
 /* ============================================================
    REDUCED MOTION — collapse cinematic sections
    ============================================================ */
@@ -1046,8 +1109,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   <div class="gate-copy">
     <h1>Bring our lights together</h1>
     <p>Two paths. One sky.</p>
-    <span class="hint">Drag the lanterns toward each other</span><br/>
-    <button id="connect-btn" class="btn ghost" type="button">Tap to connect</button>
+    <span class="hint">Drag the two lanterns together — or simply tap below to enter.</span><br/>
+    <button id="connect-btn" class="btn" type="button">Tap to Enter &rsaquo;</button>
   </div>
 </div>
 
@@ -1061,6 +1124,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="w-line"><span class="w">Our Journey</span></div>
       <div class="rule" aria-hidden="true"></div>
       <p class="meta rv">Tommy &amp; Jeyan · December 27, 2026</p>
+      <p class="signpost rv">Scroll down for our story — or tap <b>Menu</b> (bottom&#8209;right) any time for the wedding details &amp; RSVP.</p>
     </div>
     <div class="scrollcue" aria-hidden="true">Scroll</div>
   </section>
@@ -1071,9 +1135,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <svg id="arcs" viewBox="0 0 1000 1400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <radialGradient id="tGlow">
-            <stop offset="0" stop-color="#fff6dd" stop-opacity=".95"/>
-            <stop offset=".35" stop-color="#ffcf96" stop-opacity=".55"/>
-            <stop offset="1" stop-color="#cf826e" stop-opacity="0"/>
+            <stop offset="0" stop-color="#fff9ee" stop-opacity=".95"/>
+            <stop offset=".35" stop-color="#ffe6cc" stop-opacity=".55"/>
+            <stop offset="1" stop-color="#e0c0a8" stop-opacity="0"/>
           </radialGradient>
         </defs>
         <path class="glow" id="arcLg" d="M 165 1380 C 130 1020, 290 780, 498 648"/>
@@ -1084,17 +1148,17 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <path id="arcM" d="M 500 646 C 528 520, 472 350, 500 130"/>
         <g id="tracerL" class="tracer">
           <circle r="38" fill="url(#tGlow)"/>
-          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#ffe9bf"/>
+          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#fff1da"/>
           <circle cy="9" r="4" fill="#fff8e8"/>
         </g>
         <g id="tracerR" class="tracer">
           <circle r="38" fill="url(#tGlow)"/>
-          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#ffe9bf"/>
+          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#fff1da"/>
           <circle cy="9" r="4" fill="#fff8e8"/>
         </g>
         <g id="tracerM" class="tracer">
           <circle r="52" fill="url(#tGlow)"/>
-          <rect x="-10" y="-15" width="20" height="29" rx="9" fill="#fff0ca"/>
+          <rect x="-10" y="-15" width="20" height="29" rx="9" fill="#fff5e6"/>
           <circle cy="11" r="5" fill="#fff"/>
         </g>
       </svg>
@@ -1145,6 +1209,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <span class="b-lan" style="left:30%; top:30%; animation-delay:-2s"></span>
         <span class="b-lan" style="left:58%; top:36%; animation-delay:-7s"></span>
         <span class="b-lan" style="left:74%; top:26%; animation-delay:-11s"></span>
+        <span class="b-lan" style="left:18%; top:40%; width:12px; height:17px; animation-delay:-5s"></span>
+        <span class="b-lan" style="left:44%; top:24%; width:13px; height:18px; animation-delay:-9s"></span>
+        <span class="b-lan" style="left:66%; top:42%; width:18px; height:24px; animation-delay:-14s"></span>
+        <span class="b-lan" style="left:86%; top:38%; width:12px; height:17px; animation-delay:-17s"></span>
         <svg class="palm" viewBox="0 0 220 260">
           <g class="sway" fill="currentColor">
             <path d="M104 250c-2-60 0-110 8-150l8 2c-9 42-10 90-6 148z"/>
@@ -1195,9 +1263,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       </article>
       <article class="dcard rv">
         <span class="k">Reception</span>
-        <h3>To follow</h3>
-        <p class="big">Savoy Hotel Manila</p>
-        <p>Andrews Avenue, Newport City, Pasay · doors at 3:00 PM</p>
+        <h3>4:30 PM</h3>
+        <p class="big">Gallio Events Hall</p>
+        <p>Talisay Hall · Aseana City, Parañaque · doors 3:30 PM</p>
       </article>
       <article class="dcard rose rv">
         <span class="k">Attire</span>
@@ -1288,8 +1356,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     </div>
     <div class="head">
       <span class="script-accent rv">chart your course by starlight</span>
-      <h2 class="rv">Our Constellation</h2>
-      <p class="rv">Everything you need for the day, written in the stars — follow the lantern, star to star.</p>
+      <h2 class="rv">Wedding Details</h2>
+      <p class="rv">Everything for the day — itinerary, directions, attire, entourage, gifts and RSVP. Tap any glowing marker below to open it.</p>
     </div>
     <div class="world-map rv" id="world-map">
       <!-- decorative sky-chart layer: graticule, constellations, scattered stars -->
@@ -1343,25 +1411,25 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       </svg>
       <div class="map-script" aria-hidden="true">our little sky</div>
       <div class="map-cartouche" aria-hidden="true"><span>The Sky of</span><b>T &amp; J</b></div>
-      <div class="map-legend" aria-hidden="true"><svg aria-hidden="true"><use href="#ic-plane"/></svg> the lantern&rsquo;s path &middot; tap a star</div>
+      <div class="map-legend" aria-hidden="true"><svg aria-hidden="true"><use href="#ic-plane"/></svg> tap a marker to open</div>
       <div class="map-sea" aria-hidden="true">a sky of someday</div>
       <svg class="map-lines" id="map-lines" aria-hidden="true" preserveAspectRatio="none">
         <path class="route-glow" d="" />
         <path class="route" d="" />
         <g class="route-plane" id="route-plane" style="display:none">
           <ellipse cx="0" cy="-9" rx="3" ry="1.3" fill="#9a7a39"/>
-          <path d="M-6 0 C-6 -5 6 -5 6 0 C6 5 4 9 0 9 C-4 9 -6 5 -6 0 Z" fill="#ffd9a3"/>
+          <path d="M-6 0 C-6 -5 6 -5 6 0 C6 5 4 9 0 9 C-4 9 -6 5 -6 0 Z" fill="#ffe7c8"/>
           <circle cx="0" cy="5.4" r="1.5" fill="#fff3d2"/>
         </g>
       </svg>
-      <button class="map-pin" type="button" data-panel="p-itinerary" style="--mx:29;--my:9;--x:12;--y:62" aria-label="Stop 1, Hourglass Bay: itinerary"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-clock"/></svg><i class="pin-num">1</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Hourglass Bay</span></button>
-      <button class="map-pin" type="button" data-panel="p-directions" style="--mx:71;--my:23;--x:30;--y:44" aria-label="Stop 2, Wayfarer's Cross: directions"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-pin"/></svg><i class="pin-num">2</i></span><span class="pin-label">Directions</span><span class="pin-place">Wayfarer&rsquo;s Cross</span></button>
-      <button class="map-pin" type="button" data-panel="p-attire" style="--mx:29;--my:40;--x:47;--y:35" aria-label="Stop 3, Linen Shores: attire guide"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><i class="pin-num">3</i></span><span class="pin-label">Attire Guide</span><span class="pin-place">Linen Shores</span></button>
-      <button class="map-pin" type="button" data-panel="p-entourage" style="--mx:71;--my:55;--x:63;--y:35" aria-label="Stop 4, Company Cove: entourage"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-users"/></svg><i class="pin-num">4</i></span><span class="pin-label">Entourage</span><span class="pin-place">Company Cove</span></button>
-      <button class="map-pin" type="button" data-panel="p-gift" style="--mx:29;--my:70;--x:79;--y:45" aria-label="Stop 5, Cape of Beginnings: gift fund"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-gift"/></svg><i class="pin-num">5</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">Cape of Beginnings</span></button>
-      <button class="map-pin" type="button" data-panel="p-faq" style="--mx:70;--my:86;--x:89;--y:62" aria-label="Stop 6, Lantern Light: FAQ and contact"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-help"/></svg><i class="pin-num">6</i></span><span class="pin-label">FAQ &amp; Contact</span><span class="pin-place">Lantern Light</span></button>
+      <button class="map-pin" type="button" data-panel="p-itinerary" style="--mx:29;--my:9;--x:12;--y:62" aria-label="Itinerary — stop 1"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-clock"/></svg><i class="pin-num">1</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Hourglass Bay</span></button>
+      <button class="map-pin" type="button" data-panel="p-directions" style="--mx:71;--my:23;--x:30;--y:44" aria-label="Directions — stop 2"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-pin"/></svg><i class="pin-num">2</i></span><span class="pin-label">Directions</span><span class="pin-place">Wayfarer&rsquo;s Cross</span></button>
+      <button class="map-pin" type="button" data-panel="p-attire" style="--mx:29;--my:40;--x:47;--y:35" aria-label="Attire guide — stop 3"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><i class="pin-num">3</i></span><span class="pin-label">Attire Guide</span><span class="pin-place">Linen Shores</span></button>
+      <button class="map-pin" type="button" data-panel="p-entourage" style="--mx:71;--my:55;--x:63;--y:35" aria-label="Entourage — stop 4"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-users"/></svg><i class="pin-num">4</i></span><span class="pin-label">Entourage</span><span class="pin-place">Company Cove</span></button>
+      <button class="map-pin" type="button" data-panel="p-gift" style="--mx:29;--my:70;--x:79;--y:45" aria-label="Gift fund — stop 5"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-gift"/></svg><i class="pin-num">5</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">Cape of Beginnings</span></button>
+      <button class="map-pin" type="button" data-panel="p-faq" style="--mx:70;--my:86;--x:89;--y:62" aria-label="FAQ and contact — stop 6"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-help"/></svg><i class="pin-num">6</i></span><span class="pin-label">FAQ &amp; Contact</span><span class="pin-place">Lantern Light</span></button>
     </div>
-    <p class="map-hint rv">Follow stops 1&ndash;6 &middot; tap any marker</p>
+    <p class="map-hint rv">Tap any marker to open the details &middot; stops 1&ndash;6</p>
   </section>
 
   <!-- INTERLUDE — THE PROMISE -->
@@ -1422,7 +1490,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   <p class="names">Tommy &amp; Jeyan</p>
   <p class="hash">#ToMyJeyan</p>
   <p class="tag">Soaring with TJ</p>
-  <small>Sunday, December 27, 2026 · Newport City, Pasay</small>
+  <small>Sunday, December 27, 2026 · Newport City &amp; Aseana City</small>
   <small><a href="invitation.html">View the full invitation →</a></small>
 </footer>
 
@@ -1476,7 +1544,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div><span class="panel-kicker">save a seat</span><h3>RSVP</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
-    <p>Kindly respond by <strong>November 30, 2026</strong> so we can finalize seats with Savoy Hotel Manila. A confirmed RSVP secures your place at the reception.</p>
+    <p>Kindly respond by <strong>November 30, 2026</strong> so we can finalize seats with Gallio Events Hall. A confirmed RSVP secures your place at the reception.</p>
     <div class="success" id="rsvp-success" role="status" aria-live="polite"></div>
     <form id="rsvp-form" novalidate>
       <!-- Honeypot: hidden from people, irresistible to bots. Must stay empty. -->
@@ -1498,7 +1566,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           <label>Which parts of the day?</label>
           <div class="check-row">
             <label><input type="checkbox" id="att-cer" checked /> Ceremony · 1:30 PM</label>
-            <label><input type="checkbox" id="att-rec" checked /> Reception · Savoy Hotel</label>
+            <label><input type="checkbox" id="att-rec" checked /> Reception · Gallio Events Hall</label>
           </div>
         </div>
         <div class="field" id="party-size-group">
@@ -1567,18 +1635,19 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <article class="pass rose">
         <div class="ph"><span>Boarding Pass · Reception</span><svg aria-hidden="true"><use href="#ic-plane"/></svg></div>
         <div class="pb">
-          <span class="role">Dinner &amp; Celebration</span><h4>Savoy Hotel Manila</h4>
-          <p class="addr">Andrews Avenue, Newport City, Pasay</p>
-          <div class="fields"><div class="f"><span>Doors</span><b>3:00 PM</b></div><div class="f"><span>Program</span><b>5:00 PM</b></div><div class="f"><span>Dress</span><b>Smart Formal</b></div></div>
-          <a class="map" href="https://maps.google.com/?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Open map</a>
+          <span class="role">Dinner &amp; Celebration</span><h4>Gallio Events Hall</h4>
+          <p class="addr">Talisay Hall · 3008 V. Almario Ave. cor. P. Antonio St., Aseana City, Parañaque</p>
+          <div class="fields"><div class="f"><span>Doors</span><b>3:30 PM</b></div><div class="f"><span>Program</span><b>4:30 PM</b></div><div class="f"><span>Dress</span><b>Smart Formal</b></div></div>
+          <a class="map" href="https://maps.google.com/?q=Gallio+Events+Hall+3008+V.+Almario+Avenue+Aseana+City+Paranaque" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Open map</a>
         </div>
       </article>
     </div>
     <div class="timeline">
       <div class="stop"><b>1:30 PM</b><span>Ceremony</span></div>
       <div class="stop"><b>2:45 PM</b><span>Photos</span></div>
-      <div class="stop"><b>3:00 PM</b><span>Reception opens</span></div>
-      <div class="stop"><b>5:00 PM</b><span>Program &amp; dinner</span></div>
+      <div class="stop"><b>3:00 PM</b><span>Transfer to Aseana City</span></div>
+      <div class="stop"><b>3:30 PM</b><span>Reception doors open</span></div>
+      <div class="stop"><b>4:30 PM</b><span>Program &amp; dinner</span></div>
       <div class="stop"><b>Late</b><span>After-party · TBA</span></div>
     </div>
   </div>
@@ -1591,14 +1660,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div><span class="panel-kicker">finding the way</span><h3>Directions</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
-    <p>Everything happens within <strong>Newport City, Pasay</strong>, just across from NAIA Terminal 3. Tap a venue for live directions.</p>
+    <p>The <strong>ceremony</strong> is in Newport City, Pasay (across from NAIA Terminal 3). The <strong>reception</strong> is about a <strong>15–20 minute drive away</strong> in Aseana City, Parañaque, near Mall of Asia. Tap a venue below for live directions.</p>
     <div class="passes" style="margin-top:14px">
       <article class="pass is-a"><div class="ph"><span>Ceremony</span><svg aria-hidden="true"><use href="#ic-pin"/></svg></div><div class="pb"><h4>St. Therese Parish</h4><p class="addr">Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Get directions</a></div></article>
-      <article class="pass rose is-b"><div class="ph"><span>Reception</span><svg aria-hidden="true"><use href="#ic-pin"/></svg></div><div class="pb"><h4>Savoy Hotel Manila</h4><p class="addr">Andrews Avenue, Newport City, Pasay</p><a class="map" href="https://maps.google.com/?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Get directions</a></div></article>
+      <article class="pass rose is-b"><div class="ph"><span>Reception</span><svg aria-hidden="true"><use href="#ic-pin"/></svg></div><div class="pb"><h4>Gallio Events Hall</h4><p class="addr">Talisay Hall · 3008 V. Almario Ave. cor. P. Antonio St., Aseana City, Parañaque</p><a class="map" href="https://maps.google.com/?q=Gallio+Events+Hall+3008+V.+Almario+Avenue+Aseana+City+Paranaque" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Get directions</a></div></article>
       <div class="map-embed is-a"><iframe title="Map to St. Therese Parish, Newport City, Pasay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="https://maps.google.com/maps?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay&amp;z=16&amp;output=embed"></iframe></div>
-      <div class="map-embed is-b"><iframe title="Map to Savoy Hotel Manila, Newport City, Pasay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="https://maps.google.com/maps?q=Savoy+Hotel+Manila+Andrews+Avenue+Newport+City+Pasay&amp;z=16&amp;output=embed"></iframe></div>
+      <div class="map-embed is-b"><iframe title="Map to Gallio Events Hall, Aseana City, Parañaque" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="https://maps.google.com/maps?q=Gallio+Events+Hall+Aseana+City+Paranaque&amp;z=16&amp;output=embed"></iframe></div>
     </div>
-    <p style="margin-top:16px; font-size:13.5px">On-site parking is available at both the church and the hotel. Both venues sit minutes from NAIA Terminal 3 by car or ride-hail.</p>
+    <p style="margin-top:16px; font-size:13.5px">On-site parking is available at both the church and Gallio Events Hall. Please allow about 15–20 minutes to drive from the ceremony in Newport City to the reception in Aseana City — ride-hailing is easy at both.</p>
   </div>
 </dialog>
 
@@ -1637,7 +1706,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     </div>
     <details class="faq"><summary>Can I bring a plus one?</summary><p>Our guest list is by name, so the seats reserved for you are shown when you RSVP. If you're unsure how many seats are yours, message us and we'll gladly confirm.</p></details>
     <details class="faq"><summary>What should I wear?</summary><p>Smart formal in soft, dreamy tones: cream, ivory, champagne, sage, dusty rose, soft taupe. See the Attire Guide for the full palette. Kindly skip loud colours, heavy black, and neon.</p></details>
-    <details class="faq"><summary>Where can I park?</summary><p>On-site parking is available at both St. Therese Parish and Savoy Hotel Manila. Both are in Newport City, minutes from NAIA Terminal 3, so ride-hailing is easy too.</p></details>
+    <details class="faq"><summary>Where can I park?</summary><p>On-site parking is available at both St. Therese Parish (Newport City, Pasay) and Gallio Events Hall (Aseana City, Parañaque). The two are about a 15–20 minute drive apart, so ride-hailing is easy too.</p></details>
     <details class="faq"><summary>What time should I arrive?</summary><p>The ceremony begins at 1:30 PM sharp. We suggest being seated by 1:00 PM so you can settle in before the doors close for the processional.</p></details>
     <details class="faq"><summary>Are children invited?</summary><p>We love your little ones. Seats are limited, so please include everyone joining you by name in your RSVP so we can plan their places with care.</p></details>
     <div class="divider-sm">Still need us? The help desk</div>
@@ -1647,6 +1716,26 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="ccard"><span class="role">For the guest list</span><h4>RSVP Desk</h4><p>Name &amp; number to follow</p></div>
       <div class="ccard"><span class="role">On the day</span><h4>Coordinator</h4><p>Name &amp; number to follow</p></div>
       <div class="ccard"><span class="role">Anything else</span><h4>Tommy &amp; Jeyan</h4><p>Message us on our socials · #ToMyJeyan</p></div>
+    </div>
+  </div>
+</dialog>
+
+<!-- Menu — quick links to every section -->
+<dialog class="panel" id="p-menu" aria-label="Menu">
+  <div class="panel-inner">
+    <div class="panel-head">
+      <div><span class="panel-kicker">jump to anything</span><h3>Menu</h3></div>
+      <button class="panel-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <p>Tap a section to open it — no scrolling needed.</p>
+    <div class="menu-grid">
+      <button class="menu-link primary wide" type="button" data-go="p-rsvp"><svg aria-hidden="true"><use href="#ic-mail"/></svg> <span>RSVP<small>Let us know if you can join</small></span></button>
+      <button class="menu-link" type="button" data-go="p-itinerary"><svg aria-hidden="true"><use href="#ic-clock"/></svg> <span>Itinerary<small>Times for the day</small></span></button>
+      <button class="menu-link" type="button" data-go="p-directions"><svg aria-hidden="true"><use href="#ic-pin"/></svg> <span>Directions<small>Church &amp; reception maps</small></span></button>
+      <button class="menu-link" type="button" data-go="p-attire"><svg aria-hidden="true"><use href="#ic-hanger"/></svg> <span>Attire Guide<small>What to wear</small></span></button>
+      <button class="menu-link" type="button" data-go="p-entourage"><svg aria-hidden="true"><use href="#ic-users"/></svg> <span>Entourage<small>The wedding party</small></span></button>
+      <button class="menu-link" type="button" data-go="p-gift"><svg aria-hidden="true"><use href="#ic-gift"/></svg> <span>Gift Fund<small>A small blessing</small></span></button>
+      <button class="menu-link" type="button" data-go="p-faq"><svg aria-hidden="true"><use href="#ic-help"/></svg> <span>FAQ &amp; Contact<small>Questions &amp; help</small></span></button>
     </div>
   </div>
 </dialog>
@@ -1681,6 +1770,16 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <circle cx="6.8" cy="18" r="2.4" fill="currentColor"/><circle cx="15.8" cy="16" r="2.4" fill="currentColor"/>
       </svg>
       <span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>
+    </button>
+  </div>
+  <div class="ctrl-row">
+    <button id="menu-btn" class="ctrl-pill" type="button" aria-haspopup="dialog" aria-label="Open the menu of wedding details">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Menu
+    </button>
+  </div>
+  <div class="ctrl-row">
+    <button class="ctrl-pill rsvp" type="button" data-panel="p-rsvp" aria-label="Open the RSVP form">
+      <svg aria-hidden="true"><use href="#ic-mail"/></svg> RSVP
     </button>
   </div>
 </div>
@@ -1758,19 +1857,19 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       var cx = glowR, cy = glowR;
       /* halo */
       var halo = c.createRadialGradient(cx, cy, core * 0.2, cx, cy, glowR);
-      halo.addColorStop(0, 'rgba(255,214,160,.85)');
-      halo.addColorStop(0.25, 'rgba(255,178,130,.4)');
-      halo.addColorStop(0.6, 'rgba(207,124,108,.14)');
-      halo.addColorStop(1, 'rgba(207,124,108,0)');
+      halo.addColorStop(0, 'rgba(255,228,204,.85)');
+      halo.addColorStop(0.25, 'rgba(255,212,180,.4)');
+      halo.addColorStop(0.6, 'rgba(206,176,150,.14)');
+      halo.addColorStop(1, 'rgba(206,176,150,0)');
       c.fillStyle = halo;
       c.fillRect(0, 0, size, size);
       /* paper body */
       var bw = core * 1.15, bh = core * 1.55;
       var bx = cx - bw / 2, by = cy - bh / 2;
       var body = c.createLinearGradient(0, by, 0, by + bh);
-      body.addColorStop(0, '#f3c690');
-      body.addColorStop(0.45, '#ffe9bf');
-      body.addColorStop(1, '#e89a64');
+      body.addColorStop(0, '#f3ddb0');
+      body.addColorStop(0.45, '#fff2da');
+      body.addColorStop(1, '#e6c8a8');
       c.fillStyle = body;
       c.beginPath();
       if (c.roundRect) c.roundRect(bx, by, bw, bh, [bw * 0.42, bw * 0.42, bw * 0.34, bw * 0.34]);
@@ -2179,6 +2278,18 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     btn.addEventListener('click', function () { openPanel(btn.getAttribute('data-panel'), btn); });
   });
 
+  /* Persistent Menu: open the quick-links sheet, and let each row jump straight
+     to its section (close the menu first so we never stack two dialogs). */
+  var menuBtn = $('menu-btn');
+  if (menuBtn) menuBtn.addEventListener('click', function () { openPanel('p-menu', menuBtn); });
+  document.querySelectorAll('#p-menu [data-go]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var menuDlg = $('p-menu');
+      if (menuDlg && menuDlg.open) menuDlg.close();
+      openPanel(b.getAttribute('data-go'), menuBtn);
+    });
+  });
+
   /* ---------- gallery lightbox ---------- */
   (function () {
     var lb = $('lb'), lbImg = $('lb-img'), lbCap = $('lb-cap');
@@ -2224,7 +2335,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
   /* ---------- RSVP ---------- */
   (function () {
-    var RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxvLRW-_JejderjHjt4DnY0JaJpihphEjzHOK9ViY-84bz2HZpqcpJFFQYCc-Kgrnx1/exec';
+    var RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzR3J6K8k0McwaM-3RwyfoqBpf9xUvc1UviOtGRErjehAaJmRIvuJKlwGyGa4G89jSI/exec';
     var attendingValue = null;
     document.querySelectorAll('.toggle-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -2448,6 +2559,28 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     });
 
     $('connect-btn').addEventListener('click', connect);
+
+    /* Safety net for non-tech-savvy guests: if nothing happens, the Enter button
+       starts to breathe after a few seconds, then the gate opens itself. Any
+       interaction (drag, key, tap) cancels the auto-open. */
+    var connectBtn = $('connect-btn'), nudgeTimer = 0, autoTimer = 0;
+    function clearGateTimers() {
+      clearTimeout(nudgeTimer); clearTimeout(autoTimer);
+      connectBtn.classList.remove('nudge');
+    }
+    function armGateTimers() {
+      nudgeTimer = setTimeout(function () { if (!connected) connectBtn.classList.add('nudge'); }, 9000);
+      autoTimer = setTimeout(function () { if (!connected) connect(); }, 22000);
+    }
+    ['pointerdown', 'keydown'].forEach(function (ev) {
+      gate.addEventListener(ev, function (e) {
+        if (e.target === connectBtn) return; /* tapping Enter runs connect() itself */
+        clearTimeout(nudgeTimer); clearTimeout(autoTimer);
+        connectBtn.classList.remove('nudge');
+      }, true);
+    });
+    connectBtn.addEventListener('click', clearGateTimers);
+    armGateTimers();
   })();
 
   /* ---------- finale background lanterns (DOM, above dawn overlays) ---------- */
@@ -2543,29 +2676,32 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       var tl = gsap.timeline({
         scrollTrigger: { trigger: '#next', start: 'top top', end: 'bottom bottom', scrub: 0.6 }
       });
-      tl.fromTo('#dawn-cap', { opacity: 0 }, { opacity: 1, duration: 0.7 }, 0.1)
-        .to('#dawn-cap', { opacity: 0, duration: 0.7 }, 1.8)
-        .to('.sky-dawn', { opacity: 1, ease: 'none', duration: 3.4 }, 0.6)
-        .to('.sky-warm', { opacity: 1, ease: 'none', duration: 4 }, 4.4)
+      tl.fromTo('#dawn-cap', { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0.1)
+        .to('#dawn-cap', { opacity: 0, duration: 0.6 }, 1.5)
+        .to('.sky-dawn', { opacity: 1, ease: 'none', duration: 2.6 }, 0.5)
+        .to('.sky-warm', { opacity: 1, ease: 'none', duration: 2.6 }, 3.0)
         .to('#next-lans .lantern', { y: -window.innerHeight * 1.3, ease: 'none', duration: 9, stagger: 0.35 }, 0.4)
-        .to('#nlanT', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return W() * 0.18; }, ease: 'power1.inOut', duration: 6 }, 0.6)
-        .to('#nlanJ', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return -W() * 0.18; }, ease: 'power1.inOut', duration: 6 }, 0.6)
-        .to(['#nlanT', '#nlanJ'], { y: '-=' + window.innerHeight * 0.14, ease: 'power1.out', duration: 3 }, 6.6)
-        .to(['#route-path', '#route-glow'], { strokeDashoffset: 0, ease: 'none', duration: 5.5 }, 1.6);
+        .to('#nlanT', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return W() * 0.18; }, ease: 'power1.inOut', duration: 4.4 }, 0.6)
+        .to('#nlanJ', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return -W() * 0.18; }, ease: 'power1.inOut', duration: 4.4 }, 0.6)
+        .to(['#nlanT', '#nlanJ'], { y: '-=' + window.innerHeight * 0.14, ease: 'power1.out', duration: 2.4 }, 5.0)
+        .to(['#route-path', '#route-glow'], { strokeDashoffset: 0, ease: 'none', duration: 3.6 }, 1.4);
       if (window.MotionPathPlugin) {
         tl.to('#plane', {
           motionPath: { path: '#route-path', align: '#route-path', alignOrigin: [0.5, 0.5], autoRotate: 49 },
-          ease: 'none', duration: 5.5
-        }, 1.6);
+          ease: 'none', duration: 3.6
+        }, 1.4);
         gsap.set('#plane', { opacity: 0 });
-        tl.to('#plane', { opacity: 1, duration: 0.4 }, 1.6)
-          .to('#plane', { opacity: 0, duration: 0.5 }, 6.8);
+        tl.to('#plane', { opacity: 1, duration: 0.4 }, 1.4)
+          .to('#plane', { opacity: 0, duration: 0.5 }, 4.6);
       }
-      tl.to('#dest', { opacity: 1, duration: 0.8 }, 6.9)
-        .to('#next-micro', { opacity: 1, y: 0, duration: 0.5 }, 7.2)
-        .to('#arr1', { opacity: 1, duration: 0.7 }, 7.5)
-        .to('#arr2', { opacity: 1, duration: 0.7 }, 8.1)
-        .to(['#next-date', '#cd', '.cd-cap', '#rsvp-cta'], { opacity: 1, duration: 0.8, stagger: 0.18 }, 8.6);
+      /* Reveal the arrival copy well before the section unpins, then hold it
+         fully visible for the last stretch of scroll so it's easy to read. */
+      tl.to('#dest', { opacity: 1, duration: 0.7 }, 5.0)
+        .to('#next-micro', { opacity: 1, y: 0, duration: 0.5 }, 5.3)
+        .to('#arr1', { opacity: 1, duration: 0.7 }, 5.6)
+        .to('#arr2', { opacity: 1, duration: 0.6 }, 6.2)
+        .to(['#next-date', '#cd', '.cd-cap', '#rsvp-cta'], { opacity: 1, duration: 0.7, stagger: 0.16 }, 6.6)
+        .to('#cd', { opacity: 1, duration: 3 }); /* hold — keeps everything on screen while still pinned */
     })();
   }
 })();
