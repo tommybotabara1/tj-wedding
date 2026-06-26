@@ -2721,44 +2721,53 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       var stick = document.querySelector('#next .stick');
       var W = function () { return stick.clientWidth; };
       primeDraw(['route-path', 'route-glow']);
-      /* scrub:true — the whole finale (scene AND arrival copy) is locked 1:1 to
-         the scroll position, exactly like the bridge/promise sections. Nothing
-         here runs on a clock: scroll forward and it advances, scroll back and it
-         rewinds, stop and it stops. */
+      /* scrub:true AND start:'top bottom' — the finale begins the instant the
+         section slides up into view (just like the bridge/promise sections),
+         not after a full screen of pinning. So there's no dead "buffer" night
+         before it: the sky already warms toward dawn while #next is still rising
+         into frame, then it pins (CSS sticky) for the lantern + copy beats.
+
+         The pin engages at ~45% of this timeline (one viewport of entry, then
+         220vh - 100vh of pinned scroll). PHASE A (0 -> ~4.5) is the entry: only
+         opacity-based sky beats run, which look right while the panel is still
+         moving. PHASE B (~4.5 -> 10) is the pinned hold: lanterns rise, the
+         route draws, and the copy reveals while the scene is locked centre-screen
+         so nothing reveals off-screen. Total timeline length is fixed at 10. */
       var tl = gsap.timeline({
-        scrollTrigger: { trigger: '#next', start: 'top top', end: 'bottom bottom', scrub: true }
+        scrollTrigger: { trigger: '#next', start: 'top bottom', end: 'bottom bottom', scrub: true }
       });
-      tl.fromTo('#dawn-cap', { opacity: 0 }, { opacity: 1, ease: 'none', duration: 0.6 }, 0.2)
-        .to('#dawn-cap', { opacity: 0, ease: 'none', duration: 0.7 }, 1.8)
-        .to('.sky-dawn', { opacity: 1, ease: 'none', duration: 3.4 }, 0.4)
-        .to('.sky-warm', { opacity: 1, ease: 'none', duration: 4.2 }, 3.6)
-        .to('#next-lans .lantern', { y: -window.innerHeight * 1.3, ease: 'none', duration: 8.2, stagger: 0.22 }, 0.4)
-        .to('#nlanT', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return W() * 0.18; }, ease: 'power1.inOut', duration: 6.0 }, 0.6)
-        .to('#nlanJ', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return -W() * 0.18; }, ease: 'power1.inOut', duration: 6.0 }, 0.6)
-        .to(['#nlanT', '#nlanJ'], { y: '-=' + window.innerHeight * 0.16, ease: 'none', duration: 3.4 }, 6.6)
-        .to(['#route-path', '#route-glow'], { strokeDashoffset: 0, ease: 'none', duration: 5.0 }, 1.6);
+      /* --- PHASE A · entry: night warms to dawn as the section rises in --- */
+      tl.to('.sky-dawn', { opacity: 1, ease: 'none', duration: 3.6 }, 0.0)
+        .to('.sky-warm', { opacity: 1, ease: 'none', duration: 4.3 }, 3.2)
+        .fromTo('#dawn-cap', { opacity: 0 }, { opacity: 1, ease: 'none', duration: 0.7 }, 0.4)
+        .to('#dawn-cap', { opacity: 0, ease: 'none', duration: 0.8 }, 2.6)
+        /* --- PHASE B · pinned: lanterns rise, route draws, copy reveals --- */
+        .to('#next-lans .lantern', { y: -window.innerHeight * 1.3, ease: 'none', duration: 3.8, stagger: 0.18 }, 4.6)
+        .to('#nlanT', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return W() * 0.18; }, ease: 'power1.inOut', duration: 4.4 }, 4.6)
+        .to('#nlanJ', { y: function () { return -window.innerHeight * 0.74; }, x: function () { return -W() * 0.18; }, ease: 'power1.inOut', duration: 4.4 }, 4.6)
+        .to(['#nlanT', '#nlanJ'], { y: '-=' + window.innerHeight * 0.12, ease: 'none', duration: 1.0 }, 9.0)
+        .to(['#route-path', '#route-glow'], { strokeDashoffset: 0, ease: 'none', duration: 4.0 }, 5.0);
       if (window.MotionPathPlugin) {
         tl.to('#plane', {
           motionPath: { path: '#route-path', align: '#route-path', alignOrigin: [0.5, 0.5], autoRotate: 49 },
-          ease: 'none', duration: 5.0
-        }, 1.6);
+          ease: 'none', duration: 4.0
+        }, 5.0);
         gsap.set('#plane', { opacity: 0 });
-        tl.to('#plane', { opacity: 1, ease: 'none', duration: 0.4 }, 1.6)
-          .to('#plane', { opacity: 0, ease: 'none', duration: 0.6 }, 6.4);
+        tl.to('#plane', { opacity: 1, ease: 'none', duration: 0.4 }, 5.0)
+          .to('#plane', { opacity: 0, ease: 'none', duration: 0.6 }, 8.6);
       }
-      /* Arrival copy rides the same scrub: it reveals as you scroll into the
-         finale and then stays put all the way to the end, so a fast flick always
-         lands on fully-visible copy (never blank) while a slow scroll reveals it
-         line by line with the scroll. */
+      /* Arrival copy — pinned phase only (starts at t5, after the ~t4.5 pin), so
+         it reveals on screen and then stays put to the end; a fast flick lands on
+         fully-visible copy, a slow scroll reveals it line by line. */
       var copyEls = ['#dest', '#next-micro', '#arr1', '#arr2', '#next-date', '#cd', '.cd-cap', '#rsvp-cta'];
       var riseEls = ['#next-micro', '#arr1', '#arr2', '#next-date', '#cd', '.cd-cap', '#rsvp-cta'];
       gsap.set(copyEls, { opacity: 0 });
       gsap.set(riseEls, { y: 20 });
-      tl.to('#dest', { opacity: 1, ease: 'none', duration: 0.6 }, 1.6)
-        .to('#next-micro', { opacity: 1, y: 0, ease: 'none', duration: 0.6 }, 1.9)
-        .to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, 2.1)
-        .to('#arr2', { opacity: 1, y: 0, ease: 'none', duration: 0.7 }, 2.5)
-        .to(['#next-date', '#cd', '.cd-cap', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.18 }, 2.9);
+      tl.to('#dest', { opacity: 1, ease: 'none', duration: 0.6 }, 5.0)
+        .to('#next-micro', { opacity: 1, y: 0, ease: 'none', duration: 0.6 }, 5.3)
+        .to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, 5.6)
+        .to('#arr2', { opacity: 1, y: 0, ease: 'none', duration: 0.7 }, 6.1)
+        .to(['#next-date', '#cd', '.cd-cap', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.18 }, 6.6);
     })();
   }
 })();
