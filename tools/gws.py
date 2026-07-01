@@ -18,6 +18,7 @@ import sys
 from dotenv import load_dotenv
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload, MediaIoBaseUpload
 
 try:
@@ -28,14 +29,56 @@ except ImportError:
 
 load_dotenv()
 
-SCOPES     = ["https://www.googleapis.com/auth/drive"]
+SCOPES     = [
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/spreadsheets.readonly",
+]
 CREDS_FILE = os.path.join(os.path.dirname(__file__), "..", "credentials.json")
 FILE_ID    = os.environ.get("GOOGLE_DRIVE_FILE_ID", "")
 
 
-def _drive_service():
+def _creds():
     creds = Credentials.from_service_account_file(CREDS_FILE, scopes=SCOPES)
-    return build("drive", "v3", credentials=creds)
+    return creds
+
+
+def _drive_service():
+    return build("drive", "v3", credentials=_creds())
+
+
+def _sheets_service():
+    return build("sheets", "v4", credentials=_creds())
+
+
+def _append_values(ws, values):
+    for row in values:
+        ws.append(row)
+
+
+def _download_workbook_from_sheets_api() -> openpyxl.Workbook:
+    """Build a compact workbook from visible source tabs when Drive export is too large."""
+    service = _sheets_service()
+    ranges = [
+        "'Timeline  Task List'!A1:D120",
+        "'Budget + Vendor Tracker'!A1:I120",
+        "'Guest List'!A1:K1000",
+        "'Wedding Day Itinerary'!A1:G100",
+    ]
+    result = service.spreadsheets().values().batchGet(
+        spreadsheetId=FILE_ID,
+        ranges=ranges,
+        valueRenderOption="FORMATTED_VALUE",
+        dateTimeRenderOption="FORMATTED_STRING",
+    ).execute()
+
+    wb = openpyxl.Workbook()
+    wb.remove(wb.active)
+    for item in result.get("valueRanges", []):
+        range_name = item.get("range", "")
+        sheet_name = range_name.split("!", 1)[0].strip("'")
+        ws = wb.create_sheet(sheet_name)
+        _append_values(ws, item.get("values", []))
+    return wb
 
 
 def download_workbook() -> openpyxl.Workbook:
@@ -44,14 +87,27 @@ def download_workbook() -> openpyxl.Workbook:
         raise ValueError("GOOGLE_DRIVE_FILE_ID not set in .env")
 
     service = _drive_service()
-    request = service.files().get_media(fileId=FILE_ID)
+    meta = service.files().get(fileId=FILE_ID, fields="mimeType").execute()
+    if meta.get("mimeType") == "application/vnd.google-apps.spreadsheet":
+        request = service.files().export_media(
+            fileId=FILE_ID,
+            mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+    else:
+        request = service.files().get_media(fileId=FILE_ID)
 
     buf = io.BytesIO()
     downloader = MediaIoBaseDownload(buf, request)
 
     done = False
-    while not done:
-        _, done = downloader.next_chunk()
+    try:
+        while not done:
+            _, done = downloader.next_chunk()
+    except HttpError as exc:
+        content = exc.content.decode("utf-8", errors="ignore") if getattr(exc, "content", None) else ""
+        if "exportSizeLimitExceeded" in content:
+            return _download_workbook_from_sheets_api()
+        raise
 
     buf.seek(0)
     return openpyxl.load_workbook(buf, data_only=True)

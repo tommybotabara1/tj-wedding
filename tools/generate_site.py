@@ -18,7 +18,76 @@ sys.path.insert(0, os.path.dirname(__file__))
 from gws import download_workbook
 
 WEDDING_DATE = date(2026, 12, 27)
+REFRESH_DATE = date(2026, 7, 1)
 OUTPUT_PATH  = os.path.join(os.path.dirname(__file__), "..", "docs", "index.html")
+
+
+def norm_header(cell):
+    return str(cell).strip().lower() if cell is not None else ""
+
+
+def header_map(row):
+    return {norm_header(cell): i for i, cell in enumerate(row) if norm_header(cell)}
+
+
+def col_index(headers, *aliases):
+    for alias in aliases:
+        idx = headers.get(alias.lower())
+        if idx is not None:
+            return idx
+    return None
+
+
+def value_at(row, idx, default=None):
+    if idx is None or idx >= len(row):
+        return default
+    return row[idx] if row[idx] is not None else default
+
+
+def to_money(value):
+    if value in (None, ""):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    cleaned = str(value).replace(",", "").replace("PHP", "").replace("₱", "").strip()
+    if not cleaned:
+        return None
+    try:
+        return float(cleaned)
+    except ValueError:
+        return None
+
+
+def to_int(value):
+    if value in (None, ""):
+        return None
+    if isinstance(value, (int, float)):
+        return int(value)
+    cleaned = str(value).replace(",", "").strip()
+    try:
+        return int(float(cleaned))
+    except ValueError:
+        return None
+
+
+def parse_date(value):
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    if not value:
+        return None
+    text = str(value).strip()
+    for fmt in ("%B %d, %Y", "%b %d, %Y", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(text, fmt).date()
+        except ValueError:
+            continue
+    return None
+
+
+def text_value(value, default=""):
+    return str(value).strip() if value not in (None, "") else default
 
 
 # ── Data readers ──────────────────────────────────────────────────────────────
@@ -26,7 +95,6 @@ OUTPUT_PATH  = os.path.join(os.path.dirname(__file__), "..", "docs", "index.html
 def read_timeline(wb):
     ws = wb["Timeline  Task List"]
     tasks = []
-    today = date.today()
     for row in ws.iter_rows(min_row=2, values_only=True):
         if not row[0]:
             continue
@@ -34,53 +102,57 @@ def read_timeline(wb):
         if str(row[0]).startswith("http"):
             continue
         task, owner, status, deadline = row[0], row[1], row[2], row[3]
-        if isinstance(deadline, datetime):
-            deadline = deadline.date()
-        # Determine effective status
-        effective = status or "Not Started"
-        if effective not in ("Booked", "Done") and deadline and deadline < today:
-            effective = "Overdue"
+        deadline = parse_date(deadline)
+        effective = text_value(status, "Not Started")
+        is_overdue = effective not in ("Booked", "Done") and deadline and deadline < REFRESH_DATE
         tasks.append({
             "task":     task,
             "owner":    owner or "—",
             "status":   effective,
             "deadline": deadline,
+            "overdue":  bool(is_overdue),
         })
     return tasks
 
 
 def read_budget(wb):
     ws = wb["Budget + Vendor Tracker"]
-    # Columns: Category, Vendor, Status, Actual, Balance, Notes, Low, Mid, High
     SKIP = {"Total", "Total + buffer", "Miscellaneous & Contingency (10%)"}
+    rows_iter = ws.iter_rows(values_only=True)
+    headers = header_map(next(rows_iter))
+    ci = {
+        "category": col_index(headers, "category"),
+        "vendor":   col_index(headers, "vendor"),
+        "status":   col_index(headers, "status"),
+        "budget":   col_index(headers, "budget"),
+        "actual":   col_index(headers, "actual"),
+        "paid":     col_index(headers, "paid"),
+        "balance":  col_index(headers, "balance"),
+        "notes":    col_index(headers, "notes"),
+    }
     rows = []
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        if not row[0] or row[0] in SKIP:
+    for row in rows_iter:
+        category = value_at(row, ci["category"])
+        if not category or category in SKIP:
             continue
         rows.append({
-            "category": row[0],
-            "vendor":   row[1] or "",
-            "actual":   row[3],
-            "balance":  row[4],
-            "notes":    row[5] or "",
+            "category": text_value(category),
+            "vendor":   text_value(value_at(row, ci["vendor"])),
+            "status":   text_value(value_at(row, ci["status"]), "Pending"),
+            "budget":   to_money(value_at(row, ci["budget"])),
+            "actual":   to_money(value_at(row, ci["actual"])),
+            "paid":     to_money(value_at(row, ci["paid"])),
+            "balance":  to_money(value_at(row, ci["balance"])),
+            "notes":    text_value(value_at(row, ci["notes"])),
         })
     return rows
 
 
 def read_vendors(wb):
-    ws = wb["Budget + Vendor Tracker"]
-    # Columns: Category, Vendor, Status, Actual, Balance, Notes, Low, Mid, High
-    SKIP = {"Total", "Total + buffer", "Miscellaneous & Contingency (10%)"}
-    vendors = []
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        if not row[0] or row[0] in SKIP:
-            continue
-        vendors.append({
-            "type":   row[0],
-            "name":   row[1] or "",
-            "status": row[2] or "Pending",
-        })
-    return vendors
+    return [
+        {"type": r["category"], "name": r["vendor"], "status": r["status"]}
+        for r in read_budget(wb)
+    ]
 
 
 def read_guests(wb):
@@ -137,16 +209,14 @@ def read_guests(wb):
     rows = []
     total_pax = 0
     for row in all_rows[header_idx + 1:]:
-        num = get(row, "num")
-        if not isinstance(num, (int, float)):
+        num = to_int(get(row, "num"))
+        if num is None:
             continue
-        pax_val = get(row, "pax")
-        pax = int(pax_val) if isinstance(pax_val, (int, float)) else 1
-        table_val = get(row, "table")
-        table = int(table_val) if isinstance(table_val, (int, float)) else None
+        pax = to_int(get(row, "pax")) or 1
+        table = to_int(get(row, "table"))
         plus1 = get(row, "plus1")
         rows.append({
-            "num":    int(num),
+            "num":    num,
             "name":   str(get(row, "name")).strip() if get(row, "name") else "",
             "side":   str(get(row, "side")).strip() if get(row, "side") else "",
             "group":  str(get(row, "group")).strip() if get(row, "group") else "",
@@ -164,40 +234,82 @@ def read_guests(wb):
 def read_reception(wb):
     """Reception facts derived from the Budget sheet (single source of truth)."""
     import re as _re
-    venue, total, notes = "Reception Venue", None, ""
-    catering = ""
-    ws = wb["Budget + Vendor Tracker"]
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        if row[0] == "Reception Venue":
-            venue = (row[1] or "Reception Venue").strip()
-            total = row[3]
-            notes = row[5] or ""
-        elif row[0] == "Caterer":
-            catering = (row[1] or "").strip()
-    # Pull pax / rate from the reception note, with sensible Savoy fallbacks.
+    budget = read_budget(wb)
+    venue, hall, total, paid, balance, notes = "Reception Venue", "", None, None, None, ""
+    catering, catering_total = "", None
+    for row in budget:
+        if row["category"] == "Reception Venue":
+            venue = row["vendor"] or "Reception Venue"
+            total = row["actual"]
+            paid = row["paid"]
+            balance = row["balance"]
+            notes = row["notes"]
+        elif row["category"] == "Caterer":
+            catering = row["vendor"]
+            catering_total = row["actual"]
+
     pax = 120
     m = _re.search(r"for\s+(\d+)\s*pax", notes, _re.I)
     if m:
         pax = int(m.group(1))
-    rate = 2500
-    m = _re.search(r"PHP\s*([\d,]+)\s*/?\s*person", notes, _re.I)
-    if m:
-        rate = int(m.group(1).replace(",", ""))
-    return {"venue": venue, "total": total, "pax": pax, "rate": rate,
-            "catering": catering, "notes": notes}
+    intro = None
+    try:
+        intro = wb["Wedding Day Itinerary"]["A2"].value
+    except KeyError:
+        pass
+    if intro:
+        m = _re.search(r"Reception:\s*[^,]+,\s*([^|]+)", str(intro))
+        if m:
+            full_location = m.group(1).strip()
+            if " - " in full_location:
+                venue, hall = [part.strip() for part in full_location.split(" - ", 1)]
+            else:
+                venue = full_location
+    return {
+        "venue": venue,
+        "hall": hall,
+        "total": total,
+        "paid": paid,
+        "balance": balance,
+        "pax": pax,
+        "catering": catering,
+        "catering_total": catering_total,
+        "notes": notes,
+    }
 
 
 def read_schedule(wb):
-    ws = wb["Schedule"]
+    ws = wb["Wedding Day Itinerary"]
+    rows = list(ws.iter_rows(values_only=True))
+    header_idx = None
+    headers = {}
+    for idx, row in enumerate(rows):
+        current = header_map(row)
+        if "time" in current and "activity / program part" in current:
+            header_idx = idx
+            headers = current
+            break
+    if header_idx is None:
+        return []
+
+    ci = {
+        "section":  col_index(headers, "section"),
+        "time":     col_index(headers, "time"),
+        "activity": col_index(headers, "activity / program part", "activity"),
+        "location": col_index(headers, "location"),
+        "status":   col_index(headers, "status"),
+    }
     items = []
-    for row in ws.iter_rows(min_row=2, values_only=True):
-        if not row[0]:
+    for row in rows[header_idx + 1:]:
+        if not value_at(row, ci["time"]) or not value_at(row, ci["activity"]):
             continue
-        # Clean up encoding artifacts (emoji dashes etc)
-        time_str = str(row[0]).encode("ascii", "ignore").decode("ascii").strip()
-        activity = str(row[1]).encode("ascii", "ignore").decode("ascii").strip() if row[1] else ""
-        if time_str and activity:
-            items.append({"time": time_str, "activity": activity})
+        items.append({
+            "section":  text_value(value_at(row, ci["section"])),
+            "time":     text_value(value_at(row, ci["time"])),
+            "activity": text_value(value_at(row, ci["activity"])),
+            "location": text_value(value_at(row, ci["location"])),
+            "status":   text_value(value_at(row, ci["status"])),
+        })
     return items
 
 
@@ -207,6 +319,7 @@ STATUS_BADGE = {
     "Booked":      ("bg-emerald-100 text-emerald-800 border border-emerald-300", "Booked"),
     "Done":        ("bg-emerald-100 text-emerald-800 border border-emerald-300", "Done"),
     "Ongoing":     ("bg-amber-100 text-amber-800 border border-amber-300",       "Ongoing"),
+    "Pending":     ("bg-stone-100 text-stone-500 border border-stone-300",       "Pending"),
     "Not Started": ("bg-stone-100 text-stone-500 border border-stone-300",       "Not Started"),
     "Overdue":     ("bg-rose-100 text-rose-800 border border-rose-300",          "Overdue"),
 }
@@ -270,7 +383,9 @@ def build_html(tasks, budget, vendors, schedule, guests):
     booked_count   = sum(1 for v in vendors if v["status"] in ("Booked", "Done"))
     total_vendors  = len(vendors)
     total_actual   = sum(r["actual"] for r in budget if r["actual"])
-    overdue_count  = sum(1 for t in tasks if t["status"] == "Overdue")
+    total_paid     = sum(r["paid"] for r in budget if r["paid"])
+    total_balance  = sum(r["balance"] for r in budget if r["balance"])
+    overdue_count  = sum(1 for t in tasks if t.get("overdue"))
 
     # Guest list rows + filter options
     guest_groups = sorted(set(g["group"] for g in guests["rows"] if g["group"]))
@@ -302,9 +417,10 @@ def build_html(tasks, budget, vendors, schedule, guests):
     # Timeline rows
     timeline_rows = ""
     for t in tasks:
-        cls, label = STATUS_BADGE.get(t["status"], STATUS_BADGE["Not Started"])
+        status_info = STATUS_BADGE.get(t["status"])
+        cls, label = status_info if status_info else (STATUS_BADGE["Not Started"][0], t["status"])
         deadline_str = fmt_date(t["deadline"])
-        row_cls = "bg-rose-50" if t["status"] == "Overdue" else "hover:bg-stone-50"
+        row_cls = "bg-rose-50" if t.get("overdue") else "hover:bg-stone-50"
         timeline_rows += f"""
         <tr class="{row_cls} transition-colors">
           <td class="px-4 py-3 text-sm text-stone-800">{t['task']}</td>
@@ -319,6 +435,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
     budget_rows = ""
     for r in budget:
         actual_cls  = "text-emerald-700 font-semibold" if r["actual"] else "text-stone-300"
+        paid_cls    = "text-emerald-700 font-semibold" if r["paid"] else "text-stone-300"
         balance_cls = "text-rose-600 font-semibold" if (r["balance"] or 0) > 0 else "text-stone-300"
         vendor_display = r["vendor"] if r["vendor"] else '<span class="italic text-stone-300">TBD</span>'
         budget_rows += f"""
@@ -326,6 +443,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
           <td class="px-4 py-3 text-sm text-stone-800">{r['category']}</td>
           <td class="px-4 py-3 text-sm text-stone-500">{vendor_display}</td>
           <td class="px-4 py-3 text-sm text-right {actual_cls}">{fmt_php(r['actual'])}</td>
+          <td class="px-4 py-3 text-sm text-right {paid_cls}">{fmt_php(r['paid'])}</td>
           <td class="px-4 py-3 text-sm text-right {balance_cls}">{fmt_php(r['balance'])}</td>
         </tr>"""
 
@@ -346,6 +464,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
     schedule_items = ""
     for i, item in enumerate(schedule):
         dot_cls = "bg-[#8B1A35]" if i == 0 else "bg-stone-300"
+        meta = " · ".join(part for part in (item.get("section"), item.get("location"), item.get("status")) if part)
         schedule_items += f"""
         <div class="flex gap-4 items-start">
           <div class="flex flex-col items-center">
@@ -355,6 +474,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
           <div class="pb-6">
             <div class="text-xs font-semibold text-[#8B1A35] uppercase tracking-widest mb-0.5">{item['time']}</div>
             <div class="text-sm text-stone-700">{item['activity']}</div>
+            <div class="text-xs text-stone-400 mt-0.5">{meta}</div>
           </div>
         </div>"""
 
@@ -425,7 +545,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
       <div class="divider-ornament w-48 mx-auto my-5 animate-fadeup delay-2">
         <span class="text-[#B5924C] text-lg">&#10022;</span>
       </div>
-      <p class="serif text-2xl text-[#E8D5B5] font-light animate-fadeup delay-2">December 27, 2026 &nbsp;&bull;&nbsp; St. Therese Parish, BGC</p>
+      <p class="serif text-2xl text-[#E8D5B5] font-light animate-fadeup delay-2">December 27, 2026 &nbsp;&bull;&nbsp; St. Therese Parish, Newport City, Pasay</p>
       <div id="countdown" class="mt-8 flex justify-center gap-6 animate-fadeup delay-3">
         <div class="text-center">
           <div id="cnt-days" class="serif text-5xl text-white font-light">—</div>
@@ -458,8 +578,8 @@ def build_html(tasks, budget, vendors, schedule, guests):
         <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Vendors Booked</div>
       </div>
       <div class="stat-pill text-center">
-        <div class="serif text-3xl font-light" style="color: var(--burgundy);">₱{total_actual:,.0f}</div>
-        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Budget Spent</div>
+        <div class="serif text-3xl font-light" style="color: var(--burgundy);">₱{total_paid:,.0f}</div>
+        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Paid So Far</div>
       </div>
       <div class="stat-pill text-center">
         <div class="serif text-3xl font-light" style="color: var(--burgundy);">{guests['total']}</div>
@@ -499,7 +619,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
     <section class="section-card overflow-hidden animate-fadeup delay-4">
       <div class="px-6 py-5 border-b border-stone-100">
         <h2 class="serif text-2xl font-light text-stone-800">Budget Overview</h2>
-        <p class="text-stone-400 text-sm mt-0.5">Total committed: <span class="text-emerald-700 font-semibold">₱{total_actual:,.0f}</span></p>
+        <p class="text-stone-400 text-sm mt-0.5">Actual: <span class="text-emerald-700 font-semibold">₱{total_actual:,.0f}</span> &middot; Paid: <span class="text-emerald-700 font-semibold">₱{total_paid:,.0f}</span> &middot; Balance: <span class="text-rose-600 font-semibold">₱{total_balance:,.0f}</span></p>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full">
@@ -508,6 +628,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
               <th class="px-4 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Category</th>
               <th class="px-4 py-3 text-left text-xs font-semibold text-stone-400 uppercase tracking-wider">Vendor</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Actual</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Paid</th>
               <th class="px-4 py-3 text-right text-xs font-semibold text-stone-400 uppercase tracking-wider">Balance</th>
             </tr>
           </thead>
@@ -518,7 +639,8 @@ def build_html(tasks, budget, vendors, schedule, guests):
             <tr class="bg-stone-50 border-t border-stone-200">
               <td class="px-4 py-3 text-sm font-semibold text-stone-700" colspan="2">Total Actual Spent</td>
               <td class="px-4 py-3 text-right text-sm font-bold text-emerald-700">₱{total_actual:,.0f}</td>
-              <td></td>
+              <td class="px-4 py-3 text-right text-sm font-bold text-emerald-700">₱{total_paid:,.0f}</td>
+              <td class="px-4 py-3 text-right text-sm font-bold text-rose-600">₱{total_balance:,.0f}</td>
             </tr>
           </tfoot>
         </table>
@@ -723,9 +845,9 @@ TABLE_META = {
     10: ("Mixed Friends",  "#8896A6"),
 }
 
-TABLE_CAP = 12   # Savoy "Connect Lounge" round tables seat 12
+TABLE_CAP = 12
 
-# Savoy "Connect Lounge" — round-table setup (231.56 sqm; ideal 120 / max 140).
+# Talisay Hall round-table setup.
 # Landscape SVG, viewBox 0 0 920 510. Stage on the RIGHT; two rows of five round
 # tables; managed buffet bottom-centre; three entrances along the bottom;
 # registration bottom-left; tech booth + beverage stations top; service rooms
@@ -740,7 +862,7 @@ TABLE_POS = {
 
 
 def connect_lounge_shell():
-    """Static SVG (no guest tables) for the Savoy Connect Lounge, viewBox 920x510."""
+    """Static SVG (no guest tables) for the reception hall, viewBox 920x510."""
     return """
   <!-- outer floor -->
   <rect x="18" y="36" width="884" height="456" fill="#ffffff" stroke="#C4B49A" stroke-width="2"/>
@@ -809,7 +931,7 @@ def connect_lounge_shell():
 
 
 def make_floor_plan_svg(by_table):
-    """Static seating SVG for the Savoy Connect Lounge (10 round tables of 12)."""
+    """Static seating SVG for the reception hall (10 round tables of 12)."""
     table_svgs = ""
     for tnum, (cx, cy) in TABLE_POS.items():
         _, color = TABLE_META.get(tnum, ("Guest", "#A0A0A0"))
@@ -904,7 +1026,7 @@ def build_reception_html(guests, reception):
   <header style="background: linear-gradient(160deg, #2D0A16 0%, #5A1525 50%, #8B1A35 100%);">
     <div class="max-w-7xl mx-auto px-6 py-10 flex items-center justify-between flex-wrap gap-4">
       <div>
-        <p class="text-[#B5924C] text-xs tracking-[0.4em] uppercase mb-1">Reception · {reception['venue']}</p>
+        <p class="text-[#B5924C] text-xs tracking-[0.4em] uppercase mb-1">Reception · {reception['venue']}{' · ' + reception['hall'] if reception['hall'] else ''}</p>
         <h1 class="serif text-4xl md:text-5xl text-white font-light italic">Seating Chart</h1>
         <p class="text-stone-400 text-xs mt-2">Tommy &amp; Jeyan &bull; December 27, 2026 &bull; Updated {now_str}</p>
       </div>
@@ -922,7 +1044,7 @@ def build_reception_html(guests, reception):
       <div class="section-card px-6 py-4 flex-1 min-w-60">
         <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Venue</p>
         <p class="serif text-xl font-light text-stone-800">{reception['venue']}</p>
-        <p class="text-stone-400 text-sm">Package for {reception['pax']} pax · ₱{reception['rate']:,}/pax · {fmt_php(reception['total'])} (incl. catering)</p>
+        <p class="text-stone-400 text-sm">{reception['hall'] or 'Reception hall'} · Venue actual {fmt_php(reception['total'])} · Paid {fmt_php(reception['paid'])} · Balance {fmt_php(reception['balance'])} · Caterer: {reception['catering'] or 'TBD'} ({fmt_php(reception['catering_total'])})</p>
       </div>
       <div class="section-card px-6 py-4">
         <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">Legend</p>
@@ -939,10 +1061,10 @@ def build_reception_html(guests, reception):
 
     <div class="space-y-8">
 
-      <!-- Floor plan SVG — Savoy Connect Lounge -->
+      <!-- Floor plan SVG -->
       <div class="section-card p-6">
-        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Floor Plan — {reception['venue']} · Connect Lounge</p>
-        <p class="text-stone-400 text-xs mb-4">Round-table setup &middot; 10 tables &times; 12 &middot; ideal 120 pax &middot; stage at right, buffet &amp; entrances along the bottom</p>
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Floor Plan — {reception['venue']}{' · ' + reception['hall'] if reception['hall'] else ''}</p>
+        <p class="text-stone-400 text-xs mb-4">Round-table setup &middot; 10 tables &times; 12 &middot; target 120 pax &middot; stage at right, buffet &amp; entrances along the bottom</p>
         {floor_svg}
       </div>
 
@@ -1070,7 +1192,7 @@ def build_floorplan_html(guests, reception):
     <div>
       <p class="text-[#B5924C] text-xs tracking-[.4em] uppercase mb-1">Interactive Editor</p>
       <h1 class="serif text-4xl text-white font-light italic">Floor Plan</h1>
-      <p class="text-stone-400 text-xs mt-1">Tommy &amp; Jeyan · Dec 27 2026 · {reception['venue']} · Connect Lounge · drag tables to reposition</p>
+      <p class="text-stone-400 text-xs mt-1">Tommy &amp; Jeyan · Dec 27 2026 · {reception['venue']}{' · ' + reception['hall'] if reception['hall'] else ''} · drag tables to reposition</p>
     </div>
     <div class="flex gap-3 flex-wrap">
       <a href="reception.html" class="text-xs text-[#B5924C] border border-[#B5924C] px-4 py-2 rounded-full hover:bg-[#B5924C] hover:text-white transition-colors">Seating Chart</a>
@@ -1114,7 +1236,7 @@ def build_floorplan_html(guests, reception):
   <div class="flex justify-center mb-6">
     <div class="sc p-5">
       <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3 text-center">
-        Savoy Connect Lounge · round-table setup (10 × 12) · drag a table to reposition
+        {reception['venue']}{' · ' + reception['hall'] if reception['hall'] else ''} · round-table setup (10 × 12) · drag a table to reposition
       </p>
       <div style="overflow:auto; max-height:78vh;">
         <svg id="fp-svg" viewBox="0 0 920 510" width="920"
@@ -1260,7 +1382,7 @@ function svgPt(e) {{
 
 function getTr(el) {{
   const m = (el.getAttribute('transform') || 'translate(0,0)')
-              .match(/translate\(([^,]+),([^)]+)\)/);
+              .match(/translate\\(([^,]+),([^)]+)\\)/);
   return m ? {{x:+m[1], y:+m[2]}} : {{x:0,y:0}};
 }}
 
@@ -1571,7 +1693,8 @@ def main():
     print(f"  Vendors  : {len(vendors)} vendors")
     print(f"  Schedule : {len(schedule)} items")
     print(f"  Guests   : {guests['total']} total pax, {len(guests['rows'])} names")
-    print(f"  Reception: {reception['venue']} — {reception['pax']} pax @ PHP {reception['rate']:,}")
+    hall = f" / {reception['hall']}" if reception["hall"] else ""
+    print(f"  Reception: {reception['venue']}{hall} - {reception['pax']} pax")
 
     print("Generating HTML...")
     dashboard_html  = build_html(tasks, budget, vendors, schedule, guests)
