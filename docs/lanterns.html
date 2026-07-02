@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Welcome to Our Journey — Tommy &amp; Jeyan · #ToMyJeyan</title>
-<meta name="description" content="Two paths. One sky. Join Tommy & Jeyan as they begin their next chapter — December 27, 2026 · Newport City, Pasay. Soaring with TJ." />
+<title>Welcome to Our Journey · Tommy &amp; Jeyan · #ToMyJeyan</title>
+<meta name="description" content="Two paths. One sky. Join Tommy & Jeyan as they begin their next chapter. December 27, 2026 · Newport City, Pasay. Soaring with TJ." />
 <link rel="canonical" href="https://tommybotabara1.github.io/tj-wedding/lanterns.html" />
-<meta property="og:title" content="Welcome to Our Journey — Tommy & Jeyan" />
+<meta property="og:title" content="Welcome to Our Journey · Tommy & Jeyan" />
 <meta property="og:description" content="Two lights finding the same sky. December 27, 2026 · Newport City, Pasay · #ToMyJeyan" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://tommybotabara1.github.io/tj-wedding/lanterns.html" />
@@ -23,10 +23,10 @@
    ============================================================ */
 :root{
   /* night world — warm espresso / rosewood dusk (no violet) */
-  --night-deep:#140f0d;
-  --night:#1e1715;
-  --dusk:#3e2a2c;
-  --plum:#6c4540;
+  --night-deep:#050403;
+  --night:#090706;
+  --dusk:#1b1110;
+  --plum:#3f2520;
   /* dawn / paper world */
   --ivory:#fbf9f4;
   --cream:#f3ede2;
@@ -46,13 +46,13 @@
   --rose-deep:#945a52;
   --gold:#b8964e;
   --gold-light:#d8bc82;
-  --ember:#ffe7c8;
-  /* lantern light — neutral warm-white (~4500K), not candle-amber */
-  --lan-core:#fffaf2;        /* near-white center            */
-  --lan-mid:#ffe9cf;         /* soft warm cream              */
-  --lan-edge:#ecccac;        /* muted warm beige (low orange) */
-  --lan-glow:255,228,204;    /* warm-white halo (use in rgba) */
-  --lan-halo:206,176,150;    /* neutral-warm outer halo      */
+  --ember:#ffb24d;
+  /* lantern light - rich sky-lantern amber, matching the festival peg */
+  --lan-core:#fff1a8;        /* hot golden center            */
+  --lan-mid:#ffb84f;         /* saturated amber paper        */
+  --lan-edge:#c85f18;        /* toasted orange rim           */
+  --lan-glow:255,151,38;     /* orange-gold halo (rgba)      */
+  --lan-halo:188,74,18;      /* deep ember outer halo        */
   --serif:'Cormorant Garamond', Georgia, serif;
   --sans:'Montserrat', 'Helvetica Neue', Arial, sans-serif;
   --ease:cubic-bezier(.22,.61,.36,1);
@@ -104,6 +104,7 @@ button{ font-family:var(--sans); cursor:pointer; }
   box-shadow:0 0 0 rgba(207,154,147,0);
 }
 .btn:hover{ transform:translateY(-2px); background:var(--rose-deep); box-shadow:0 6px 30px rgba(207,154,147,.45); }
+.btn:disabled{ opacity:.55; cursor:default; transform:none; box-shadow:none; }
 .btn.ghost{ background:rgba(244,237,221,.06); color:var(--moon); border-color:rgba(244,237,221,.4); }
 .btn.ghost:hover{ background:rgba(244,237,221,.14); box-shadow:0 6px 26px rgba(207,154,147,.3); }
 .btn.dark{ background:var(--ink); border-color:var(--ink); color:var(--ivory); }
@@ -111,7 +112,7 @@ button{ font-family:var(--sans); cursor:pointer; }
 
 section{ position:relative; }
 .copy-center{ text-align:center; max-width:680px; margin:0 auto; padding:0 24px; width:100%; }
-.tall{ height:320vh; height:320svh; }
+.tall{ height:260vh; height:260svh; }
 .tall-200{ height:220vh; height:220svh; }
 .stick{
   position:sticky; top:0; height:100vh; height:100svh;
@@ -128,39 +129,39 @@ html.reduced .rv, html.reduced .scrub-hide{ opacity:1 !important; transform:none
 .lantern{ position:relative; display:block; width:84px; height:118px; pointer-events:none; }
 .lantern .body{
   position:absolute; inset:0 7px 20px 7px; border-radius:30% 30% 36% 36% / 22% 22% 42% 42%;
-  border:1px solid rgba(150,120,96,.32);
-  background:radial-gradient(60% 46% at 50% 64%, var(--lan-core), var(--lan-mid) 52%, var(--lan-edge) 100%);
+  border:1px solid rgba(255,180,90,.46);
+  background:radial-gradient(60% 46% at 50% 64%, var(--lan-core), var(--lan-mid) 50%, var(--lan-edge) 100%);
   box-shadow:
-    0 0 30px 10px rgba(var(--lan-glow),.5),
-    0 0 90px 30px rgba(var(--lan-halo),.3),
-    0 0 180px 60px rgba(var(--lan-halo),.16),
-    inset 0 -10px 22px rgba(150,118,92,.32),
-    inset 0 6px 10px rgba(255,255,255,.6);
+    0 0 34px 12px rgba(var(--lan-glow),.62),
+    0 0 98px 34px rgba(var(--lan-halo),.38),
+    0 0 190px 64px rgba(var(--lan-halo),.18),
+    inset 0 -12px 24px rgba(132,54,18,.38),
+    inset 0 7px 12px rgba(255,238,170,.5);
 }
 .lantern .body::before{
   content:""; position:absolute; inset:0; border-radius:inherit;
-  background:repeating-linear-gradient(180deg, transparent 0 13px, rgba(148,80,62,.1) 13px 14px);
+  background:repeating-linear-gradient(180deg, transparent 0 13px, rgba(98,38,12,.16) 13px 14px);
 }
 .lantern .crown{
   position:absolute; top:-4px; left:50%; width:28px; height:7px; transform:translateX(-50%);
-  background:#7d4a3e; border-radius:4px;
+  background:#6d331a; border-radius:4px;
 }
 .lantern .base{
   position:absolute; bottom:14px; left:50%; width:38px; height:6px; transform:translateX(-50%);
-  background:#7d4a3e; border-radius:4px;
+  background:#6d331a; border-radius:4px;
 }
 .lantern .flame{
   position:absolute; bottom:2px; left:50%; width:12px; height:12px; transform:translateX(-50%);
   border-radius:50%;
-  background:radial-gradient(circle, #fff 0%, #fff4dc 45%, rgba(255,228,204,0) 75%);
-  box-shadow:0 0 22px 9px rgba(var(--lan-glow),.72);
+  background:radial-gradient(circle, #fff8d8 0%, #ffc955 42%, rgba(255,151,38,0) 75%);
+  box-shadow:0 0 24px 10px rgba(var(--lan-glow),.82);
 }
 html:not(.reduced) .lantern .flame{ animation:flick 2.8s ease-in-out infinite; }
 @keyframes flick{ 0%,100%{ opacity:.85 } 30%{ opacity:1 } 60%{ opacity:.7 } }
 .lantern .mono{
   position:absolute; inset:0 7px 20px 7px; display:flex; align-items:center; justify-content:center;
-  font-family:var(--serif); font-size:44px; font-weight:500; color:#8a5440;
-  text-shadow:0 1px 0 rgba(255,255,255,.5);
+  font-family:var(--serif); font-size:44px; font-weight:500; color:#5f2c16;
+  text-shadow:0 1px 0 rgba(255,216,132,.56);
 }
 
 /* ============================================================
@@ -210,12 +211,12 @@ html.reduced #connect-btn.nudge{ animation:none; }
 
 .gate-spark{
   position:absolute; width:6px; height:6px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, #fff 0%, var(--ember) 50%, transparent 80%);
+  background:radial-gradient(circle, #fff6cf 0%, var(--ember) 50%, transparent 80%);
   box-shadow:0 0 10px 3px rgba(var(--lan-glow),.7);
 }
 #bloom{
   position:absolute; width:420px; height:420px; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, rgba(255,250,242,.95) 0%, rgba(var(--lan-glow),.5) 36%, transparent 70%);
+  background:radial-gradient(circle, rgba(255,239,168,.96) 0%, rgba(var(--lan-glow),.58) 36%, transparent 70%);
   transform:translate(-50%,-50%) scale(0); opacity:0;
 }
 
@@ -228,11 +229,13 @@ html.reduced #connect-btn.nudge{ animation:none; }
   overflow:clip;
 }
 #curtain .inner{ padding:40px 24px; width:100%; }
-#curtain .w-line{ overflow:hidden; }
+#curtain .w-line{ overflow:hidden; padding-bottom:.11em; margin-bottom:-.11em; }
 #curtain .w{
   display:block; font-family:var(--serif); color:var(--moon);
-  font-size:clamp(46px,9.4vw,96px); line-height:1.08; font-weight:400; letter-spacing:.01em;
-  text-shadow:0 0 60px rgba(207,154,147,.4);
+  font-size:clamp(46px,9.4vw,96px); line-height:1.12; font-weight:400; letter-spacing:.01em;
+  text-shadow:
+    0 0 34px rgba(var(--lan-glow),.18),
+    0 0 86px rgba(var(--lan-halo),.18);
 }
 #curtain .w.small{ font-size:clamp(22px,4vw,40px); font-style:italic; color:var(--rose-light); text-shadow:none; }
 .js-anim #curtain .w{ transform:translateY(112%); }
@@ -276,39 +279,57 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
   position:absolute; inset:5px 8px 21px 8px;
   display:flex; align-items:center; justify-content:center; text-align:center; padding:0 4px;
   border-radius:32% 32% 38% 38% / 24% 24% 46% 46%;
-  border:1px solid rgba(150,120,96,.36);
-  background:radial-gradient(60% 48% at 50% 62%, var(--lan-core), var(--lan-mid) 52%, var(--lan-edge) 100%);
+  border:1px solid rgba(255,180,90,.5);
+  background:radial-gradient(60% 48% at 50% 62%, var(--lan-core), var(--lan-mid) 50%, var(--lan-edge) 100%);
   box-shadow:
-    0 0 30px 10px rgba(var(--lan-glow),.5),
-    0 0 90px 30px rgba(var(--lan-halo),.3),
-    0 0 170px 56px rgba(var(--lan-halo),.16),
-    inset 0 -10px 22px rgba(150,118,92,.32),
-    inset 0 6px 10px rgba(255,255,255,.6);
+    0 0 34px 12px rgba(var(--lan-glow),.62),
+    0 0 98px 34px rgba(var(--lan-halo),.38),
+    0 0 178px 58px rgba(var(--lan-halo),.18),
+    inset 0 -12px 24px rgba(132,54,18,.38),
+    inset 0 7px 12px rgba(255,238,170,.5);
   font-family:var(--sans); font-size:8.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
-  color:#7a4a38; text-shadow:0 1px 0 rgba(255,250,240,.6);
+  color:#542713; text-shadow:0 1px 0 rgba(255,216,132,.58);
 }
 .chip .body::before{
   content:""; position:absolute; inset:0; border-radius:inherit;
-  background:repeating-linear-gradient(180deg, transparent 0 11px, rgba(148,80,62,.1) 11px 12px);
+  background:repeating-linear-gradient(180deg, transparent 0 11px, rgba(98,38,12,.16) 11px 12px);
 }
 .chip .crown{
   position:absolute; top:0; left:50%; width:30px; height:5px; transform:translateX(-50%);
-  background:#7d4a3e; border-radius:4px;
+  background:#6d331a; border-radius:4px;
 }
 .chip .base{
   position:absolute; bottom:14px; left:50%; width:40px; height:5px; transform:translateX(-50%);
-  background:#7d4a3e; border-radius:4px;
+  background:#6d331a; border-radius:4px;
 }
 .chip .flame{
   position:absolute; bottom:2px; left:50%; width:11px; height:11px; transform:translateX(-50%);
   border-radius:50%;
-  background:radial-gradient(circle, #fff 0%, #fff4dc 45%, rgba(255,228,204,0) 75%);
-  box-shadow:0 0 22px 9px rgba(var(--lan-glow),.72);
+  background:radial-gradient(circle, #fff8d8 0%, #ffc955 42%, rgba(255,151,38,0) 75%);
+  box-shadow:0 0 24px 10px rgba(var(--lan-glow),.82);
 }
 html:not(.reduced) .chip .flame{ animation:flick 2.8s ease-in-out infinite; }
 .tracer{ opacity:0; }
 html.reduced .tracer, html:not(.js-anim) .tracer{ display:none; }
+/* quiet progress thread on the left so the pinned scroll never reads as frozen */
+.path-progress{
+  position:absolute; left:20px; top:50%; transform:translateY(-50%);
+  width:2px; height:104px; border-radius:2px; background:rgba(244,237,221,.16);
+  overflow:hidden;
+}
+.path-progress i{
+  display:block; width:100%; height:100%; border-radius:2px;
+  background:linear-gradient(var(--gold-light), var(--lan-mid));
+  transform:scaleY(0); transform-origin:top;
+  box-shadow:0 0 10px rgba(var(--lan-glow),.5);
+}
+html.reduced .path-progress, html:not(.js-anim) .path-progress{ display:none; }
 .pcaps{ position:absolute; left:0; right:0; bottom:11vh; bottom:11svh; text-align:center; padding:0 24px; pointer-events:none; }
+/* phones: keep captions and the lower-right word-lantern clear of the fixed dock */
+@media (max-width:640px){
+  .pcaps{ bottom:20vh; bottom:20svh; }
+  .chip:nth-of-type(2){ left:72% !important; top:64% !important; }
+}
 .pcap{
   position:absolute; left:0; right:0; margin:0 auto; max-width:640px;
   font-family:var(--serif); font-style:italic; font-size:clamp(23px,3.8vw,36px); color:var(--moon-soft);
@@ -432,8 +453,8 @@ html.reduced svg.bird{ animation:none; left:60%; }
 .beach svg.shades{ position:absolute; bottom:8%; right:32%; width:clamp(32px,4vw,48px); height:auto; color:#1d1410; transform:rotate(9deg); }
 .beach .b-lan{
   position:absolute; width:16px; height:22px; border-radius:45% 45% 50% 50%/35% 35% 60% 60%;
-  background:radial-gradient(circle at 50% 65%, var(--lan-mid), var(--lan-edge));
-  box-shadow:0 0 18px 6px rgba(var(--lan-glow),.65); animation:b-rise 13s linear infinite;
+  background:radial-gradient(circle at 50% 65%, var(--lan-core) 0%, var(--lan-mid) 48%, var(--lan-edge) 100%);
+  box-shadow:0 0 22px 8px rgba(var(--lan-glow),.72), 0 0 54px 18px rgba(var(--lan-halo),.25); animation:b-rise 13s linear infinite;
 }
 @keyframes b-rise{ from{ transform:translateY(40vh) scale(.7); opacity:0 } 12%{ opacity:1 } to{ transform:translateY(-30vh) scale(1); opacity:0 } }
 html.reduced .b-lan{ animation:none; opacity:.85; }
@@ -503,7 +524,7 @@ html.reduced .b-lan{ animation:none; opacity:.85; }
   font-family:var(--serif); font-style:italic; font-size:16.5px; color:var(--soft);
   display:flex; justify-content:space-between; align-items:baseline; gap:8px;
 }
-.tile figcaption small{ font-family:var(--sans); font-style:normal; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--sage); }
+.tile figcaption small{ font-family:var(--sans); font-style:normal; font-size:9px; letter-spacing:.22em; text-transform:uppercase; color:var(--sage-deep); }
 
 /* Lightbox */
 dialog.lb{
@@ -595,14 +616,6 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
 }
 .map-cartouche span{ display:block; font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--gold-light); }
 .map-cartouche b{ font-family:var(--serif); font-size:20px; font-weight:500; color:var(--moon); line-height:1.15; }
-.map-legend{
-  position:absolute; right:14px; bottom:14px; z-index:1; pointer-events:none;
-  display:inline-flex; align-items:center; gap:6px;
-  font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--moon-soft);
-  background:rgba(18,13,11,.5); border:1px solid rgba(216,188,130,.3); padding:6px 11px; border-radius:20px;
-  -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
-}
-.map-legend svg{ width:13px; height:13px; color:var(--gold-light); }
 .map-sea{
   position:absolute; right:7%; bottom:21%; z-index:1; pointer-events:none; transform:rotate(-4deg);
   font-family:var(--serif); font-style:italic; font-size:15px; letter-spacing:.28em; color:rgba(216,188,130,.5); white-space:nowrap;
@@ -652,7 +665,8 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
 }
 .map-pin:nth-child(3n) .pin-label{ transform:rotate(-1.6deg); }
 .map-pin:nth-child(3n+1) .pin-label{ transform:rotate(1.3deg); }
-.map-pin:hover, .map-pin:focus-visible{ transform:translate(-50%,-50%) scale(1.06); outline:none; }
+.map-pin:hover, .map-pin:focus-visible{ transform:translate(-50%,-50%) scale(1.06); }
+.map-pin:focus-visible{ outline:2px solid var(--rose-light); outline-offset:4px; border-radius:12px; }
 .map-pin:hover .pin-dot, .map-pin:focus-visible .pin-dot{
   background:radial-gradient(circle at 50% 44%, #ffe9c4 0%, var(--rose-light) 48%, rgba(148,90,82,.4) 80%, transparent 100%);
   box-shadow:0 0 0 4px rgba(var(--lan-glow),.12), 0 0 34px rgba(var(--lan-glow),.6), 0 0 70px rgba(var(--lan-halo),.5);
@@ -673,7 +687,6 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
   .map-cartouche{ padding:5px 14px 7px; }
   .map-cartouche span{ font-size:8px; } .map-cartouche b{ font-size:15px; }
   .map-sea{ font-size:11.5px; letter-spacing:.18em; }
-  .map-legend{ display:none; }
 }
 @media (min-width:720px){
   .world-map{ aspect-ratio:16 / 9.4; }
@@ -696,6 +709,7 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 }
 .panel-back svg{ width:16px; height:16px; }
 .panel-back:hover{ color:var(--rose); }
+.panel-back[hidden]{ display:none; }
 .panel-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:14px; }
 .panel-head h3{ font-size:clamp(27px,3.5vw,36px); margin-top:2px; color:var(--ink); }
 .panel-kicker{
@@ -738,6 +752,7 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
   background:var(--ivory); color:var(--ink); font-family:var(--sans); font-size:15px;
 }
 .field textarea{ min-height:96px; resize:vertical; }
+.field input::placeholder,.field textarea::placeholder{ color:var(--soft); opacity:1; }
 .field input:focus,.field select:focus,.field textarea:focus{ outline:2px solid var(--sage); outline-offset:1px; }
 .toggle-group{ display:flex; gap:10px; flex-wrap:wrap; }
 .toggle-btn{
@@ -1131,7 +1146,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   <div class="gate-copy">
     <h1>Bring our lights together</h1>
     <p>Two paths. One sky.</p>
-    <span class="hint">Drag the two lanterns together — or simply tap below to enter.</span><br/>
+    <span class="hint">Drag the two lanterns together, or simply tap below to enter.</span><br/>
     <button id="connect-btn" class="btn" type="button">Tap to Enter &rsaquo;</button>
   </div>
 </div>
@@ -1146,7 +1161,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="w-line"><span class="w">Our Journey</span></div>
       <div class="rule" aria-hidden="true"></div>
       <p class="meta rv">Tommy &amp; Jeyan · December 27, 2026</p>
-      <p class="signpost rv">Scroll down for our story — or tap <b>Menu</b> (bottom&#8209;right) any time for the wedding details &amp; RSVP.</p>
+      <p class="signpost rv">Scroll down for our story, or tap <b>Menu</b> (bottom&#8209;right) any time for the wedding details &amp; RSVP.</p>
     </div>
     <div class="scrollcue" aria-hidden="true">Scroll</div>
   </section>
@@ -1157,9 +1172,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <svg id="arcs" viewBox="0 0 1000 1400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
           <radialGradient id="tGlow">
-            <stop offset="0" stop-color="#fff9ee" stop-opacity=".95"/>
-            <stop offset=".35" stop-color="#ffe6cc" stop-opacity=".55"/>
-            <stop offset="1" stop-color="#e0c0a8" stop-opacity="0"/>
+            <stop offset="0" stop-color="#fff1a8" stop-opacity=".96"/>
+            <stop offset=".35" stop-color="#ff9d28" stop-opacity=".64"/>
+            <stop offset="1" stop-color="#bc4a12" stop-opacity="0"/>
           </radialGradient>
         </defs>
         <path class="glow" id="arcLg" d="M 165 1380 C 130 1020, 290 780, 498 648"/>
@@ -1170,18 +1185,18 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <path id="arcM" d="M 500 646 C 528 520, 472 350, 500 130"/>
         <g id="tracerL" class="tracer">
           <circle r="38" fill="url(#tGlow)"/>
-          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#fff1da"/>
-          <circle cy="9" r="4" fill="#fff8e8"/>
+          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#ffb84f"/>
+          <circle cy="9" r="4" fill="#fff1a8"/>
         </g>
         <g id="tracerR" class="tracer">
           <circle r="38" fill="url(#tGlow)"/>
-          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#fff1da"/>
-          <circle cy="9" r="4" fill="#fff8e8"/>
+          <rect x="-8" y="-12" width="16" height="23" rx="7" fill="#ffb84f"/>
+          <circle cy="9" r="4" fill="#fff1a8"/>
         </g>
         <g id="tracerM" class="tracer">
           <circle r="52" fill="url(#tGlow)"/>
-          <rect x="-10" y="-15" width="20" height="29" rx="9" fill="#fff5e6"/>
-          <circle cy="11" r="5" fill="#fff"/>
+          <rect x="-10" y="-15" width="20" height="29" rx="9" fill="#ffb84f"/>
+          <circle cy="11" r="5" fill="#fff1a8"/>
         </g>
       </svg>
       <div id="merge-glow" class="scrub-hide" aria-hidden="true"></div>
@@ -1192,6 +1207,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <span class="chip scrub-hide" style="left:76%; top:49%"><span class="crown"></span><span class="body">Laughter</span><span class="base"></span><span class="flame"></span></span>
       <span class="chip scrub-hide" style="left:38%; top:33%"><span class="crown"></span><span class="body">Trust</span><span class="base"></span><span class="flame"></span></span>
       <span class="chip scrub-hide" style="left:55%; top:15%"><span class="crown"></span><span class="body">Home</span><span class="base"></span><span class="flame"></span></span>
+
+      <div class="path-progress" aria-hidden="true"><i id="path-progress-fill"></i></div>
 
       <div class="pcaps" aria-live="off">
         <p class="pcap scrub-hide">Some lights drift quietly.</p>
@@ -1379,7 +1396,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     <div class="head">
       <span class="script-accent rv">chart your course by starlight</span>
       <h2 class="rv">Wedding Details</h2>
-      <p class="rv">Everything for the day — itinerary, directions, attire, entourage, gifts and RSVP. Tap any glowing marker below to open it.</p>
+      <p class="rv">Everything for the day: itinerary, directions, attire, entourage, gifts and RSVP. Tap any glowing marker below to open it.</p>
     </div>
     <div class="world-map rv" id="world-map">
       <!-- decorative sky-chart layer: graticule, constellations, scattered stars -->
@@ -1433,23 +1450,22 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       </svg>
       <div class="map-script" aria-hidden="true">our little sky</div>
       <div class="map-cartouche" aria-hidden="true"><span>The Sky of</span><b>T &amp; J</b></div>
-      <div class="map-legend" aria-hidden="true"><svg aria-hidden="true"><use href="#ic-plane"/></svg> tap a marker to open</div>
       <div class="map-sea" aria-hidden="true">a sky of someday</div>
       <svg class="map-lines" id="map-lines" aria-hidden="true" preserveAspectRatio="none">
         <path class="route-glow" d="" />
         <path class="route" d="" />
         <g class="route-plane" id="route-plane" style="display:none">
           <ellipse cx="0" cy="-9" rx="3" ry="1.3" fill="#9a7a39"/>
-          <path d="M-6 0 C-6 -5 6 -5 6 0 C6 5 4 9 0 9 C-4 9 -6 5 -6 0 Z" fill="#ffe7c8"/>
+          <path d="M-6 0 C-6 -5 6 -5 6 0 C6 5 4 9 0 9 C-4 9 -6 5 -6 0 Z" fill="#ffb24d"/>
           <circle cx="0" cy="5.4" r="1.5" fill="#fff3d2"/>
         </g>
       </svg>
-      <button class="map-pin" type="button" data-panel="p-itinerary" style="--mx:29;--my:9;--x:12;--y:62" aria-label="Itinerary — stop 1"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-clock"/></svg><i class="pin-num">1</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Hourglass Bay</span></button>
-      <button class="map-pin" type="button" data-panel="p-directions" style="--mx:71;--my:23;--x:30;--y:44" aria-label="Directions — stop 2"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-pin"/></svg><i class="pin-num">2</i></span><span class="pin-label">Directions</span><span class="pin-place">Wayfarer&rsquo;s Cross</span></button>
-      <button class="map-pin" type="button" data-panel="p-attire" style="--mx:29;--my:40;--x:47;--y:35" aria-label="Attire guide — stop 3"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><i class="pin-num">3</i></span><span class="pin-label">Attire Guide</span><span class="pin-place">Linen Shores</span></button>
-      <button class="map-pin" type="button" data-panel="p-entourage" style="--mx:71;--my:55;--x:63;--y:35" aria-label="Entourage — stop 4"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-users"/></svg><i class="pin-num">4</i></span><span class="pin-label">Entourage</span><span class="pin-place">Company Cove</span></button>
-      <button class="map-pin" type="button" data-panel="p-gift" style="--mx:29;--my:70;--x:79;--y:45" aria-label="Gift fund — stop 5"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-gift"/></svg><i class="pin-num">5</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">Cape of Beginnings</span></button>
-      <button class="map-pin" type="button" data-panel="p-faq" style="--mx:70;--my:86;--x:89;--y:62" aria-label="FAQ and contact — stop 6"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-help"/></svg><i class="pin-num">6</i></span><span class="pin-label">FAQ &amp; Contact</span><span class="pin-place">Lantern Light</span></button>
+      <button class="map-pin" type="button" data-panel="p-itinerary" style="--mx:29;--my:9;--x:12;--y:62" aria-label="Itinerary, stop 1"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-clock"/></svg><i class="pin-num">1</i></span><span class="pin-label">Itinerary</span><span class="pin-place">Hourglass Bay</span></button>
+      <button class="map-pin" type="button" data-panel="p-directions" style="--mx:71;--my:23;--x:30;--y:44" aria-label="Directions, stop 2"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-pin"/></svg><i class="pin-num">2</i></span><span class="pin-label">Directions</span><span class="pin-place">Wayfarer&rsquo;s Cross</span></button>
+      <button class="map-pin" type="button" data-panel="p-attire" style="--mx:29;--my:40;--x:47;--y:35" aria-label="Attire guide, stop 3"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-hanger"/></svg><i class="pin-num">3</i></span><span class="pin-label">Attire Guide</span><span class="pin-place">Linen Shores</span></button>
+      <button class="map-pin" type="button" data-panel="p-entourage" style="--mx:71;--my:55;--x:63;--y:35" aria-label="Entourage, stop 4"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-users"/></svg><i class="pin-num">4</i></span><span class="pin-label">Entourage</span><span class="pin-place">Company Cove</span></button>
+      <button class="map-pin" type="button" data-panel="p-gift" style="--mx:29;--my:70;--x:79;--y:45" aria-label="Gift fund, stop 5"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-gift"/></svg><i class="pin-num">5</i></span><span class="pin-label">Gift Fund</span><span class="pin-place">Cape of Beginnings</span></button>
+      <button class="map-pin" type="button" data-panel="p-faq" style="--mx:70;--my:86;--x:89;--y:62" aria-label="FAQ and contact, stop 6"><span class="pin-dot"><svg aria-hidden="true"><use href="#ic-help"/></svg><i class="pin-num">6</i></span><span class="pin-label">FAQ &amp; Contact</span><span class="pin-place">Lantern Light</span></button>
     </div>
     <p class="map-hint rv">Tap any marker to open the details &middot; stops 1&ndash;6</p>
   </section>
@@ -1618,7 +1634,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div><span class="panel-kicker">dress for the sky</span><h3>Attire Guide</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
-    <p>Our palette is dreamy minimalist — cream, ivory, champagne beige, sage green, dusty rose, and soft taupe.</p>
+    <p>Our palette is dreamy minimalist: cream, ivory, champagne beige, sage green, dusty rose, and soft taupe.</p>
     <div class="attire-cards">
       <article class="acard"><span class="role">Our Guests</span><h4>Smart Formal</h4><span class="code">come dressed to soar</span><p>Polished suits, barong, long dresses, or elegant cocktail attire, in soft, celebratory tones.</p></article>
       <article class="acard"><span class="role" style="color:var(--rose-deep)">The Entourage</span><h4>Formal · in our colours</h4><span class="code">the wedding party leads the runway</span><p>Long gowns and formal menswear in the wedding palette below.</p></article>
@@ -1693,7 +1709,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="map-embed is-a"><iframe title="Map to St. Therese Parish, Newport City, Pasay" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="https://maps.google.com/maps?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay&amp;z=16&amp;output=embed"></iframe></div>
       <div class="map-embed is-b"><iframe title="Map to Gallio Events Hall, Aseana City, Parañaque" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-src="https://maps.google.com/maps?q=Gallio+Events+Hall+Aseana+City+Paranaque&amp;z=16&amp;output=embed"></iframe></div>
     </div>
-    <p style="margin-top:16px; font-size:13.5px">On-site parking is available at both the church and Gallio Events Hall. Please allow about 15–20 minutes to drive from the ceremony in Newport City to the reception in Aseana City — ride-hailing is easy at both.</p>
+    <p style="margin-top:16px; font-size:13.5px">On-site parking is available at both the church and Gallio Events Hall. Please allow about 15–20 minutes to drive from the ceremony in Newport City to the reception in Aseana City. Ride-hailing is easy at both.</p>
   </div>
 </dialog>
 
@@ -1708,7 +1724,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="gp-head"><span>Boarding Pass · Gift</span><span>TJ · 27 DEC 2026</span></div>
       <div class="gp-body">
         <div class="gp-route"><span>Today</span><svg aria-hidden="true"><use href="#ic-plane"/></svg><span class="dots" aria-hidden="true"></span><span>Forever</span></div>
-        <p style="font-size:14px; color:var(--soft); margin:0">Your presence is already a gift. Should you wish to bless us further, you may help us begin our first journey together — toward our first home and travels as a married couple.</p>
+        <p style="font-size:14px; color:var(--soft); margin:0">Your presence is already a gift. Should you wish to bless us further, you may help us begin our first journey together, toward our first home and travels as a married couple.</p>
       </div>
       <div class="gp-foot"><small>Passenger: You, with love</small><span class="barcode" aria-hidden="true"></span></div>
     </div>
@@ -1753,7 +1769,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div><span class="panel-kicker">jump to anything</span><h3>Menu</h3></div>
       <button class="panel-close" type="button" aria-label="Close">&times;</button>
     </div>
-    <p>Tap a section to open it — no scrolling needed.</p>
+    <p>Tap a section to open it. No scrolling needed.</p>
     <div class="menu-grid">
       <button class="menu-link primary wide" type="button" data-go="p-rsvp"><svg aria-hidden="true"><use href="#ic-mail"/></svg> <span>RSVP<small>Let us know if you can join</small></span></button>
       <button class="menu-link" type="button" data-go="p-itinerary"><svg aria-hidden="true"><use href="#ic-clock"/></svg> <span>Itinerary<small>Times for the day</small></span></button>
@@ -1802,8 +1818,6 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     <button id="menu-btn" class="ctrl-pill" type="button" aria-haspopup="dialog" aria-label="Open the menu of wedding details">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg> Menu
     </button>
-  </div>
-  <div class="ctrl-row">
     <button class="ctrl-pill rsvp" type="button" data-panel="p-rsvp" aria-label="Open the RSVP form">
       <svg aria-hidden="true"><use href="#ic-mail"/></svg> RSVP
     </button>
@@ -1853,9 +1867,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     /* sky color keyframes across full document scroll: warm champagne dusk → deep
        espresso night. Red >= green >= blue at every stop keeps it warm, never violet. */
     var STOPS = [
-      { p: 0.00, top: [12, 10, 9],   mid: [17, 13, 12],   bot: [23, 18, 15],   horizon: 0.06 },
-      { p: 0.50, top: [10, 8, 7],    mid: [14, 11, 10],   bot: [20, 15, 13],   horizon: 0.04 },
-      { p: 1.00, top: [8, 6, 6],     mid: [12, 9, 9],     bot: [17, 13, 11],   horizon: 0.03 }
+      { p: 0.00, top: [2, 2, 2],     mid: [5, 4, 4],      bot: [8, 6, 5],      horizon: 0.025 },
+      { p: 0.50, top: [1, 1, 2],     mid: [4, 3, 3],      bot: [7, 5, 4],      horizon: 0.018 },
+      { p: 1.00, top: [1, 1, 1],     mid: [3, 2, 2],      bot: [6, 4, 3],      horizon: 0.012 }
     ];
     function lerp(a, b, t) { return a + (b - a) * t; }
     function mix(c1, c2, t) {
@@ -1883,19 +1897,19 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       var cx = glowR, cy = glowR;
       /* halo */
       var halo = c.createRadialGradient(cx, cy, core * 0.2, cx, cy, glowR);
-      halo.addColorStop(0, 'rgba(255,228,204,.85)');
-      halo.addColorStop(0.25, 'rgba(255,212,180,.4)');
-      halo.addColorStop(0.6, 'rgba(206,176,150,.14)');
-      halo.addColorStop(1, 'rgba(206,176,150,0)');
+      halo.addColorStop(0, 'rgba(255,178,77,.94)');
+      halo.addColorStop(0.25, 'rgba(255,151,38,.54)');
+      halo.addColorStop(0.6, 'rgba(188,74,18,.18)');
+      halo.addColorStop(1, 'rgba(188,74,18,0)');
       c.fillStyle = halo;
       c.fillRect(0, 0, size, size);
       /* paper body */
       var bw = core * 1.15, bh = core * 1.55;
       var bx = cx - bw / 2, by = cy - bh / 2;
       var body = c.createLinearGradient(0, by, 0, by + bh);
-      body.addColorStop(0, '#f3ddb0');
-      body.addColorStop(0.45, '#fff2da');
-      body.addColorStop(1, '#e6c8a8');
+      body.addColorStop(0, '#c85f18');
+      body.addColorStop(0.45, '#ffb84f');
+      body.addColorStop(1, '#fff1a8');
       c.fillStyle = body;
       c.beginPath();
       if (c.roundRect) c.roundRect(bx, by, bw, bh, [bw * 0.42, bw * 0.42, bw * 0.34, bw * 0.34]);
@@ -1903,8 +1917,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       c.fill();
       /* glow core near base */
       var fl = c.createRadialGradient(cx, by + bh * 0.78, 0, cx, by + bh * 0.78, core * 0.7);
-      fl.addColorStop(0, 'rgba(255,248,225,.95)');
-      fl.addColorStop(1, 'rgba(255,248,225,0)');
+      fl.addColorStop(0, 'rgba(255,242,164,.98)');
+      fl.addColorStop(1, 'rgba(255,151,38,0)');
       c.fillStyle = fl;
       c.fillRect(bx, by, bw, bh);
       return s;
@@ -1960,7 +1974,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       return Math.min(1, Math.max(0, window.scrollY / max));
     }
 
-    var lastT = 0;
+    var lastT = 0, frameId = 0, runId = 0;
     function drawFrame(t, dt) {
       var p = progress();
       var sky = skyAt(p);
@@ -1969,19 +1983,19 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
       /* dusk horizon ember */
-      if (sky.horizon > 0.02) {
+      if (sky.horizon > 0.01) {
         var hg = ctx.createRadialGradient(W * 0.5, H * 1.1, 0, W * 0.5, H * 1.1, H * 0.85);
-        hg.addColorStop(0, 'rgba(214,120,90,' + (sky.horizon * 0.55).toFixed(3) + ')');
-        hg.addColorStop(0.5, 'rgba(178,96,90,' + (sky.horizon * 0.22).toFixed(3) + ')');
+        hg.addColorStop(0, 'rgba(214,110,64,' + (sky.horizon * 0.45).toFixed(3) + ')');
+        hg.addColorStop(0.5, 'rgba(160,62,28,' + (sky.horizon * 0.18).toFixed(3) + ')');
         hg.addColorStop(1, 'rgba(178,96,90,0)');
         ctx.fillStyle = hg;
         ctx.fillRect(0, 0, W, H);
       }
       /* stars */
-      ctx.fillStyle = '#fff7ea';
+      ctx.fillStyle = '#fff4d8';
       for (var i = 0; i < stars.length; i++) {
         var st = stars[i];
-        var a = 0.18 + 0.5 * (0.5 + 0.5 * Math.sin(t * 0.001 * st.sp + st.tw));
+        var a = 0.26 + 0.62 * (0.5 + 0.5 * Math.sin(t * 0.001 * st.sp + st.tw));
         ctx.globalAlpha = a;
         ctx.fillRect(st.x, st.y, st.r, st.r);
       }
@@ -2026,21 +2040,27 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       if (lift > 0) lift = Math.max(0, lift - dt / 3500);
     }
 
-    function loop(t) {
-      if (!running) return;
+    function loop(t, id) {
+      if (!running || id !== runId) return;
       var dt = Math.min(50, t - lastT || 16);
       lastT = t;
       drawFrame(t, dt);
-      requestAnimationFrame(loop);
+      frameId = requestAnimationFrame(function (nextT) { loop(nextT, id); });
     }
     function start() {
       if (REDUCED) { drawFrame(0, 0); return; }
       if (running) return;
       running = true;
       lastT = performance.now();
-      requestAnimationFrame(loop);
+      runId++;
+      frameId = requestAnimationFrame(function (t) { loop(t, runId); });
     }
-    function stop() { running = false; }
+    function stop() {
+      running = false;
+      runId++;
+      if (frameId) cancelAnimationFrame(frameId);
+      frameId = 0;
+    }
 
     window.addEventListener('resize', resize);
     document.addEventListener('visibilitychange', function () {
@@ -2437,7 +2457,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           $('rsvp-form').style.display = 'none';
           var success = $('rsvp-success');
           success.textContent = attendingValue === 'yes'
-            ? 'Thank you, ' + nameVal + '. Your response has been noted — your seat is booked, and we can’t wait to celebrate with you.'
+            ? 'Thank you, ' + nameVal + '. Your response has been noted. Your seat is booked, and we can’t wait to celebrate with you.'
             : 'Thank you, ' + nameVal + '. Your response has been noted. We’ll miss you, but we appreciate you letting us know.';
           success.style.display = 'block';
         })
@@ -2454,14 +2474,17 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     if (!ANIM || instant) {
       document.querySelectorAll('#curtain .w').forEach(function (w) { w.style.transform = 'none'; });
       document.querySelector('#curtain .rule').style.width = '84px';
-      var meta = document.querySelector('#curtain .meta');
-      meta.style.opacity = 1; meta.style.transform = 'none';
+      document.querySelectorAll('#curtain .meta, #curtain .signpost').forEach(function (el) {
+        el.style.opacity = 1;
+        el.style.transform = 'none';
+      });
       return;
     }
     var tl = gsap.timeline({ delay: 0.2 });
     tl.to('#curtain .w', { y: 0, duration: 1.2, ease: 'power3.out', stagger: 0.24 })
       .to('#curtain .rule', { width: 84, duration: 0.9, ease: 'power2.out' }, '-=0.5')
-      .to('#curtain .meta', { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }, '-=0.4');
+      .to('#curtain .meta', { opacity: 1, y: 0, duration: 0.85, ease: 'power2.out' }, '+=0.35')
+      .to('#curtain .signpost', { opacity: 1, y: 0, duration: 0.85, ease: 'power2.out' }, '-=0.48');
   }
 
   /* ---------- ACT 0 — the gate ---------- */
@@ -2545,6 +2568,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       if (dragT) dragT.disable();
       if (dragJ) dragJ.disable();
       T.disabled = true; J.disabled = true;
+      $('connect-btn').disabled = true;
       var a = center(T), b = center(J);
       var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
       var bloom = $('bloom');
@@ -2663,6 +2687,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
     /* generic reveals */
     gsap.utils.toArray('.rv').forEach(function (el) {
+      if (el.closest('#curtain')) return;
       gsap.to(el, {
         opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
         scrollTrigger: { trigger: el, start: 'top 88%', once: true }
@@ -2671,8 +2696,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
     /* Section 1 — lantern path */
     (function () {
+      var progFill = $('path-progress-fill');
       var tl = gsap.timeline({
-        scrollTrigger: { trigger: '#path', start: 'top top', end: 'bottom bottom', scrub: 0.6 }
+        scrollTrigger: {
+          trigger: '#path', start: 'top top', end: 'bottom bottom', scrub: 0.6,
+          onUpdate: function (self) {
+            if (progFill) progFill.style.transform = 'scaleY(' + self.progress.toFixed(4) + ')';
+          }
+        }
       });
       var chips = gsap.utils.toArray('#path .chip');
       var caps = gsap.utils.toArray('#path .pcap');
