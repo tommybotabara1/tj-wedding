@@ -92,7 +92,7 @@
     <button class="btn" onclick="resetGuests()">Reset seating</button>
     <button class="btn btn-primary" onclick="doSave()" id="save-btn">Save</button>
     <div class="ml-auto text-stone-400">
-      <span id="stat-a">–</span> / 150 planned pax &nbsp;·&nbsp; July 02, 2026 at 10:06 PM
+      <span id="stat-a">–</span> / 150 planned pax &nbsp;·&nbsp; July 02, 2026 at 10:41 PM
     </div>
   </div>
 </div>
@@ -335,6 +335,7 @@ function createTableSVG(tNum, cx, cy, color) {
   if (sponsorRect) {
     g.innerHTML = `
       <rect x="-64" y="-24" width="128" height="48" rx="6" fill="${color}" fill-opacity=".20"
+            transform="rotate(90)"
             stroke="${color}" stroke-width="1.5" class="fp-body"/>
       <text text-anchor="middle" y="-5" font-size="12"
             font-weight="bold" fill="${color}">${tNum}</text>
