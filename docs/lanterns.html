@@ -395,14 +395,14 @@ html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:16p
 }
 #day .copy-center.day-head{ position:relative; z-index:3; padding:clamp(44px,7vh,88px) 24px 0; margin:0 auto; }
 .beach .moon{
-  position:absolute; top:26%; left:50%; width:92px; height:92px; transform:translateX(-50%);
+  position:absolute; top:33%; left:67%; width:92px; height:92px; transform:translateX(-50%);
   border-radius:50%;
   background:radial-gradient(circle at 42% 38%, #fffdf6 0%, #f4eddd 55%, #d9cfba 100%);
   box-shadow:0 0 60px 18px rgba(244,237,221,.28), 0 0 150px 55px rgba(244,237,221,.12);
 }
 .beach .cloud{
-  position:absolute; height:26px; border-radius:999px; filter:blur(8px);
-  background:rgba(216,208,222,.14); animation:drift 40s linear infinite alternate;
+  position:absolute; height:26px; border-radius:999px; filter:blur(14px);
+  background:rgba(216,208,222,.08); animation:drift 40s linear infinite alternate;
 }
 @keyframes drift{ from{ transform:translateX(-10%) } to{ transform:translateX(10%) } }
 html.reduced .beach .cloud{ animation:none; }
@@ -421,7 +421,7 @@ html.reduced .beach .cloud{ animation:none; }
   filter:blur(1px);
 }
 .beach .glints{ /* moonglade: moonlight column on the water */
-  position:absolute; left:50%; top:47.5%; height:26%; width:110px; transform:translateX(-50%);
+  position:absolute; left:67%; top:47.5%; height:26%; width:110px; transform:translateX(-50%);
   background:repeating-linear-gradient(180deg, rgba(244,237,221,.26) 0 2px, transparent 2px 9px);
   -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,.95), transparent);
   mask-image:linear-gradient(180deg, rgba(0,0,0,.95), transparent);
@@ -1238,8 +1238,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="beach" aria-hidden="true">
         <div class="moon"></div>
         <div class="cloud" style="top:16%; left:12%; width:180px"></div>
-        <div class="cloud" style="top:26%; right:16%; width:240px; animation-delay:-16s"></div>
-        <div class="cloud" style="top:10%; right:38%; width:120px; animation-delay:-30s"></div>
+        <div class="cloud" style="top:38%; right:10%; width:240px; animation-delay:-16s"></div>
+        <div class="cloud" style="top:7%; right:6%; width:120px; animation-delay:-30s"></div>
         <div class="sea"></div>
         <div class="glints"></div>
         <div class="foam"></div>
