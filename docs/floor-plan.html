@@ -17,7 +17,7 @@
     .fp-comp { cursor:grab; user-select:none; }
     .fp-comp:hover .fp-body { opacity:.82; }
     .fp-comp.dragging { cursor:grabbing; opacity:.7; }
-    .fp-table.sel circle {
+    .fp-table.sel .fp-body {
       stroke-width:3 !important;
       filter:drop-shadow(0 0 5px rgba(139,26,53,.6));
     }
@@ -83,11 +83,16 @@
       <input type="checkbox" id="grid-cb" class="accent-[#8B1A35]"> Grid 1 m
     </label>
     <div class="h-4 w-px bg-stone-200"></div>
+    <div class="flex items-center gap-1">
+      <button class="btn btn-primary" id="layout-round" onclick="setLayout('round')">All round</button>
+      <button class="btn" id="layout-sponsor" onclick="setLayout('sponsor')">Sponsor rectangles</button>
+    </div>
+    <div class="h-4 w-px bg-stone-200"></div>
     <button class="btn" onclick="resetPositions()">Reset positions</button>
     <button class="btn" onclick="resetGuests()">Reset seating</button>
     <button class="btn btn-primary" onclick="doSave()" id="save-btn">Save</button>
     <div class="ml-auto text-stone-400">
-      <span id="stat-a">–</span> / 120 pax seated &nbsp;·&nbsp; July 02, 2026 at 09:43 PM
+      <span id="stat-a">–</span> / 150 planned pax &nbsp;·&nbsp; July 02, 2026 at 10:06 PM
     </div>
   </div>
 </div>
@@ -99,7 +104,7 @@
   <div class="flex justify-center mb-6">
     <div class="sc p-5">
       <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3 text-center">
-        Gallio Events Hall · Talisay Hall · 9.8 m x 33 m · drag any item to reposition
+        Gallio Events Hall · Talisay Hall · 150 planned pax · choose a table layout
       </p>
       <div style="overflow:auto; max-height:78vh;">
         <svg id="fp-svg" viewBox="0 0 460 1570" width="460"
@@ -214,7 +219,7 @@
         <button class="btn btn-primary" onclick="addTable()">+ Add table</button>
       </div>
       <div class="text-xs text-stone-400 mb-3">
-        <span id="stat-a2">–</span> / 120 pax seated
+        <span id="stat-a2">–</span> / 150 planned pax
       </div>
       <div id="table-list"></div>
     </div>
@@ -253,16 +258,19 @@
 const GUESTS          = [{"num": 1, "name": "Joan Diñoso", "pax": 1, "table": 1, "side": "Jeyan", "group": "Benilde"}, {"num": 2, "name": "Christian Dino Diñoso", "pax": 1, "table": 1, "side": "Jeyan", "group": "Benilde"}, {"num": 3, "name": "Mark Jayson De Jesus", "pax": 1, "table": 10, "side": "Jeyan", "group": "Benilde"}, {"num": 4, "name": "Julian Christopher A. Lopez", "pax": 1, "table": 9, "side": "Jeyan", "group": "College"}, {"num": 5, "name": "Michelle A. Alaras", "pax": 2, "table": 9, "side": "Jeyan", "group": "College"}, {"num": 6, "name": "Aldrine R. Andres", "pax": 1, "table": 9, "side": "Jeyan", "group": "College"}, {"num": 7, "name": "Micca Ricka Raphaella T. Cantos", "pax": 1, "table": 9, "side": "Jeyan", "group": "College"}, {"num": 8, "name": "Carl Tristan A. Sarmiento", "pax": 1, "table": 9, "side": "Jeyan", "group": "College"}, {"num": 9, "name": "Prof. Benedict Avila", "pax": 2, "table": 1, "side": "Jeyan", "group": "College"}, {"num": 11, "name": "Joel M. Santioque", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 12, "name": "Olivia C. Santioque", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 13, "name": "Hannah C. Santioque", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 14, "name": "Joval C. Santioque", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 15, "name": "Romulo Fronda Jr.", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 16, "name": "Ronulfo I. Calma", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 17, "name": "Mamerto I. Calma", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 18, "name": "Denise M. Beltran", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 20, "name": "JV Cruz", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 21, "name": "Agustina Francisco", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 25, "name": "Dimples Jenna S. Collera", "pax": 2, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 26, "name": "Paulo Luis B. Reyes", "pax": 1, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 27, "name": "Donnabelle F. Aliwalas", "pax": 1, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 28, "name": "Josett A. Romano", "pax": 1, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 29, "name": "Haidee Melaine P. Manlapaz", "pax": 1, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 30, "name": "Gemela Marian A. David", "pax": 1, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 31, "name": "Jaimini Jahaziel R. Bituaran", "pax": 2, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 32, "name": "Ceijas-Lyn Y. Tagana", "pax": 1, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 33, "name": "Adrianne Micaela Manalaotao", "pax": 1, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 34, "name": "Julia Cecilia A. Santos", "pax": 1, "table": 6, "side": "Jeyan", "group": "JHS"}, {"num": 35, "name": "Abigail Cayabyab-Fereras", "pax": 2, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 36, "name": "Paolo A. Macasaet", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 37, "name": "Michaela Sta. Rosa", "pax": 1, "table": 10, "side": "Jeyan", "group": "JHS"}, {"num": 38, "name": "Karen Austria", "pax": 2, "table": 1, "side": "Jeyan", "group": "Manulife"}, {"num": 39, "name": "Shiela Chan", "pax": 2, "table": 1, "side": "Jeyan", "group": "Manulife"}, {"num": 42, "name": "Cheryl Imelda V. Capinpin", "pax": 2, "table": 1, "side": "Jeyan", "group": "PAL"}, {"num": 43, "name": "Patrick M. Santillan", "pax": 2, "table": 1, "side": "Jeyan", "group": "PAL"}, {"num": 44, "name": "Andrew Paul I. Montinola", "pax": 1, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 45, "name": "Analiza C. Chiapoco", "pax": 2, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 46, "name": "William G. Tan", "pax": 2, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 47, "name": "Jaime C. Perez", "pax": 2, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 48, "name": "Ma. Corazon D. Babadilla", "pax": 2, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 49, "name": "Emalyn Lira", "pax": 1, "table": 2, "side": "Jeyan", "group": "PAL"}, {"num": 50, "name": "Kristian Edison C. Flora", "pax": 1, "table": 10, "side": "Jeyan", "group": "PAL"}, {"num": 51, "name": "Godofredo Baja Jr.", "pax": 1, "table": 10, "side": "Jeyan", "group": "REBAP"}, {"num": 52, "name": "John Carlo Soriaga", "pax": 1, "table": 10, "side": "Jeyan", "group": "REBAP"}, {"num": 53, "name": "Geraldine Ang", "pax": 1, "table": 10, "side": "Jeyan", "group": "REBAP"}, {"num": 54, "name": "Joy Giron", "pax": 1, "table": 9, "side": "Jeyan", "group": "Megaworld"}, {"num": 55, "name": "Vanessa Laureen A. Trinidad", "pax": 1, "table": 9, "side": "Jeyan", "group": "SHS"}, {"num": 56, "name": "Marielle Joy K. Serania", "pax": 2, "table": 9, "side": "Jeyan", "group": "SHS"}, {"num": 59, "name": "Betlee Barraquias", "pax": 2, "table": 8, "side": "Tommy", "group": "College"}, {"num": 60, "name": "Jason Deichmann", "pax": 1, "table": 10, "side": "Tommy", "group": "College"}, {"num": 61, "name": "Piolo Barletta", "pax": 2, "table": 10, "side": "Tommy", "group": "College"}, {"num": 62, "name": "Jan Carlo Ponce", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 63, "name": "Louise Litonjua", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 64, "name": "Elaine Botabara", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 65, "name": "Sherwin Botabara", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 66, "name": "Teddy Botabara", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 67, "name": "Sheryl De Dios", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 68, "name": "Dong De Dios", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 69, "name": "Jun Botabara", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 70, "name": "Jackie Botabara", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 71, "name": "Mae Aspra", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 72, "name": "Kervy Aspra", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 73, "name": "Emil De Dios", "pax": 2, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 74, "name": "Luis De Dios", "pax": 1, "table": 4, "side": "Tommy", "group": "Family"}, {"num": 75, "name": "Alvin Botabara", "pax": 2, "table": 5, "side": "Tommy", "group": "Family"}, {"num": 76, "name": "Bea Botabara", "pax": 1, "table": 5, "side": "Tommy", "group": "Family"}, {"num": 77, "name": "Nina Botabara", "pax": 1, "table": 5, "side": "Tommy", "group": "Family"}, {"num": 78, "name": "Seansean Botabara", "pax": 1, "table": 5, "side": "Tommy", "group": "Family"}, {"num": 79, "name": "Asuncion Mirabueno", "pax": 1, "table": 5, "side": "Tommy", "group": "Family"}, {"num": 80, "name": "Dennis Mirabueno", "pax": 1, "table": 5, "side": "Tommy", "group": "Family"}, {"num": 82, "name": "Axl John Mirabueno", "pax": 1, "table": 5, "side": "Tommy", "group": "Family"}, {"num": 83, "name": "George Suarez", "pax": 1, "table": 5, "side": "Tommy", "group": "Family"}, {"num": 84, "name": "Traviz Keinn Climacosa", "pax": 1, "table": 8, "side": "Tommy", "group": "HS / Elem"}, {"num": 85, "name": "Vaunn Maribao", "pax": 2, "table": 8, "side": "Tommy", "group": "HS / Elem"}, {"num": 86, "name": "John Goloya", "pax": 1, "table": 5, "side": "Tommy", "group": "HS / Elem"}, {"num": 87, "name": "Jade Calera", "pax": 1, "table": 8, "side": "Tommy", "group": "HS / Elem"}, {"num": 88, "name": "Michael Somosot", "pax": 2, "table": 8, "side": "Tommy", "group": "HS / Elem"}, {"num": 89, "name": "Gabriel Ventura", "pax": 1, "table": 8, "side": "Tommy", "group": "HS / Elem"}, {"num": 90, "name": "Patrick Soriano", "pax": 2, "table": 8, "side": "Tommy", "group": "HS / Elem"}, {"num": 91, "name": "Ellwin Serge Panaglima", "pax": 2, "table": 5, "side": "Tommy", "group": "HS / Elem"}, {"num": 92, "name": "Tricia Ong", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 93, "name": "Francis Valencia", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 94, "name": "Didi Rico", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 95, "name": "Juan Gabriel Cuenco (Jiggy)", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 96, "name": "Ed Paul", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 97, "name": "Juan Ambrocio Britanico (JA)", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 98, "name": "Sharm Lee", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 99, "name": "Bryle Raviz", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 100, "name": "Rahim Damanwala", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 101, "name": "Chito Ramos", "pax": 1, "table": 7, "side": "Tommy", "group": "Deloitte"}, {"num": 102, "name": "Nuki Tan", "pax": 1, "table": null, "side": "Tommy", "group": ""}, {"num": 103, "name": "Luis Montenegro", "pax": 1, "table": 3, "side": "Jeyan", "group": ""}, {"num": 22, "name": "Yshmael I. Calma", "pax": 1, "table": 2, "side": "Jeyan", "group": "Family"}, {"num": 23, "name": "Jennifer Calma", "pax": 1, "table": 2, "side": "Jeyan", "group": "Family"}, {"num": 24, "name": "Josiah Calma", "pax": 1, "table": 3, "side": "Jeyan", "group": "Family"}, {"num": 57, "name": "Jean Distal", "pax": 1, "table": 9, "side": "Jeyan", "group": "SHS"}, {"num": 58, "name": "Eloissa Lazarte", "pax": 1, "table": 9, "side": "Jeyan", "group": "SHS"}];
 const DEFAULT_META    = {"1": {"cat": "VIP", "color": "#B5924C", "x": 130, "y": 520}, "2": {"cat": "VIP", "color": "#B5924C", "x": 322, "y": 520}, "3": {"cat": "VIP", "color": "#B5924C", "x": 130, "y": 620}, "4": {"cat": "Jeyan Family", "color": "#D4A5A0", "x": 322, "y": 620}, "5": {"cat": "Jeyan Family", "color": "#D4A5A0", "x": 130, "y": 720}, "6": {"cat": "Jeyan Family", "color": "#D4A5A0", "x": 322, "y": 720}, "7": {"cat": "Tommy Family", "color": "#B8837A", "x": 130, "y": 820}, "8": {"cat": "Tommy Family", "color": "#B8837A", "x": 322, "y": 820}, "9": {"cat": "Tommy Family", "color": "#B8837A", "x": 130, "y": 920}, "10": {"cat": "Jeyan Friends", "color": "#7A9E7E", "x": 322, "y": 920}, "11": {"cat": "Jeyan Friends", "color": "#7A9E7E", "x": 130, "y": 1020}, "12": {"cat": "Jeyan Friends", "color": "#7A9E7E", "x": 322, "y": 1020}, "13": {"cat": "Jeyan Friends", "color": "#7A9E7E", "x": 130, "y": 1120}, "14": {"cat": "Tommy Friends", "color": "#8B1A35", "x": 322, "y": 1120}, "15": {"cat": "Tommy Friends", "color": "#8B1A35", "x": 130, "y": 1220}, "16": {"cat": "Tommy Friends", "color": "#8B1A35", "x": 322, "y": 1220}};
 const DEFAULT_COMPS   = {"comp-sweetheart": {"x": 226, "y": 290}, "comp-dancefloor": {"x": 226, "y": 400}, "comp-dj": {"x": 410, "y": 218}, "comp-buffet": {"x": 413, "y": 960}, "comp-mobilebar": {"x": 83, "y": 1320}};
+const SPONSOR_TABLES  = new Set([1, 2, 3]);
 
 // ── MUTABLE STATE ─────────────────────────────────────────────────────────────
 let tables      = {};   // tableNum → {cat, color, x, y}
 let assignments = {};   // guestNum → tableNum | null
 let selTable    = null;
 let snapOn      = true;
+let layoutMode  = 'round';
 const SNAP = 20;          // 20 px = 50 cm
-const LS_T  = 'tjwed_tables';
-const LS_A  = 'tjwed_asn';
-const LS_FX = 'tjwed_fixtures';
+const LS_T  = 'tjwed_tables_talisay_v2';
+const LS_A  = 'tjwed_asn_talisay_v2';
+const LS_FX = 'tjwed_fixtures_talisay_v2';
+const LS_LAYOUT = 'tjwed_layout_talisay_v1';
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 function init() {
@@ -271,6 +279,12 @@ function init() {
 
   // Load saved assignments
   try { const a = localStorage.getItem(LS_A); if (a) Object.assign(assignments, JSON.parse(a)); } catch(_) {}
+
+  // Load saved table-shape preference
+  try {
+    const savedLayout = localStorage.getItem(LS_LAYOUT);
+    if (savedLayout === 'sponsor') layoutMode = 'sponsor';
+  } catch(_) {}
 
   // Load tables (or use defaults)
   const savedT = localStorage.getItem(LS_T);
@@ -295,6 +309,7 @@ function init() {
     }
   } catch(_) {}
 
+  applyLayoutButtons();
   setupDrag();
   setupToggles();
   renderAll();
@@ -307,6 +322,7 @@ function createTableSVG(tNum, cx, cy, color) {
   g.setAttribute('id', `fp-t${tNum}`);
   g.setAttribute('transform', `translate(${cx},${cy})`);
   g.dataset.table = tNum;
+  const sponsorRect = layoutMode === 'sponsor' && SPONSOR_TABLES.has(tNum);
 
   g.innerHTML = `
     <circle r="30" fill="${color}" fill-opacity=".20"
@@ -316,7 +332,28 @@ function createTableSVG(tNum, cx, cy, color) {
     <text id="fp-px${tNum}" text-anchor="middle" y="9"
           font-size="9" fill="#5A4040">–pax</text>`;
 
+  if (sponsorRect) {
+    g.innerHTML = `
+      <rect x="-64" y="-24" width="128" height="48" rx="6" fill="${color}" fill-opacity=".20"
+            stroke="${color}" stroke-width="1.5" class="fp-body"/>
+      <text text-anchor="middle" y="-5" font-size="12"
+            font-weight="bold" fill="${color}">${tNum}</text>
+      <text id="fp-px${tNum}" text-anchor="middle" y="9"
+            font-size="9" fill="#5A4040">-pax</text>
+      <text text-anchor="middle" y="19" font-size="7" fill="#8B7355">sponsors</text>`;
+  }
+
   document.getElementById('fp-tables').appendChild(g);
+}
+
+function renderTableShapes() {
+  const selected = selTable;
+  document.getElementById('fp-tables').innerHTML = '';
+  Object.entries(tables).forEach(([t, meta]) => createTableSVG(+t, meta.x, meta.y, meta.color));
+  if (selected && document.getElementById(`fp-t${selected}`)) {
+    document.getElementById(`fp-t${selected}`).classList.add('sel');
+  }
+  updatePaxLabels();
 }
 
 // ── DRAG & DROP ───────────────────────────────────────────────────────────────
@@ -391,6 +428,7 @@ function saveAll() {
 
   // Save assignments
   localStorage.setItem(LS_A, JSON.stringify(assignments));
+  localStorage.setItem(LS_LAYOUT, layoutMode);
 }
 
 function doSave() {
@@ -608,6 +646,23 @@ function updateStats() {
 }
 
 // ── TOGGLES ───────────────────────────────────────────────────────────────────
+function setLayout(mode) {
+  layoutMode = mode === 'sponsor' ? 'sponsor' : 'round';
+  localStorage.setItem(LS_LAYOUT, layoutMode);
+  renderTableShapes();
+  applyLayoutButtons();
+  renderAll();
+  if(selTable) renderDetail(selTable);
+}
+
+function applyLayoutButtons() {
+  const round = document.getElementById('layout-round');
+  const sponsor = document.getElementById('layout-sponsor');
+  if(!round || !sponsor) return;
+  round.className = layoutMode === 'round' ? 'btn btn-primary' : 'btn';
+  sponsor.className = layoutMode === 'sponsor' ? 'btn btn-primary' : 'btn';
+}
+
 function setupToggles() {
   document.getElementById('snap-cb').addEventListener('change',e=>snapOn=e.target.checked);
   document.getElementById('grid-cb').addEventListener('change',e=>{

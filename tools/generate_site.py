@@ -19,6 +19,7 @@ from gws import download_workbook
 
 WEDDING_DATE = date(2026, 12, 27)
 REFRESH_DATE = date(2026, 7, 1)
+PLANNED_PAX = 150
 OUTPUT_PATH  = os.path.join(os.path.dirname(__file__), "..", "docs", "index.html")
 
 
@@ -248,10 +249,10 @@ def read_reception(wb):
             catering = row["vendor"]
             catering_total = row["actual"]
 
-    pax = 120
+    pax = PLANNED_PAX
     m = _re.search(r"for\s+(\d+)\s*pax", notes, _re.I)
     if m:
-        pax = int(m.group(1))
+        pax = max(pax, int(m.group(1)))
     intro = None
     try:
         intro = wb["Wedding Day Itinerary"]["A2"].value
@@ -582,8 +583,8 @@ def build_html(tasks, budget, vendors, schedule, guests):
         <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Paid So Far</div>
       </div>
       <div class="stat-pill text-center">
-        <div class="serif text-3xl font-light" style="color: var(--burgundy);">{guests['total']}</div>
-        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Guests (est.)</div>
+        <div class="serif text-3xl font-light" style="color: var(--burgundy);">{PLANNED_PAX}</div>
+        <div class="text-xs text-stone-400 tracking-wider uppercase mt-1">Planned Pax</div>
       </div>
     </div>
   </section>
@@ -681,7 +682,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
         <div>
           <h2 class="serif text-2xl font-light text-stone-800">Guest List</h2>
           <p class="text-stone-400 text-sm mt-0.5">
-            <span id="guest-count">{len(guests['rows'])}</span> of {len(guests['rows'])} guests &mdash; {guests['total']} pax
+            <span id="guest-count">{len(guests['rows'])}</span> of {len(guests['rows'])} guests &mdash; {guests['total']} listed pax / {PLANNED_PAX} planned
           </p>
         </div>
         <a href="reception.html" class="text-xs font-medium px-4 py-2 rounded-full border border-stone-200 text-stone-500 hover:bg-stone-50 transition-colors">
@@ -1070,7 +1071,7 @@ def build_reception_html(guests, reception):
       <div class="section-card px-6 py-4 flex-1 min-w-60">
         <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Venue</p>
         <p class="serif text-xl font-light text-stone-800">{reception['venue']}</p>
-        <p class="text-stone-400 text-sm">{reception['hall'] or 'Reception hall'} · Venue actual {fmt_php(reception['total'])} · Paid {fmt_php(reception['paid'])} · Balance {fmt_php(reception['balance'])} · Caterer: {reception['catering'] or 'TBD'} ({fmt_php(reception['catering_total'])})</p>
+        <p class="text-stone-400 text-sm">{reception['hall'] or 'Reception hall'} · {reception['pax']} planned pax · {guests['total']} listed pax · Venue actual {fmt_php(reception['total'])} · Paid {fmt_php(reception['paid'])} · Balance {fmt_php(reception['balance'])} · Caterer: {reception['catering'] or 'TBD'} ({fmt_php(reception['catering_total'])})</p>
       </div>
       <div class="section-card px-6 py-4">
         <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-2">Legend</p>
@@ -1089,7 +1090,7 @@ def build_reception_html(guests, reception):
       <!-- Floor plan SVG -->
       <div class="section-card p-6">
         <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Floor Plan - Talisay Hall</p>
-        <p class="text-stone-400 text-xs mb-4">9.8 m x 33 m &middot; 16 tables &middot; stage/backdrop at the top, entrance at the bottom</p>
+        <p class="text-stone-400 text-xs mb-4">9.8 m x 33 m &middot; 16 tables &middot; {reception['pax']} planned pax &middot; stage/backdrop at the top, entrance at the bottom</p>
         <div class="flex gap-2 mb-4">
           <button id="btn-a" onclick="showOption('a')" class="px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors">Option A &middot; All Round</button>
           <button id="btn-b" onclick="showOption('b')" class="px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors">Option B &middot; Sponsor Tables</button>
@@ -1201,7 +1202,7 @@ def build_floorplan_html(guests, reception):
     .fp-comp {{ cursor:grab; user-select:none; }}
     .fp-comp:hover .fp-body {{ opacity:.82; }}
     .fp-comp.dragging {{ cursor:grabbing; opacity:.7; }}
-    .fp-table.sel circle {{
+    .fp-table.sel .fp-body {{
       stroke-width:3 !important;
       filter:drop-shadow(0 0 5px rgba(139,26,53,.6));
     }}
@@ -1267,11 +1268,16 @@ def build_floorplan_html(guests, reception):
       <input type="checkbox" id="grid-cb" class="accent-[#8B1A35]"> Grid 1 m
     </label>
     <div class="h-4 w-px bg-stone-200"></div>
+    <div class="flex items-center gap-1">
+      <button class="btn btn-primary" id="layout-round" onclick="setLayout('round')">All round</button>
+      <button class="btn" id="layout-sponsor" onclick="setLayout('sponsor')">Sponsor rectangles</button>
+    </div>
+    <div class="h-4 w-px bg-stone-200"></div>
     <button class="btn" onclick="resetPositions()">Reset positions</button>
     <button class="btn" onclick="resetGuests()">Reset seating</button>
     <button class="btn btn-primary" onclick="doSave()" id="save-btn">Save</button>
     <div class="ml-auto text-stone-400">
-      <span id="stat-a">–</span> / {guests['total']} pax seated &nbsp;·&nbsp; {now_str}
+      <span id="stat-a">–</span> / {reception['pax']} planned pax &nbsp;·&nbsp; {now_str}
     </div>
   </div>
 </div>
@@ -1283,7 +1289,7 @@ def build_floorplan_html(guests, reception):
   <div class="flex justify-center mb-6">
     <div class="sc p-5">
       <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3 text-center">
-        {reception['venue']}{' · ' + reception['hall'] if reception['hall'] else ''} · 9.8 m x 33 m · drag any item to reposition
+        {reception['venue']}{' · ' + reception['hall'] if reception['hall'] else ''} · {reception['pax']} planned pax · choose a table layout
       </p>
       <div style="overflow:auto; max-height:78vh;">
         <svg id="fp-svg" viewBox="0 0 460 1570" width="460"
@@ -1313,7 +1319,7 @@ def build_floorplan_html(guests, reception):
         <button class="btn btn-primary" onclick="addTable()">+ Add table</button>
       </div>
       <div class="text-xs text-stone-400 mb-3">
-        <span id="stat-a2">–</span> / {guests['total']} pax seated
+        <span id="stat-a2">–</span> / {reception['pax']} planned pax
       </div>
       <div id="table-list"></div>
     </div>
@@ -1352,16 +1358,19 @@ def build_floorplan_html(guests, reception):
 const GUESTS          = {guest_json};
 const DEFAULT_META    = {table_meta_with_pos_json};
 const DEFAULT_COMPS   = {comp_defaults_json};
+const SPONSOR_TABLES  = new Set([1, 2, 3]);
 
 // ── MUTABLE STATE ─────────────────────────────────────────────────────────────
 let tables      = {{}};   // tableNum → {{cat, color, x, y}}
 let assignments = {{}};   // guestNum → tableNum | null
 let selTable    = null;
 let snapOn      = true;
+let layoutMode  = 'round';
 const SNAP = 20;          // 20 px = 50 cm
-const LS_T  = 'tjwed_tables';
-const LS_A  = 'tjwed_asn';
-const LS_FX = 'tjwed_fixtures';
+const LS_T  = 'tjwed_tables_talisay_v2';
+const LS_A  = 'tjwed_asn_talisay_v2';
+const LS_FX = 'tjwed_fixtures_talisay_v2';
+const LS_LAYOUT = 'tjwed_layout_talisay_v1';
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 function init() {{
@@ -1370,6 +1379,12 @@ function init() {{
 
   // Load saved assignments
   try {{ const a = localStorage.getItem(LS_A); if (a) Object.assign(assignments, JSON.parse(a)); }} catch(_) {{}}
+
+  // Load saved table-shape preference
+  try {{
+    const savedLayout = localStorage.getItem(LS_LAYOUT);
+    if (savedLayout === 'sponsor') layoutMode = 'sponsor';
+  }} catch(_) {{}}
 
   // Load tables (or use defaults)
   const savedT = localStorage.getItem(LS_T);
@@ -1394,6 +1409,7 @@ function init() {{
     }}
   }} catch(_) {{}}
 
+  applyLayoutButtons();
   setupDrag();
   setupToggles();
   renderAll();
@@ -1406,6 +1422,7 @@ function createTableSVG(tNum, cx, cy, color) {{
   g.setAttribute('id', `fp-t${{tNum}}`);
   g.setAttribute('transform', `translate(${{cx}},${{cy}})`);
   g.dataset.table = tNum;
+  const sponsorRect = layoutMode === 'sponsor' && SPONSOR_TABLES.has(tNum);
 
   g.innerHTML = `
     <circle r="30" fill="${{color}}" fill-opacity=".20"
@@ -1415,7 +1432,28 @@ function createTableSVG(tNum, cx, cy, color) {{
     <text id="fp-px${{tNum}}" text-anchor="middle" y="9"
           font-size="9" fill="#5A4040">–pax</text>`;
 
+  if (sponsorRect) {{
+    g.innerHTML = `
+      <rect x="-64" y="-24" width="128" height="48" rx="6" fill="${{color}}" fill-opacity=".20"
+            stroke="${{color}}" stroke-width="1.5" class="fp-body"/>
+      <text text-anchor="middle" y="-5" font-size="12"
+            font-weight="bold" fill="${{color}}">${{tNum}}</text>
+      <text id="fp-px${{tNum}}" text-anchor="middle" y="9"
+            font-size="9" fill="#5A4040">-pax</text>
+      <text text-anchor="middle" y="19" font-size="7" fill="#8B7355">sponsors</text>`;
+  }}
+
   document.getElementById('fp-tables').appendChild(g);
+}}
+
+function renderTableShapes() {{
+  const selected = selTable;
+  document.getElementById('fp-tables').innerHTML = '';
+  Object.entries(tables).forEach(([t, meta]) => createTableSVG(+t, meta.x, meta.y, meta.color));
+  if (selected && document.getElementById(`fp-t${{selected}}`)) {{
+    document.getElementById(`fp-t${{selected}}`).classList.add('sel');
+  }}
+  updatePaxLabels();
 }}
 
 // ── DRAG & DROP ───────────────────────────────────────────────────────────────
@@ -1490,6 +1528,7 @@ function saveAll() {{
 
   // Save assignments
   localStorage.setItem(LS_A, JSON.stringify(assignments));
+  localStorage.setItem(LS_LAYOUT, layoutMode);
 }}
 
 function doSave() {{
@@ -1707,6 +1746,23 @@ function updateStats() {{
 }}
 
 // ── TOGGLES ───────────────────────────────────────────────────────────────────
+function setLayout(mode) {{
+  layoutMode = mode === 'sponsor' ? 'sponsor' : 'round';
+  localStorage.setItem(LS_LAYOUT, layoutMode);
+  renderTableShapes();
+  applyLayoutButtons();
+  renderAll();
+  if(selTable) renderDetail(selTable);
+}}
+
+function applyLayoutButtons() {{
+  const round = document.getElementById('layout-round');
+  const sponsor = document.getElementById('layout-sponsor');
+  if(!round || !sponsor) return;
+  round.className = layoutMode === 'round' ? 'btn btn-primary' : 'btn';
+  sponsor.className = layoutMode === 'sponsor' ? 'btn btn-primary' : 'btn';
+}}
+
 function setupToggles() {{
   document.getElementById('snap-cb').addEventListener('change',e=>snapOn=e.target.checked);
   document.getElementById('grid-cb').addEventListener('change',e=>{{
