@@ -836,117 +836,142 @@ def build_html(tasks, budget, vendors, schedule, guests):
 # ── Reception / Seating Chart ─────────────────────────────────────────────────
 
 TABLE_META = {
-    1:  ("VIP / Sponsors", "#B5924C"), 2:  ("VIP / Sponsors", "#B5924C"),
-    3:  ("Jeyan Family",   "#D4A5A0"),
-    4:  ("Tommy Family",   "#B8837A"), 5:  ("Tommy Family",   "#B8837A"),
-    6:  ("Jeyan Friends",  "#7A9E7E"),
-    7:  ("Tommy Friends",  "#8B1A35"), 8:  ("Tommy Friends",  "#8B1A35"),
-    9:  ("Jeyan Friends",  "#7A9E7E"),
-    10: ("Mixed Friends",  "#8896A6"),
+    1:  ("VIP", "#B5924C"), 2:  ("VIP", "#B5924C"), 3:  ("VIP", "#B5924C"),
+    4:  ("Jeyan Family", "#D4A5A0"), 5: ("Jeyan Family", "#D4A5A0"), 6: ("Jeyan Family", "#D4A5A0"),
+    7:  ("Tommy Family", "#B8837A"), 8: ("Tommy Family", "#B8837A"), 9: ("Tommy Family", "#B8837A"),
+    10: ("Jeyan Friends", "#7A9E7E"), 11: ("Jeyan Friends", "#7A9E7E"),
+    12: ("Jeyan Friends", "#7A9E7E"), 13: ("Jeyan Friends", "#7A9E7E"),
+    14: ("Tommy Friends", "#8B1A35"), 15: ("Tommy Friends", "#8B1A35"), 16: ("Tommy Friends", "#8B1A35"),
 }
 
-TABLE_CAP = 12
+TABLE_CAP = 10
 
-# Talisay Hall round-table setup.
-# Landscape SVG, viewBox 0 0 920 510. Stage on the RIGHT; two rows of five round
-# tables; managed buffet bottom-centre; three entrances along the bottom;
-# registration bottom-left; tech booth + beverage stations top; service rooms
-# (lobby / pantry / toilets / storage / gym) on the left.
+# Gallio Talisay floor plan: 9.8m wide x 33m long, 300 sqm.
+# Interactive SVG uses 40px/m: hall x=30-422, y=150-1470.
 TABLE_POS = {
-    1: (706, 190), 2: (706, 340),     # nearest the stage  — VIP / Sponsors
-    3: (590, 190), 4: (590, 340),
-    5: (474, 190), 6: (474, 340),
-    7: (358, 190), 8: (358, 340),
-    9: (242, 190), 10: (242, 340),    # nearest the entrance
+    1: (130, 520), 2: (322, 520),
+    3: (130, 620), 4: (322, 620),
+    5: (130, 720), 6: (322, 720),
+    7: (130, 820), 8: (322, 820),
+    9: (130, 920), 10: (322, 920),
+    11: (130, 1020), 12: (322, 1020),
+    13: (130, 1120), 14: (322, 1120),
+    15: (130, 1220), 16: (322, 1220),
 }
 
-
-def connect_lounge_shell():
-    """Static SVG (no guest tables) for the reception hall, viewBox 920x510."""
+def talisay_floor_shell():
+    """Static SVG shell for Gallio Events Hall, Talisay Hall, viewBox 460x1570."""
     return """
-  <!-- outer floor -->
-  <rect x="18" y="36" width="884" height="456" fill="#ffffff" stroke="#C4B49A" stroke-width="2"/>
+          <!-- Kitchen: external separate room -->
+          <rect x="30" y="10" width="160" height="120" rx="3"
+                fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
+          <text x="110" y="52" text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700">KITCHEN</text>
+          <text x="110" y="67" text-anchor="middle" font-size="9" fill="#9B7A52">separate room</text>
+          <text x="110" y="80" text-anchor="middle" font-size="8" fill="#B09070">not part of 300 sqm</text>
 
-  <!-- LEFT SERVICE BLOCK -->
-  <rect x="18" y="36" width="152" height="456" fill="#F3ECE2" stroke="#C4B49A" stroke-width="1.5"/>
-  <rect x="32" y="50"  width="124" height="86" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="94" y="97"  text-anchor="middle" font-size="9" fill="#8B7355">Elevator Lobby</text>
-  <rect x="32" y="146" width="124" height="62" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="94" y="181" text-anchor="middle" font-size="9" fill="#8B7355">Pantry / Prep</text>
-  <rect x="32" y="218" width="60"  height="64" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="62" y="254" text-anchor="middle" font-size="8" fill="#8B7355">Female</text>
-  <rect x="96" y="218" width="60"  height="64" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="126" y="254" text-anchor="middle" font-size="8" fill="#8B7355">Male</text>
-  <rect x="32" y="292" width="124" height="92" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="94" y="342" text-anchor="middle" font-size="9" fill="#8B7355">Storage</text>
-  <rect x="32" y="394" width="124" height="84" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="94" y="440" text-anchor="middle" font-size="9" fill="#8B7355">Gym</text>
+          <!-- Service door gap + swing arc -->
+          <line x1="30" y1="150" x2="62" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <line x1="94" y1="150" x2="422" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <path d="M 62,150 A 32,32 0 0 1 94,118"
+                fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="78" y="145" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
 
-  <!-- MAIN HALL -->
-  <rect x="175" y="76" width="628" height="356" fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
+          <!-- Main hall: 9.8m x 33m -->
+          <polygon points="30,150 422,150 422,1430 382,1470 30,1470"
+                   fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
 
-  <!-- top greenery / planters strip -->
-  <rect x="320" y="84" width="478" height="40" rx="3" fill="#EAF1E6" stroke="#A9C2A0" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="559" y="109" text-anchor="middle" font-size="9" fill="#6F9166" letter-spacing="2">PLANTERS / WINDOWS</text>
+          <!-- Stage / Backdrop -->
+          <rect x="38" y="162" width="376" height="80" rx="6"
+                fill="#EAD8EC" fill-opacity=".65" stroke="#A484A8" stroke-width="1.5"/>
+          <text x="226" y="198" text-anchor="middle" font-size="12" font-weight="bold"
+                fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
+          <text x="226" y="214" text-anchor="middle" font-size="8" fill="#9070A0">9.4m x 2.0m</text>
 
-  <!-- tech booth + top beverage -->
-  <rect x="676" y="130" width="60" height="24" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
-  <text x="706" y="146" text-anchor="middle" font-size="8" fill="#8B7355">Tech Booth</text>
-  <rect x="516" y="130" width="70" height="20" rx="3" fill="#FEFAE8" stroke="#C4A840" stroke-dasharray="4,2"/>
-  <text x="551" y="144" text-anchor="middle" font-size="8" fill="#7A6010">Beverage</text>
+          <!-- Stair notch -->
+          <polygon points="382,1470 422,1430 422,1470" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="408" y="1462" text-anchor="middle" font-size="7" fill="#8B7355"
+                transform="rotate(-45,408,1462)">STAIRS</text>
 
-  <!-- right control room -->
-  <rect x="804" y="76" width="80" height="84" rx="2" fill="#F3ECE2" stroke="#C4B49A"/>
-  <text x="844" y="113" text-anchor="middle" font-size="8" fill="#8B7355">Mtg Room</text>
-  <text x="844" y="125" text-anchor="middle" font-size="8" fill="#8B7355">Sto / Ctrl</text>
+          <!-- Entrance doors -->
+          <rect x="152" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <rect x="234" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="184" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="266" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="226" y="1500" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
 
-  <!-- STAGE (right end) -->
-  <rect x="804" y="168" width="84" height="172" rx="4" fill="#EAD8EC" fill-opacity="0.6" stroke="#A484A8" stroke-width="1.5"/>
-  <rect x="810" y="184" width="32" height="26" rx="2" fill="#fff" stroke="#A484A8"/>
-  <text x="826" y="201" text-anchor="middle" font-size="7" fill="#6A3080">Podium</text>
-  <text x="858" y="262" text-anchor="middle" font-size="12" font-weight="bold" fill="#6A3080" transform="rotate(90,858,262)">STAGE</text>
-  <text x="800" y="262" text-anchor="middle" font-size="7" fill="#9070A0" transform="rotate(90,800,262)">projector screen</text>
+          <!-- Dimension labels -->
+          <text x="226" y="7" text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
+          <text x="16" y="810" text-anchor="middle" font-size="8" fill="#B0A090"
+                transform="rotate(-90,16,810)">33 m</text>
 
-  <!-- sweetheart table (couple), in front of stage -->
-  <circle cx="758" cy="262" r="21" fill="#8B1A35" fill-opacity="0.15" stroke="#8B1A35" stroke-width="1.8"/>
-  <text x="758" y="259" text-anchor="middle" font-size="9" font-weight="bold" fill="#8B1A35">T &amp; J</text>
-  <text x="758" y="271" text-anchor="middle" font-size="6.5" fill="#8B1A35">sweetheart</text>
+          <!-- Scale bar -->
+          <line x1="38" y1="1540" x2="78" y2="1540" stroke="#B0A090" stroke-width="2"/>
+          <line x1="38" y1="1534" x2="38" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <line x1="78" y1="1534" x2="78" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <text x="58" y="1558" text-anchor="middle" font-size="9" fill="#B0A090">1 m</text>
 
-  <!-- bottom: beverage + entrances + registration -->
-  <rect x="430" y="404" width="70" height="20" rx="3" fill="#FEFAE8" stroke="#C4A840" stroke-dasharray="4,2"/>
-  <text x="465" y="418" text-anchor="middle" font-size="8" fill="#7A6010">Beverage</text>
-  <rect x="248" y="424" width="48" height="12" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
-  <rect x="464" y="424" width="48" height="12" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
-  <rect x="676" y="424" width="48" height="12" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
-  <text x="272" y="450" text-anchor="middle" font-size="7.5" fill="#8B7355">Room 1 entrance</text>
-  <text x="488" y="450" text-anchor="middle" font-size="7.5" fill="#8B7355">Room 2 entrance</text>
-  <text x="700" y="450" text-anchor="middle" font-size="7.5" fill="#8B7355">Room 3 entrance</text>
-  <rect x="176" y="442" width="50" height="20" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="201" y="455" text-anchor="middle" font-size="7.5" fill="#8B7355">Registration</text>
+          <!-- Draggable fixtures in the editor; static fixtures on reception page -->
+          <g class="fp-comp" id="comp-sweetheart" transform="translate(226,290)" data-type="sweetheart">
+            <circle r="22" fill="#8B1A35" fill-opacity=".18" stroke="#8B1A35" stroke-width="2" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="8" font-weight="bold" fill="#8B1A35">T&amp;J</text>
+            <text text-anchor="middle" y="9" font-size="6" fill="#8B1A35">sweetheart</text>
+          </g>
 
-  <!-- managed buffet station (corridor, bottom-centre) -->
-  <rect x="406" y="466" width="156" height="22" rx="4" fill="#FEFAE8" fill-opacity="0.95" stroke="#C4A840" stroke-width="1.5"/>
-  <text x="484" y="481" text-anchor="middle" font-size="9" fill="#7A6010" font-weight="600">MANAGED BUFFET STATION</text>
+          <g class="fp-comp" id="comp-dancefloor" transform="translate(226,400)" data-type="dancefloor">
+            <rect x="-170" y="-60" width="340" height="120" rx="6"
+                  fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5"
+                  stroke-dasharray="6,3" class="fp-body"/>
+            <text text-anchor="middle" y="-10" font-size="11" fill="#B0A090" letter-spacing="2">+ DANCE FLOOR</text>
+            <text text-anchor="middle" y="7" font-size="8" fill="#C8B8A0">8.5m x 3.0m</text>
+          </g>
+
+          <g class="fp-comp" id="comp-dj" transform="translate(410,218)" data-type="dj">
+            <rect x="-12" y="-32" width="24" height="64" rx="3"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-6" font-size="8" font-weight="700" fill="#8B6340">DJ</text>
+            <text text-anchor="middle" y="6" font-size="6" fill="#A88050">booth</text>
+          </g>
+
+          <g class="fp-comp" id="comp-buffet" transform="translate(413,960)" data-type="buffet">
+            <rect x="-15" y="-120" width="30" height="240" rx="3"
+                  fill="#FEFAE8" fill-opacity=".92" stroke="#C4A840"
+                  stroke-width="1.5" stroke-dasharray="5,3" class="fp-body"/>
+            <text text-anchor="middle" y="5" font-size="9" fill="#7A6010" font-weight="600"
+                  transform="rotate(-90,0,5)">BUFFET</text>
+          </g>
+
+          <g class="fp-comp" id="comp-mobilebar" transform="translate(83,1320)" data-type="mobilebar">
+            <rect x="-46" y="-20" width="92" height="40" rx="5"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="9" font-weight="600" fill="#8B6340">MOBILE BAR</text>
+            <text text-anchor="middle" y="10" font-size="7" fill="#B09070">2.3m x 1.0m</text>
+          </g>
 """
 
 
-def make_floor_plan_svg(by_table):
-    """Static seating SVG for the reception hall (10 round tables of 12)."""
+def make_floor_plan_svg(option, by_table):
+    """Return a Gallio Talisay seating SVG. option='b' makes sponsor tables rectangular."""
+    sponsor_tables = {1, 2, 3}
     table_svgs = ""
     for tnum, (cx, cy) in TABLE_POS.items():
         _, color = TABLE_META.get(tnum, ("Guest", "#A0A0A0"))
         members   = by_table.get(tnum, [])
         total_pax = sum(g["pax"] for g in members)
-        warn      = " ⚠" if total_pax > TABLE_CAP else ""
-        table_svgs += f'\n  <circle cx="{cx}" cy="{cy}" r="34" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.6"/>'
-        table_svgs += f'\n  <text x="{cx}" y="{cy - 4}" text-anchor="middle" font-size="14" font-weight="bold" fill="{color}">{tnum}</text>'
-        table_svgs += f'\n  <text x="{cx}" y="{cy + 12}" text-anchor="middle" font-size="9" fill="#5A4040">{int(total_pax)} pax{warn}</text>'
+        warn      = " !" if total_pax > TABLE_CAP else ""
 
-    return f"""<svg viewBox="0 0 920 510" width="100%" style="max-width:920px" xmlns="http://www.w3.org/2000/svg" class="block">
-{connect_lounge_shell()}
-  <!-- ── GUEST TABLES (10 × 12) ── -->
-  {table_svgs}
-  <text x="744" y="395" text-anchor="middle" font-size="7.5" fill="#9070A0">guests face the stage →</text>
+        if option == "b" and tnum in sponsor_tables:
+            table_svgs += f'\n          <rect x="{cx - 60}" y="{cy - 22}" width="120" height="44" rx="5" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.5"/>'
+            table_svgs += f'\n          <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="11" font-weight="bold" fill="{color}">{tnum} - {int(total_pax)}pax{warn}</text>'
+            table_svgs += f'\n          <text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="9" fill="{color}" font-style="italic">Sponsors</text>'
+        else:
+            table_svgs += f'\n          <circle cx="{cx}" cy="{cy}" r="30" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.5"/>'
+            table_svgs += f'\n          <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="12" font-weight="bold" fill="{color}">{tnum}</text>'
+            table_svgs += f'\n          <text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="9" fill="#5A4040">{int(total_pax)}pax{warn}</text>'
+
+    return f"""<svg viewBox="0 0 460 1570" width="460" xmlns="http://www.w3.org/2000/svg" class="block" style="max-width:100%; height:auto;">
+{talisay_floor_shell()}
+          <!-- Guest tables T01-T16 -->
+{table_svgs}
 </svg>"""
 
 
@@ -960,8 +985,9 @@ def build_reception_html(guests, reception):
         else:
             unassigned.append(g)
 
-    # Build the Connect Lounge seating SVG
-    floor_svg = make_floor_plan_svg(by_table)
+    # Build SVG floor plans for both Talisay layout options.
+    svg_a = make_floor_plan_svg("a", by_table)
+    svg_b = make_floor_plan_svg("b", by_table)
 
     # Table cards HTML
     table_cards = ""
@@ -1054,7 +1080,6 @@ def build_reception_html(guests, reception):
           <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#B8837A"></span>Tommy's Family</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#7A9E7E"></span>Jeyan's Friends</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#8B1A35"></span>Tommy's Friends</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#8896A6"></span>Mixed Friends</span>
         </div>
       </div>
     </div>
@@ -1063,9 +1088,14 @@ def build_reception_html(guests, reception):
 
       <!-- Floor plan SVG -->
       <div class="section-card p-6">
-        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Floor Plan — {reception['venue']}{' · ' + reception['hall'] if reception['hall'] else ''}</p>
-        <p class="text-stone-400 text-xs mb-4">Round-table setup &middot; 10 tables &times; 12 &middot; target 120 pax &middot; stage at right, buffet &amp; entrances along the bottom</p>
-        {floor_svg}
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Floor Plan - Talisay Hall</p>
+        <p class="text-stone-400 text-xs mb-4">9.8 m x 33 m &middot; 16 tables &middot; stage/backdrop at the top, entrance at the bottom</p>
+        <div class="flex gap-2 mb-4">
+          <button id="btn-a" onclick="showOption('a')" class="px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors">Option A &middot; All Round</button>
+          <button id="btn-b" onclick="showOption('b')" class="px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors">Option B &middot; Sponsor Tables</button>
+        </div>
+        <div id="svg-a">{svg_a}</div>
+        <div id="svg-b" style="display:none">{svg_b}</div>
       </div>
 
       <!-- Table cards -->
@@ -1083,6 +1113,19 @@ def build_reception_html(guests, reception):
   <footer class="text-center py-8 text-stone-300 text-xs tracking-wider">
     <span class="serif italic text-stone-400">Tommy &amp; Jeyan &bull; December 27, 2026</span>
   </footer>
+
+  <script>
+    function showOption(opt) {{
+      document.getElementById('svg-a').style.display = opt === 'a' ? '' : 'none';
+      document.getElementById('svg-b').style.display = opt === 'b' ? '' : 'none';
+      document.getElementById('btn-a').className = opt === 'a'
+        ? 'px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors'
+        : 'px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors';
+      document.getElementById('btn-b').className = opt === 'b'
+        ? 'px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors'
+        : 'px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors';
+    }}
+  </script>
 
 </body>
 </html>"""
@@ -1111,7 +1154,7 @@ def build_floorplan_html(guests, reception):
         for t, (cat, col) in TABLE_META.items()
     })
 
-    # Initial table positions = the Connect Lounge 2x5 grid (viewBox 920x510).
+    # Initial table positions = the Gallio Talisay 16-table layout.
     fp_pos = dict(TABLE_POS)
     table_pos_json = json.dumps(
         {str(t): {"x": x, "y": y} for t, (x, y) in fp_pos.items()}
@@ -1121,19 +1164,23 @@ def build_floorplan_html(guests, reception):
         for t, (cat, col) in TABLE_META.items()
     })
 
-    # Venue fixtures (stage, buffet, sweetheart…) are part of the fixed shell now,
-    # so there are no draggable fixtures — only the guest tables move.
-    comp_defaults_json = json.dumps({})
+    comp_defaults_json = json.dumps({
+        "comp-sweetheart": {"x": 226, "y": 290},
+        "comp-dancefloor": {"x": 226, "y": 400},
+        "comp-dj":         {"x": 410, "y": 218},
+        "comp-buffet":     {"x": 413, "y": 960},
+        "comp-mobilebar":  {"x": 83,  "y": 1320},
+    })
 
-    # ── Grid lines (inside hall bounds, viewBox 920x510) ─────────────────────
+    # ── Grid lines (1 m = 40 px, inside hall bounds) ─────────────────────────
     grid_svg = ""
-    for gx in range(195, 800, 40):
-        grid_svg += f'<line x1="{gx}" y1="76" x2="{gx}" y2="432"/>'
-    for gy in range(96, 432, 40):
-        grid_svg += f'<line x1="175" y1="{gy}" x2="803" y2="{gy}"/>'
+    for gx in range(70, 422, 40):
+        grid_svg += f'<line x1="{gx}" y1="150" x2="{gx}" y2="1470"/>'
+    for gy in range(190, 1470, 40):
+        grid_svg += f'<line x1="30" y1="{gy}" x2="422" y2="{gy}"/>'
 
     now_str = datetime.now().strftime("%B %d, %Y at %I:%M %p")
-    shell = connect_lounge_shell()
+    shell = talisay_floor_shell()
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -1236,16 +1283,16 @@ def build_floorplan_html(guests, reception):
   <div class="flex justify-center mb-6">
     <div class="sc p-5">
       <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-3 text-center">
-        {reception['venue']}{' · ' + reception['hall'] if reception['hall'] else ''} · round-table setup (10 × 12) · drag a table to reposition
+        {reception['venue']}{' · ' + reception['hall'] if reception['hall'] else ''} · 9.8 m x 33 m · drag any item to reposition
       </p>
       <div style="overflow:auto; max-height:78vh;">
-        <svg id="fp-svg" viewBox="0 0 920 510" width="920"
-             xmlns="http://www.w3.org/2000/svg" style="display:block; touch-action:none; max-width:100%;">
+        <svg id="fp-svg" viewBox="0 0 460 1570" width="460"
+             xmlns="http://www.w3.org/2000/svg" style="display:block; touch-action:none;">
 
           <!-- Grid (1 m = 40 px) -->
           <g id="fp-grid" style="display:none">{grid_svg}</g>
 
-          <!-- ── FIXED: Connect Lounge shell ── -->
+          <!-- Fixed: Gallio Talisay hall shell -->
           {shell}
 
           <!-- ── TABLES (rendered by JS on init) ── -->
@@ -1484,7 +1531,7 @@ function addTable() {{
   const newNum = nums.length ? Math.max(...nums)+1 : 1;
   const color = '#9CA3AF';
   // Place at center of hall
-  const cx=489, cy=255;
+  const cx=226, cy=810;
   tables[newNum] = {{cat:'Custom', color, x:cx, y:cy}};
   createTableSVG(newNum, cx, cy, color);
   saveAll();
@@ -1536,7 +1583,7 @@ function renderDetail(tNum) {{
   const meta  = tables[String(tNum)] || tables[tNum] || {{cat:'Guest',color:'#A0A0A0'}};
   const gs    = GUESTS.filter(g=>assignments[g.num]===tNum);
   const pax   = gs.reduce((s,g)=>s+g.pax,0);
-  const overLimit = pax>12;
+  const overLimit = pax>{TABLE_CAP};
 
   document.getElementById('d-title').textContent=`Table ${{tNum}}`;
   document.getElementById('d-cat').innerHTML=
@@ -1603,8 +1650,8 @@ function updatePaxLabels() {{
     const el=document.getElementById(`fp-px${{t}}`);
     if(!el) return;
     const p=byT[t]||0;
-    el.textContent=p+'pax'+(p>12?' ⚠':'');
-    el.setAttribute('fill',p>12?'#dc2626':'#5A4040');
+    el.textContent=p+'pax'+(p>{TABLE_CAP}?' !':'');
+    el.setAttribute('fill',p>{TABLE_CAP}?'#dc2626':'#5A4040');
   }});
 }}
 
@@ -1624,7 +1671,7 @@ function renderTableList() {{
   let html=nums.map(t=>{{
     const meta=tables[t]||{{}};
     const pax=(byT[t]||[]).reduce((s,g)=>s+g.pax,0);
-    const warn=pax>12?'<span style="color:#dc2626"> ⚠</span>':'';
+    const warn=pax>{TABLE_CAP}?'<span style="color:#dc2626"> !</span>':'';
     const selCls=selTable===t?' sel':'';
     return `<div class="trow${{selCls}}" id="trow-${{t}}" onclick="selectTable(${{t}})">
       <span class="w-3 h-3 rounded-full flex-shrink-0"

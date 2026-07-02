@@ -22,7 +22,7 @@
       <div>
         <p class="text-[#B5924C] text-xs tracking-[0.4em] uppercase mb-1">Reception · Gallio Events Hall · Talisay Hall</p>
         <h1 class="serif text-4xl md:text-5xl text-white font-light italic">Seating Chart</h1>
-        <p class="text-stone-400 text-xs mt-2">Tommy &amp; Jeyan &bull; December 27, 2026 &bull; Updated July 01, 2026 at 03:46 PM</p>
+        <p class="text-stone-400 text-xs mt-2">Tommy &amp; Jeyan &bull; December 27, 2026 &bull; Updated July 02, 2026 at 09:43 PM</p>
       </div>
       <div class="flex gap-3">
         <a href="floor-plan.html" class="text-xs text-[#B5924C] border border-[#B5924C] px-4 py-2 rounded-full hover:bg-[#B5924C] hover:text-white transition-colors">&#9998; Floor Plan Editor</a>
@@ -48,7 +48,6 @@
           <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#B8837A"></span>Tommy's Family</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#7A9E7E"></span>Jeyan's Friends</span>
           <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#8B1A35"></span>Tommy's Friends</span>
-          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:#8896A6"></span>Mixed Friends</span>
         </div>
       </div>
     </div>
@@ -57,108 +56,288 @@
 
       <!-- Floor plan SVG -->
       <div class="section-card p-6">
-        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Floor Plan — Gallio Events Hall · Talisay Hall</p>
-        <p class="text-stone-400 text-xs mb-4">Round-table setup &middot; 10 tables &times; 12 &middot; target 120 pax &middot; stage at right, buffet &amp; entrances along the bottom</p>
-        <svg viewBox="0 0 920 510" width="100%" style="max-width:920px" xmlns="http://www.w3.org/2000/svg" class="block">
+        <p class="text-xs font-semibold text-stone-400 uppercase tracking-widest mb-1">Floor Plan - Talisay Hall</p>
+        <p class="text-stone-400 text-xs mb-4">9.8 m x 33 m &middot; 16 tables &middot; stage/backdrop at the top, entrance at the bottom</p>
+        <div class="flex gap-2 mb-4">
+          <button id="btn-a" onclick="showOption('a')" class="px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors">Option A &middot; All Round</button>
+          <button id="btn-b" onclick="showOption('b')" class="px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors">Option B &middot; Sponsor Tables</button>
+        </div>
+        <div id="svg-a"><svg viewBox="0 0 460 1570" width="460" xmlns="http://www.w3.org/2000/svg" class="block" style="max-width:100%; height:auto;">
 
-  <!-- outer floor -->
-  <rect x="18" y="36" width="884" height="456" fill="#ffffff" stroke="#C4B49A" stroke-width="2"/>
+          <!-- Kitchen: external separate room -->
+          <rect x="30" y="10" width="160" height="120" rx="3"
+                fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
+          <text x="110" y="52" text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700">KITCHEN</text>
+          <text x="110" y="67" text-anchor="middle" font-size="9" fill="#9B7A52">separate room</text>
+          <text x="110" y="80" text-anchor="middle" font-size="8" fill="#B09070">not part of 300 sqm</text>
 
-  <!-- LEFT SERVICE BLOCK -->
-  <rect x="18" y="36" width="152" height="456" fill="#F3ECE2" stroke="#C4B49A" stroke-width="1.5"/>
-  <rect x="32" y="50"  width="124" height="86" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="94" y="97"  text-anchor="middle" font-size="9" fill="#8B7355">Elevator Lobby</text>
-  <rect x="32" y="146" width="124" height="62" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="94" y="181" text-anchor="middle" font-size="9" fill="#8B7355">Pantry / Prep</text>
-  <rect x="32" y="218" width="60"  height="64" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="62" y="254" text-anchor="middle" font-size="8" fill="#8B7355">Female</text>
-  <rect x="96" y="218" width="60"  height="64" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="126" y="254" text-anchor="middle" font-size="8" fill="#8B7355">Male</text>
-  <rect x="32" y="292" width="124" height="92" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="94" y="342" text-anchor="middle" font-size="9" fill="#8B7355">Storage</text>
-  <rect x="32" y="394" width="124" height="84" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="94" y="440" text-anchor="middle" font-size="9" fill="#8B7355">Gym</text>
+          <!-- Service door gap + swing arc -->
+          <line x1="30" y1="150" x2="62" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <line x1="94" y1="150" x2="422" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <path d="M 62,150 A 32,32 0 0 1 94,118"
+                fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="78" y="145" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
 
-  <!-- MAIN HALL -->
-  <rect x="175" y="76" width="628" height="356" fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
+          <!-- Main hall: 9.8m x 33m -->
+          <polygon points="30,150 422,150 422,1430 382,1470 30,1470"
+                   fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
 
-  <!-- top greenery / planters strip -->
-  <rect x="320" y="84" width="478" height="40" rx="3" fill="#EAF1E6" stroke="#A9C2A0" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="559" y="109" text-anchor="middle" font-size="9" fill="#6F9166" letter-spacing="2">PLANTERS / WINDOWS</text>
+          <!-- Stage / Backdrop -->
+          <rect x="38" y="162" width="376" height="80" rx="6"
+                fill="#EAD8EC" fill-opacity=".65" stroke="#A484A8" stroke-width="1.5"/>
+          <text x="226" y="198" text-anchor="middle" font-size="12" font-weight="bold"
+                fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
+          <text x="226" y="214" text-anchor="middle" font-size="8" fill="#9070A0">9.4m x 2.0m</text>
 
-  <!-- tech booth + top beverage -->
-  <rect x="676" y="130" width="60" height="24" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
-  <text x="706" y="146" text-anchor="middle" font-size="8" fill="#8B7355">Tech Booth</text>
-  <rect x="516" y="130" width="70" height="20" rx="3" fill="#FEFAE8" stroke="#C4A840" stroke-dasharray="4,2"/>
-  <text x="551" y="144" text-anchor="middle" font-size="8" fill="#7A6010">Beverage</text>
+          <!-- Stair notch -->
+          <polygon points="382,1470 422,1430 422,1470" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="408" y="1462" text-anchor="middle" font-size="7" fill="#8B7355"
+                transform="rotate(-45,408,1462)">STAIRS</text>
 
-  <!-- right control room -->
-  <rect x="804" y="76" width="80" height="84" rx="2" fill="#F3ECE2" stroke="#C4B49A"/>
-  <text x="844" y="113" text-anchor="middle" font-size="8" fill="#8B7355">Mtg Room</text>
-  <text x="844" y="125" text-anchor="middle" font-size="8" fill="#8B7355">Sto / Ctrl</text>
+          <!-- Entrance doors -->
+          <rect x="152" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <rect x="234" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="184" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="266" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="226" y="1500" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
 
-  <!-- STAGE (right end) -->
-  <rect x="804" y="168" width="84" height="172" rx="4" fill="#EAD8EC" fill-opacity="0.6" stroke="#A484A8" stroke-width="1.5"/>
-  <rect x="810" y="184" width="32" height="26" rx="2" fill="#fff" stroke="#A484A8"/>
-  <text x="826" y="201" text-anchor="middle" font-size="7" fill="#6A3080">Podium</text>
-  <text x="858" y="262" text-anchor="middle" font-size="12" font-weight="bold" fill="#6A3080" transform="rotate(90,858,262)">STAGE</text>
-  <text x="800" y="262" text-anchor="middle" font-size="7" fill="#9070A0" transform="rotate(90,800,262)">projector screen</text>
+          <!-- Dimension labels -->
+          <text x="226" y="7" text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
+          <text x="16" y="810" text-anchor="middle" font-size="8" fill="#B0A090"
+                transform="rotate(-90,16,810)">33 m</text>
 
-  <!-- sweetheart table (couple), in front of stage -->
-  <circle cx="758" cy="262" r="21" fill="#8B1A35" fill-opacity="0.15" stroke="#8B1A35" stroke-width="1.8"/>
-  <text x="758" y="259" text-anchor="middle" font-size="9" font-weight="bold" fill="#8B1A35">T &amp; J</text>
-  <text x="758" y="271" text-anchor="middle" font-size="6.5" fill="#8B1A35">sweetheart</text>
+          <!-- Scale bar -->
+          <line x1="38" y1="1540" x2="78" y2="1540" stroke="#B0A090" stroke-width="2"/>
+          <line x1="38" y1="1534" x2="38" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <line x1="78" y1="1534" x2="78" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <text x="58" y="1558" text-anchor="middle" font-size="9" fill="#B0A090">1 m</text>
 
-  <!-- bottom: beverage + entrances + registration -->
-  <rect x="430" y="404" width="70" height="20" rx="3" fill="#FEFAE8" stroke="#C4A840" stroke-dasharray="4,2"/>
-  <text x="465" y="418" text-anchor="middle" font-size="8" fill="#7A6010">Beverage</text>
-  <rect x="248" y="424" width="48" height="12" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
-  <rect x="464" y="424" width="48" height="12" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
-  <rect x="676" y="424" width="48" height="12" rx="2" fill="#E8E0D5" stroke="#C4B89A"/>
-  <text x="272" y="450" text-anchor="middle" font-size="7.5" fill="#8B7355">Room 1 entrance</text>
-  <text x="488" y="450" text-anchor="middle" font-size="7.5" fill="#8B7355">Room 2 entrance</text>
-  <text x="700" y="450" text-anchor="middle" font-size="7.5" fill="#8B7355">Room 3 entrance</text>
-  <rect x="176" y="442" width="50" height="20" rx="2" fill="#fff" stroke="#C9BBA4"/>
-  <text x="201" y="455" text-anchor="middle" font-size="7.5" fill="#8B7355">Registration</text>
+          <!-- Draggable fixtures in the editor; static fixtures on reception page -->
+          <g class="fp-comp" id="comp-sweetheart" transform="translate(226,290)" data-type="sweetheart">
+            <circle r="22" fill="#8B1A35" fill-opacity=".18" stroke="#8B1A35" stroke-width="2" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="8" font-weight="bold" fill="#8B1A35">T&amp;J</text>
+            <text text-anchor="middle" y="9" font-size="6" fill="#8B1A35">sweetheart</text>
+          </g>
 
-  <!-- managed buffet station (corridor, bottom-centre) -->
-  <rect x="406" y="466" width="156" height="22" rx="4" fill="#FEFAE8" fill-opacity="0.95" stroke="#C4A840" stroke-width="1.5"/>
-  <text x="484" y="481" text-anchor="middle" font-size="9" fill="#7A6010" font-weight="600">MANAGED BUFFET STATION</text>
+          <g class="fp-comp" id="comp-dancefloor" transform="translate(226,400)" data-type="dancefloor">
+            <rect x="-170" y="-60" width="340" height="120" rx="6"
+                  fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5"
+                  stroke-dasharray="6,3" class="fp-body"/>
+            <text text-anchor="middle" y="-10" font-size="11" fill="#B0A090" letter-spacing="2">+ DANCE FLOOR</text>
+            <text text-anchor="middle" y="7" font-size="8" fill="#C8B8A0">8.5m x 3.0m</text>
+          </g>
 
-  <!-- ── GUEST TABLES (10 × 12) ── -->
-  
-  <circle cx="706" cy="190" r="34" fill="#B5924C" fill-opacity="0.22" stroke="#B5924C" stroke-width="1.6"/>
-  <text x="706" y="186" text-anchor="middle" font-size="14" font-weight="bold" fill="#B5924C">1</text>
-  <text x="706" y="202" text-anchor="middle" font-size="9" fill="#5A4040">12 pax</text>
-  <circle cx="706" cy="340" r="34" fill="#B5924C" fill-opacity="0.22" stroke="#B5924C" stroke-width="1.6"/>
-  <text x="706" y="336" text-anchor="middle" font-size="14" font-weight="bold" fill="#B5924C">2</text>
-  <text x="706" y="352" text-anchor="middle" font-size="9" fill="#5A4040">12 pax</text>
-  <circle cx="590" cy="190" r="34" fill="#D4A5A0" fill-opacity="0.22" stroke="#D4A5A0" stroke-width="1.6"/>
-  <text x="590" y="186" text-anchor="middle" font-size="14" font-weight="bold" fill="#D4A5A0">3</text>
-  <text x="590" y="202" text-anchor="middle" font-size="9" fill="#5A4040">12 pax</text>
-  <circle cx="590" cy="340" r="34" fill="#B8837A" fill-opacity="0.22" stroke="#B8837A" stroke-width="1.6"/>
-  <text x="590" y="336" text-anchor="middle" font-size="14" font-weight="bold" fill="#B8837A">4</text>
-  <text x="590" y="352" text-anchor="middle" font-size="9" fill="#5A4040">12 pax</text>
-  <circle cx="474" cy="190" r="34" fill="#B8837A" fill-opacity="0.22" stroke="#B8837A" stroke-width="1.6"/>
-  <text x="474" y="186" text-anchor="middle" font-size="14" font-weight="bold" fill="#B8837A">5</text>
-  <text x="474" y="202" text-anchor="middle" font-size="9" fill="#5A4040">12 pax</text>
-  <circle cx="474" cy="340" r="34" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.6"/>
-  <text x="474" y="336" text-anchor="middle" font-size="14" font-weight="bold" fill="#7A9E7E">6</text>
-  <text x="474" y="352" text-anchor="middle" font-size="9" fill="#5A4040">12 pax</text>
-  <circle cx="358" cy="190" r="34" fill="#8B1A35" fill-opacity="0.22" stroke="#8B1A35" stroke-width="1.6"/>
-  <text x="358" y="186" text-anchor="middle" font-size="14" font-weight="bold" fill="#8B1A35">7</text>
-  <text x="358" y="202" text-anchor="middle" font-size="9" fill="#5A4040">12 pax</text>
-  <circle cx="358" cy="340" r="34" fill="#8B1A35" fill-opacity="0.22" stroke="#8B1A35" stroke-width="1.6"/>
-  <text x="358" y="336" text-anchor="middle" font-size="14" font-weight="bold" fill="#8B1A35">8</text>
-  <text x="358" y="352" text-anchor="middle" font-size="9" fill="#5A4040">11 pax</text>
-  <circle cx="242" cy="190" r="34" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.6"/>
-  <text x="242" y="186" text-anchor="middle" font-size="14" font-weight="bold" fill="#7A9E7E">9</text>
-  <text x="242" y="202" text-anchor="middle" font-size="9" fill="#5A4040">12 pax</text>
-  <circle cx="242" cy="340" r="34" fill="#8896A6" fill-opacity="0.22" stroke="#8896A6" stroke-width="1.6"/>
-  <text x="242" y="336" text-anchor="middle" font-size="14" font-weight="bold" fill="#8896A6">10</text>
-  <text x="242" y="352" text-anchor="middle" font-size="9" fill="#5A4040">12 pax</text>
-  <text x="744" y="395" text-anchor="middle" font-size="7.5" fill="#9070A0">guests face the stage →</text>
-</svg>
+          <g class="fp-comp" id="comp-dj" transform="translate(410,218)" data-type="dj">
+            <rect x="-12" y="-32" width="24" height="64" rx="3"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-6" font-size="8" font-weight="700" fill="#8B6340">DJ</text>
+            <text text-anchor="middle" y="6" font-size="6" fill="#A88050">booth</text>
+          </g>
+
+          <g class="fp-comp" id="comp-buffet" transform="translate(413,960)" data-type="buffet">
+            <rect x="-15" y="-120" width="30" height="240" rx="3"
+                  fill="#FEFAE8" fill-opacity=".92" stroke="#C4A840"
+                  stroke-width="1.5" stroke-dasharray="5,3" class="fp-body"/>
+            <text text-anchor="middle" y="5" font-size="9" fill="#7A6010" font-weight="600"
+                  transform="rotate(-90,0,5)">BUFFET</text>
+          </g>
+
+          <g class="fp-comp" id="comp-mobilebar" transform="translate(83,1320)" data-type="mobilebar">
+            <rect x="-46" y="-20" width="92" height="40" rx="5"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="9" font-weight="600" fill="#8B6340">MOBILE BAR</text>
+            <text text-anchor="middle" y="10" font-size="7" fill="#B09070">2.3m x 1.0m</text>
+          </g>
+
+          <!-- Guest tables T01-T16 -->
+
+          <circle cx="130" cy="520" r="30" fill="#B5924C" fill-opacity="0.22" stroke="#B5924C" stroke-width="1.5"/>
+          <text x="130" y="515" text-anchor="middle" font-size="12" font-weight="bold" fill="#B5924C">1</text>
+          <text x="130" y="530" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="322" cy="520" r="30" fill="#B5924C" fill-opacity="0.22" stroke="#B5924C" stroke-width="1.5"/>
+          <text x="322" y="515" text-anchor="middle" font-size="12" font-weight="bold" fill="#B5924C">2</text>
+          <text x="322" y="530" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="130" cy="620" r="30" fill="#B5924C" fill-opacity="0.22" stroke="#B5924C" stroke-width="1.5"/>
+          <text x="130" y="615" text-anchor="middle" font-size="12" font-weight="bold" fill="#B5924C">3</text>
+          <text x="130" y="630" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="322" cy="620" r="30" fill="#D4A5A0" fill-opacity="0.22" stroke="#D4A5A0" stroke-width="1.5"/>
+          <text x="322" y="615" text-anchor="middle" font-size="12" font-weight="bold" fill="#D4A5A0">4</text>
+          <text x="322" y="630" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="130" cy="720" r="30" fill="#D4A5A0" fill-opacity="0.22" stroke="#D4A5A0" stroke-width="1.5"/>
+          <text x="130" y="715" text-anchor="middle" font-size="12" font-weight="bold" fill="#D4A5A0">5</text>
+          <text x="130" y="730" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="322" cy="720" r="30" fill="#D4A5A0" fill-opacity="0.22" stroke="#D4A5A0" stroke-width="1.5"/>
+          <text x="322" y="715" text-anchor="middle" font-size="12" font-weight="bold" fill="#D4A5A0">6</text>
+          <text x="322" y="730" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="130" cy="820" r="30" fill="#B8837A" fill-opacity="0.22" stroke="#B8837A" stroke-width="1.5"/>
+          <text x="130" y="815" text-anchor="middle" font-size="12" font-weight="bold" fill="#B8837A">7</text>
+          <text x="130" y="830" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="322" cy="820" r="30" fill="#B8837A" fill-opacity="0.22" stroke="#B8837A" stroke-width="1.5"/>
+          <text x="322" y="815" text-anchor="middle" font-size="12" font-weight="bold" fill="#B8837A">8</text>
+          <text x="322" y="830" text-anchor="middle" font-size="9" fill="#5A4040">11pax !</text>
+          <circle cx="130" cy="920" r="30" fill="#B8837A" fill-opacity="0.22" stroke="#B8837A" stroke-width="1.5"/>
+          <text x="130" y="915" text-anchor="middle" font-size="12" font-weight="bold" fill="#B8837A">9</text>
+          <text x="130" y="930" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="322" cy="920" r="30" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.5"/>
+          <text x="322" y="915" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A9E7E">10</text>
+          <text x="322" y="930" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="130" cy="1020" r="30" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.5"/>
+          <text x="130" y="1015" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A9E7E">11</text>
+          <text x="130" y="1030" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="322" cy="1020" r="30" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.5"/>
+          <text x="322" y="1015" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A9E7E">12</text>
+          <text x="322" y="1030" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="130" cy="1120" r="30" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.5"/>
+          <text x="130" y="1115" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A9E7E">13</text>
+          <text x="130" y="1130" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="322" cy="1120" r="30" fill="#8B1A35" fill-opacity="0.22" stroke="#8B1A35" stroke-width="1.5"/>
+          <text x="322" y="1115" text-anchor="middle" font-size="12" font-weight="bold" fill="#8B1A35">14</text>
+          <text x="322" y="1130" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="130" cy="1220" r="30" fill="#8B1A35" fill-opacity="0.22" stroke="#8B1A35" stroke-width="1.5"/>
+          <text x="130" y="1215" text-anchor="middle" font-size="12" font-weight="bold" fill="#8B1A35">15</text>
+          <text x="130" y="1230" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="322" cy="1220" r="30" fill="#8B1A35" fill-opacity="0.22" stroke="#8B1A35" stroke-width="1.5"/>
+          <text x="322" y="1215" text-anchor="middle" font-size="12" font-weight="bold" fill="#8B1A35">16</text>
+          <text x="322" y="1230" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+</svg></div>
+        <div id="svg-b" style="display:none"><svg viewBox="0 0 460 1570" width="460" xmlns="http://www.w3.org/2000/svg" class="block" style="max-width:100%; height:auto;">
+
+          <!-- Kitchen: external separate room -->
+          <rect x="30" y="10" width="160" height="120" rx="3"
+                fill="#efe0ce" stroke="#9B7A52" stroke-width="2"/>
+          <text x="110" y="52" text-anchor="middle" font-size="11" fill="#6B4820" font-weight="700">KITCHEN</text>
+          <text x="110" y="67" text-anchor="middle" font-size="9" fill="#9B7A52">separate room</text>
+          <text x="110" y="80" text-anchor="middle" font-size="8" fill="#B09070">not part of 300 sqm</text>
+
+          <!-- Service door gap + swing arc -->
+          <line x1="30" y1="150" x2="62" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <line x1="94" y1="150" x2="422" y2="150" stroke="#C4B49A" stroke-width="2.5"/>
+          <path d="M 62,150 A 32,32 0 0 1 94,118"
+                fill="none" stroke="#9B7A52" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="78" y="145" text-anchor="middle" font-size="7" fill="#9B7A52">service door</text>
+
+          <!-- Main hall: 9.8m x 33m -->
+          <polygon points="30,150 422,150 422,1430 382,1470 30,1470"
+                   fill="#F9F6F2" stroke="#C4B49A" stroke-width="2"/>
+
+          <!-- Stage / Backdrop -->
+          <rect x="38" y="162" width="376" height="80" rx="6"
+                fill="#EAD8EC" fill-opacity=".65" stroke="#A484A8" stroke-width="1.5"/>
+          <text x="226" y="198" text-anchor="middle" font-size="12" font-weight="bold"
+                fill="#6A3080" letter-spacing="1">&#9829; STAGE / BACKDROP</text>
+          <text x="226" y="214" text-anchor="middle" font-size="8" fill="#9070A0">9.4m x 2.0m</text>
+
+          <!-- Stair notch -->
+          <polygon points="382,1470 422,1430 422,1470" fill="#DDD4C8" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="408" y="1462" text-anchor="middle" font-size="7" fill="#8B7355"
+                transform="rotate(-45,408,1462)">STAIRS</text>
+
+          <!-- Entrance doors -->
+          <rect x="152" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <rect x="234" y="1438" width="64" height="30" rx="4" fill="#E8E0D5" stroke="#C4B89A" stroke-width="1.2"/>
+          <text x="184" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="266" y="1457" text-anchor="middle" font-size="8" fill="#8B7355">DOOR</text>
+          <text x="226" y="1500" text-anchor="middle" font-size="9" fill="#B0A090" letter-spacing="1.5">&#9650; ENTRANCE</text>
+
+          <!-- Dimension labels -->
+          <text x="226" y="7" text-anchor="middle" font-size="8" fill="#B0A090">9.8 m</text>
+          <text x="16" y="810" text-anchor="middle" font-size="8" fill="#B0A090"
+                transform="rotate(-90,16,810)">33 m</text>
+
+          <!-- Scale bar -->
+          <line x1="38" y1="1540" x2="78" y2="1540" stroke="#B0A090" stroke-width="2"/>
+          <line x1="38" y1="1534" x2="38" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <line x1="78" y1="1534" x2="78" y2="1546" stroke="#B0A090" stroke-width="1.5"/>
+          <text x="58" y="1558" text-anchor="middle" font-size="9" fill="#B0A090">1 m</text>
+
+          <!-- Draggable fixtures in the editor; static fixtures on reception page -->
+          <g class="fp-comp" id="comp-sweetheart" transform="translate(226,290)" data-type="sweetheart">
+            <circle r="22" fill="#8B1A35" fill-opacity=".18" stroke="#8B1A35" stroke-width="2" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="8" font-weight="bold" fill="#8B1A35">T&amp;J</text>
+            <text text-anchor="middle" y="9" font-size="6" fill="#8B1A35">sweetheart</text>
+          </g>
+
+          <g class="fp-comp" id="comp-dancefloor" transform="translate(226,400)" data-type="dancefloor">
+            <rect x="-170" y="-60" width="340" height="120" rx="6"
+                  fill="#fdf6f0" stroke="#D4C5B0" stroke-width="1.5"
+                  stroke-dasharray="6,3" class="fp-body"/>
+            <text text-anchor="middle" y="-10" font-size="11" fill="#B0A090" letter-spacing="2">+ DANCE FLOOR</text>
+            <text text-anchor="middle" y="7" font-size="8" fill="#C8B8A0">8.5m x 3.0m</text>
+          </g>
+
+          <g class="fp-comp" id="comp-dj" transform="translate(410,218)" data-type="dj">
+            <rect x="-12" y="-32" width="24" height="64" rx="3"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-6" font-size="8" font-weight="700" fill="#8B6340">DJ</text>
+            <text text-anchor="middle" y="6" font-size="6" fill="#A88050">booth</text>
+          </g>
+
+          <g class="fp-comp" id="comp-buffet" transform="translate(413,960)" data-type="buffet">
+            <rect x="-15" y="-120" width="30" height="240" rx="3"
+                  fill="#FEFAE8" fill-opacity=".92" stroke="#C4A840"
+                  stroke-width="1.5" stroke-dasharray="5,3" class="fp-body"/>
+            <text text-anchor="middle" y="5" font-size="9" fill="#7A6010" font-weight="600"
+                  transform="rotate(-90,0,5)">BUFFET</text>
+          </g>
+
+          <g class="fp-comp" id="comp-mobilebar" transform="translate(83,1320)" data-type="mobilebar">
+            <rect x="-46" y="-20" width="92" height="40" rx="5"
+                  fill="#E8D5B5" stroke="#B5924C" stroke-width="1.5" class="fp-body"/>
+            <text text-anchor="middle" y="-3" font-size="9" font-weight="600" fill="#8B6340">MOBILE BAR</text>
+            <text text-anchor="middle" y="10" font-size="7" fill="#B09070">2.3m x 1.0m</text>
+          </g>
+
+          <!-- Guest tables T01-T16 -->
+
+          <rect x="70" y="498" width="120" height="44" rx="5" fill="#B5924C" fill-opacity="0.22" stroke="#B5924C" stroke-width="1.5"/>
+          <text x="130" y="515" text-anchor="middle" font-size="11" font-weight="bold" fill="#B5924C">1 - 12pax !</text>
+          <text x="130" y="530" text-anchor="middle" font-size="9" fill="#B5924C" font-style="italic">Sponsors</text>
+          <rect x="262" y="498" width="120" height="44" rx="5" fill="#B5924C" fill-opacity="0.22" stroke="#B5924C" stroke-width="1.5"/>
+          <text x="322" y="515" text-anchor="middle" font-size="11" font-weight="bold" fill="#B5924C">2 - 12pax !</text>
+          <text x="322" y="530" text-anchor="middle" font-size="9" fill="#B5924C" font-style="italic">Sponsors</text>
+          <rect x="70" y="598" width="120" height="44" rx="5" fill="#B5924C" fill-opacity="0.22" stroke="#B5924C" stroke-width="1.5"/>
+          <text x="130" y="615" text-anchor="middle" font-size="11" font-weight="bold" fill="#B5924C">3 - 12pax !</text>
+          <text x="130" y="630" text-anchor="middle" font-size="9" fill="#B5924C" font-style="italic">Sponsors</text>
+          <circle cx="322" cy="620" r="30" fill="#D4A5A0" fill-opacity="0.22" stroke="#D4A5A0" stroke-width="1.5"/>
+          <text x="322" y="615" text-anchor="middle" font-size="12" font-weight="bold" fill="#D4A5A0">4</text>
+          <text x="322" y="630" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="130" cy="720" r="30" fill="#D4A5A0" fill-opacity="0.22" stroke="#D4A5A0" stroke-width="1.5"/>
+          <text x="130" y="715" text-anchor="middle" font-size="12" font-weight="bold" fill="#D4A5A0">5</text>
+          <text x="130" y="730" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="322" cy="720" r="30" fill="#D4A5A0" fill-opacity="0.22" stroke="#D4A5A0" stroke-width="1.5"/>
+          <text x="322" y="715" text-anchor="middle" font-size="12" font-weight="bold" fill="#D4A5A0">6</text>
+          <text x="322" y="730" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="130" cy="820" r="30" fill="#B8837A" fill-opacity="0.22" stroke="#B8837A" stroke-width="1.5"/>
+          <text x="130" y="815" text-anchor="middle" font-size="12" font-weight="bold" fill="#B8837A">7</text>
+          <text x="130" y="830" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="322" cy="820" r="30" fill="#B8837A" fill-opacity="0.22" stroke="#B8837A" stroke-width="1.5"/>
+          <text x="322" y="815" text-anchor="middle" font-size="12" font-weight="bold" fill="#B8837A">8</text>
+          <text x="322" y="830" text-anchor="middle" font-size="9" fill="#5A4040">11pax !</text>
+          <circle cx="130" cy="920" r="30" fill="#B8837A" fill-opacity="0.22" stroke="#B8837A" stroke-width="1.5"/>
+          <text x="130" y="915" text-anchor="middle" font-size="12" font-weight="bold" fill="#B8837A">9</text>
+          <text x="130" y="930" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="322" cy="920" r="30" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.5"/>
+          <text x="322" y="915" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A9E7E">10</text>
+          <text x="322" y="930" text-anchor="middle" font-size="9" fill="#5A4040">12pax !</text>
+          <circle cx="130" cy="1020" r="30" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.5"/>
+          <text x="130" y="1015" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A9E7E">11</text>
+          <text x="130" y="1030" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="322" cy="1020" r="30" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.5"/>
+          <text x="322" y="1015" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A9E7E">12</text>
+          <text x="322" y="1030" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="130" cy="1120" r="30" fill="#7A9E7E" fill-opacity="0.22" stroke="#7A9E7E" stroke-width="1.5"/>
+          <text x="130" y="1115" text-anchor="middle" font-size="12" font-weight="bold" fill="#7A9E7E">13</text>
+          <text x="130" y="1130" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="322" cy="1120" r="30" fill="#8B1A35" fill-opacity="0.22" stroke="#8B1A35" stroke-width="1.5"/>
+          <text x="322" y="1115" text-anchor="middle" font-size="12" font-weight="bold" fill="#8B1A35">14</text>
+          <text x="322" y="1130" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="130" cy="1220" r="30" fill="#8B1A35" fill-opacity="0.22" stroke="#8B1A35" stroke-width="1.5"/>
+          <text x="130" y="1215" text-anchor="middle" font-size="12" font-weight="bold" fill="#8B1A35">15</text>
+          <text x="130" y="1230" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+          <circle cx="322" cy="1220" r="30" fill="#8B1A35" fill-opacity="0.22" stroke="#8B1A35" stroke-width="1.5"/>
+          <text x="322" y="1215" text-anchor="middle" font-size="12" font-weight="bold" fill="#8B1A35">16</text>
+          <text x="322" y="1230" text-anchor="middle" font-size="9" fill="#5A4040">0pax</text>
+</svg></div>
       </div>
 
       <!-- Table cards -->
@@ -170,9 +349,9 @@
           <div class="px-4 py-3 flex items-center justify-between" style="background: #B5924C22; border-bottom: 1px solid #B5924C44;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 1</span>
-              <span class="ml-2 text-xs" style="color:#B5924C;">VIP / Sponsors</span>
+              <span class="ml-2 text-xs" style="color:#B5924C;">VIP</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">12 pax</span>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Joan Diñoso<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Christian Dino Diñoso<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Prof. Benedict Avila<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Karen Austria <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Shiela Chan <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Cheryl Imelda V. Capinpin <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Patrick M. Santillan <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li></ul>
         </div>
@@ -180,89 +359,89 @@
           <div class="px-4 py-3 flex items-center justify-between" style="background: #B5924C22; border-bottom: 1px solid #B5924C44;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 2</span>
-              <span class="ml-2 text-xs" style="color:#B5924C;">VIP / Sponsors</span>
+              <span class="ml-2 text-xs" style="color:#B5924C;">VIP</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">12 pax</span>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Andrew Paul I. Montinola<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Analiza C. Chiapoco <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">William G. Tan<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jaime C. Perez<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ma. Corazon D. Babadilla<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Emalyn Lira<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Yshmael I. Calma<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jennifer Calma<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Principal Sponsor</span></li></ul>
         </div>
         <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div class="px-4 py-3 flex items-center justify-between" style="background: #D4A5A022; border-bottom: 1px solid #D4A5A044;">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B5924C22; border-bottom: 1px solid #B5924C44;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 3</span>
-              <span class="ml-2 text-xs" style="color:#D4A5A0;">Jeyan Family</span>
+              <span class="ml-2 text-xs" style="color:#B5924C;">VIP</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">12 pax</span>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Joel M. Santioque</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Olivia C. Santioque</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Hannah C. Santioque<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-700 border border-rose-200">MOH</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Joval C. Santioque<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-700 border border-rose-200">Best Man</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Romulo Fronda Jr.<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ronulfo I. Calma</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mamerto I. Calma</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Denise M. Beltran<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">JV Cruz</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Agustina Francisco</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Luis Montenegro</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Josiah Calma</li></ul>
         </div>
         <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div class="px-4 py-3 flex items-center justify-between" style="background: #B8837A22; border-bottom: 1px solid #B8837A44;">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #D4A5A022; border-bottom: 1px solid #D4A5A044;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 4</span>
-              <span class="ml-2 text-xs" style="color:#B8837A;">Tommy Family</span>
+              <span class="ml-2 text-xs" style="color:#D4A5A0;">Jeyan Family</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">12 pax</span>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Elaine Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Sherwin Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Teddy Botabara<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-700 border border-rose-200">Best Man</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Sheryl De Dios</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Dong De Dios</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jun Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jackie Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mae Aspra</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Kervy Aspra</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Emil De Dios <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Luis De Dios</li></ul>
         </div>
         <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div class="px-4 py-3 flex items-center justify-between" style="background: #B8837A22; border-bottom: 1px solid #B8837A44;">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #D4A5A022; border-bottom: 1px solid #D4A5A044;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 5</span>
-              <span class="ml-2 text-xs" style="color:#B8837A;">Tommy Family</span>
+              <span class="ml-2 text-xs" style="color:#D4A5A0;">Jeyan Family</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">12 pax</span>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Alvin Botabara <span class="text-xs text-emerald-600">+1</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Bea Botabara<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">Flower Girl</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Nina Botabara<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">Flower Girl</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Seansean Botabara</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Asuncion Mirabueno</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Dennis Mirabueno</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Axl John Mirabueno</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">George Suarez</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">John Goloya<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ellwin Serge Panaglima <span class="text-xs text-emerald-600">+1</span></li></ul>
         </div>
         <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div class="px-4 py-3 flex items-center justify-between" style="background: #7A9E7E22; border-bottom: 1px solid #7A9E7E44;">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #D4A5A022; border-bottom: 1px solid #D4A5A044;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 6</span>
-              <span class="ml-2 text-xs" style="color:#7A9E7E;">Jeyan Friends</span>
+              <span class="ml-2 text-xs" style="color:#D4A5A0;">Jeyan Family</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">12 pax</span>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Dimples Jenna S. Collera <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-700 border border-rose-200">MOH</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Paulo Luis B. Reyes</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Donnabelle F. Aliwalas</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Josett A. Romano<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Haidee Melaine P. Manlapaz</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Gemela Marian A. David<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jaimini Jahaziel R. Bituaran</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ceijas-Lyn Y. Tagana<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Adrianne Micaela Manalaotao</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Julia Cecilia A. Santos</li></ul>
         </div>
         <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div class="px-4 py-3 flex items-center justify-between" style="background: #8B1A3522; border-bottom: 1px solid #8B1A3544;">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B8837A22; border-bottom: 1px solid #B8837A44;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 7</span>
-              <span class="ml-2 text-xs" style="color:#8B1A35;">Tommy Friends</span>
+              <span class="ml-2 text-xs" style="color:#B8837A;">Tommy Family</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">12 pax</span>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jan Carlo Ponce</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Louise Litonjua</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Tricia Ong</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Francis Valencia</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Didi Rico</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Juan Gabriel Cuenco (Jiggy)</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Ed Paul</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Juan Ambrocio Britanico (JA)</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Sharm Lee</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Bryle Raviz</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Rahim Damanwala</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Chito Ramos</li></ul>
         </div>
         <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div class="px-4 py-3 flex items-center justify-between" style="background: #8B1A3522; border-bottom: 1px solid #8B1A3544;">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B8837A22; border-bottom: 1px solid #B8837A44;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 8</span>
-              <span class="ml-2 text-xs" style="color:#8B1A35;">Tommy Friends</span>
+              <span class="ml-2 text-xs" style="color:#B8837A;">Tommy Family</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">11 pax</span>
+            <span class="text-sm font-semibold text-stone-600">11 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Betlee Barraquias <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Traviz Keinn Climacosa <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Vaunn Maribao <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jade Calera</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Michael Somosot <span class="text-xs text-emerald-600">+1</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Gabriel Ventura</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Patrick Soriano <span class="text-xs text-emerald-600">+1</span></li></ul>
         </div>
         <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div class="px-4 py-3 flex items-center justify-between" style="background: #7A9E7E22; border-bottom: 1px solid #7A9E7E44;">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #B8837A22; border-bottom: 1px solid #B8837A44;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 9</span>
-              <span class="ml-2 text-xs" style="color:#7A9E7E;">Jeyan Friends</span>
+              <span class="ml-2 text-xs" style="color:#B8837A;">Tommy Family</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">12 pax</span>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Julian Christopher A. Lopez</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Michelle A. Alaras <span class="text-xs text-emerald-600">+1</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Aldrine R. Andres</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Micca Ricka Raphaella T. Cantos<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Carl Tristan A. Sarmiento</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Joy Giron</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Vanessa Laureen A. Trinidad<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Marielle Joy K. Serania<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jean Distal</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Eloissa Lazarte</li></ul>
         </div>
         <div class="rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div class="px-4 py-3 flex items-center justify-between" style="background: #8896A622; border-bottom: 1px solid #8896A644;">
+          <div class="px-4 py-3 flex items-center justify-between" style="background: #7A9E7E22; border-bottom: 1px solid #7A9E7E44;">
             <div>
               <span class="text-xs font-semibold tracking-widest uppercase text-stone-400">Table 10</span>
-              <span class="ml-2 text-xs" style="color:#8896A6;">Mixed Friends</span>
+              <span class="ml-2 text-xs" style="color:#7A9E7E;">Jeyan Friends</span>
             </div>
-            <span class="text-sm font-semibold text-stone-600">12 pax</span>
+            <span class="text-sm font-semibold text-stone-600">12 pax<span class="ml-1 text-amber-600 font-bold" title="Over 10 pax">⚠</span></span>
           </div>
           <ul class="px-4 py-2 text-sm text-stone-700"><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Mark Jayson De Jesus</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Abigail Cayabyab-Fereras<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-pink-100 text-pink-700 border border-pink-200">Bridesmaid</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Paolo A. Macasaet</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Michaela Sta. Rosa</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Kristian Edison C. Flora</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Godofredo Baja Jr.</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">John Carlo Soriaga</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Geraldine Ang</li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Jason Deichmann<span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li><li class="flex items-center gap-1 py-0.5 border-b border-stone-50 last:border-0">Piolo Barletta <span class="text-xs text-emerald-600">+1</span><span class="ml-1 px-1 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">Groomsman</span></li></ul>
         </div>
@@ -283,6 +462,19 @@
   <footer class="text-center py-8 text-stone-300 text-xs tracking-wider">
     <span class="serif italic text-stone-400">Tommy &amp; Jeyan &bull; December 27, 2026</span>
   </footer>
+
+  <script>
+    function showOption(opt) {
+      document.getElementById('svg-a').style.display = opt === 'a' ? '' : 'none';
+      document.getElementById('svg-b').style.display = opt === 'b' ? '' : 'none';
+      document.getElementById('btn-a').className = opt === 'a'
+        ? 'px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors'
+        : 'px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors';
+      document.getElementById('btn-b').className = opt === 'b'
+        ? 'px-3 py-1.5 text-xs font-medium rounded-full border border-[#8B1A35] bg-[#8B1A35] text-white transition-colors'
+        : 'px-3 py-1.5 text-xs font-medium rounded-full border border-stone-300 text-stone-500 hover:bg-stone-50 transition-colors';
+    }
+  </script>
 
 </body>
 </html>
