@@ -340,7 +340,7 @@ html.reduced .path-progress, html:not(.js-anim) .path-progress{ display:none; }
 /* phones: keep captions and the lower-right word-lantern clear of the fixed dock */
 @media (max-width:640px){
   .pcaps{ bottom:20vh; bottom:20svh; }
-  .chip:nth-of-type(2){ left:72% !important; top:64% !important; }
+  #path .chip:nth-of-type(2){ left:72% !important; top:64% !important; }
 }
 .pcap{
   position:absolute; left:0; right:0; margin:0 auto; max-width:640px;
@@ -999,6 +999,7 @@ html.reduced #union-glow, html:not(.js-anim) #union-glow{ display:none; }
   box-shadow:0 24px 60px -20px rgba(74,54,32,.45), 0 0 50px rgba(255,196,150,.3);
 }
 #dawn-photo img{ width:100%; height:100%; object-fit:cover; }
+/* below 1280px the left-anchored photo collides with the ~690px copy block */
 @media (max-width:1279px){ html.js-anim #dawn-photo{ display:none; } }
 html.reduced #dawn-photo, html:not(.js-anim) #dawn-photo{
   position:relative; left:auto; top:auto; margin:0 auto 26px; opacity:1;
@@ -1025,8 +1026,10 @@ html.reduced .next-copy .date-stamp, html:not(.js-anim) .next-copy .date-stamp{ 
 html.reduced .cd strong, html:not(.js-anim) .cd strong{ color:var(--ink); }
 .cd span{ font-size:9px; letter-spacing:.3em; text-transform:uppercase; color:var(--moon-soft); }
 html.reduced .cd span, html:not(.js-anim) .cd span{ color:var(--soft); }
-.cd-cap{ font-family:var(--serif); font-style:italic; color:var(--rose-deep); font-size:19px; margin-top:8px; }
+.cd-cap{ font-family:var(--serif); font-style:italic; color:var(--rose-light); font-size:19px; margin-top:8px; }
+html.reduced .cd-cap, html:not(.js-anim) .cd-cap{ color:var(--rose-deep); }
 .next-copy .add-light{ display:block; margin-top:24px; }
+html.reduced .next-copy .add-light, html:not(.js-anim) .next-copy .add-light{ color:var(--rose-deep); }
 #rsvp-cta{ margin-top:14px; }
 /* short viewports: tighten the finale stack so the RSVP button stays fully on screen */
 @media (max-height:760px){
@@ -2492,7 +2495,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     gsap.to(chip, { opacity: 1, duration: 0.5, ease: 'power1.out' });
     gsap.fromTo(chip, { y: 0 }, {
       y: -(window.innerHeight + 300), ease: 'power1.in', duration: 4.8,
-      onComplete: function () { chip.remove(); }
+      onComplete: function () { gsap.killTweensOf(chip); chip.remove(); }
     });
     gsap.to(chip, { x: 24, duration: 1.3, yoyo: true, repeat: 3, ease: 'sine.inOut' });
     return true;
@@ -2865,10 +2868,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
          The pin engages at ~45% of this timeline (one viewport of entry, then
          220vh - 100vh of pinned scroll). Total timeline length is fixed at 10. */
       var tl = gsap.timeline({
-        scrollTrigger: { trigger: '#next', start: 'top bottom', end: 'bottom bottom', scrub: true }
+        scrollTrigger: { trigger: '#next', start: 'top bottom', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true }
       });
       /* PHASE A · entry: the lantern sea starts rising while the panel slides in */
-      tl.to('#next-lans .lantern', { y: -window.innerHeight * 1.5, ease: 'none', duration: 6.4, stagger: 0.12 }, 1.0)
+      tl.to('#next-lans .lantern', { y: function () { return -window.innerHeight * 1.5; }, ease: 'none', duration: 6.4, stagger: 0.12 }, 1.0)
       /* PHASE B · pinned: T & J rise from the corners and meet above the copy */
         .to('#nlanT', {
           y: function () { return -(window.innerHeight * 0.78 + 270); },
@@ -2896,10 +2899,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         .to(['#next-date', '#cd', '.cd-cap'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.18 }, 6.5)
         .to(['.add-light', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.2 }, 7.5)
       /* copy crossfades to ink as dawn washes in, so it stays readable on the light sky */
+      /* dawn palette: every text node in .next-copy must stay AA on the brightening sky */
       .to(['.next-copy', '#arr1', '.next-copy .date-stamp', '.cd strong'], { color: '#2e2b27', ease: 'none', duration: 1.0 }, 8.7)
       .to(['#arr2', '.cd span'], { color: '#5f584f', ease: 'none', duration: 1.0 }, 8.7)
       .to('.add-light', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7)
       .to('#next-micro', { color: '#8a6a2e', ease: 'none', duration: 1.0 }, 8.7)
+      .to('.cd-cap', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7)
       .to('#union-glow', { opacity: 0, ease: 'none', duration: 0.8 }, 9.0)
       .to('#dawn-photo', { opacity: 1, ease: 'none', duration: 0.9 }, 8.9);
     })();
