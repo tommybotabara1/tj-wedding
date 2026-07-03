@@ -969,38 +969,22 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 html.reduced .sky-dawn, html:not(.js-anim) .sky-dawn{ opacity:0; }
 html.reduced .sky-warm, html:not(.js-anim) .sky-warm{ opacity:1; }
 #next-lans{ position:absolute; inset:0; pointer-events:none; }
+html:not(.reduced) #next-lans .lantern.far{ animation:floaty 7s ease-in-out infinite; }
 #nlanT,#nlanJ{ position:absolute; bottom:-150px; }
 #nlanT{ left:10%; } #nlanJ{ right:10%; }
 html.reduced #nlanT, html:not(.js-anim) #nlanT{ bottom:auto; top:15%; left:32%; }
 html.reduced #nlanJ, html:not(.js-anim) #nlanJ{ bottom:auto; top:15%; right:32%; }
-#union-glow{ /* two lights become one */
-  position:absolute; left:calc(50% - 130px); top:calc(22% - 130px); width:260px; height:260px;
+#union-glow{ /* two lights, flying together */
+  position:absolute; left:calc(50% - 130px); top:calc(24% - 130px); width:260px; height:260px;
   border-radius:50%; pointer-events:none;
   background:radial-gradient(circle, rgba(255,241,168,.85) 0%, rgba(var(--lan-glow),.5) 40%, rgba(var(--lan-halo),.18) 68%, transparent 76%);
 }
 html.reduced #union-glow, html:not(.js-anim) #union-glow{ display:none; }
-#dawn-photo{ /* at dawn, the one light becomes the two of them */
-  position:absolute; left:8%; top:calc(50% - 120px); width:clamp(120px,11vw,150px); margin:0;
-  aspect-ratio:3/4; border-radius:999px 999px 12px 12px; overflow:hidden;
-  border:1px solid rgba(216,188,130,.6);
-  box-shadow:0 24px 60px -20px rgba(74,54,32,.45), 0 0 50px rgba(255,196,150,.3);
-}
-#dawn-photo img{ width:100%; height:100%; object-fit:cover; }
-/* below 1280px the left-anchored photo collides with the ~690px copy block */
-@media (max-width:1279px){ html.js-anim #dawn-photo{ display:none; } }
-html.reduced #dawn-photo, html:not(.js-anim) #dawn-photo{
-  position:relative; left:auto; top:auto; margin:0 auto 26px; opacity:1;
-}
 .next-copy{
   position:absolute; left:0; right:0; top:50%; transform:translateY(-45%);
   text-align:center; padding:0 24px; color:var(--moon);
 }
 html.reduced .next-copy, html:not(.js-anim) .next-copy{ position:relative; top:auto; transform:none; padding:130px 24px 100px; color:var(--ink); }
-.next-copy .micro{
-  font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--gold-light); margin-bottom:18px; font-weight:600;
-}
-html.reduced .next-copy .micro, html:not(.js-anim) .next-copy .micro{ color:#8a6a2e; }
-.next-copy .micro .sep{ color:var(--soft); padding:0 8px; }
 .next-copy h2{ font-size:clamp(34px,5.8vw,62px); max-width:780px; margin:0 auto; color:var(--moon); }
 html.reduced .next-copy h2, html:not(.js-anim) .next-copy h2{ color:var(--ink); }
 .next-copy .join{ font-family:var(--serif); font-style:italic; font-size:clamp(19px,2.8vw,27px); color:var(--moon-soft); margin-top:14px; }
@@ -1020,7 +1004,6 @@ html.reduced .next-copy .add-light, html:not(.js-anim) .next-copy .add-light{ co
 #rsvp-cta{ margin-top:14px; }
 /* short viewports: tighten the finale stack so the RSVP button stays fully on screen */
 @media (max-height:760px){
-  .next-copy .micro{ margin-bottom:3px; }
   .next-copy .join{ margin-top:8px; }
   .next-copy .date-stamp{ margin-top:10px; }
   .cd{ margin-top:10px; }
@@ -1508,13 +1491,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <span class="crown"></span><span class="body"></span><span class="mono">J</span><span class="base"></span><span class="flame"></span>
       </div>
       <div id="union-glow" class="scrub-hide" aria-hidden="true"></div>
-      <figure id="dawn-photo" class="scrub-hide">
-        <img src="images/journey-06.webp" loading="lazy" decoding="async"
-          alt="Tommy and Jeyan, foreheads together, eyes closed" />
-      </figure>
 
       <div class="next-copy">
-        <p class="micro scrub-hide" id="next-micro">NWPT&nbsp;→&nbsp;FOREVER <span class="sep">·</span> 14°31′N 121°01′E <span class="sep">·</span> SEAT 2-OF-2</p>
         <h2 class="scrub-hide" id="arr1">The best part of the journey is still ahead.</h2>
         <p class="join scrub-hide" id="arr2">Join us as we begin our next chapter.</p>
         <p class="date-stamp scrub-hide" id="next-date">Sunday, December 27, 2026</p>
@@ -2701,7 +2679,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   /* ---------- finale background lanterns (DOM, above dawn overlays) ---------- */
   (function () {
     var host = $('next-lans');
-    for (var i = 0; i < 17; i++) {
+    /* cohort A (0-8): the rising sea, spawn below the fold and climb through the pin */
+    for (var i = 0; i < 9; i++) {
       var l = document.createElement('div');
       l.className = 'lantern';
       l.innerHTML = '<span class="body"></span><span class="flame"></span>';
@@ -2711,6 +2690,21 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       l.style.transform = 'scale(' + (0.16 + Math.random() * 0.5).toFixed(2) + ')';
       l.style.opacity = (0.4 + Math.random() * 0.4).toFixed(2);
       host.appendChild(l);
+    }
+    /* cohort B (9-16): distant ambient layer, already inside the viewport, swaying
+       in place via the floaty CSS animation so the sky stays populated late in
+       the pin instead of emptying out as the sea climbs past the top edge. */
+    for (var j = 0; j < 8; j++) {
+      var f = document.createElement('div');
+      f.className = 'lantern far';
+      f.innerHTML = '<span class="body"></span><span class="flame"></span>';
+      f.style.position = 'absolute';
+      f.style.left = (3 + Math.random() * 92) + '%';
+      f.style.top = (12 + Math.random() * 70) + '%';
+      f.style.transform = 'scale(' + (0.14 + Math.random() * 0.16).toFixed(2) + ')';
+      f.style.opacity = (0.30 + Math.random() * 0.2).toFixed(2);
+      f.style.animationDelay = '-' + (Math.random() * 8).toFixed(2) + 's';
+      host.appendChild(f);
     }
   })();
 
@@ -2832,31 +2826,54 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       var tl = gsap.timeline({
         scrollTrigger: { trigger: '#next', start: 'top bottom', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true }
       });
-      /* PHASE A · entry: the lantern sea starts rising while the panel slides in */
-      tl.to('#next-lans .lantern', { y: function () { return -window.innerHeight * 1.5; }, ease: 'none', duration: 6.4, stagger: 0.12 }, 1.0)
-      /* PHASE B · pinned: T & J rise from the corners and meet above the copy */
+      /* mobile: shrink the pair + halo so the meet point clears the copy block below it */
+      var M = function () { return window.innerWidth <= 640; };
+      /* PHASE A · entry: cohort A (the rising sea) climbs while the panel slides in.
+         Cohort B (".far") is the ambient distant layer — it stays put and only sways
+         via the floaty CSS animation, so the sky never empties out late in the pin. */
+      tl.to('#next-lans .lantern:not(.far)', { y: function () { return -window.innerHeight * 1.1; }, ease: 'none', duration: 4.8, stagger: 0.45 }, 1.0)
+      /* PHASE B · pinned: T & J rise from the corners and meet on screen, side by side.
+         x deltas are measured off each element's own un-transformed rect (left:10%/
+         right:10%) so they land with centers at stick-center ∓28px (∓22px mobile)
+         regardless of viewport width — GSAP re-runs these functions on invalidateOnRefresh.
+         y shift is derived from the measured start center (~innerHeight + 130px) minus
+         the target center (24% desktop / 14% mobile — mobile lands higher to clear the
+         copy block below it): measured (gsap.set probe, not hand math — translate+scale
+         composition doesn't shift 1:1 with the unscaled box) against 700 and 800 tall
+         viewports gives y = -(ih*0.8+60) desktop, y = -(ih*0.93+15) mobile (tune here if
+         layout shifts; verify with getBoundingClientRect at the meet beat, not calc). */
         .to('#nlanT', {
-          y: function () { return -(window.innerHeight * 0.78 + 270); },
-          x: function () { return W() * 0.4 - 36; },
-          ease: 'power1.inOut', duration: 3.6
+          y: function () { return M() ? -(window.innerHeight * 0.93 + 15) : -(window.innerHeight * 0.8 + 60); },
+          x: function () { var r = document.getElementById('nlanT').getBoundingClientRect(); return (W() / 2 - (M() ? 22 : 28)) - (r.left + r.width / 2); },
+          scale: function () { return M() ? 0.55 : 0.85; },
+          ease: 'power1.inOut', duration: 3.4
         }, 4.6)
         .to('#nlanJ', {
-          y: function () { return -(window.innerHeight * 0.78 + 270); },
-          x: function () { return -(W() * 0.4 - 36); },
-          ease: 'power1.inOut', duration: 3.6
+          y: function () { return M() ? -(window.innerHeight * 0.93 + 15) : -(window.innerHeight * 0.8 + 60); },
+          x: function () { var r = document.getElementById('nlanJ').getBoundingClientRect(); return (W() / 2 + (M() ? 22 : 28)) - (r.left + r.width / 2); },
+          scale: function () { return M() ? 0.55 : 0.85; },
+          ease: 'power1.inOut', duration: 3.4
         }, 4.6)
-        .to('#union-glow', { opacity: 1, ease: 'none', duration: 0.9 }, 7.9)
-        .to(['#nlanT', '#nlanJ'], { opacity: 0, ease: 'none', duration: 0.8 }, 8.2)
+      /* the union halo blooms behind the pair once they've met */
+        .to('#union-glow', { opacity: 1, ease: 'none', duration: 0.9 }, 7.7)
+      /* they don't part ways — pair and halo drift upward together, slowly, as one.
+         Function-based relative strings (not a pre-computed '-=N') so GSAP resolves
+         the delta lazily against innerHeight at render time, matching the other
+         function-based tweens in this timeline. */
+        .to('#nlanT', { y: function () { return '-=' + window.innerHeight * 0.08; }, ease: 'none', duration: 1.2 }, 8.4)
+        .to('#nlanJ', { y: function () { return '-=' + window.innerHeight * 0.08; }, ease: 'none', duration: 1.2 }, 8.4)
+        .to('#union-glow', { y: function () { return '-=' + window.innerHeight * 0.08; }, ease: 'none', duration: 1.2 }, 8.4)
+      /* ...then fade together as the dawn wash completes */
+        .to(['#nlanT', '#nlanJ', '#union-glow'], { opacity: 0, ease: 'none', duration: 0.4 }, 9.5)
       /* dawn only at the exit, as the guest scrolls on into the morning-after footer */
         .to('.sky-dawn', { opacity: 1, ease: 'none', duration: 1.0 }, 8.6)
         .to('.sky-warm', { opacity: 1, ease: 'none', duration: 0.9 }, 9.1);
-      /* Arrival copy — pinned phase only (starts at t5.2, after the ~t4.5 pin), so
+      /* Arrival copy — pinned phase only (starts at t5.3, after the ~t4.5 pin), so
          it reveals on screen and then stays put to the end; a fast flick lands on
          fully-visible copy, a slow scroll reveals it line by line. */
-      var copyEls = ['#next-micro', '#arr1', '#arr2', '#next-date', '#cd', '.cd-cap', '.add-light', '#rsvp-cta'];
+      var copyEls = ['#arr1', '#arr2', '#next-date', '#cd', '.cd-cap', '.add-light', '#rsvp-cta'];
       gsap.set(copyEls, { opacity: 0, y: 20 });
-      tl.to('#next-micro', { opacity: 1, y: 0, ease: 'none', duration: 0.6 }, 5.2)
-        .to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, 5.5)
+      tl.to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, 5.3)
         .to('#arr2', { opacity: 1, y: 0, ease: 'none', duration: 0.7 }, 6.0)
         .to(['#next-date', '#cd', '.cd-cap'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.18 }, 6.5)
         .to(['.add-light', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.2 }, 7.5)
@@ -2865,10 +2882,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       .to(['.next-copy', '#arr1', '.next-copy .date-stamp', '.cd strong'], { color: '#2e2b27', ease: 'none', duration: 1.0 }, 8.7)
       .to(['#arr2', '.cd span'], { color: '#5f584f', ease: 'none', duration: 1.0 }, 8.7)
       .to('.add-light', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7)
-      .to('#next-micro', { color: '#8a6a2e', ease: 'none', duration: 1.0 }, 8.7)
-      .to('.cd-cap', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7)
-      .to('#union-glow', { opacity: 0, ease: 'none', duration: 0.8 }, 9.0)
-      .to('#dawn-photo', { opacity: 1, ease: 'none', duration: 0.9 }, 8.9);
+      .to('.cd-cap', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7);
     })();
   }
 })();
