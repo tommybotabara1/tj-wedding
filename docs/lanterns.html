@@ -263,10 +263,18 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
   fill:none; stroke:var(--lan-mid); stroke-width:2.2; stroke-linecap:round;
 }
 #arcs .glow{ stroke:rgba(var(--lan-glow),.5); stroke-width:9; filter:blur(5px); }
-#merge-glow{
-  position:absolute; left:50%; top:42%; width:200px; height:200px; transform:translate(-50%,-50%);
-  border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, rgba(var(--lan-glow),.55), rgba(var(--lan-halo),.25) 45%, transparent 70%);
+#merge-medallion{ /* the two arcs meet on a real photo of the two of them */
+  position:absolute; left:calc(50% - 86px); top:calc(42% - 86px); width:172px; height:172px; margin:0;
+  border-radius:50%; overflow:hidden;
+  border:1px solid rgba(255,180,90,.55);
+  box-shadow:
+    0 0 34px 10px rgba(var(--lan-glow),.45),
+    0 0 96px 32px rgba(var(--lan-halo),.25),
+    inset 0 0 26px rgba(132,54,18,.35);
+}
+#merge-medallion img{ width:100%; height:100%; object-fit:cover; }
+html.reduced #merge-medallion, html:not(.js-anim) #merge-medallion{
+  position:static; margin:26px auto; opacity:1;
 }
 /* Each word is a real paper lantern (same build as the T/J lanterns at the
    gate & finale) — crown, ribbed glowing body, base and a flickering flame —
@@ -1219,7 +1227,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           <circle cy="11" r="5" fill="#fff1a8"/>
         </g>
       </svg>
-      <div id="merge-glow" class="scrub-hide" aria-hidden="true"></div>
+      <figure id="merge-medallion" class="scrub-hide">
+        <img src="images/journey-04.webp" loading="lazy" decoding="async"
+          alt="Jeyan looking up at Tommy beneath a sky of soft lights" />
+      </figure>
 
       <span class="chip scrub-hide" style="left:17%; top:76%"><span class="crown"></span><span class="body">Timing</span><span class="base"></span><span class="flame"></span></span>
       <span class="chip scrub-hide" style="left:82%; top:71%"><span class="crown"></span><span class="body">Courage</span><span class="base"></span><span class="flame"></span></span>
@@ -2734,12 +2745,13 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       var chips = gsap.utils.toArray('#path .chip');
       var caps = gsap.utils.toArray('#path .pcap');
       primeDraw(['arcL', 'arcR', 'arcM', 'arcLg', 'arcRg', 'arcMg']);
+      gsap.set('#merge-medallion', { scale: 0.82, transformOrigin: '50% 50%' });
       /* two lights rise together, tracing their own lines... */
       tl.to(['#arcL', '#arcLg'], { strokeDashoffset: 0, ease: 'none', duration: 5.2 }, 0.4)
         .to(['#arcR', '#arcRg'], { strokeDashoffset: 0, ease: 'none', duration: 5.2 }, 0.4)
         /* ...meet... */
-        .to('#merge-glow', { opacity: 1, duration: 0.8 }, 5.3)
-        .to('#merge-glow', { opacity: 0, duration: 1.2 }, 6.6)
+        .to('#merge-medallion', { opacity: 1, scale: 1, duration: 0.9 }, 5.3)
+        .to('#merge-medallion', { opacity: 0, scale: 0.92, duration: 1.0 }, 7.6)
         /* ...and continue as one. */
         .to(['#arcM', '#arcMg'], { strokeDashoffset: 0, ease: 'none', duration: 3.4 }, 5.8);
       if (window.MotionPathPlugin) {
