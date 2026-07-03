@@ -969,13 +969,29 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 html.reduced .sky-dawn, html:not(.js-anim) .sky-dawn{ opacity:0; }
 html.reduced .sky-warm, html:not(.js-anim) .sky-warm{ opacity:1; }
 #next-lans{ position:absolute; inset:0; pointer-events:none; }
-html:not(.reduced) #next-lans .lantern.far{ animation:floaty 7s ease-in-out infinite; }
+html:not(.reduced) #next-lans .lantern.far{ animation:floaty-far 7s ease-in-out infinite; }
+/* floaty (above) has no scale term — CSS animations replace the whole transform
+   property, so applying it directly would snap cohort B's inline scale(0.14-0.30)
+   back to scale(1). floaty-far carries the scale through a custom property that
+   JS sets alongside the inline transform, so the ambient layer stays distant. */
+@keyframes floaty-far{
+  0%,100%{ transform:translateY(0) rotate(-1.2deg) scale(var(--fs,.2)); }
+  50%{ transform:translateY(-9px) rotate(1.2deg) scale(var(--fs,.2)); }
+}
 #nlanT,#nlanJ{ position:absolute; bottom:-150px; }
 #nlanT{ left:10%; } #nlanJ{ right:10%; }
 html.reduced #nlanT, html:not(.js-anim) #nlanT{ bottom:auto; top:15%; left:32%; }
 html.reduced #nlanJ, html:not(.js-anim) #nlanJ{ bottom:auto; top:15%; right:32%; }
 #union-glow{ /* two lights, flying together */
-  position:absolute; left:calc(50% - 130px); top:calc(24% - 130px); width:260px; height:260px;
+  /* size + top retargeted to match the new (Fix 3) desktop meet point, which now
+     lands the pair around 8-11% viewport (measured off .next-copy, clearing the
+     #arr1 headline) instead of the old fixed 24% that sat behind the copy. Held a
+     little higher than the pair's own center (3% vs ~8-11%): the glow's hot core
+     is a much bigger band (+-60px) than the pair's box, so matching the pair's
+     exact center would push that hot core into the headline at full bloom — 3%
+     keeps it close to the meet point while the core clears #arr1 at 800/860px
+     tall viewports (see Fix 4 note in the timeline below for the 700px-tall case). */
+  position:absolute; left:calc(50% - 100px); top:calc(3% - 100px); width:200px; height:200px;
   border-radius:50%; pointer-events:none;
   background:radial-gradient(circle, rgba(255,241,168,.85) 0%, rgba(var(--lan-glow),.5) 40%, rgba(var(--lan-halo),.18) 68%, transparent 76%);
 }
@@ -2701,7 +2717,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       f.style.position = 'absolute';
       f.style.left = (3 + Math.random() * 92) + '%';
       f.style.top = (12 + Math.random() * 70) + '%';
-      f.style.transform = 'scale(' + (0.14 + Math.random() * 0.16).toFixed(2) + ')';
+      var fScale = (0.14 + Math.random() * 0.16).toFixed(2);
+      f.style.transform = 'scale(' + fScale + ')';
+      /* floaty-far reads scale from --fs; the inline transform above is kept too,
+         since that's what renders when the animation is off (reduced-motion). */
+      f.style.setProperty('--fs', fScale);
       f.style.opacity = (0.30 + Math.random() * 0.2).toFixed(2);
       f.style.animationDelay = '-' + (Math.random() * 8).toFixed(2) + 's';
       host.appendChild(f);
@@ -2831,30 +2851,60 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       /* PHASE A · entry: cohort A (the rising sea) climbs while the panel slides in.
          Cohort B (".far") is the ambient distant layer — it stays put and only sways
          via the floaty CSS animation, so the sky never empties out late in the pin. */
+      /* duration 4.8, not longer: last stagger element starts at 1.0 + 0.45*8 = 4.6,
+         so 4.8 ends it at 9.4 — anything bigger stretches the implicit timeline past 10
+         and desyncs every absolute-positioned beat after it. */
       tl.to('#next-lans .lantern:not(.far)', { y: function () { return -window.innerHeight * 1.1; }, ease: 'none', duration: 4.8, stagger: 0.45 }, 1.0)
       /* PHASE B · pinned: T & J rise from the corners and meet on screen, side by side.
          x deltas are measured off each element's own un-transformed rect (left:10%/
          right:10%) so they land with centers at stick-center ∓28px (∓22px mobile)
          regardless of viewport width — GSAP re-runs these functions on invalidateOnRefresh.
-         y shift is derived from the measured start center (~innerHeight + 130px) minus
-         the target center (24% desktop / 14% mobile — mobile lands higher to clear the
-         copy block below it): measured (gsap.set probe, not hand math — translate+scale
-         composition doesn't shift 1:1 with the unscaled box) against 700 and 800 tall
-         viewports gives y = -(ih*0.8+60) desktop, y = -(ih*0.93+15) mobile (tune here if
-         layout shifts; verify with getBoundingClientRect at the meet beat, not calc). */
+         MOBILE y is unchanged: measured start center (~innerHeight + 130px) minus the
+         14% target center gives y = -(ih*0.93+15) (mobile already clears the copy below it).
+         DESKTOP y is no longer a fixed 24% — that landed the pair's box behind the #arr1
+         headline (copy top ~11-16%, headline text through ~30% at the old 0.85 scale).
+         Instead it's measured live off .next-copy's rect, same "measure, don't hand-math"
+         approach as the x deltas: target center = copyTop - CLEAR - deskH/2, where deskH
+         is the box height at the new landing scale (0.5) and CLEAR is a 16px safety
+         margin (comfortably over the required 10px once rounding/sub-pixel is accounted
+         for). Deliberately reads .next-copy, NOT #arr1: #arr1 has its own reveal tween
+         (y:20 -> y:0 at beat 5.3-6.1) so its rect is still mid-animation (~20px low) at
+         the moment this function is evaluated; .next-copy is the untweened parent and its
+         top always equals #arr1's settled top (no padding/margin between them), so it's a
+         stable read. This keeps the pair above the headline at any viewport height,
+         instead of chasing a fixed percentage that only happened to work at one size. */
         .to('#nlanT', {
-          y: function () { return M() ? -(window.innerHeight * 0.93 + 15) : -(window.innerHeight * 0.8 + 60); },
+          y: function () {
+            if (M()) return -(window.innerHeight * 0.93 + 15);
+            var r = document.getElementById('nlanT').getBoundingClientRect();
+            var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
+            var deskH = 118 * 0.5, clear = 16;
+            var targetCenterY = copyTop - clear - deskH / 2;
+            return targetCenterY - (r.top + r.height / 2);
+          },
           x: function () { var r = document.getElementById('nlanT').getBoundingClientRect(); return (W() / 2 - (M() ? 22 : 28)) - (r.left + r.width / 2); },
-          scale: function () { return M() ? 0.55 : 0.85; },
+          scale: function () { return M() ? 0.55 : 0.5; },
           ease: 'power1.inOut', duration: 3.4
         }, 4.6)
         .to('#nlanJ', {
-          y: function () { return M() ? -(window.innerHeight * 0.93 + 15) : -(window.innerHeight * 0.8 + 60); },
+          y: function () {
+            if (M()) return -(window.innerHeight * 0.93 + 15);
+            var r = document.getElementById('nlanJ').getBoundingClientRect();
+            var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
+            var deskH = 118 * 0.5, clear = 16;
+            var targetCenterY = copyTop - clear - deskH / 2;
+            return targetCenterY - (r.top + r.height / 2);
+          },
           x: function () { var r = document.getElementById('nlanJ').getBoundingClientRect(); return (W() / 2 + (M() ? 22 : 28)) - (r.left + r.width / 2); },
-          scale: function () { return M() ? 0.55 : 0.85; },
+          scale: function () { return M() ? 0.55 : 0.5; },
           ease: 'power1.inOut', duration: 3.4
         }, 4.6)
-      /* the union halo blooms behind the pair once they've met */
+      /* the union halo blooms behind the pair once they've met. Fix 4 note: at very
+         short desktop viewports (~700px tall) the #union-glow CSS top (3%) plus its
+         +-100px hot-core radius leaves only a few px of clearance against #arr1 at
+         full bloom — same headroom squeeze Fix 3 hits on the pair itself at 700px
+         tall. Revisit together (glow % and the pair's `clear` constant) if a target
+         viewport shorter than ~760px tall needs to be supported precisely. */
         .to('#union-glow', { opacity: 1, ease: 'none', duration: 0.9 }, 7.7)
       /* they don't part ways — pair and halo drift upward together, slowly, as one.
          Function-based relative strings (not a pre-computed '-=N') so GSAP resolves
@@ -2863,8 +2913,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         .to('#nlanT', { y: function () { return '-=' + window.innerHeight * 0.08; }, ease: 'none', duration: 1.2 }, 8.4)
         .to('#nlanJ', { y: function () { return '-=' + window.innerHeight * 0.08; }, ease: 'none', duration: 1.2 }, 8.4)
         .to('#union-glow', { y: function () { return '-=' + window.innerHeight * 0.08; }, ease: 'none', duration: 1.2 }, 8.4)
-      /* ...then fade together as the dawn wash completes */
-        .to(['#nlanT', '#nlanJ', '#union-glow'], { opacity: 0, ease: 'none', duration: 0.4 }, 9.5)
+      /* the glow fades first and faster, on its own — its hot core is bright enough
+         that leaving it in the shared t9.5 fade let it wash out the headline right as
+         the copy crossfades to ink at t8.7; by t9.2 it's dim/gone well before that. */
+        .to('#union-glow', { opacity: 0, ease: 'none', duration: 0.6 }, 9.2)
+      /* ...the pair fades a little after, as the dawn wash completes */
+        .to(['#nlanT', '#nlanJ'], { opacity: 0, ease: 'none', duration: 0.4 }, 9.5)
       /* dawn only at the exit, as the guest scrolls on into the morning-after footer */
         .to('.sky-dawn', { opacity: 1, ease: 'none', duration: 1.0 }, 8.6)
         .to('.sky-warm', { opacity: 1, ease: 'none', duration: 0.9 }, 9.1);
