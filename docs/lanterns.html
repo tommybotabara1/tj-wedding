@@ -317,6 +317,10 @@ html.reduced #merge-medallion, html:not(.js-anim) #merge-medallion{
   box-shadow:0 0 24px 10px rgba(var(--lan-glow),.82);
 }
 html:not(.reduced) .chip .flame{ animation:flick 2.8s ease-in-out infinite; }
+.chip.guest-lantern{ /* a guest's light joining the sky (fixed overlay, z below dialogs/gate) */
+  position:fixed; left:calc(50% - 45px); bottom:-140px; z-index:55; transform:none; opacity:0;
+}
+.chip.guest-lantern .body{ font-size:11px; letter-spacing:.1em; }
 .tracer{ opacity:0; }
 html.reduced .tracer, html:not(.js-anim) .tracer{ display:none; }
 /* quiet progress thread on the left so the pinned scroll never reads as frozen */
@@ -2460,6 +2464,30 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     });
   })();
 
+  /* ---------- guest lantern: released after a successful RSVP ---------- */
+  function releaseGuestLantern(rawName) {
+    if (REDUCED || !HAS_GSAP) return false;
+    var name = (rawName || '').trim().split(/\s+/)[0] || '';
+    if (name.length > 12) name = name.charAt(0).toUpperCase();
+    var chip = document.createElement('span');
+    chip.className = 'chip guest-lantern';
+    ['crown', 'body', 'base', 'flame'].forEach(function (part) {
+      var s = document.createElement('span');
+      s.className = part;
+      if (part === 'body') s.textContent = name || '♥';
+      chip.appendChild(s);
+    });
+    document.body.appendChild(chip);
+    Sky.liftoff();
+    gsap.to(chip, { opacity: 1, duration: 0.5, ease: 'power1.out' });
+    gsap.fromTo(chip, { y: 0 }, {
+      y: -(window.innerHeight + 300), ease: 'power1.in', duration: 4.8,
+      onComplete: function () { chip.remove(); }
+    });
+    gsap.to(chip, { x: 24, duration: 1.3, yoyo: true, repeat: 3, ease: 'sine.inOut' });
+    return true;
+  }
+
   /* ---------- RSVP ---------- */
   (function () {
     var RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzR3J6K8k0McwaM-3RwyfoqBpf9xUvc1UviOtGRErjehAaJmRIvuJKlwGyGa4G89jSI/exec';
@@ -2512,9 +2540,16 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           $('rsvp-form').style.display = 'none';
           var success = $('rsvp-success');
           success.textContent = attendingValue === 'yes'
-            ? 'Thank you, ' + nameVal + '. Your response has been noted. Your seat is booked, and we can’t wait to celebrate with you.'
-            : 'Thank you, ' + nameVal + '. Your response has been noted. We’ll miss you, but we appreciate you letting us know.';
+            ? 'Thank you, ' + nameVal + '. Your seat is booked, and we can’t wait to celebrate with you. Watch the sky: your light is about to join ours.'
+            : 'Thank you, ' + nameVal + '. We’ll miss you, but your light is part of our sky all the same.';
           success.style.display = 'block';
+          if (!REDUCED && HAS_GSAP) {
+            setTimeout(function () {
+              var dlg = $('p-rsvp');
+              if (dlg && dlg.open) dlg.close();
+              releaseGuestLantern(nameVal);
+            }, 1600);
+          }
         })
         .catch(function (err) {
           console.error(err);
