@@ -1028,6 +1028,16 @@ html.reduced .cd span, html:not(.js-anim) .cd span{ color:var(--soft); }
 .cd-cap{ font-family:var(--serif); font-style:italic; color:var(--rose-deep); font-size:19px; margin-top:8px; }
 .next-copy .add-light{ display:block; margin-top:24px; }
 #rsvp-cta{ margin-top:14px; }
+/* short viewports: tighten the finale stack so the RSVP button stays fully on screen */
+@media (max-height:760px){
+  .next-copy .micro{ margin-bottom:3px; }
+  .next-copy .join{ margin-top:8px; }
+  .next-copy .date-stamp{ margin-top:10px; }
+  .cd{ margin-top:10px; }
+  .cd-cap{ margin-top:2px; }
+  .next-copy .add-light{ margin-top:8px; }
+  #rsvp-cta{ margin-top:6px; }
+}
 
 /* Footer — morning after */
 footer{
