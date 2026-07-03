@@ -334,7 +334,7 @@ html.reduced .tracer, html:not(.js-anim) .tracer{ display:none; }
 /* Memory frames — small tilted polaroids that flash alongside the rising
    lights: two lives (Tommy left, Jeyan right) climbing toward the same sky. */
 .mems{ position:absolute; inset:0; pointer-events:none; }
-.mem{ position:absolute; left:calc(var(--mx)*1%); top:calc(var(--my)*1%); width:110px; transform:translate(-50%,-50%); }
+.mem{ position:absolute; left:calc(var(--mx)*1%); top:calc(var(--my)*1%); width:110px; margin:0; transform:translate(-50%,-50%); }
 .mem-ph{
   display:block; padding:5px 5px 0; background:var(--paper); border-radius:2px;
   box-shadow:0 8px 22px rgba(0,0,0,.35), 0 0 0 1px rgba(255,180,90,.14);
@@ -393,12 +393,12 @@ html.reduced .path-progress, html:not(.js-anim) .path-progress{ display:none; }
      horizontal extremes in so a 72px frame never clips the 375px edge.
      Inline left/top (from --mx/--my) win over stylesheet rules on the same
      property, so override left/top directly rather than the custom property. */
-  #path .mem:nth-of-type(1){ left:12% !important; top:68% !important; }
-  #path .mem:nth-of-type(2){ left:86% !important; top:67% !important; }
-  #path .mem:nth-of-type(3){ left:12% !important; top:55% !important; }
-  #path .mem:nth-of-type(4){ left:78% !important; top:53% !important; }
+  #path .mem:nth-of-type(1){ left:13% !important; top:62% !important; }
+  #path .mem:nth-of-type(2){ left:43% !important; top:67% !important; }
+  #path .mem:nth-of-type(3){ left:14% !important; top:41% !important; }
+  #path .mem:nth-of-type(4){ left:48% !important; top:53% !important; }
   #path .mem:nth-of-type(5){ left:13% !important; top:40% !important; }
-  #path .mem:nth-of-type(6){ left:87% !important; top:38% !important; }
+  #path .mem:nth-of-type(6){ left:85% !important; top:33% !important; }
   #path .mem:nth-of-type(7){ left:14% !important; top:24% !important; }
   #path .mem:nth-of-type(8){ left:86% !important; top:22% !important; }
   #path .mem:nth-of-type(9){ left:20% !important; top:14% !important; }
@@ -1243,10 +1243,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       </figure>
 
       <div class="mems" aria-hidden="false">
-        <figure class="mem scrub-hide" data-beat="t-child" style="--mx:9; --my:84"><span class="mem-ph"><img src="images/story/t-child.webp" loading="lazy" decoding="async" alt="Tommy as a child" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; childhood</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="t-child" style="--mx:7; --my:84"><span class="mem-ph"><img src="images/story/t-child.webp" loading="lazy" decoding="async" alt="Tommy as a child" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; childhood</figcaption></figure>
         <figure class="mem scrub-hide" data-beat="j-child" style="--mx:91; --my:83"><span class="mem-ph"><img src="images/story/j-child.webp" loading="lazy" decoding="async" alt="Jeyan as a child" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Jeyan &middot; childhood</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="t-school" style="--mx:4; --my:60"><span class="mem-ph"><img src="images/story/t-school.webp" loading="lazy" decoding="async" alt="Tommy in high school" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; high school</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="j-school" style="--mx:89; --my:63"><span class="mem-ph"><img src="images/story/j-school.webp" loading="lazy" decoding="async" alt="Jeyan in high school" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Jeyan &middot; high school</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="t-school" style="--mx:6; --my:60"><span class="mem-ph"><img src="images/story/t-school.webp" loading="lazy" decoding="async" alt="Tommy in high school" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; high school</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="j-school" style="--mx:91; --my:63"><span class="mem-ph"><img src="images/story/j-school.webp" loading="lazy" decoding="async" alt="Jeyan in high school" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Jeyan &middot; high school</figcaption></figure>
         <figure class="mem scrub-hide" data-beat="t-college" style="--mx:9; --my:44"><span class="mem-ph"><img src="images/story/t-college.webp" loading="lazy" decoding="async" alt="Tommy in college" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; college</figcaption></figure>
         <figure class="mem scrub-hide" data-beat="j-college" style="--mx:91; --my:40"><span class="mem-ph"><img src="images/story/j-college.webp" loading="lazy" decoding="async" alt="Jeyan in college" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Jeyan &middot; college</figcaption></figure>
         <figure class="mem scrub-hide" data-beat="t-work" style="--mx:11; --my:22"><span class="mem-ph"><img src="images/story/t-work.webp" loading="lazy" decoding="async" alt="Tommy in his working years" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; working years</figcaption></figure>
