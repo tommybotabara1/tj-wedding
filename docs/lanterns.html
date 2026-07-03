@@ -2833,7 +2833,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         .to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, 5.5)
         .to('#arr2', { opacity: 1, y: 0, ease: 'none', duration: 0.7 }, 6.0)
         .to(['#next-date', '#cd', '.cd-cap'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.18 }, 6.5)
-        .to(['.add-light', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.2 }, 7.5);
+        .to(['.add-light', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.2 }, 7.5)
+      /* copy crossfades to ink as dawn washes in, so it stays readable on the light sky */
+      .to(['.next-copy', '#arr1', '.next-copy .date-stamp', '.cd strong'], { color: '#2e2b27', ease: 'none', duration: 1.0 }, 8.7)
+      .to(['#arr2', '.cd span'], { color: '#5f584f', ease: 'none', duration: 1.0 }, 8.7)
+      .to('.add-light', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7);
     })();
   }
 })();
