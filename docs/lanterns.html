@@ -455,106 +455,28 @@ html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:16p
 #day h2{ font-size:clamp(42px,6.6vw,72px); color:var(--moon); text-shadow:0 0 50px rgba(207,154,147,.35); }
 #day .sub{ font-family:var(--serif); font-style:italic; font-size:clamp(20px,2.8vw,27px); color:var(--moon-soft); margin-top:12px; }
 
-/* full-bleed beach band with the heading and detail cards overlaid on the graphic */
+/* full-bleed save-the-date photo band with the heading and detail cards overlaid */
 .beach-frame{
   position:relative; width:100%; margin:0; padding:0; overflow:clip;
   min-height:clamp(660px, 96vh, 960px);
   display:flex; flex-direction:column; justify-content:space-between; align-items:center;
   border-top:1px solid rgba(244,237,221,.12); border-bottom:1px solid rgba(244,237,221,.12);
 }
-.beach{
-  position:absolute; inset:0; overflow:clip;
-  background:linear-gradient(180deg, #0a0607 0%, #170e12 26%, #2d1a21 40%, #40252c 47%, transparent 47%);
+.day-photo{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; object-position:50% 32%;
+  filter:brightness(.84) saturate(.9) sepia(.16);
+}
+@media (max-aspect-ratio:3/5){
+  .day-photo{ height:60vh; }
 }
 .beach-scrim{
   position:absolute; inset:0; z-index:2; pointer-events:none;
-  background:linear-gradient(180deg, rgba(18,11,9,.5) 0%, rgba(18,11,9,.12) 20%, transparent 40%, transparent 52%, rgba(18,11,9,.4) 76%, rgba(18,11,9,.7) 100%);
+  background:
+    linear-gradient(180deg, rgba(12,8,6,.85) 0%, rgba(12,8,6,.5) 24%, rgba(18,11,9,.3) 45%, rgba(18,11,9,.45) 70%, rgba(10,6,5,.82) 100%),
+    radial-gradient(90% 50% at 50% 108%, rgba(188,74,18,.28), transparent 70%);
 }
 #day .copy-center.day-head{ position:relative; z-index:3; padding:clamp(44px,7vh,88px) 24px 0; margin:0 auto; }
-.beach .moon{
-  position:absolute; top:33%; left:67%; width:92px; height:92px; transform:translateX(-50%);
-  border-radius:50%;
-  background:radial-gradient(circle at 42% 38%, #fffdf6 0%, #f4eddd 55%, #d9cfba 100%);
-  box-shadow:0 0 60px 18px rgba(244,237,221,.28), 0 0 150px 55px rgba(244,237,221,.12);
-}
-.beach .cloud{
-  position:absolute; height:26px; border-radius:999px; filter:blur(14px);
-  background:rgba(216,208,222,.08); animation:drift 40s linear infinite alternate;
-}
-@keyframes drift{ from{ transform:translateX(-10%) } to{ transform:translateX(10%) } }
-html.reduced .beach .cloud{ animation:none; }
-.beach .sea{
-  position:absolute; left:0; right:0; top:47%; height:33%;
-  background:linear-gradient(180deg, #22302c 0%, #16211e 30%, #0d1512 70%, #0a100e 100%);
-}
-.beach .sea::after{
-  content:""; position:absolute; inset:0; opacity:.8;
-  background:
-    radial-gradient(4px 60px at 50% 12%, rgba(244,237,221,.9), transparent 70%),
-    radial-gradient(3px 46px at 24% 30%, rgba(255,178,77,.35), transparent 70%),
-    radial-gradient(3px 52px at 66% 40%, rgba(255,178,77,.3), transparent 70%),
-    radial-gradient(2px 36px at 82% 24%, rgba(244,237,221,.6), transparent 70%),
-    radial-gradient(2px 44px at 38% 56%, rgba(244,237,221,.45), transparent 70%);
-  filter:blur(1px);
-}
-.beach .glints{ /* moonglade: moonlight column on the water */
-  position:absolute; left:67%; top:47.5%; height:26%; width:110px; transform:translateX(-50%);
-  background:repeating-linear-gradient(180deg, rgba(244,237,221,.26) 0 2px, transparent 2px 9px);
-  -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,.95), transparent);
-  mask-image:linear-gradient(180deg, rgba(0,0,0,.95), transparent);
-  filter:blur(1.5px); opacity:.85; animation:glint 7s ease-in-out infinite alternate;
-}
-@keyframes glint{ from{ transform:translateX(calc(-50% - 10px)) } to{ transform:translateX(calc(-50% + 10px)) } }
-html.reduced .glints{ animation:none; transform:translateX(-50%); }
-.beach .sand{
-  position:absolute; left:0; right:0; bottom:0; height:20%;
-  background:linear-gradient(180deg, #453626, #241a11);
-}
-.beach .foam{
-  position:absolute; left:-4%; right:-4%; top:78.5%; height:20px;
-  border-radius:50%;
-  background:radial-gradient(60% 100% at 50% 0%, rgba(244,237,221,.4), transparent 75%);
-  filter:blur(3px); animation:swash 6.5s ease-in-out infinite;
-}
-@keyframes swash{ 0%,100%{ transform:translateY(0) scaleY(1); opacity:.7 } 50%{ transform:translateY(8px) scaleY(.7); opacity:.4 } }
-html.reduced .foam{ animation:none; }
-.beach svg.palm{ position:absolute; bottom:3%; left:-2%; width:clamp(200px,27vw,340px); height:auto; color:#1d150f; z-index:1; }
-.beach .palm .sway{ transform-origin:18% 96%; animation:sway 7s ease-in-out infinite alternate; }
-@keyframes sway{ from{ transform:rotate(-1.6deg) } to{ transform:rotate(1.8deg) } }
-html.reduced .palm .sway{ animation:none; }
-.beach svg.guitar{ position:absolute; bottom:4%; right:2%; width:clamp(64px,8vw,104px); height:auto; color:#241a12; transform:rotate(-12deg); z-index:1; }
-.beach .bonfire{
-  position:absolute; bottom:7%; right:13%; width:44px; height:44px; border-radius:50%;
-  background:radial-gradient(circle at 50% 72%, #ffe2a0 0%, #ff9726 40%, rgba(188,74,18,.4) 66%, transparent 76%);
-  box-shadow:0 0 40px 16px rgba(255,151,38,.35), 0 0 100px 34px rgba(188,74,18,.18);
-}
-html:not(.reduced) .beach .bonfire{ animation:flick 2.2s ease-in-out infinite; }
-.beach .b-lan{
-  position:absolute; width:16px; height:22px; border-radius:45% 45% 50% 50%/35% 35% 60% 60%;
-  background:radial-gradient(circle at 50% 65%, var(--lan-core) 0%, var(--lan-mid) 48%, var(--lan-edge) 100%);
-  box-shadow:0 0 22px 8px rgba(var(--lan-glow),.72), 0 0 54px 18px rgba(var(--lan-halo),.25); animation:b-rise 13s linear infinite;
-}
-@keyframes b-rise{ from{ transform:translateY(40vh) scale(.7); opacity:0 } 12%{ opacity:1 } to{ transform:translateY(-30vh) scale(1); opacity:0 } }
-html.reduced .b-lan{ animation:none; opacity:.85; }
-
-/* keepsake print: pinned to the night sky on wide screens, in-flow on small */
-.shore-photo{
-  z-index:3; width:clamp(130px,13vw,170px); margin:0;
-  padding:8px 8px 30px; background:var(--paper); border-radius:4px;
-  box-shadow:0 16px 44px -14px rgba(0,0,0,.7), 0 0 34px rgba(255,151,38,.14);
-}
-.shore-photo img{ width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:2px; display:block; transform:rotate(-4deg); }
-.shore-photo figcaption{
-  position:absolute; left:0; right:0; bottom:7px; text-align:center;
-  font-family:var(--serif); font-style:italic; font-size:13px; color:var(--soft);
-}
-@media (min-width:1100px){
-  .shore-photo{ position:absolute; top:19%; left:7%; }
-}
-@media (max-width:1099px){
-  .shore-photo{ position:relative; margin:20px auto 0; }
-  .shore-photo img{ transform:rotate(-3deg); }
-}
 
 /* cards overlaid on the lower beach — frosted warm glass instead of white */
 .dcards{
@@ -1367,51 +1289,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   <!-- THE DAY -->
   <section id="day" aria-label="The Day — wedding details">
     <div class="beach-frame rv">
-      <div class="beach" aria-hidden="true">
-        <div class="moon"></div>
-        <div class="cloud" style="top:16%; left:12%; width:180px"></div>
-        <div class="cloud" style="top:38%; right:10%; width:240px; animation-delay:-16s"></div>
-        <div class="cloud" style="top:7%; right:6%; width:120px; animation-delay:-30s"></div>
-        <div class="sea"></div>
-        <div class="glints"></div>
-        <div class="foam"></div>
-        <div class="sand"></div>
-        <span class="b-lan" style="left:30%; top:30%; animation-delay:-2s"></span>
-        <span class="b-lan" style="left:58%; top:36%; animation-delay:-7s"></span>
-        <span class="b-lan" style="left:74%; top:26%; animation-delay:-11s"></span>
-        <span class="b-lan" style="left:18%; top:40%; width:12px; height:17px; animation-delay:-5s"></span>
-        <span class="b-lan" style="left:44%; top:24%; width:13px; height:18px; animation-delay:-9s"></span>
-        <span class="b-lan" style="left:66%; top:42%; width:18px; height:24px; animation-delay:-14s"></span>
-        <span class="b-lan" style="left:86%; top:38%; width:12px; height:17px; animation-delay:-17s"></span>
-        <span class="b-lan" style="left:50%; top:56%; animation-delay:-1s"></span>
-        <span class="b-lan" style="left:56%; top:60%; width:13px; height:18px; animation-delay:-4s"></span>
-        <span class="b-lan" style="left:47%; top:63%; width:12px; height:17px; animation-delay:-8s"></span>
-        <span class="b-lan" style="left:60%; top:54%; width:18px; height:24px; animation-delay:-12s"></span>
-        <svg class="palm" viewBox="0 0 220 260">
-          <g class="sway" fill="currentColor">
-            <path d="M104 250c-2-60 0-110 8-150l8 2c-9 42-10 90-6 148z"/>
-            <path d="M115 102c-28-26-60-30-92-16 36-4 64 6 88 26zM115 100c-10-36 2-66 28-86-14 28-18 56-16 84zM116 102c22-30 52-42 88-36-32 4-60 18-80 44zM115 103c34-12 64-6 90 16-30-12-60-12-86-4zM114 103c-34-8-62 2-84 26 28-16 56-20 80-14z"/>
-            <circle cx="112" cy="104" r="7"/><circle cx="124" cy="110" r="6"/><circle cx="104" cy="112" r="6"/>
-          </g>
-        </svg>
-        <svg class="guitar" viewBox="0 0 70 182" fill="currentColor">
-          <!-- headstock + tuning pegs -->
-          <path d="M29 3h12a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H29a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z"/>
-          <circle cx="25" cy="9" r="1.5"/><circle cx="25" cy="18" r="1.5"/><circle cx="45" cy="9" r="1.5"/><circle cx="45" cy="18" r="1.5"/>
-          <!-- neck -->
-          <rect x="31" y="23" width="8" height="70" rx="2.5"/>
-          <!-- body (figure-8 with a waist) -->
-          <path d="M35 90c-11 0-16 9-16 17 0 6-4 7-5 12-2 7-2 13 0 20 3 17 11 30 21 30s18-13 21-30c2-7 2-13 0-20-1-5-5-6-5-12 0-8-5-17-16-17z"/>
-          <!-- rosette + sound hole -->
-          <circle cx="35" cy="130" r="8" fill="#7c5a40"/>
-          <circle cx="35" cy="130" r="5" fill="#1a120c"/>
-          <!-- bridge -->
-          <rect x="28" y="145" width="14" height="4" rx="1.5" fill="#7c5a40"/>
-          <!-- strings -->
-          <g stroke="#d8b890" stroke-width=".5" opacity=".5"><path d="M33 24v122M35 24v122M37 24v122"/></g>
-        </svg>
-        <span class="bonfire" aria-hidden="true"></span>
-      </div>
+      <img class="day-photo" src="images/savethedate.webp" loading="lazy" decoding="async"
+        alt="Tommy and Jeyan sitting close, looking up at a fairground ride" />
       <div class="beach-scrim" aria-hidden="true"></div>
 
       <div class="copy-center day-head">
@@ -1419,12 +1298,6 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <h2 class="rv">The Day</h2>
         <p class="sub rv">The journey continues here.</p>
       </div>
-
-      <figure class="shore-photo rv">
-        <img src="images/journey-05.webp" loading="lazy" decoding="async"
-          alt="Tommy and Jeyan laughing in an embrace, dressed in white, night lights glowing behind them" />
-        <figcaption>the joy we pack</figcaption>
-      </figure>
 
       <div class="dcards">
       <article class="dcard rv">
