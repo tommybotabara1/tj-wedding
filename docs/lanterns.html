@@ -389,7 +389,9 @@ html.reduced .mem-ph:not(:disabled), html:not(.js-anim) .mem-ph:not(:disabled){ 
 }
 html.reduced .path-progress, html:not(.js-anim) .path-progress{ display:none; }
 .pcaps{ position:absolute; left:0; right:0; bottom:11vh; bottom:11svh; text-align:center; padding:0 24px; pointer-events:none; }
-/* phones: keep captions and the lower-right word-lantern clear of the fixed dock */
+/* phones: raised captions + the two-column memory ladder (rungs in the
+   nth-of-type overrides below; word-lanterns relay-fade on mobile to free
+   these windows — see the MOBILE_PATH block in the path timeline) */
 @media (max-width:640px){
   .pcaps{ bottom:20vh; bottom:20svh; }
   #path .chip:nth-of-type(2){ left:72% !important; top:64% !important; }
@@ -489,6 +491,10 @@ html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:16p
 }
 .day-photo-clip{ position:absolute; inset:0; overflow:hidden; }
 .day-photo{
+  /* 114.5% overscan + the wrapper's clip guarantee the baked caption band
+     (bottom ~12% of the source) always falls in the clipped overflow when
+     cover is height-limited (phones). object-position Y is reverse-solved
+     for desktop parity — retune BOTH together, they are interdependent. */
   position:absolute; left:0; top:0; width:100%; height:114.5%;
   object-fit:cover; object-position:50% 51.9%;
   filter:brightness(.84) saturate(.9) sepia(.16);
@@ -2895,9 +2901,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
          frac was solved from (midBeat - segStart) / segDuration for each
          arc's timeline segment (L/R: 0.4-5.6, M: 5.8-9.2), then nudged
          (+/-0.06 max) where an on-arc position would collide with a chip.
-         side is the direction of the arc's own line relative to center
-         (kept for documentation/us-met flanking); `inward` is the actual
-         offset direction used by placeAt: T frames (arcL) push RIGHT,
+         `inward` is the offset direction used by placeAt: T frames (arcL) push RIGHT,
          J frames (arcR) push LEFT, us-met frames keep flanking the center
          line (one left, one right, unchanged from rev3-b). */
       var stick = document.querySelector('#path .stick');
