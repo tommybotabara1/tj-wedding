@@ -400,23 +400,32 @@ html.reduced .path-progress, html:not(.js-anim) .path-progress{ display:none; }
   .chip .crown{ width:21px; height:4px; }
   .chip .base{ bottom:10px; width:28px; height:4px; }
   .chip .flame{ width:8px; height:8px; }
-  .mem{ width:58px; }
+  .mem{ width:52px; }
   .mem figcaption{ font-size:9.5px; }
-  /* phones: compress the memory-frame vertical range so nothing enters the
-     pcap caption band (bottom:20svh) or the fixed dock corner, and pull the
-     horizontal extremes in so a 72px frame never clips the 375px edge.
-     Inline left/top (from --mx/--my) win over stylesheet rules on the same
-     property, so override left/top directly rather than the custom property. */
-  #path .mem:nth-of-type(1){ left:13% !important; top:62% !important; }
-  #path .mem:nth-of-type(2){ left:43% !important; top:67% !important; }
-  #path .mem:nth-of-type(3){ left:14% !important; top:41% !important; }
-  #path .mem:nth-of-type(4){ left:48% !important; top:53% !important; }
-  #path .mem:nth-of-type(5){ left:13% !important; top:40% !important; }
-  #path .mem:nth-of-type(6){ left:85% !important; top:33% !important; }
-  #path .mem:nth-of-type(7){ left:14% !important; top:24% !important; }
-  #path .mem:nth-of-type(8){ left:86% !important; top:22% !important; }
-  #path .mem:nth-of-type(9){ left:20% !important; top:14% !important; }
-  #path .mem:nth-of-type(10){ left:80% !important; top:13% !important; }
+  /* phones: a deliberate two-column "story ladder" instead of a scattered
+     per-frame grid. Tommy's four frames (odd nth-of-type: 1/3/5/7) form the
+     LEFT column at a fixed x (10%), Jeyan's four (even: 2/4/6/8) form the
+     RIGHT column at the mirrored x (90%); both climb (top% decreases) in
+     beat order so the page reads bottom-to-top the same direction the
+     scroll/timeline runs. us-met-1/2 (9/10) flank the top, clear of the
+     "Home" chip. Frames are 52px wide here (not 58) so the right column
+     x-clears the "Laughter" chip and four rungs fit each column between
+     the caption band and the chips; the mobile-only chip relay fade-outs
+     (see the MOBILE_PATH block in the timeline JS) free the lower chip
+     slots temporally. Inline left/top (from --mx/--my) win over stylesheet
+     rules on the same property, so override left/top directly rather than
+     the custom property. Swept at 375x812/414x896 against
+     chips/.pcap/medallion/dock; see rev4-b-report.md. */
+  #path .mem:nth-of-type(1){ left:10% !important; top:58% !important; }   /* t-child */
+  #path .mem:nth-of-type(2){ left:90% !important; top:71% !important; }  /* j-child */
+  #path .mem:nth-of-type(3){ left:10% !important; top:34% !important; }   /* t-school */
+  #path .mem:nth-of-type(4){ left:90% !important; top:34% !important; }  /* j-school */
+  #path .mem:nth-of-type(5){ left:10% !important; top:21% !important; }   /* t-college */
+  #path .mem:nth-of-type(6){ left:90% !important; top:21% !important; } /* j-college */
+  #path .mem:nth-of-type(7){ left:10% !important; top:8% !important; }   /* t-work */
+  #path .mem:nth-of-type(8){ left:90% !important; top:8% !important; } /* j-work */
+  #path .mem:nth-of-type(9){ left:38% !important; top:12% !important; }  /* us-met-1 */
+  #path .mem:nth-of-type(10){ left:73% !important; top:8% !important; } /* us-met-2 */
   #merge-medallion{ left:calc(50% - 70px); top:calc(42% - 70px); width:140px; height:140px; }
   .tracerM-a{ transform:translate(-14px,0); }
   .tracerM-b{ transform:translate(14px,4px); }
@@ -2833,6 +2842,25 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         tl.to(chip, { opacity: 1, duration: 0.5 }, chipTimes[i])
           .to(chip, { y: -16, duration: 1.6, ease: 'none' }, chipTimes[i]);
       });
+      /* phones: the chips become a passing RELAY instead of an accumulating
+         constellation — each word-lantern fades out ~1.8 timeline units
+         after it lights (Home, the destination, stays). The narrow stick
+         cannot host eight memory frames AND six permanently-lit chips, so
+         the relay frees each chip's slot for the story-ladder rungs whose
+         beats come later. Desktop (>640px) keeps the accumulation look
+         exactly as before. Build-time gate (same pragmatic precedent as the
+         finale's M()): evaluated once at load, so crossing 640px live keeps
+         the loaded variant until reload — positions still swap live via
+         positionMems(), only the chip fade behaviour is load-locked. In
+         reduced mode this whole timeline is never built, so reduced keeps
+         its static always-visible chips. */
+      var MOBILE_PATH = window.innerWidth <= 640;
+      if (MOBILE_PATH) {
+        var chipFades = [3.1, 3.5, 4.7, 5.2, 8.5, null];
+        chips.forEach(function (chip, i) {
+          if (chipFades[i] !== null) tl.to(chip, { autoAlpha: 0, duration: 0.5 }, chipFades[i]);
+        });
+      }
       /* memory frames — two lives flashing past as the lights climb, then two
          together-frames once the paths merge. Opacity-only tweens: rotation
          lives on .mem-ph and must survive untouched. */
@@ -2862,42 +2890,51 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
       /* ---- anchor the memory frames + medallion to the arcs at runtime ----
          Each frame sits at the point on its arc where the tracer is passing
-         at the frame's mid-beat, offset outward so it clears the line and the
-         chips. frac was solved from (midBeat - segStart) / segDuration for
-         each arc's timeline segment (L/R: 0.4-5.6, M: 5.8-9.2), then nudged
-         (+/-0.06 max) where an on-arc position would collide with a chip. */
+         at the frame's mid-beat, offset INWARD (toward the page center) so it
+         reads as riding alongside the trail rather than sitting outside it.
+         frac was solved from (midBeat - segStart) / segDuration for each
+         arc's timeline segment (L/R: 0.4-5.6, M: 5.8-9.2), then nudged
+         (+/-0.06 max) where an on-arc position would collide with a chip.
+         side is the direction of the arc's own line relative to center
+         (kept for documentation/us-met flanking); `inward` is the actual
+         offset direction used by placeAt: T frames (arcL) push RIGHT,
+         J frames (arcR) push LEFT, us-met frames keep flanking the center
+         line (one left, one right, unchanged from rev3-b). */
       var stick = document.querySelector('#path .stick');
       var arcsSvg = $('arcs');
       var arcEls = { L: $('arcL'), R: $('arcR'), M: $('arcM') };
-      var OUT = 26; /* px the frame sits outward from the arc line */
+      var OUT = 26; /* px the frame sits offset from the arc line */
       var EDGE = 8; /* min px a frame must stay inside the viewport */
+      /* fixed dock (Menu/RSVP pills, .ctrls: position:fixed; right:18px;
+         bottom:18px) exclusion zone, viewport-relative so it applies the
+         same way at every width, not just phones */
+      var DOCK_W = 200, DOCK_H = 150;
       var memAnchors = [
-        /* out overrides the default 26px outward offset where the on-arc
-           position would otherwise sit under a word-lantern chip at this
-           beat; frac nudges (still within the brief's +/-0.06 budget) do the
-           same for t-college/j-college/j-school. Verified via a 2%-step
-           sweep at 1280x800/1440x860/375x812/414x896 (see rev3-b-report.md). */
-        { beat: 't-child', arc: 'L', frac: 0.16, side: 'left', out: 40 },
-        { beat: 'j-child', arc: 'R', frac: 0.30, side: 'right' },
-        { beat: 't-school', arc: 'L', frac: 0.43, side: 'left', out: 96 },
-        { beat: 'j-school', arc: 'R', frac: 0.50, side: 'right' },
-        { beat: 't-college', arc: 'L', frac: 0.68, side: 'left' },
-        { beat: 'j-college', arc: 'R', frac: 0.73, side: 'right' },
-        { beat: 't-work', arc: 'L', frac: 0.86, side: 'left' },
-        { beat: 'j-work', arc: 'R', frac: 0.94, side: 'right' },
-        { beat: 'us-met-1', arc: 'M', frac: 0.32, side: 'left' },
-        { beat: 'us-met-2', arc: 'M', frac: 0.76, side: 'right', out: 140 }
+        /* out overrides the default 26px offset where the on-arc position
+           would otherwise sit under a word-lantern chip at this beat; frac
+           nudges (still within the brief's +/-0.06 budget) do the same for
+           t-college/j-college/j-school. Verified via a 2%-step sweep at
+           1280x800/1440x860/375x812/414x896 (see rev4-b-report.md). */
+        { beat: 't-child', arc: 'L', frac: 0.16, inward: 'right', out: 70 },
+        { beat: 'j-child', arc: 'R', frac: 0.30, inward: 'left', out: 70 },
+        { beat: 't-school', arc: 'L', frac: 0.43, inward: 'right', out: 96 },
+        { beat: 'j-school', arc: 'R', frac: 0.50, inward: 'left' },
+        { beat: 't-college', arc: 'L', frac: 0.68, inward: 'right' },
+        { beat: 'j-college', arc: 'R', frac: 0.73, inward: 'left' },
+        { beat: 't-work', arc: 'L', frac: 0.86, inward: 'right' },
+        { beat: 'j-work', arc: 'R', frac: 0.98, inward: 'left', out: 125 },
+        { beat: 'us-met-1', arc: 'M', frac: 0.32, inward: 'left' },
+        { beat: 'us-met-2', arc: 'M', frac: 0.76, inward: 'right', out: 140 }
       ];
       function positionMems() {
         if (!stick || !arcsSvg) return;
-        /* <=640px: the arc-anchored math has no reachable frac/offset that
-           clears the chips + .pcaps + medallion on a squeezed stick (8 of 10
-           beats collide — see rev3-b-report.md "BLOCKED" table). Below that
-           width, fall back to the swept CSS grid (`--mx`/`--my` inline
-           percents + the `#path .mem:nth-of-type(N)` !important rules) by
-           clearing any inline left/top this function previously set. This
-           must re-run on every resize so crossing the 640px breakpoint in
-           either direction switches modes live. */
+        /* <=640px: the stick is too narrow for arc-anchored frames to clear
+           the two-column story ladder's own chip/caption/dock geometry, so
+           mobile uses a hand-tuned CSS grid instead (`#path .mem:nth-of-type(N)`
+           !important rules below). Clear any inline left/top this function
+           previously set so that grid can apply. This must re-run on every
+           resize so crossing the 640px breakpoint in either direction
+           switches modes live. */
         if (window.innerWidth <= 640) {
           memAnchors.forEach(function (a) {
             var el = mems[a.beat];
@@ -2910,30 +2947,46 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         var stickRect = stick.getBoundingClientRect();
         var ctm = arcsSvg.getScreenCTM();
         if (!ctm) return;
+        /* .pcaps runs the full width near the bottom (CSS bottom:11vh) and
+           only one caption is visible at a time, but its box never moves, so
+           measure it once per positionMems() call and treat it as a no-go
+           band. Early-climb beats (t-child/j-child/t-school/j-school) clamp
+           to the viewport-bottom edge before their arc point comes back
+           onscreen, which previously landed them squarely under the
+           caption text once the frame moved inward toward the horizontal
+           center where .pcap is centered. */
+        var pcapsEl = document.querySelector('#path .pcaps');
+        var pcapRect = pcapsEl ? pcapsEl.getBoundingClientRect() : null;
+        var pcapTop = pcapRect ? pcapRect.top - stickRect.top : null;
 
-        function placeAt(el, arc, frac, side, out, w, h) {
+        function placeAt(el, arc, frac, inward, out, w, h) {
           var pt = arc.getPointAtLength(frac * arc.getTotalLength());
           var scr = pt.matrixTransform(ctm);
           var x = scr.x - stickRect.left;
           var y = scr.y - stickRect.top;
-          /* offset outward from the line to get the frame's box edges, then
-             clamp those edges to the .stick viewport (and the phone dock
-             zone) so nothing clips — .mem keeps its CSS translate(-50%,-50%),
-             so left/top must be converted back to the box's CENTER before
-             being written, or the transform double-offsets it */
-          var boxLeft = side === 'left' ? x - out - w : x + out;
+          /* offset toward center ("inward") from the line to get the frame's
+             box edges, then clamp those edges to the .stick viewport (and
+             the fixed dock zone) so nothing clips — .mem keeps its CSS
+             translate(-50%,-50%), so left/top must be converted back to the
+             box's CENTER before being written, or the transform
+             double-offsets it */
+          var boxLeft = inward === 'left' ? x - out - w : x + out;
           var boxTop = y - h / 2;
           var maxLeft = stickRect.width - w - EDGE;
           var maxTop = stickRect.height - h - EDGE;
+          /* keep the frame's bottom edge above the caption band whenever
+             that band is tighter than the plain viewport-edge clamp */
+          if (pcapTop !== null) maxTop = Math.min(maxTop, pcapTop - h - 12);
           boxLeft = Math.max(EDGE, Math.min(maxLeft, boxLeft));
           boxTop = Math.max(EDGE, Math.min(maxTop, boxTop));
-          /* phones: keep frames clear of the fixed bottom-right dock (170x130) */
-          if (stickRect.width <= 640) {
-            var dockLeft = stickRect.width - 170;
-            var dockTop = stickRect.height - 130;
-            if (boxLeft + w > dockLeft && boxTop + h > dockTop) {
-              boxTop = dockTop - h - 4;
-            }
+          /* fixed dock (Menu/RSVP pills, bottom-right, viewport-relative) —
+             applies at ALL widths, not just phones, since .ctrls is a fixed
+             viewport element regardless of stick size */
+          var dockLeft = stickRect.width - DOCK_W;
+          var dockTop = stickRect.height - DOCK_H;
+          if (boxLeft + w > dockLeft && boxTop + h > dockTop) {
+            boxTop = dockTop - h - 4;
+            boxTop = Math.max(EDGE, boxTop);
           }
           /* !important beats the ≤640px `#path .mem:nth-of-type(N)` static
              fallback rules, which are also !important and would otherwise
@@ -2950,7 +3003,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           var w = r.width || el.offsetWidth;
           var h = r.height || el.offsetHeight;
           if (!w || !h) return;
-          placeAt(el, arc, a.frac, a.side, a.out || OUT, w, h);
+          placeAt(el, arc, a.frac, a.inward, a.out || OUT, w, h);
         });
       }
       positionMems();
