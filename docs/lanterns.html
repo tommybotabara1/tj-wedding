@@ -273,6 +273,9 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
     inset 0 0 26px rgba(132,54,18,.35);
 }
 #merge-medallion img{ width:100%; height:100%; object-fit:cover; }
+#merge-medallion .mm-btn{
+  display:block; width:100%; height:100%; padding:0; margin:0; border:none; background:none; font:inherit; cursor:default; pointer-events:none;
+}
 #merge-medallion.missing{ background:radial-gradient(60% 46% at 50% 64%, var(--lan-core), var(--lan-mid) 50%, var(--lan-edge) 100%); }
 #merge-medallion.missing::after{
   content:"our first photo\A to follow"; white-space:pre-line;
@@ -284,6 +287,8 @@ html.reduced #curtain .rule, html:not(.js-anim) #curtain .rule{ width:84px; }
 html.reduced #merge-medallion, html:not(.js-anim) #merge-medallion{
   position:static; margin:26px auto; opacity:1;
 }
+html.reduced #merge-medallion .mm-btn, html:not(.js-anim) #merge-medallion .mm-btn{ pointer-events:auto; }
+html.reduced #merge-medallion .mm-btn:not(:disabled), html:not(.js-anim) #merge-medallion .mm-btn:not(:disabled){ cursor:zoom-in; }
 /* Each word is a real paper lantern (same build as the T/J lanterns at the
    gate & finale) — crown, ribbed glowing body, base and a flickering flame —
    with the word lit inside where the monogram sits. */
@@ -334,10 +339,11 @@ html.reduced .tracer, html:not(.js-anim) .tracer{ display:none; }
 /* Memory frames — small tilted polaroids that flash alongside the rising
    lights: two lives (Tommy left, Jeyan right) climbing toward the same sky. */
 .mems{ position:absolute; inset:0; pointer-events:none; }
-.mem{ position:absolute; left:calc(var(--mx)*1%); top:calc(var(--my)*1%); width:110px; margin:0; transform:translate(-50%,-50%); }
+.mem{ position:absolute; left:calc(var(--mx)*1%); top:calc(var(--my)*1%); width:86px; margin:0; transform:translate(-50%,-50%); }
 .mem-ph{
   display:block; padding:5px 5px 0; background:var(--paper); border-radius:2px;
   box-shadow:0 8px 22px rgba(0,0,0,.35), 0 0 0 1px rgba(255,180,90,.14);
+  border:none; margin:0; width:100%; font:inherit; cursor:default; text-align:inherit; pointer-events:none;
 }
 .mem:nth-child(odd) .mem-ph{ transform:rotate(-3deg); }
 .mem:nth-child(even) .mem-ph{ transform:rotate(2.5deg); }
@@ -350,17 +356,25 @@ html.reduced .tracer, html:not(.js-anim) .tracer{ display:none; }
   font-family:var(--serif); font-style:italic; font-size:10.5px; color:var(--soft);
   background:var(--cream);
 }
+/* .mem-open marks a button whose image has actually loaded and JS has bound
+   a click handler — only then is it clickable/focusable. Buttons start
+   disabled in markup (see JS), which also makes them untabbable, so
+   placeholder (.missing) frames stay inert. */
+.mem-ph:disabled, #merge-medallion .mm-btn:disabled{ cursor:default; }
+.mem-ph.mem-open, #merge-medallion .mm-btn.mem-open{ cursor:zoom-in; pointer-events:auto; }
 .mem figcaption{
   margin-top:5px; padding-bottom:6px; text-align:center;
-  font-family:var(--serif); font-style:italic; font-size:11.5px; color:var(--moon-soft);
+  font-family:var(--serif); font-style:italic; font-size:10.5px; color:var(--moon-soft);
   text-shadow:0 0 12px rgba(0,0,0,.6);
 }
 html.reduced .mems, html:not(.js-anim) .mems{
   position:static; display:flex; flex-wrap:wrap; gap:14px; justify-content:center;
   padding:24px; pointer-events:auto;
 }
-html.reduced .mem, html:not(.js-anim) .mem{ position:static; opacity:1 !important; left:auto; top:auto; transform:none; }
-html.reduced .mem-ph, html:not(.js-anim) .mem-ph{ transform:none !important; }
+html.reduced .mem, html:not(.js-anim) .mem{ position:static; opacity:1 !important; visibility:visible !important; left:auto; top:auto; transform:none; }
+html.reduced .mem-ph, html:not(.js-anim) .mem-ph{ transform:none !important; pointer-events:auto; }
+html.reduced .mem-ph:not(:disabled), html:not(.js-anim) .mem-ph:not(:disabled){ cursor:zoom-in; }
+.js-anim .mem.scrub-hide{ visibility:hidden; }
 /* quiet progress thread on the left so the pinned scroll never reads as frozen */
 .path-progress{
   position:absolute; left:20px; top:50%; transform:translateY(-50%);
@@ -386,8 +400,8 @@ html.reduced .path-progress, html:not(.js-anim) .path-progress{ display:none; }
   .chip .crown{ width:21px; height:4px; }
   .chip .base{ bottom:10px; width:28px; height:4px; }
   .chip .flame{ width:8px; height:8px; }
-  .mem{ width:72px; }
-  .mem figcaption{ font-size:10px; }
+  .mem{ width:58px; }
+  .mem figcaption{ font-size:9.5px; }
   /* phones: compress the memory-frame vertical range so nothing enters the
      pcap caption band (bottom:20svh) or the fixed dock corner, and pull the
      horizontal extremes in so a 72px frame never clips the 375px edge.
@@ -1240,22 +1254,24 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         </g>
       </svg>
       <figure id="merge-medallion" class="scrub-hide">
-        <img src="images/story/us-meet.webp" loading="lazy" decoding="async"
-          alt="The earliest photo of Tommy and Jeyan together"
-          onerror="this.closest('#merge-medallion').classList.add('missing'); this.remove();" />
+        <button type="button" class="mm-btn" disabled aria-label="View photo: our first photo">
+          <img src="images/story/us-meet.webp" loading="lazy" decoding="async"
+            alt="The earliest photo of Tommy and Jeyan together"
+            onerror="this.closest('#merge-medallion').classList.add('missing'); this.remove();" />
+        </button>
       </figure>
 
       <div class="mems" aria-hidden="false">
-        <figure class="mem scrub-hide" data-beat="t-child" style="--mx:7; --my:84"><span class="mem-ph"><img src="images/story/t-child.webp" loading="lazy" decoding="async" alt="Tommy as a child" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; childhood</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="j-child" style="--mx:91; --my:83"><span class="mem-ph"><img src="images/story/j-child.webp" loading="lazy" decoding="async" alt="Jeyan as a child" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Jeyan &middot; childhood</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="t-school" style="--mx:6; --my:60"><span class="mem-ph"><img src="images/story/t-school.webp" loading="lazy" decoding="async" alt="Tommy in high school" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; high school</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="j-school" style="--mx:91; --my:63"><span class="mem-ph"><img src="images/story/j-school.webp" loading="lazy" decoding="async" alt="Jeyan in high school" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Jeyan &middot; high school</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="t-college" style="--mx:9; --my:44"><span class="mem-ph"><img src="images/story/t-college.webp" loading="lazy" decoding="async" alt="Tommy in college" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; college</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="j-college" style="--mx:91; --my:40"><span class="mem-ph"><img src="images/story/j-college.webp" loading="lazy" decoding="async" alt="Jeyan in college" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Jeyan &middot; college</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="t-work" style="--mx:11; --my:22"><span class="mem-ph"><img src="images/story/t-work.webp" loading="lazy" decoding="async" alt="Tommy in his working years" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Tommy &middot; working years</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="j-work" style="--mx:89; --my:19"><span class="mem-ph"><img src="images/story/j-work.webp" loading="lazy" decoding="async" alt="Jeyan in her working years" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>Jeyan &middot; working years</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="us-met-1" style="--mx:15; --my:20"><span class="mem-ph"><img src="images/story/us-met-1.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan in their first year together" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>the year we met</figcaption></figure>
-        <figure class="mem scrub-hide" data-beat="us-met-2" style="--mx:85; --my:19"><span class="mem-ph"><img src="images/story/us-met-2.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan in their first year together" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></span><figcaption>and every day after</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="t-child" style="--mx:7; --my:84"><button type="button" class="mem-ph" disabled aria-label="View photo: Tommy &middot; childhood"><img src="images/story/t-child.webp" loading="lazy" decoding="async" alt="Tommy as a child" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>Tommy &middot; childhood</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="j-child" style="--mx:91; --my:83"><button type="button" class="mem-ph" disabled aria-label="View photo: Jeyan &middot; childhood"><img src="images/story/j-child.webp" loading="lazy" decoding="async" alt="Jeyan as a child" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>Jeyan &middot; childhood</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="t-school" style="--mx:6; --my:60"><button type="button" class="mem-ph" disabled aria-label="View photo: Tommy &middot; high school"><img src="images/story/t-school.webp" loading="lazy" decoding="async" alt="Tommy in high school" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>Tommy &middot; high school</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="j-school" style="--mx:91; --my:63"><button type="button" class="mem-ph" disabled aria-label="View photo: Jeyan &middot; high school"><img src="images/story/j-school.webp" loading="lazy" decoding="async" alt="Jeyan in high school" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>Jeyan &middot; high school</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="t-college" style="--mx:9; --my:44"><button type="button" class="mem-ph" disabled aria-label="View photo: Tommy &middot; college"><img src="images/story/t-college.webp" loading="lazy" decoding="async" alt="Tommy in college" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>Tommy &middot; college</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="j-college" style="--mx:91; --my:40"><button type="button" class="mem-ph" disabled aria-label="View photo: Jeyan &middot; college"><img src="images/story/j-college.webp" loading="lazy" decoding="async" alt="Jeyan in college" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>Jeyan &middot; college</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="t-work" style="--mx:11; --my:22"><button type="button" class="mem-ph" disabled aria-label="View photo: Tommy &middot; working years"><img src="images/story/t-work.webp" loading="lazy" decoding="async" alt="Tommy in his working years" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>Tommy &middot; working years</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="j-work" style="--mx:89; --my:19"><button type="button" class="mem-ph" disabled aria-label="View photo: Jeyan &middot; working years"><img src="images/story/j-work.webp" loading="lazy" decoding="async" alt="Jeyan in her working years" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>Jeyan &middot; working years</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="us-met-1" style="--mx:15; --my:20"><button type="button" class="mem-ph" disabled aria-label="View photo: the year we met"><img src="images/story/us-met-1.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan in their first year together" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>the year we met</figcaption></figure>
+        <figure class="mem scrub-hide" data-beat="us-met-2" style="--mx:85; --my:19"><button type="button" class="mem-ph" disabled aria-label="View photo: and every day after"><img src="images/story/us-met-2.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan in their first year together" onerror="this.closest('.mem-ph').classList.add('missing'); this.remove();" /></button><figcaption>and every day after</figcaption></figure>
       </div>
 
       <span class="chip scrub-hide" style="left:17%; top:76%"><span class="crown"></span><span class="body">Timing</span><span class="base"></span><span class="flame"></span></span>
@@ -2401,6 +2417,41 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       if (window.__lenis) window.__lenis.stop();
       if (typeof lb.showModal === 'function') lb.showModal(); else lb.setAttribute('open', '');
     });
+
+    /* memory frames + medallion: same solo pattern as the attire guide, but
+       only wired up once each button's own <img> has actually loaded — the
+       button starts disabled in markup so a missing story photo (still
+       rendering the "photo to follow" placeholder) never opens an empty
+       lightbox and never grabs a tab stop. */
+    function bindSoloOpen(btn, capText) {
+      if (!btn || btn.__memBound) return;
+      var img = btn.querySelector('img');
+      if (!img) return;
+      function enable() {
+        if (btn.__memBound) return;
+        btn.__memBound = true;
+        btn.disabled = false;
+        btn.classList.add('mem-open');
+        btn.addEventListener('click', function () {
+          lastTrigger = btn;
+          lb.classList.add('solo');
+          lbImg.src = img.currentSrc || img.src;
+          lbImg.alt = img.alt || '';
+          lbCap.textContent = capText;
+          if (window.__lenis) window.__lenis.stop();
+          if (typeof lb.showModal === 'function') lb.showModal(); else lb.setAttribute('open', '');
+        });
+      }
+      if (img.complete && img.naturalWidth > 0) enable();
+      else img.addEventListener('load', enable);
+    }
+    Array.prototype.slice.call(document.querySelectorAll('#path .mem')).forEach(function (mem) {
+      var btn = mem.querySelector('.mem-ph');
+      var cap = mem.querySelector('figcaption');
+      bindSoloOpen(btn, cap ? cap.textContent : '');
+    });
+    var medallionEl = $('merge-medallion');
+    bindSoloOpen(medallionEl && medallionEl.querySelector('.mm-btn'), 'our first photo');
   })();
 
   /* ---------- guest lantern: released after a successful RSVP ---------- */
@@ -2805,9 +2856,94 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       memBeats.forEach(function (beat) {
         var el = mems[beat[0]];
         if (!el) return;
-        tl.to(el, { opacity: 1, duration: 0.35 }, beat[1])
-          .to(el, { opacity: 0, duration: 0.35 }, beat[2] - 0.35);
+        tl.to(el, { autoAlpha: 1, duration: 0.35 }, beat[1])
+          .to(el, { autoAlpha: 0, duration: 0.35 }, beat[2] - 0.35);
       });
+
+      /* ---- anchor the memory frames + medallion to the arcs at runtime ----
+         Each frame sits at the point on its arc where the tracer is passing
+         at the frame's mid-beat, offset outward so it clears the line and the
+         chips. frac was solved from (midBeat - segStart) / segDuration for
+         each arc's timeline segment (L/R: 0.4-5.6, M: 5.8-9.2), then nudged
+         (+/-0.06 max) where an on-arc position would collide with a chip. */
+      var stick = document.querySelector('#path .stick');
+      var arcsSvg = $('arcs');
+      var arcEls = { L: $('arcL'), R: $('arcR'), M: $('arcM') };
+      var OUT = 26; /* px the frame sits outward from the arc line */
+      var EDGE = 8; /* min px a frame must stay inside the viewport */
+      var memAnchors = [
+        /* out overrides the default 26px outward offset where the on-arc
+           position would otherwise sit under a word-lantern chip at this
+           beat; frac nudges (still within the brief's +/-0.06 budget) do the
+           same for t-college/j-college/j-school. Verified via a 2%-step
+           sweep at 1280x800/1440x860/375x812/414x896 (see rev3-b-report.md). */
+        { beat: 't-child', arc: 'L', frac: 0.16, side: 'left', out: 40 },
+        { beat: 'j-child', arc: 'R', frac: 0.30, side: 'right' },
+        { beat: 't-school', arc: 'L', frac: 0.43, side: 'left', out: 96 },
+        { beat: 'j-school', arc: 'R', frac: 0.50, side: 'right' },
+        { beat: 't-college', arc: 'L', frac: 0.68, side: 'left' },
+        { beat: 'j-college', arc: 'R', frac: 0.73, side: 'right' },
+        { beat: 't-work', arc: 'L', frac: 0.86, side: 'left' },
+        { beat: 'j-work', arc: 'R', frac: 0.94, side: 'right' },
+        { beat: 'us-met-1', arc: 'M', frac: 0.32, side: 'left' },
+        { beat: 'us-met-2', arc: 'M', frac: 0.76, side: 'right', out: 140 }
+      ];
+      function positionMems() {
+        if (!stick || !arcsSvg) return;
+        var stickRect = stick.getBoundingClientRect();
+        var ctm = arcsSvg.getScreenCTM();
+        if (!ctm) return;
+
+        function placeAt(el, arc, frac, side, out, w, h) {
+          var pt = arc.getPointAtLength(frac * arc.getTotalLength());
+          var scr = pt.matrixTransform(ctm);
+          var x = scr.x - stickRect.left;
+          var y = scr.y - stickRect.top;
+          /* offset outward from the line to get the frame's box edges, then
+             clamp those edges to the .stick viewport (and the phone dock
+             zone) so nothing clips — .mem keeps its CSS translate(-50%,-50%),
+             so left/top must be converted back to the box's CENTER before
+             being written, or the transform double-offsets it */
+          var boxLeft = side === 'left' ? x - out - w : x + out;
+          var boxTop = y - h / 2;
+          var maxLeft = stickRect.width - w - EDGE;
+          var maxTop = stickRect.height - h - EDGE;
+          boxLeft = Math.max(EDGE, Math.min(maxLeft, boxLeft));
+          boxTop = Math.max(EDGE, Math.min(maxTop, boxTop));
+          /* phones: keep frames clear of the fixed bottom-right dock (170x130) */
+          if (stickRect.width <= 640) {
+            var dockLeft = stickRect.width - 170;
+            var dockTop = stickRect.height - 130;
+            if (boxLeft + w > dockLeft && boxTop + h > dockTop) {
+              boxTop = dockTop - h - 4;
+            }
+          }
+          /* !important beats the ≤640px `#path .mem:nth-of-type(N)` static
+             fallback rules, which are also !important and would otherwise
+             outrank a plain inline style at the same specificity */
+          el.style.setProperty('left', (boxLeft + w / 2) + 'px', 'important');
+          el.style.setProperty('top', (boxTop + h / 2) + 'px', 'important');
+        }
+
+        memAnchors.forEach(function (a) {
+          var el = mems[a.beat];
+          var arc = arcEls[a.arc];
+          if (!el || !arc) return;
+          var r = el.getBoundingClientRect();
+          var w = r.width || el.offsetWidth;
+          var h = r.height || el.offsetHeight;
+          if (!w || !h) return;
+          placeAt(el, arc, a.frac, a.side, a.out || OUT, w, h);
+        });
+      }
+      positionMems();
+      ScrollTrigger.addEventListener('refresh', positionMems);
+      var memResizeTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(memResizeTimer);
+        memResizeTimer = setTimeout(positionMems, 150);
+      });
+
       var capTimes = [[0.5, 2.4], [2.6, 4.4], [4.6, 6.4], [6.8, null]];
       caps.forEach(function (cap, i) {
         tl.to(cap, { opacity: 1, duration: 0.6 }, capTimes[i][0]);
