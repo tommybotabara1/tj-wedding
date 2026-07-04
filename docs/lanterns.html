@@ -440,6 +440,8 @@ html.reduced .pcap, html:not(.js-anim) .pcap{ position:static; margin-bottom:16p
     radial-gradient(90% 55% at 50% 108%, rgba(22,15,12,.55), transparent 70%);
 }
 .bridge-copy{ position:relative; z-index:2; text-align:center; padding:0 24px 12vh; }
+/* phones: keep the bridge caption above the fixed dock corner */
+@media (max-width:640px){ .bridge-copy{ padding-bottom:24vh; } }
 .bridge-copy .script-accent{ text-shadow:0 2px 22px rgba(0,0,0,.7); }
 .bridge-copy .accent{ width:46px; height:1px; background:var(--gold-light); margin:14px auto 16px; opacity:.8; }
 .bridge-copy p{
@@ -980,8 +982,9 @@ html:not(.reduced) #next-lans .lantern.far{ animation:floaty-far 7s ease-in-out 
 }
 #nlanT,#nlanJ{ position:absolute; bottom:-150px; }
 #nlanT{ left:10%; } #nlanJ{ right:10%; }
-html.reduced #nlanT, html:not(.js-anim) #nlanT{ bottom:auto; top:15%; left:32%; }
-html.reduced #nlanJ, html:not(.js-anim) #nlanJ{ bottom:auto; top:15%; right:32%; }
+/* static pair parks above the headline (h2 top is ~16% at common heights) */
+html.reduced #nlanT, html:not(.js-anim) #nlanT{ bottom:auto; top:2%; left:26%; }
+html.reduced #nlanJ, html:not(.js-anim) #nlanJ{ bottom:auto; top:2%; right:26%; }
 #union-glow{ /* two lights, flying together */
   /* size + top retargeted to match the new (Fix 3) desktop meet point, which now
      lands the pair around 8-11% viewport (measured off .next-copy, clearing the
