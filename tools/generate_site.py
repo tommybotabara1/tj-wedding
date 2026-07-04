@@ -961,7 +961,7 @@ def make_floor_plan_svg(option, by_table):
         warn      = " !" if total_pax > TABLE_CAP else ""
 
         if option == "b" and tnum in sponsor_tables:
-            table_svgs += f'\n          <rect x="{cx - 60}" y="{cy - 22}" width="120" height="44" rx="5" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.5"/>'
+            table_svgs += f'\n          <rect x="{cx - 60}" y="{cy - 22}" width="120" height="44" rx="5" fill="{color}" fill-opacity="0.22" stroke="{color}" stroke-width="1.5" transform="rotate(90,{cx},{cy})"/>'
             table_svgs += f'\n          <text x="{cx}" y="{cy - 5}" text-anchor="middle" font-size="11" font-weight="bold" fill="{color}">{tnum} - {int(total_pax)}pax{warn}</text>'
             table_svgs += f'\n          <text x="{cx}" y="{cy + 10}" text-anchor="middle" font-size="9" fill="{color}" font-style="italic">Sponsors</text>'
         else:
@@ -1435,6 +1435,7 @@ function createTableSVG(tNum, cx, cy, color) {{
   if (sponsorRect) {{
     g.innerHTML = `
       <rect x="-64" y="-24" width="128" height="48" rx="6" fill="${{color}}" fill-opacity=".20"
+            transform="rotate(90)"
             stroke="${{color}}" stroke-width="1.5" class="fp-body"/>
       <text text-anchor="middle" y="-5" font-size="12"
             font-weight="bold" fill="${{color}}">${{tNum}}</text>
