@@ -2890,6 +2890,23 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       ];
       function positionMems() {
         if (!stick || !arcsSvg) return;
+        /* <=640px: the arc-anchored math has no reachable frac/offset that
+           clears the chips + .pcaps + medallion on a squeezed stick (8 of 10
+           beats collide — see rev3-b-report.md "BLOCKED" table). Below that
+           width, fall back to the swept CSS grid (`--mx`/`--my` inline
+           percents + the `#path .mem:nth-of-type(N)` !important rules) by
+           clearing any inline left/top this function previously set. This
+           must re-run on every resize so crossing the 640px breakpoint in
+           either direction switches modes live. */
+        if (window.innerWidth <= 640) {
+          memAnchors.forEach(function (a) {
+            var el = mems[a.beat];
+            if (!el) return;
+            el.style.removeProperty('left');
+            el.style.removeProperty('top');
+          });
+          return;
+        }
         var stickRect = stick.getBoundingClientRect();
         var ctm = arcsSvg.getScreenCTM();
         if (!ctm) return;
