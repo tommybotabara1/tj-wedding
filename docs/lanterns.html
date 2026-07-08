@@ -786,15 +786,33 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 .role{ display:block; font-size:10px; letter-spacing:.28em; text-transform:uppercase; color:var(--rose-deep); margin-bottom:4px; }
 .ent-col.sage .role, .ent-block .role{ color:var(--sage-deep); }
 .ent-col h4, .ent-block h4{ font-size:21px; margin-bottom:8px; }
-.ent-roster{ list-style:none; margin:0; padding:0; font-size:14px; }
-.ent-roster li{ padding:4px 0; border-bottom:1px dashed var(--line); }
+.ent-roster{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px; }
+.ent-roster li, .ent-name-chip{
+  display:inline-flex; align-items:center; min-height:34px; max-width:100%;
+  border:1px solid var(--line); border-radius:999px; padding:6px 12px;
+  background:var(--ivory); color:var(--soft); font-size:12.5px; line-height:1.25;
+}
 .ent-block{ margin-top:20px; }
 .ent-mini{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; }
 .ent-tk{ border:1px solid var(--line); border-radius:10px; padding:12px 14px; font-size:13px; background:var(--ivory); }
 .ent-tk b{ display:block; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--rose-deep); margin-bottom:4px; font-weight:500; }
-.ent-tk span{ display:block; }
-.ent-sponsors{ display:flex; flex-wrap:wrap; gap:8px; }
-.ent-sponsors span{ font-size:12.5px; border:1px solid var(--line); border-radius:999px; padding:6px 14px; background:var(--ivory); }
+.ent-tk .ent-role-names{ display:flex; flex-wrap:wrap; gap:6px; }
+.ent-tk .ent-name-chip{ min-height:30px; padding:5px 10px; font-size:12px; }
+.ent-sponsor-list{
+  list-style:none; margin:0; padding:0; display:grid; gap:8px;
+  counter-reset:sponsor;
+}
+.ent-sponsor-list li{
+  counter-increment:sponsor; display:grid; grid-template-columns:34px 1fr; align-items:center; gap:10px;
+  min-height:42px; border:1px solid var(--line); border-radius:12px; padding:8px 12px;
+  background:linear-gradient(90deg, rgba(156,170,143,.08), var(--ivory) 42%);
+  color:var(--ink); font-size:13px; line-height:1.35;
+}
+.ent-sponsor-list li::before{
+  content:counter(sponsor, decimal-leading-zero); display:grid; place-items:center;
+  width:28px; height:28px; border-radius:50%; background:rgba(148,90,82,.09);
+  color:var(--rose-deep); font-size:10px; letter-spacing:.08em; font-weight:500;
+}
 
 /* Forms */
 .field{ margin-bottom:16px; }
@@ -1732,36 +1750,55 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     </div>
     <p>The family and friends who walk beside us as our next chapter takes flight.</p>
     <div class="ent-leads">
-      <div class="ent-lead"><h4>Parents of the Bride</h4><span class="nm">Joel Santioque</span><span class="nm">Olivia Santioque</span></div>
-      <div class="ent-lead sage"><h4>Parents of the Groom</h4><span class="nm">Sherwin Tommy Botabara</span><span class="nm">Elaine Botabara</span></div>
+      <div class="ent-lead"><h4>Parents of the Bride</h4><span class="nm">Joel M. Santioque</span><span class="nm">Olivia C. Santioque</span></div>
+      <div class="ent-lead sage"><h4>Parents of the Groom</h4><span class="nm">Sherwin Tommy P. Botabara</span><span class="nm">Elaine M. Botabara</span></div>
     </div>
     <div class="ent-leads">
       <div class="ent-lead"><h4>Maids of Honor</h4><span class="nm">Hannah C. Santioque</span><span class="nm">Dimples Jenna S. Collera</span></div>
-      <div class="ent-lead sage"><h4>Best Men</h4><span class="nm">Teddy M. Botabara</span><span class="nm">Joval C. Santioque</span></div>
+      <div class="ent-lead sage"><h4>Best Men</h4><span class="nm">Joval C. Santioque</span><span class="nm">Teddy M. Botabara</span></div>
     </div>
     <div class="ent-party">
       <div class="ent-col"><span class="role">In Dusty Rose</span><h4>Bridesmaids</h4>
-        <ul class="ent-roster"><li>Micca Ricka Raphaella T. Cantos</li><li>Denise M. Beltran</li><li>Josett A. Romano</li><li>Gemela Marian A. David</li><li>Ceijas Lyn Tagana</li><li>Abigail Cayabyab</li><li>Vanessa Trinidad</li><li>Marielle Serania</li></ul>
+        <ul class="ent-roster"><li>Gemela Marian A. David</li><li>Josett A. Romano</li><li>Ceijas-Lyn Y. Tagana</li><li>Abigail Cayabyab-Fereras</li><li>Adrianne Micaela Manalaotao</li><li>Michelle A. Alaras</li><li>Micca Ricka Raphaella T. Cantos</li><li>Denise M. Beltran</li><li>Vanessa Laureen A. Trinidad</li><li>Marielle Joy K. Serania</li></ul>
       </div>
       <div class="ent-col sage"><span class="role">In Sage</span><h4>Groomsmen</h4>
-        <ul class="ent-roster"><li>Rom D. Fronda Jr.</li><li>Betlee T. Barraquias</li><li>Jason S. Deichmann</li><li>Piolo G. Barletta</li><li>Emil B. de Dios</li><li>Traviz Keinn T. Climacosa</li><li>Vaunn C. Maribao</li><li>Michael Ryan F. Somosot</li></ul>
+        <ul class="ent-roster"><li>Rom D. Fronda Jr.</li><li>Axl John R. Mirabueno</li><li>Emil B. de Dios</li><li>Traviz Keinn T. Climacosa</li><li>Vaunn C. Maribao</li><li>Michael Ryan F. Somosot</li><li>Julian Christopher A. Lopez</li><li>Betlee T. Barraquias</li><li>Jason S. Deichmann</li><li>Piolo G. Barletta</li></ul>
       </div>
     </div>
     <div class="ent-block">
       <span class="role">In the Ceremony</span><h4>Ceremony Roles</h4>
       <div class="ent-mini">
-        <div class="ent-tk"><b>Candle</b><span>Julian Christopher A. Lopez</span><span>Michelle A. Alaras</span></div>
-        <div class="ent-tk"><b>Cord</b><span>Dean Joan</span><span>Chairperson Christian</span></div>
-        <div class="ent-tk"><b>Veil</b><span>Adrianne Micaela Manalaotao</span><span>Axl John Mirabueno</span></div>
-        <div class="ent-tk"><b>Bible</b><span>Seansean Botabara</span></div>
-        <div class="ent-tk"><b>Flower Girl</b><span>Nina Botabara</span></div>
+        <div class="ent-tk"><b>Candle</b><div class="ent-role-names"><span class="ent-name-chip">Julian Christopher A. Lopez</span><span class="ent-name-chip">Michelle A. Alaras</span></div></div>
+        <div class="ent-tk"><b>Cord</b><div class="ent-role-names"><span class="ent-name-chip">Christian Dino Diñoso</span><span class="ent-name-chip">Joan Diñoso</span></div></div>
+        <div class="ent-tk"><b>Veil</b><div class="ent-role-names"><span class="ent-name-chip">Axl John R. Mirabueno</span><span class="ent-name-chip">Adrianne Micaela Manalaotao</span></div></div>
+        <div class="ent-tk"><b>Bible Bearer</b><div class="ent-role-names"><span class="ent-name-chip">Alvin P. Botabara</span></div></div>
+        <div class="ent-tk"><b>Coin Bearer</b><div class="ent-role-names"><span class="ent-name-chip">Luis B. de Dios</span></div></div>
+        <div class="ent-tk"><b>Ring Bearer</b><div class="ent-role-names"><span class="ent-name-chip">Seansean B. Aspra</span></div></div>
+        <div class="ent-tk"><b>Flower Girls</b><div class="ent-role-names"><span class="ent-name-chip">Bea Bianca B. Botabara</span><span class="ent-name-chip">Nina Ysabelle B. Botabara</span></div></div>
       </div>
     </div>
     <div class="ent-block">
       <span class="role">With Gratitude</span><h4>Principal Sponsors</h4>
-      <div class="ent-sponsors">
-        <span>Dean Joan</span><span>Chairperson Christian</span><span>Prof. Benedict Avila</span><span>Karen Austria</span><span>Shiela Chan</span><span>Cheryl Imelda V. Capinpin</span><span>Patrick M. Santillan</span><span>Andrew Paul I. Montinola</span><span>Analiza C. Chiapoco</span><span>William G. Tan</span><span>Jaime C. Perez</span><span>Ma. Corazon D. Babadilla</span><span>Emalyn Lira</span><span>Yshmael I. Calma</span><span>Jennifer Calma</span>
-      </div>
+      <ol class="ent-sponsor-list">
+        <li>Mr. and Mrs. Avila</li>
+        <li>Mr. and Mrs. Capinpin</li>
+        <li>Mr. and Mrs. Santillan</li>
+        <li>Andrew Paul I. Montinola</li>
+        <li>Analiza C. Chiapoco</li>
+        <li>Mr. and Mrs. Perez</li>
+        <li>Mr. and Mrs. Babadilla</li>
+        <li>Mr. and Mrs. Tan</li>
+        <li>Emalyn Lira</li>
+        <li>Mr. and Mrs. Austria</li>
+        <li>Mr. and Mrs. Chan</li>
+        <li>Voltaire Villareal</li>
+        <li>Mr. and Mrs. Christian Dino Diñoso</li>
+        <li>Godofredo Baja Jr.</li>
+        <li>Mr. and Mrs. Ang</li>
+        <li>Rosa Gonzales</li>
+        <li>Mr. and Mrs. Rene Muller</li>
+        <li>Mr. Denley Cyder A. Mirabueno and Mrs. Grace Chua-Mirabueno</li>
+      </ol>
     </div>
   </div>
 </dialog>
