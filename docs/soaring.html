@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tommy &amp; Jeyan | Soaring with TJ</title>
+  <meta name="description" content="An invitation to celebrate Tommy and Jeyan. Sunday, December 27, 2026 in Newport City and Aseana City.">
+  <link rel="canonical" href="https://tommybotabara1.github.io/tj-wedding/soaring.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tommy & Jeyan | Soaring with TJ">
+  <meta property="og:description" content="Two paths. One sky. December 27, 2026.">
+  <meta property="og:image" content="https://tommybotabara1.github.io/tj-wedding/images/og-image.jpg">
+  <meta property="og:url" content="https://tommybotabara1.github.io/tj-wedding/soaring.html">
+  <meta name="theme-color" content="#15110e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --night:#15110e;
+      --night-soft:#211912;
+      --ink:#28221c;
+      --paper:#f7f1e7;
+      --paper-deep:#eee2d1;
+      --white:#fffdf9;
+      --sand:#d8c3a6;
+      --gold:#c88b3f;
+      --gold-soft:#ebc87e;
+      --rose:#ae6f69;
+      --sage:#74866a;
+      --muted:#73685c;
+      --line:rgba(40,34,28,.16);
+      --serif:"Cormorant Garamond", Georgia, serif;
+      --sans:Montserrat, Arial, sans-serif;
+      --ease:cubic-bezier(.22,.61,.36,1);
+    }
+
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; background:var(--night); }
+    body{
+      margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+      font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;
+    }
+    img{ display:block; width:100%; }
+    button,input,select,textarea{ font:inherit; }
+    button{ cursor:pointer; }
+    a{ color:inherit; }
+    :focus-visible{ outline:3px solid var(--gold); outline-offset:4px; }
+    .shell{ width:min(1180px, calc(100% - 40px)); margin:0 auto; }
+    .eyebrow{ margin:0; font-size:10px; font-weight:600; letter-spacing:.24em; text-transform:uppercase; }
+    h1,h2,h3,p{ margin-top:0; }
+    h1,h2,h3{ font-family:var(--serif); font-weight:500; line-height:.98; text-wrap:balance; }
+    .button{
+      display:inline-flex; min-height:52px; align-items:center; justify-content:center; padding:14px 22px;
+      border:1px solid currentColor; text-decoration:none; font-size:11px; font-weight:600;
+      letter-spacing:.14em; text-transform:uppercase; transition:background-color .2s var(--ease), color .2s var(--ease), transform .2s var(--ease);
+    }
+    .button:hover{ transform:translateY(-2px); }
+    .button.dark{ background:var(--night); color:var(--paper); border-color:var(--night); }
+    .button.dark:hover{ background:transparent; color:var(--night); }
+    .button.light{ color:var(--paper); }
+    .button.light:hover{ background:var(--paper); color:var(--night); }
+
+    .site-nav{
+      position:absolute; inset:0 0 auto; z-index:5; padding:20px 0; color:var(--paper);
+    }
+    .site-nav .shell{ display:flex; align-items:center; justify-content:space-between; gap:20px; }
+    .mark{ font-family:var(--serif); font-size:24px; letter-spacing:.04em; text-decoration:none; }
+    .nav-links{ display:flex; align-items:center; gap:20px; }
+    .nav-links a{ font-size:10px; font-weight:600; letter-spacing:.16em; text-decoration:none; text-transform:uppercase; }
+    .nav-links .nav-rsvp{ border-bottom:1px solid var(--gold-soft); padding-bottom:3px; }
+
+    .hero{ position:relative; min-height:100svh; overflow:hidden; background:var(--night); color:var(--paper); }
+    .hero::before{
+      content:""; position:absolute; inset:0; z-index:1;
+      background:linear-gradient(180deg, rgba(10,8,6,.55) 0%, rgba(10,8,6,.12) 37%, rgba(10,8,6,.86) 100%);
+    }
+    .hero-photo{ position:absolute; inset:0; }
+    .hero-photo img{ height:100%; object-fit:cover; object-position:50% 42%; filter:saturate(.82) contrast(1.06); }
+    .hero-glow{ position:absolute; inset:auto -20% -28%; z-index:2; height:58%; background:radial-gradient(ellipse at center, rgba(221,149,62,.29), transparent 66%); pointer-events:none; }
+    .hero-copy{ position:relative; z-index:3; min-height:100svh; display:flex; flex-direction:column; justify-content:flex-end; padding:145px 0 48px; }
+    .hero-copy .eyebrow{ color:var(--gold-soft); margin-bottom:18px; }
+    .hero h1{ max-width:760px; margin:0; font-size:clamp(66px, 11vw, 148px); letter-spacing:-.035em; }
+    .hero h1 span{ display:block; font-style:italic; font-size:.64em; margin-left:clamp(44px, 12vw, 170px); }
+    .hero-bottom{ display:flex; align-items:end; justify-content:space-between; gap:30px; margin-top:28px; }
+    .hero-bottom p{ max-width:370px; margin:0; color:rgba(247,241,231,.82); font-size:14px; }
+    .hero-date{ font-size:11px !important; font-weight:600; letter-spacing:.16em; text-transform:uppercase; text-align:right; }
+    .lanterns{ position:absolute; right:clamp(22px,6vw,96px); top:26%; z-index:3; display:flex; gap:14px; align-items:end; pointer-events:none; }
+    .lantern{ position:relative; width:25px; height:38px; border:1px solid rgba(255,221,157,.72); border-radius:9px 9px 11px 11px; background:radial-gradient(circle at 50% 68%, #fff4bd 0 8%, #f6ac4c 30%, #b75720 100%); box-shadow:0 0 22px 7px rgba(239,142,48,.38); }
+    .lantern::before{ content:""; position:absolute; left:50%; top:-5px; width:10px; height:4px; transform:translateX(-50%); border-radius:3px; background:#7b351c; }
+    .lantern::after{ content:""; position:absolute; left:50%; bottom:-9px; width:2px; height:8px; transform:translateX(-50%); background:rgba(253,214,143,.72); }
+    .lantern:nth-child(2){ width:34px; height:51px; animation:lantern-breathe 7s ease-in-out infinite; }
+    .lantern:nth-child(1){ animation:lantern-breathe 8s ease-in-out -2s infinite; }
+    .lantern:nth-child(3){ animation:lantern-breathe 9s ease-in-out -4s infinite; }
+    @keyframes lantern-breathe{ 0%,100%{ transform:translateY(0); opacity:.82; } 50%{ transform:translateY(-8px); opacity:1; } }
+
+    .intro{ padding:100px 0 88px; background:var(--paper); }
+    .intro-grid{ display:grid; grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr); gap:clamp(44px,8vw,140px); align-items:end; }
+    .intro h2{ max-width:720px; margin:13px 0 0; font-size:clamp(48px,6vw,86px); letter-spacing:-.025em; }
+    .intro h2 em{ color:var(--rose); font-weight:400; }
+    .intro-note{ border-top:1px solid var(--ink); padding-top:17px; font-size:14px; color:var(--muted); }
+    .intro-note strong{ display:block; margin-bottom:6px; color:var(--ink); font-size:11px; letter-spacing:.16em; text-transform:uppercase; }
+
+    .details{ background:var(--night); color:var(--paper); padding:86px 0 96px; overflow:hidden; }
+    .details-head{ display:flex; align-items:end; justify-content:space-between; gap:30px; border-bottom:1px solid rgba(247,241,231,.22); padding-bottom:22px; }
+    .details .eyebrow{ color:var(--gold-soft); }
+    .details h2{ margin:12px 0 0; font-size:clamp(45px,5vw,74px); }
+    .details-head p{ max-width:310px; margin:0; color:rgba(247,241,231,.72); font-size:13px; }
+    .events{ display:grid; grid-template-columns:1fr 1fr; }
+    .event{ position:relative; min-height:370px; padding:clamp(28px,4vw,54px) 0; }
+    .event + .event{ border-left:1px solid rgba(247,241,231,.22); padding-left:clamp(28px,4vw,54px); }
+    .event .number{ color:var(--gold-soft); font-size:11px; font-weight:600; letter-spacing:.16em; }
+    .event h3{ margin:38px 0 12px; max-width:370px; font-size:clamp(42px,4.7vw,64px); }
+    .event .venue{ margin:0; color:var(--gold-soft); font-family:var(--serif); font-size:24px; }
+    .event .address{ max-width:360px; margin:9px 0 22px; color:rgba(247,241,231,.74); font-size:13px; }
+    .event .time-list{ display:flex; flex-wrap:wrap; gap:12px 20px; margin-top:28px; }
+    .time-list span{ display:block; color:rgba(247,241,231,.62); font-size:10px; letter-spacing:.14em; text-transform:uppercase; }
+    .time-list b{ display:block; margin-top:4px; font-family:var(--serif); font-size:20px; font-weight:500; }
+    .map-link{ display:inline-flex; margin-top:31px; color:var(--paper); font-size:10px; font-weight:600; letter-spacing:.16em; text-decoration:none; text-transform:uppercase; border-bottom:1px solid var(--gold-soft); padding-bottom:4px; }
+
+    .story{ padding:100px 0; background:var(--paper); }
+    .story-head{ display:flex; align-items:end; justify-content:space-between; gap:30px; margin-bottom:35px; }
+    .story h2{ margin:11px 0 0; font-size:clamp(46px,6vw,84px); }
+    .story-head p{ max-width:290px; margin:0; color:var(--muted); font-size:13px; }
+    .photo-grid{ display:grid; grid-template-columns:1.05fr .8fr .8fr; grid-template-rows:310px 310px; gap:12px; }
+    .photo-button{ position:relative; min-width:0; overflow:hidden; border:0; padding:0; background:var(--night); color:var(--paper); text-align:left; }
+    .photo-button:first-child{ grid-row:span 2; }
+    .photo-button img{ height:100%; object-fit:cover; transition:transform .7s var(--ease); }
+    .photo-button:hover img{ transform:scale(1.035); }
+    .photo-button::after{ content:""; position:absolute; inset:45% 0 0; background:linear-gradient(transparent, rgba(17,12,9,.76)); pointer-events:none; }
+    .photo-button span{ position:absolute; z-index:1; left:16px; bottom:13px; font-family:var(--serif); font-size:19px; }
+
+    .dress{ background:var(--paper-deep); padding:0; overflow:hidden; }
+    .dress-grid{ display:grid; grid-template-columns:.87fr 1.13fr; }
+    .dress-copy{ display:flex; flex-direction:column; justify-content:center; padding:clamp(56px,8vw,116px); }
+    .dress h2{ margin:12px 0 22px; font-size:clamp(44px,5.5vw,76px); }
+    .dress-copy p{ max-width:420px; color:var(--muted); font-size:14px; }
+    .dress-list{ display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 25px; padding:0; list-style:none; }
+    .dress-list li{ border:1px solid rgba(40,34,28,.26); padding:7px 10px; font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; }
+    .dress-art{ min-height:480px; background:var(--paper); }
+    .dress-art img{ height:100%; object-fit:cover; }
+
+    .schedule{ padding:92px 0; background:var(--white); }
+    .schedule-grid{ display:grid; grid-template-columns:.7fr 1.3fr; gap:clamp(38px,8vw,120px); }
+    .schedule h2{ margin:12px 0 0; font-size:clamp(45px,5.5vw,76px); }
+    .schedule-note{ margin-top:22px; color:var(--muted); font-size:13px; }
+    .timeline{ margin:0; padding:0; list-style:none; border-top:1px solid var(--line); }
+    .timeline li{ display:grid; grid-template-columns:108px 1fr; gap:20px; align-items:baseline; border-bottom:1px solid var(--line); padding:16px 0; }
+    .timeline time{ color:var(--rose); font-size:11px; font-weight:600; letter-spacing:.12em; }
+    .timeline span{ font-family:var(--serif); font-size:24px; }
+
+    .rsvp{ position:relative; overflow:hidden; padding:110px 0; background:var(--night-soft); color:var(--paper); }
+    .rsvp::before{ content:""; position:absolute; inset:auto -15% -42%; height:88%; background:radial-gradient(ellipse at center, rgba(204,126,56,.35), transparent 66%); pointer-events:none; }
+    .rsvp-grid{ position:relative; display:grid; grid-template-columns:.8fr 1.2fr; gap:clamp(42px,8vw,120px); align-items:start; }
+    .rsvp-copy{ position:sticky; top:34px; }
+    .rsvp .eyebrow{ color:var(--gold-soft); }
+    .rsvp h2{ margin:13px 0 20px; font-size:clamp(52px,6vw,90px); }
+    .rsvp-copy p{ max-width:350px; color:rgba(247,241,231,.74); font-size:14px; }
+    .rsvp-copy .response-date{ margin-top:28px; color:var(--gold-soft); font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+    .rsvp-form{ padding:clamp(26px,4vw,46px); border:1px solid rgba(247,241,231,.26); background:rgba(20,15,11,.42); }
+    .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .field{ margin-top:17px; }
+    .field label,.field-label{ display:block; margin-bottom:7px; color:rgba(247,241,231,.72); font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+    .field input,.field select,.field textarea{ width:100%; border:1px solid rgba(247,241,231,.34); border-radius:0; padding:13px 14px; background:rgba(255,255,255,.05); color:var(--paper); outline:0; }
+    .field select option{ color:var(--ink); }
+    .field textarea{ min-height:98px; resize:vertical; }
+    .field input:focus,.field select:focus,.field textarea:focus{ border-color:var(--gold-soft); }
+    .attendance{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .attendance input{ position:absolute; opacity:0; pointer-events:none; }
+    .attendance label{ display:flex; min-height:50px; align-items:center; justify-content:center; margin:0; border:1px solid rgba(247,241,231,.32); color:rgba(247,241,231,.72); font-size:10px; font-weight:600; letter-spacing:.11em; text-align:center; text-transform:uppercase; cursor:pointer; }
+    .attendance input:checked + label{ border-color:var(--gold-soft); background:var(--gold-soft); color:var(--night); }
+    .guest-fields{ display:grid; gap:10px; margin-top:10px; }
+    .rsvp-form .button{ width:100%; margin-top:22px; border-color:var(--gold-soft); background:var(--gold-soft); color:var(--night); }
+    .rsvp-form .button:hover{ background:transparent; color:var(--gold-soft); }
+    .form-message{ min-height:22px; margin:12px 0 0; font-size:13px; }
+    .form-message.error{ color:#f2afa6; }
+    .form-message.success{ color:#d9e4cf; }
+    .honeypot{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+
+    footer{ padding:42px 0; background:var(--paper); color:var(--ink); }
+    .footer-row{ display:flex; justify-content:space-between; align-items:end; gap:24px; }
+    footer .names{ margin:0; font-family:var(--serif); font-size:30px; }
+    footer .meta{ margin:4px 0 0; color:var(--muted); font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+    footer a{ color:var(--rose); font-size:11px; font-weight:600; letter-spacing:.14em; text-decoration:none; text-transform:uppercase; }
+
+    .lightbox{ width:min(920px, calc(100% - 28px)); max-height:calc(100% - 28px); padding:0; border:0; background:var(--night); color:var(--paper); }
+    .lightbox::backdrop{ background:rgba(9,7,5,.82); }
+    .lightbox figure{ margin:0; }
+    .lightbox img{ max-height:78svh; object-fit:contain; }
+    .lightbox figcaption{ padding:12px 52px 16px 16px; font-family:var(--serif); font-size:22px; }
+    .close-lightbox{ position:absolute; top:10px; right:10px; width:38px; height:38px; border:1px solid rgba(247,241,231,.55); border-radius:50%; background:rgba(20,15,11,.58); color:var(--paper); font-size:24px; line-height:1; }
+
+    .reveal{ opacity:0; transform:translateY(22px); transition:opacity .75s var(--ease), transform .75s var(--ease); }
+    .reveal.is-visible{ opacity:1; transform:none; }
+    .delay-1{ transition-delay:.1s; }
+    .delay-2{ transition-delay:.2s; }
+    @media (prefers-reduced-motion:reduce){
+      html{ scroll-behavior:auto; }
+      *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+      .reveal{ opacity:1; transform:none; }
+    }
+    @media (max-width:760px){
+      .shell{ width:min(100% - 32px, 580px); }
+      .site-nav{ padding:16px 0; }
+      .nav-links a:not(.nav-rsvp){ display:none; }
+      .hero-copy{ padding:120px 0 33px; }
+      .hero h1{ font-size:clamp(60px,19vw,86px); }
+      .hero h1 span{ margin-left:20px; }
+      .hero-bottom{ display:block; margin-top:23px; }
+      .hero-date{ margin-top:18px !important; text-align:left; }
+      .lanterns{ top:23%; right:22px; transform:scale(.84); transform-origin:top right; }
+      .intro{ padding:74px 0 70px; }
+      .intro-grid,.dress-grid,.schedule-grid,.rsvp-grid{ grid-template-columns:1fr; }
+      .intro-grid{ gap:34px; }
+      .details{ padding:72px 0; }
+      .details-head,.story-head{ display:block; }
+      .details-head p,.story-head p{ margin-top:18px; }
+      .events{ grid-template-columns:1fr; }
+      .event{ min-height:0; padding:32px 0 38px; }
+      .event + .event{ border-left:0; border-top:1px solid rgba(247,241,231,.22); padding-left:0; }
+      .event h3{ margin-top:24px; }
+      .story{ padding:75px 0; }
+      .photo-grid{ grid-template-columns:1fr 1fr; grid-template-rows:300px 170px 170px; gap:8px; }
+      .photo-button:first-child{ grid-column:span 2; grid-row:auto; }
+      .photo-button span{ font-size:17px; }
+      .dress-copy{ padding:72px 0 48px; }
+      .dress-art{ min-height:0; max-height:430px; }
+      .schedule{ padding:72px 0; }
+      .schedule-grid{ gap:34px; }
+      .timeline li{ grid-template-columns:86px 1fr; gap:14px; }
+      .timeline span{ font-size:22px; }
+      .rsvp{ padding:78px 0; }
+      .rsvp-grid{ gap:38px; }
+      .rsvp-copy{ position:static; }
+      .rsvp-form{ padding:22px; }
+      .form-row{ grid-template-columns:1fr; gap:0; }
+      .footer-row{ display:block; }
+      footer a{ display:inline-block; margin-top:20px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero" id="top">
+    <nav class="site-nav" aria-label="Primary navigation">
+      <div class="shell">
+        <a class="mark" href="#top">T &amp; J</a>
+        <div class="nav-links">
+          <a href="#details">The Day</a>
+          <a class="nav-rsvp" href="#rsvp">RSVP</a>
+        </div>
+      </div>
+    </nav>
+    <div class="hero-photo"><img src="images/hero.webp" width="1365" height="2048" alt="Tommy and Jeyan smiling together at night" fetchpriority="high"></div>
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="lanterns" aria-hidden="true"><span class="lantern"></span><span class="lantern"></span><span class="lantern"></span></div>
+    <div class="shell hero-copy">
+      <p class="eyebrow">An invitation to celebrate</p>
+      <h1>Tommy <span>&amp; Jeyan</span></h1>
+      <div class="hero-bottom">
+        <p>Two paths, one sky. We would be so grateful to have you with us as we begin the next chapter.</p>
+        <p class="hero-date">Sunday &middot; December 27 &middot; 2026</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="intro-title">
+      <div class="shell intro-grid">
+        <div class="reveal">
+          <p class="eyebrow">Soaring with TJ</p>
+          <h2 id="intro-title">The best part of the journey is <em>still ahead.</em></h2>
+        </div>
+        <div class="intro-note reveal delay-1">
+          <strong>Please join us</strong>
+          For an afternoon of vows, dinner, and the people who have helped our story take flight.
+        </div>
+      </div>
+    </section>
+
+    <section class="details" id="details" aria-labelledby="details-title">
+      <div class="shell">
+        <div class="details-head reveal">
+          <div>
+            <p class="eyebrow">Save the date</p>
+            <h2 id="details-title">Sunday, December 27</h2>
+          </div>
+          <p>One celebration across two beloved places. Please allow time to travel between the ceremony and reception.</p>
+        </div>
+        <div class="events">
+          <article class="event reveal">
+            <p class="number">01 &middot; The ceremony</p>
+            <h3>1:30 PM</h3>
+            <p class="venue">St. Therese Parish</p>
+            <p class="address">Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p>
+            <div class="time-list"><div><span>Guests seated</span><b>1:00 PM</b></div><div><span>Dress</span><b>Smart Formal</b></div></div>
+            <a class="map-link" href="https://maps.google.com/?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay" target="_blank" rel="noopener">Open ceremony map</a>
+          </article>
+          <article class="event reveal delay-1">
+            <p class="number">02 &middot; The celebration</p>
+            <h3>4:30 PM</h3>
+            <p class="venue">Gallio Events Hall</p>
+            <p class="address">Talisay Hall, 3008 V. Almario Ave. cor. P. Antonio St., Aseana City, Paranaque</p>
+            <div class="time-list"><div><span>Doors open</span><b>3:30 PM</b></div><div><span>Dress</span><b>Smart Formal</b></div></div>
+            <a class="map-link" href="https://maps.google.com/?q=Gallio+Events+Hall+3008+V.+Almario+Avenue+Aseana+City+Paranaque" target="_blank" rel="noopener">Open reception map</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="story" aria-labelledby="story-title">
+      <div class="shell">
+        <div class="story-head reveal">
+          <div><p class="eyebrow">A few of us</p><h2 id="story-title">Small moments. A long way home.</h2></div>
+          <p>Tap a photograph to linger a little longer.</p>
+        </div>
+        <div class="photo-grid reveal delay-1">
+          <button class="photo-button" type="button" data-lightbox="images/journey-01.webp" data-caption="A night full of light"><img src="images/journey-01.webp" width="900" height="1200" alt="Tommy and Jeyan together at night" loading="lazy"><span>A night full of light</span></button>
+          <button class="photo-button" type="button" data-lightbox="images/journey-03.webp" data-caption="The easy kind of joy"><img src="images/journey-03.webp" width="900" height="1200" alt="Tommy and Jeyan smiling together" loading="lazy"><span>The easy kind of joy</span></button>
+          <button class="photo-button" type="button" data-lightbox="images/journey-06.webp" data-caption="Wherever the day takes us"><img src="images/journey-06.webp" width="900" height="1200" alt="Tommy and Jeyan on an outing together" loading="lazy"><span>Wherever the day takes us</span></button>
+          <button class="photo-button" type="button" data-lightbox="images/journey-09.webp" data-caption="Still choosing each other"><img src="images/journey-09.webp" width="900" height="1200" alt="Tommy and Jeyan together" loading="lazy"><span>Still choosing each other</span></button>
+          <button class="photo-button" type="button" data-lightbox="images/journey-wide.webp" data-caption="The journey continues"><img src="images/journey-wide.webp" width="1200" height="800" alt="Tommy and Jeyan under lantern lights" loading="lazy"><span>The journey continues</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="dress" aria-labelledby="dress-title">
+      <div class="shell dress-grid">
+        <div class="dress-copy reveal">
+          <p class="eyebrow">Dress with the sky</p>
+          <h2 id="dress-title">Dreamy, polished, and ready to celebrate.</h2>
+          <p>Smart formal, in the gentle colours of our day. We hope the room feels like a soft sky at the end of an unforgettable flight.</p>
+          <ul class="dress-list" aria-label="Suggested colours"><li>Cream</li><li>Champagne</li><li>Sage</li><li>Dusty rose</li><li>Soft taupe</li></ul>
+          <a class="button dark" href="images/attire-guide.webp" target="_blank" rel="noopener">View attire guide</a>
+        </div>
+        <div class="dress-art reveal delay-1"><img src="images/attire-guide.webp" width="1672" height="941" alt="Wedding attire guide with guests in soft formal colours" loading="lazy"></div>
+      </div>
+    </section>
+
+    <section class="schedule" aria-labelledby="schedule-title">
+      <div class="shell schedule-grid">
+        <div class="reveal"><p class="eyebrow">The flow of the day</p><h2 id="schedule-title">Meet us along the way.</h2><p class="schedule-note">On-site parking is available at both venues. The drive from Newport City to Aseana City usually takes about 15 to 20 minutes.</p></div>
+        <ol class="timeline reveal delay-1">
+          <li><time>1:00 PM</time><span>Please be seated</span></li>
+          <li><time>1:30 PM</time><span>The ceremony begins</span></li>
+          <li><time>2:45 PM</time><span>Photos and farewells at the church</span></li>
+          <li><time>3:30 PM</time><span>Reception doors open</span></li>
+          <li><time>4:30 PM</time><span>Dinner and celebration at Gallio</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="rsvp" id="rsvp" aria-labelledby="rsvp-title">
+      <div class="shell rsvp-grid">
+        <div class="rsvp-copy reveal">
+          <p class="eyebrow">Save a seat</p>
+          <h2 id="rsvp-title">Will you join us?</h2>
+          <p>Your reply helps us prepare a place for you at the celebration. We cannot wait to welcome you.</p>
+          <p class="response-date">Kindly respond by November 30, 2026</p>
+        </div>
+        <form class="rsvp-form reveal delay-1" id="rsvp-form" novalidate>
+          <div class="honeypot" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+          <div class="form-row">
+            <div class="field"><label for="name">Your name *</label><input id="name" name="name" autocomplete="name" required placeholder="Full name"></div>
+            <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" placeholder="Optional"></div>
+          </div>
+          <div class="field"><span class="field-label">Will you be joining us? *</span><div class="attendance"><input id="attending-yes" name="attending" value="yes" type="radio"><label for="attending-yes">Yes, joyfully</label><input id="attending-no" name="attending" value="no" type="radio"><label for="attending-no">Regretfully, no</label></div></div>
+          <div id="attending-details" hidden>
+            <div class="field"><label for="party-size">How many are in your party?</label><select id="party-size" name="party_size"><option value="1">1 guest</option><option value="2">2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option><option value="5">5 guests</option><option value="6">6 guests</option><option value="7">7 guests</option><option value="8">8 guests</option></select></div>
+            <div class="guest-fields" id="guest-fields"></div>
+          </div>
+          <div class="field"><label for="notes">Meal notes or a message for us</label><textarea id="notes" name="notes" placeholder="Allergies, dietary needs, or a note for the couple"></textarea></div>
+          <p class="form-message" id="form-message" role="alert" aria-live="polite"></p>
+          <button class="button" id="submit-rsvp" type="submit">Send RSVP</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-row"><div><p class="names">Tommy &amp; Jeyan</p><p class="meta">Soaring with TJ &middot; December 27, 2026</p></div><a href="#top">Back to the beginning</a></div>
+  </footer>
+
+  <dialog class="lightbox" id="lightbox" aria-label="Enlarged photograph"><button class="close-lightbox" type="button" aria-label="Close photo">&times;</button><figure><img id="lightbox-image" src="" alt=""><figcaption id="lightbox-caption"></figcaption></figure></dialog>
+
+  <script>
+    (function () {
+      'use strict';
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var revealItems = document.querySelectorAll('.reveal');
+      if (reduced || !('IntersectionObserver' in window)) {
+        revealItems.forEach(function (item) { item.classList.add('is-visible'); });
+      } else {
+        var observer = new IntersectionObserver(function (entries, currentObserver) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-visible');
+            currentObserver.unobserve(entry.target);
+          });
+        }, { threshold: 0.12 });
+        revealItems.forEach(function (item) { observer.observe(item); });
+      }
+
+      var lightbox = document.getElementById('lightbox');
+      var lightboxImage = document.getElementById('lightbox-image');
+      var lightboxCaption = document.getElementById('lightbox-caption');
+      document.querySelectorAll('[data-lightbox]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          lightboxImage.src = button.getAttribute('data-lightbox');
+          lightboxImage.alt = button.querySelector('img').alt;
+          lightboxCaption.textContent = button.getAttribute('data-caption') || '';
+          lightbox.showModal();
+        });
+      });
+      lightbox.querySelector('.close-lightbox').addEventListener('click', function () { lightbox.close(); });
+      lightbox.addEventListener('click', function (event) { if (event.target === lightbox) lightbox.close(); });
+
+      var attendingDetails = document.getElementById('attending-details');
+      var partySize = document.getElementById('party-size');
+      var guestFields = document.getElementById('guest-fields');
+      var attendance = document.querySelectorAll('input[name="attending"]');
+      function renderGuestFields() {
+        var count = Math.max(1, Number(partySize.value) || 1);
+        guestFields.innerHTML = '';
+        for (var index = 2; index <= count; index += 1) {
+          var field = document.createElement('div');
+          field.className = 'field';
+          field.innerHTML = '<label for="guest-' + index + '">Guest ' + index + ' name</label><input id="guest-' + index + '" name="guest_' + index + '" autocomplete="name" placeholder="Full name">';
+          guestFields.appendChild(field);
+        }
+      }
+      attendance.forEach(function (input) {
+        input.addEventListener('change', function () {
+          attendingDetails.hidden = input.value !== 'yes' || !input.checked;
+          if (input.value === 'yes' && input.checked) renderGuestFields();
+        });
+      });
+      partySize.addEventListener('change', renderGuestFields);
+
+      var endpoint = 'https://script.google.com/macros/s/AKfycbzR3J6K8k0McwaM-3RwyfoqBpf9xUvc1UviOtGRErjehAaJmRIvuJKlwGyGa4G89jSI/exec';
+      var form = document.getElementById('rsvp-form');
+      var message = document.getElementById('form-message');
+      var submit = document.getElementById('submit-rsvp');
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        message.textContent = '';
+        message.className = 'form-message';
+        var name = document.getElementById('name').value.trim();
+        var selected = document.querySelector('input[name="attending"]:checked');
+        if (!name) { message.textContent = 'Please add your name so we know who to welcome.'; message.classList.add('error'); document.getElementById('name').focus(); return; }
+        if (!selected) { message.textContent = 'Please let us know whether you can join us.'; message.classList.add('error'); return; }
+        var yes = selected.value === 'yes';
+        var guests = [];
+        if (yes) {
+          document.querySelectorAll('#guest-fields input').forEach(function (input) { if (input.value.trim()) guests.push(input.value.trim()); });
+        }
+        var payload = {
+          name: name,
+          email: document.getElementById('email').value.trim(),
+          attending: selected.value,
+          party_size: yes ? Number(partySize.value) : 1,
+          guests: guests,
+          notes: document.getElementById('notes').value.trim(),
+          website: document.getElementById('website').value
+        };
+        submit.disabled = true;
+        submit.textContent = 'Sending RSVP...';
+        fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) })
+          .then(function (response) { return response.json(); })
+          .then(function (data) {
+            if (data.status !== 'ok') throw new Error(data.message || 'Unable to send RSVP');
+            form.reset();
+            attendingDetails.hidden = true;
+            guestFields.innerHTML = '';
+            message.textContent = yes ? 'Thank you, ' + name + '. We cannot wait to celebrate with you.' : 'Thank you, ' + name + '. We will miss you and are grateful you let us know.';
+            message.classList.add('success');
+            submit.textContent = 'RSVP received';
+          })
+          .catch(function () {
+            message.textContent = 'We could not send your RSVP just now. Please check your connection and try again.';
+            message.classList.add('error');
+            submit.disabled = false;
+            submit.textContent = 'Send RSVP';
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
