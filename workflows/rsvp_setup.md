@@ -56,7 +56,7 @@
 
 ## Step 4 — Wire it to the invitation page
 
-1. Open `docs/invitation.html` in your editor.
+1. Open `docs/lanterns.html` in your editor.
 2. Find this line near the bottom of the `<script>` block:
    ```js
    const RSVP_ENDPOINT = 'YOUR_APPS_SCRIPT_URL_HERE';
@@ -65,14 +65,15 @@
    ```js
    const RSVP_ENDPOINT = 'https://script.google.com/macros/s/ABC123.../exec';
    ```
-4. Save the file.
+4. Save the file. Do not update the older `invitation.html` examples unless
+   that page is intentionally brought back into service.
 
 ---
 
 ## Step 5 — Test the integration
 
 ### Quick smoke test (browser)
-1. Open `docs/invitation.html` locally (or on GitHub Pages).
+1. Open `docs/lanterns.html` locally (or on GitHub Pages).
 2. Scroll to the RSVP section.
 3. Fill out the form with test data and submit.
 4. Open your Google Sheet — you should see a new row with timestamp, name, and all fields.

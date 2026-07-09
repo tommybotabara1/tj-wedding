@@ -88,7 +88,7 @@ a{ color:var(--rose-light); }
 button{ font-family:var(--sans); cursor:pointer; }
 :focus-visible{ outline:2px solid var(--rose-light); outline-offset:3px; border-radius:4px; }
 
-#sky{ position:fixed; inset:0; z-index:0; width:100%; height:100%; display:block; }
+#sky{ position:fixed; inset:0; z-index:0; width:100%; height:100%; display:block; pointer-events:none; }
 
 .script-accent{
   font-family:var(--serif); font-style:italic; font-weight:400;
@@ -1146,8 +1146,10 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
   .keepsakes{ display:none; }
 }
 
-/* Opt-in mobile finale preview: /lanterns.html?simpleFinale=1
-   Keeps the normal invite unchanged while testing the low-motion RSVP ending. */
+/* The RSVP finale is deliberately static on phones: a finger-scroll must never
+   compete with a long pinned timeline. `?finale=full` remains available for
+   design review, while `?simpleFinale=1` is retained as a backwards-compatible
+   explicit opt-in. */
 html.simple-finale #next.tall,
 html.simple-finale #next.tall-200{ height:auto !important; min-height:0; }
 html.simple-finale #next .stick{
@@ -1287,6 +1289,17 @@ html.reduced #music-btn .eq i{ animation:none; }
   .ctrl-pill{ min-height:44px; padding:0 14px; font-size:11px; letter-spacing:.1em; gap:7px; }
   .ctrl-pill svg{ width:14px; height:14px; }
   .ctrl-hint{ font-size:9.5px; padding:6px 11px; }
+}
+/* Backdrop filtering a fixed control over an animated canvas is expensive on
+   iOS. The darker solid treatment keeps the controls just as legible, without
+   another live compositing layer under a guest's thumb. */
+@media (max-width:640px), (hover:none) and (pointer:coarse){
+  .ctrl-btn, .ctrl-pill, .ctrl-hint{
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+    background:rgba(28,21,17,.88);
+  }
+  .ctrl-pill.rsvp{ background:var(--rose); }
 }
 
 /* Menu panel — big tappable rows to every section */
@@ -1552,9 +1565,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       </article>
       <article class="dcard rose rv">
         <span class="k">Ceremony</span>
-        <h3>1:00 PM</h3>
+        <h3>1:30 PM</h3>
         <p class="big">St. Therese Parish</p>
-        <p>Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p>
+        <p>Please be seated by 1:00 PM · Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p>
       </article>
       <article class="dcard rv">
         <span class="k">Reception</span>
@@ -1751,7 +1764,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <h2 class="scrub-hide" id="arr1">The best part of the journey is still ahead.</h2>
         <p class="join scrub-hide" id="arr2">Join us as we begin our next chapter.</p>
         <p class="date-stamp scrub-hide" id="next-date">Sunday, December 27, 2026</p>
-        <div class="cd scrub-hide" id="cd" role="timer" aria-label="Countdown to December 27, 2026, 1:00 PM">
+        <div class="cd scrub-hide" id="cd" role="timer" aria-label="Countdown to December 27, 2026, 1:30 PM">
           <div><strong id="cd-d">--</strong><span>Days</span></div>
           <div><strong id="cd-h">--</strong><span>Hours</span></div>
           <div><strong id="cd-m">--</strong><span>Minutes</span></div>
@@ -1937,7 +1950,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <div class="field">
           <label>Which parts of the day?</label>
           <div class="check-row">
-            <label><input type="checkbox" id="att-cer" checked /> Ceremony · 1:00 PM</label>
+            <label><input type="checkbox" id="att-cer" checked /> Ceremony · seated by 1:00 PM</label>
             <label><input type="checkbox" id="att-rec" checked /> Reception · Gallio Events Hall</label>
           </div>
         </div>
@@ -2000,7 +2013,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <div class="pb">
           <span class="role">The Rite of Marriage</span><h4>St. Therese Parish</h4>
           <p class="addr">Shrine of St. Therese of the Child Jesus, Newport City, Pasay</p>
-          <div class="fields"><div class="f"><span>Date</span><b>Dec 27, 2026</b></div><div class="f"><span>Time</span><b>1:00 PM</b></div><div class="f"><span>Dress</span><b>Smart Formal</b></div></div>
+          <div class="fields"><div class="f"><span>Date</span><b>Dec 27, 2026</b></div><div class="f"><span>Time</span><b>1:30 PM</b></div><div class="f"><span>Dress</span><b>Smart Formal</b></div></div>
           <a class="map" href="https://maps.google.com/?q=Shrine+of+St.+Therese+of+the+Child+Jesus+Newport+City+Pasay" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#ic-pin"/></svg> Open map</a>
         </div>
       </article>
@@ -2015,7 +2028,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       </article>
     </div>
     <div class="timeline">
-      <div class="stop"><b>1:00 PM</b><span>Ceremony</span></div>
+      <div class="stop"><b>1:00 PM</b><span>Guests seated</span></div>
+      <div class="stop"><b>1:30 PM</b><span>Ceremony begins</span></div>
       <div class="stop"><b>2:45 PM</b><span>Photos</span></div>
       <div class="stop"><b>3:00 PM</b><span>Transfer to Aseana City</span></div>
       <div class="stop"><b>3:30 PM</b><span>Reception doors open</span></div>
@@ -2167,11 +2181,20 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
   var $ = function (id) { return document.getElementById(id); };
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var compactViewport = window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
+  var isTouchLike = (navigator.maxTouchPoints || 0) > 0
+    || (window.matchMedia && (
+      window.matchMedia('(any-pointer: coarse)').matches
+      || window.matchMedia('(pointer: coarse)').matches
+      || window.matchMedia('(hover: none)').matches
+    ));
   var HAS_GSAP = !!(window.gsap && window.ScrollTrigger);
   var ANIM = HAS_GSAP && !REDUCED;
   var docEl = document.documentElement;
   var qs = new URLSearchParams(window.location.search);
-  var SIMPLE_FINALE = qs.has('simpleFinale') || qs.get('finale') === 'simple';
+  var MOBILE_SAFE_FINALE = isTouchLike || compactViewport;
+  var SIMPLE_FINALE = qs.get('finale') !== 'full'
+    && (qs.has('simpleFinale') || qs.get('finale') === 'simple' || MOBILE_SAFE_FINALE);
 
   if (REDUCED) docEl.classList.add('reduced');
   if (SIMPLE_FINALE) docEl.classList.add('simple-finale');
@@ -2186,6 +2209,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     var simpleNext = $('next');
     var setSimpleFinaleActive = function (active) {
       docEl.classList.toggle('simple-finale-active', !!active);
+      if (Sky && Sky.setFinaleQuiet) Sky.setFinaleQuiet(!!active);
     };
     if (simpleNext && 'IntersectionObserver' in window) {
       var simpleFinaleObserver = new IntersectionObserver(function (entries) {
@@ -2205,7 +2229,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   /* =========================================================
      THE NIGHT SKY — canvas lantern field
      ========================================================= */
-  var Sky = (function () {
+  var Sky;
+  Sky = (function () {
     var canvas = $('sky');
     if (!canvas || !canvas.getContext) return { liftoff: function () {} };
     var ctx = canvas.getContext('2d');
@@ -2216,6 +2241,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     var shoot = null, nextShoot = 1600;
     var px = 0, py = 0, tx = 0, ty = 0;   // pointer parallax
     var running = false;
+    var finaleQuiet = false;
+    /* On touch devices the sky is atmosphere, not an interaction. Use a
+       lighter field and a 30fps draw cadence so native scrolling gets first
+       claim on the device. */
+    var MOBILE_SKY = isTouchLike || compactViewport;
+    var scrollProgress = 0;
 
     /* sky color keyframes across full document scroll: warm champagne dusk → deep
        espresso night. Red >= green >= blue at every stop keeps it warm, never violet. */
@@ -2290,8 +2321,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         tier: tier,
         x: Math.random() * W,
         y: fromBottom ? H + spr.height : Math.random() * H * 1.2 - H * 0.1,
-        vy: (tier === 0 ? 5 : tier === 1 ? 10 : 17) * (0.7 + Math.random() * 0.6),  /* px per second */
-        sway: 6 + Math.random() * 14,
+        vy: (tier === 0 ? 5 : tier === 1 ? 10 : 17) * (0.7 + Math.random() * 0.6) * (MOBILE_SKY ? 0.55 : 1),  /* px per second */
+        sway: (MOBILE_SKY ? 3 : 6) + Math.random() * (MOBILE_SKY ? 7 : 14),
         phase: Math.random() * Math.PI * 2,
         spin: 0.25 + Math.random() * 0.45,
         flick: Math.random() * Math.PI * 2,
@@ -2301,13 +2332,13 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     function populate() {
       lanterns.length = 0; stars.length = 0;
       var area = (W * H) / (DPR * DPR);
-      var base = Math.round(area / 16000);          /* ~80 on 1440x900, ~45 on phone */
-      base = Math.max(36, Math.min(120, base));
+      var base = Math.round(area / (MOBILE_SKY ? 22000 : 16000));
+      base = MOBILE_SKY ? Math.max(20, Math.min(54, base)) : Math.max(36, Math.min(120, base));
       for (var i = 0; i < base; i++) {
         var r = Math.random();
         lanterns.push(spawn(r < 0.55 ? 0 : r < 0.88 ? 1 : 2, false));
       }
-      var ns = Math.round(area / 6500) + 120;
+      var ns = MOBILE_SKY ? Math.round(area / 9000) + 85 : Math.round(area / 6500) + 120;
       for (var j = 0; j < ns; j++) {
         stars.push({ x: Math.random() * W, y: Math.random() * H * 0.92, r: (0.35 + Math.random() * 1.15) * DPR, tw: Math.random() * Math.PI * 2, sp: 0.4 + Math.random() * 1.1 });
       }
@@ -2319,17 +2350,18 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       canvas.width = W; canvas.height = H;
       buildSprites();
       populate();
+      syncProgress();
       if (REDUCED) drawFrame(0, 0);
     }
 
-    function progress() {
+    function syncProgress() {
       var max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      return Math.min(1, Math.max(0, window.scrollY / max));
+      scrollProgress = Math.min(1, Math.max(0, window.scrollY / max));
     }
 
     var lastT = 0, frameId = 0, runId = 0;
     function drawFrame(t, dt) {
-      var p = progress();
+      var p = scrollProgress;
       var sky = skyAt(p);
       var g = ctx.createLinearGradient(0, 0, 0, H);
       g.addColorStop(0, sky.top); g.addColorStop(0.55, sky.mid); g.addColorStop(1, sky.bot);
@@ -2377,7 +2409,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       /* pointer parallax easing */
       px += (tx - px) * 0.04; py += (ty - py) * 0.04;
       /* lanterns by depth */
-      var liftBoost = 1 + lift * 7;
+      var liftBoost = 1 + lift * (MOBILE_SKY ? 1.5 : 7);
       for (var k = 0; k < lanterns.length; k++) {
         var L = lanterns[k];
         var spr = sprites[L.tier];
@@ -2395,7 +2427,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
     function loop(t, id) {
       if (!running || id !== runId) return;
-      var dt = Math.min(50, t - lastT || 16);
+      var elapsed = t - lastT || 16;
+      if (MOBILE_SKY && elapsed < 32) {
+        frameId = requestAnimationFrame(function (nextT) { loop(nextT, id); });
+        return;
+      }
+      var dt = Math.min(50, elapsed);
       lastT = t;
       drawFrame(t, dt);
       frameId = requestAnimationFrame(function (nextT) { loop(nextT, id); });
@@ -2416,8 +2453,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     }
 
     window.addEventListener('resize', resize);
+    window.addEventListener('scroll', syncProgress, { passive:true });
     document.addEventListener('visibilitychange', function () {
-      if (document.hidden) stop(); else start();
+      if (document.hidden) stop(); else if (!finaleQuiet) start();
     });
     if (!REDUCED && window.matchMedia('(pointer:fine)').matches) {
       window.addEventListener('pointermove', function (e) {
@@ -2431,10 +2469,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
     return {
       liftoff: function () {
-        lift = 1;
+        lift = MOBILE_SKY ? 0.25 : 1;
         if (REDUCED) return;
         /* burst of fresh lanterns from below */
-        for (var i = 0; i < 26; i++) {
+        for (var i = 0; i < (MOBILE_SKY ? 8 : 26); i++) {
           var tier = Math.random() < 0.5 ? 1 : 2;
           var L = spawn(tier, true);
           L.y = H + Math.random() * H * 0.6;
@@ -2442,6 +2480,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         }
         /* trim back down later so the count doesn't grow forever */
         setTimeout(function () { lanterns.splice(0, Math.max(0, lanterns.length - 130)); }, 9000);
+      },
+      setFinaleQuiet: function (quiet) {
+        finaleQuiet = !!quiet;
+        if (finaleQuiet) stop();
+        else if (!document.hidden) start();
       }
     };
   })();
@@ -2550,12 +2593,6 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
   /* ---------- Lenis smooth scroll ---------- */
   var lenisStarted = false;
-  var isTouchLike = (navigator.maxTouchPoints || 0) > 0
-    || (window.matchMedia && (
-      window.matchMedia('(any-pointer: coarse)').matches
-      || window.matchMedia('(pointer: coarse)').matches
-      || window.matchMedia('(hover: none)').matches
-    ));
   function scheduleScrollRefresh() {
     if (!HAS_GSAP) return;
     var refresh = function () { ScrollTrigger.refresh(); };
