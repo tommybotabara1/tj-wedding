@@ -114,6 +114,9 @@ section{ position:relative; }
 .copy-center{ text-align:center; max-width:680px; margin:0 auto; padding:0 24px; width:100%; }
 .tall{ height:260vh; height:260svh; }
 .tall-200{ height:220vh; height:220svh; }
+@media (max-width:640px){
+  #path.tall{ height:430vh; height:430svh; }
+}
 .stick{
   position:sticky; top:0; height:100vh; height:100svh;
   overflow:clip; display:flex; align-items:center; justify-content:center;
@@ -436,6 +439,9 @@ html.reduced .path-progress, html:not(.js-anim) .path-progress{ display:none; }
   .tracerM-a{ transform:translate(-14px,0); }
   .tracerM-b{ transform:translate(14px,4px); }
 }
+@media (max-width:380px){
+  .pcaps{ bottom:22vh; bottom:22svh; }
+}
 .pcap{
   position:absolute; left:0; right:0; margin:0 auto; max-width:640px;
   font-family:var(--serif); font-style:italic; font-size:clamp(23px,3.8vw,36px); color:var(--moon-soft);
@@ -599,7 +605,7 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
 .lb-nav{ position:absolute; bottom:8px; right:12px; display:flex; gap:6px; }
 .lb.solo .lb-nav{ display:none; } /* standalone image (e.g. attire guide) — no gallery arrows */
 .lb-nav button, .panel-close{
-  width:44px; height:44px; border-radius:50%; border:1px solid var(--line);
+  width:44px; height:44px; flex:0 0 44px; border-radius:50%; border:1px solid var(--line);
   background:var(--paper); color:var(--ink); font-size:18px; line-height:1;
   display:inline-flex; align-items:center; justify-content:center;
   transition:background .3s var(--ease);
@@ -755,7 +761,7 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 .panel-inner{ padding:clamp(24px,4vw,40px); overflow-y:auto; max-height:86vh; max-height:86svh; }
 /* "Back to menu" affordance, shown only when a panel was opened from the Menu */
 .panel-back{
-  display:inline-flex; align-items:center; gap:6px; margin:-4px 0 14px; padding:6px 0;
+  display:inline-flex; align-items:center; gap:6px; min-height:44px; margin:-10px 0 8px; padding:8px 0;
   background:none; border:0; cursor:pointer; color:var(--rose-deep);
   font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase;
 }
@@ -1029,7 +1035,7 @@ html:not(.reduced) #next-lans .lantern.far{ animation:floaty-far 7s ease-in-out 
   0%,100%{ transform:translateY(0) rotate(-1.2deg) scale(var(--fs,.2)); }
   50%{ transform:translateY(-9px) rotate(1.2deg) scale(var(--fs,.2)); }
 }
-#nlanT,#nlanJ{ position:absolute; bottom:-150px; }
+#nlanT,#nlanJ{ position:absolute; bottom:-150px; pointer-events:none; }
 #nlanT{ left:10%; } #nlanJ{ right:10%; }
 /* the lit pair has to read against the brightening dawn sky at the finale's end:
    a soft dark grounding shadow (near-invisible on the night sky at the start,
@@ -1084,14 +1090,9 @@ html.reduced .next-copy .add-light, html:not(.js-anim) .next-copy .add-light{ co
    .keepsake) and the CSS hover-lift (transform on .keepsake-tilt) never fight
    over the transform property. A missing file shows "photo to follow"; a loaded
    one becomes tap-to-enlarge (bindSoloOpen, like the story frames). */
-.keepsakes{ display:flex; justify-content:center; align-items:flex-start; margin-top:clamp(20px,2.8vh,32px); padding-bottom:6px; }
-.keepsake{ position:relative; margin:0; width:clamp(74px,8.4vw,98px); }  /* margin:0 clears UA <figure> defaults */
+.keepsakes{ display:flex; justify-content:center; align-items:flex-start; margin:clamp(20px,2.8vh,32px) auto 0; padding-bottom:6px; max-width:min(92vw,760px); }
+.keepsake{ position:relative; margin:0; width:clamp(62px,7.2vw,92px); z-index:var(--z,1); margin-top:var(--rise,0px); }  /* margin:0 clears UA <figure> defaults */
 .keepsake:not(:first-child){ margin-left:clamp(-42px,-3.8vw,-30px); }   /* overlap the prints */
-.keepsake:nth-child(1){ z-index:1; margin-top:16px; }
-.keepsake:nth-child(2){ z-index:3; margin-top:5px; }
-.keepsake:nth-child(3){ z-index:5; }                                    /* centre rides highest & on top */
-.keepsake:nth-child(4){ z-index:4; margin-top:6px; }
-.keepsake:nth-child(5){ z-index:2; margin-top:16px; }
 .keepsake:hover, .keepsake:focus-within{ z-index:10; }
 .keepsake-tilt{
   transform:rotate(var(--tilt,0deg));
@@ -1127,7 +1128,15 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
   .next-copy .add-light{ margin-top:8px; }
   #rsvp-cta{ margin-top:6px; }
   .keepsakes{ margin-top:10px; }
-  .keepsake{ width:clamp(56px,7vw,74px); }
+  .keepsake{ width:clamp(52px,7vw,74px); }
+}
+@media (max-width:640px){
+  .keepsakes{
+    display:grid; grid-template-columns:repeat(4, 54px); justify-content:center;
+    gap:8px 4px; margin-top:14px; max-width:100%;
+  }
+  .keepsake{ width:54px; margin-left:0 !important; margin-top:var(--rise-mobile,0px); }
+  .keepsake-btn{ padding:7% 7% 18%; }
 }
 /* truly short (landscape phones): drop the keepsake flourish rather than crowd the CTA */
 @media (max-height:560px){ .keepsakes{ display:none; } }
@@ -1170,6 +1179,10 @@ footer a{ color:var(--sage-deep); }
 @keyframes eq{ 0%,100%{ transform:scaleY(.5) } 50%{ transform:scaleY(1) } }
 #music-btn.playing .eq{ display:inline-flex; }
 #music-btn.playing .note{ display:none; }
+#music-btn.needs-tap{
+  color:var(--ember); border-color:rgba(255,205,150,.65);
+  box-shadow:0 0 34px rgba(255,196,150,.42);
+}
 html.reduced #music-btn .eq i{ animation:none; }
 .as-pause{ display:none; }
 #autoscroll-btn.on{ color:var(--ember); border-color:rgba(255,205,150,.55); box-shadow:0 0 34px rgba(255,196,150,.4); }
@@ -1183,6 +1196,7 @@ html.reduced #music-btn .eq i{ animation:none; }
   transition:opacity .5s var(--ease), transform .5s var(--ease);
 }
 .ctrls.hint-show .ctrl-hint{ opacity:1; transform:none; }
+.ctrls.music-prompt .music-hint{ opacity:1; transform:none; color:#fff3d2; }
 
 /* Always-labelled pills so non-tech guests can reach Menu / RSVP at any time */
 .ctrl-pill{
@@ -1200,10 +1214,10 @@ html.reduced #music-btn .eq i{ animation:none; }
 /* phones: shrink the floating dock so it doesn't crowd the screen */
 @media (max-width:560px){
   .ctrls{ right:12px; bottom:12px; gap:8px; }
-  .ctrl-btn{ width:38px; height:38px; }
+  .ctrl-btn{ width:44px; height:44px; }
   .ctrl-btn svg{ width:15px; height:15px; }
   #music-btn svg{ width:14px; height:14px; }
-  .ctrl-pill{ min-height:38px; padding:0 14px; font-size:11px; letter-spacing:.1em; gap:7px; }
+  .ctrl-pill{ min-height:44px; padding:0 14px; font-size:11px; letter-spacing:.1em; gap:7px; }
   .ctrl-pill svg{ width:14px; height:14px; }
   .ctrl-hint{ font-size:9.5px; padding:6px 11px; }
 }
@@ -1288,8 +1302,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   <div class="gate-copy">
     <h1>Bring our lights together</h1>
     <p>Two paths. One sky.</p>
-    <span class="hint">Drag the two lanterns together, or simply tap below to enter.</span><br/>
-    <button id="connect-btn" class="btn" type="button">Tap to Enter &rsaquo;</button>
+    <span class="hint">Tap below to enter with music. You can turn it off any time.</span><br/>
+    <button id="connect-btn" class="btn" type="button">Enter With Music &rsaquo;</button>
   </div>
 </div>
 
@@ -1592,18 +1606,19 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       </svg>
       <!-- the couple's zodiac constellations -->
       <svg class="map-const const-gem" aria-hidden="true" viewBox="0 0 120 178">
-        <path class="cline" d="M38,18 L82,26 M38,18 L46,62 L42,108 L26,158 M42,108 L52,150 M82,26 L88,68 L92,114 L74,160 M92,114 L104,152 M46,62 L88,68"/>
+        <path class="cline" d="M34,18 L50,48 L45,86 L31,128 L20,158 M45,86 L62,122 M86,24 L75,54 L78,91 L93,130 L105,160 M78,91 L62,122 M50,48 L75,54 M34,18 L86,24"/>
         <g class="cstar">
-          <circle cx="38" cy="18" r="3"/><circle cx="82" cy="26" r="3"/>
-          <circle cx="46" cy="62" r="2.2"/><circle cx="42" cy="108" r="2.2"/><circle cx="26" cy="158" r="2"/><circle cx="52" cy="150" r="2"/>
-          <circle cx="88" cy="68" r="2.2"/><circle cx="92" cy="114" r="2.2"/><circle cx="74" cy="160" r="2"/><circle cx="104" cy="152" r="2"/>
+          <circle cx="34" cy="18" r="3.4"/><circle cx="86" cy="24" r="4"/>
+          <circle cx="50" cy="48" r="2.4"/><circle cx="45" cy="86" r="2.2"/><circle cx="31" cy="128" r="2"/><circle cx="20" cy="158" r="1.8"/>
+          <circle cx="62" cy="122" r="2"/><circle cx="75" cy="54" r="2.4"/><circle cx="78" cy="91" r="2.2"/><circle cx="93" cy="130" r="2"/><circle cx="105" cy="160" r="1.8"/>
         </g>
         <text class="cname" x="60" y="176" text-anchor="middle" font-size="13">Gemini</text>
       </svg>
       <svg class="map-const const-lib" aria-hidden="true" viewBox="0 0 120 128">
-        <path class="cline" d="M58,16 L24,52 L56,88 L94,46 L58,16 M24,52 L18,98 M94,46 L100,86"/>
+        <path class="cline" d="M58,18 L28,50 L46,91 L88,84 L98,42 L58,18 M28,50 L18,98 M46,91 L18,98 M98,42 L106,88 M88,84 L106,88 M28,50 L98,42"/>
         <g class="cstar">
-          <circle cx="58" cy="16" r="3"/><circle cx="24" cy="52" r="2.4"/><circle cx="94" cy="46" r="2.4"/><circle cx="56" cy="88" r="2.2"/><circle cx="18" cy="98" r="2"/><circle cx="100" cy="86" r="2"/>
+          <circle cx="58" cy="18" r="3"/><circle cx="28" cy="50" r="2.8"/><circle cx="98" cy="42" r="2.6"/>
+          <circle cx="46" cy="91" r="2.2"/><circle cx="88" cy="84" r="2.2"/><circle cx="18" cy="98" r="1.8"/><circle cx="106" cy="88" r="1.8"/>
         </g>
         <text class="cname" x="60" y="122" text-anchor="middle" font-size="13">Libra</text>
       </svg>
@@ -1685,40 +1700,64 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
                · us-today.webp   — a recent photo, how you look right now
                · us-trip.webp    — an adventure together (travel / somewhere you love)
                · us-dressup.webp — the two of you dressed up (a date night / event)
+               · us-laugh.webp   — laughing together
+               · us-quiet.webp   — a quiet moment together
+               · us-favorite.webp — a favorite memory together
              Missing files show a "photo to follow" placeholder; loaded ones are tap-to-enlarge. -->
         <div class="keepsakes" id="keepsakes" aria-label="A few of us">
-          <figure class="keepsake scrub-hide" style="--tilt:-8deg">
+          <figure class="keepsake scrub-hide" style="--tilt:-10deg;--rise:22px;--z:1;--rise-mobile:0px">
             <div class="keepsake-tilt">
               <button type="button" class="keepsake-btn" disabled aria-label="View photo: a candid of us">
                 <img src="images/closing/us-candid.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan, a relaxed candid together" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
               </button>
             </div>
           </figure>
-          <figure class="keepsake scrub-hide" style="--tilt:-4deg">
+          <figure class="keepsake scrub-hide" style="--tilt:-7deg;--rise:12px;--z:2;--rise-mobile:7px">
             <div class="keepsake-tilt">
               <button type="button" class="keepsake-btn" disabled aria-label="View photo: a milestone moment">
                 <img src="images/closing/us-moment.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan on a milestone day together" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
               </button>
             </div>
           </figure>
-          <figure class="keepsake scrub-hide" style="--tilt:0deg">
+          <figure class="keepsake scrub-hide" style="--tilt:-4deg;--rise:5px;--z:3;--rise-mobile:0px">
             <div class="keepsake-tilt">
               <button type="button" class="keepsake-btn" disabled aria-label="View photo: us lately">
                 <img src="images/closing/us-today.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan, a recent portrait" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
               </button>
             </div>
           </figure>
-          <figure class="keepsake scrub-hide" style="--tilt:4deg">
+          <figure class="keepsake scrub-hide" style="--tilt:-1deg;--rise:0px;--z:4;--rise-mobile:7px">
             <div class="keepsake-tilt">
               <button type="button" class="keepsake-btn" disabled aria-label="View photo: an adventure together">
                 <img src="images/closing/us-trip.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan on an adventure together" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
               </button>
             </div>
           </figure>
-          <figure class="keepsake scrub-hide" style="--tilt:8deg">
+          <figure class="keepsake scrub-hide" style="--tilt:1deg;--rise:0px;--z:4;--rise-mobile:0px">
             <div class="keepsake-tilt">
               <button type="button" class="keepsake-btn" disabled aria-label="View photo: the two of you dressed up">
                 <img src="images/closing/us-dressup.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan dressed up together" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
+              </button>
+            </div>
+          </figure>
+          <figure class="keepsake scrub-hide" style="--tilt:4deg;--rise:5px;--z:3;--rise-mobile:7px">
+            <div class="keepsake-tilt">
+              <button type="button" class="keepsake-btn" disabled aria-label="View photo: laughing together">
+                <img src="images/closing/us-laugh.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan laughing together" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
+              </button>
+            </div>
+          </figure>
+          <figure class="keepsake scrub-hide" style="--tilt:7deg;--rise:12px;--z:2;--rise-mobile:0px">
+            <div class="keepsake-tilt">
+              <button type="button" class="keepsake-btn" disabled aria-label="View photo: a quiet moment together">
+                <img src="images/closing/us-quiet.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan in a quiet moment together" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
+              </button>
+            </div>
+          </figure>
+          <figure class="keepsake scrub-hide" style="--tilt:10deg;--rise:22px;--z:1;--rise-mobile:7px">
+            <div class="keepsake-tilt">
+              <button type="button" class="keepsake-btn" disabled aria-label="View photo: a favorite memory together">
+                <img src="images/closing/us-favorite.webp" loading="lazy" decoding="async" alt="Tommy and Jeyan in a favorite memory together" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
               </button>
             </div>
           </figure>
@@ -2029,7 +2068,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     </button>
   </div>
   <div class="ctrl-row">
-    <span class="ctrl-hint">Ambient music</span>
+    <span class="ctrl-hint music-hint">Tap for music</span>
     <button id="music-btn" class="ctrl-btn" type="button" aria-pressed="false" aria-label="Play ambient music">
       <svg class="note" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M9 18V6l9-2v12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -2380,25 +2419,63 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
   /* ambient music */
   var audio = $('ambient'), musicBtn = $('music-btn');
+  var musicHint = document.querySelector('.music-hint');
+  var needsMusicTap = false;
   function setMusicState(on) {
+    needsMusicTap = false;
     musicBtn.classList.toggle('playing', on);
+    musicBtn.classList.remove('needs-tap');
+    ctrls.classList.remove('music-prompt');
     musicBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     musicBtn.setAttribute('aria-label', on ? 'Pause ambient music' : 'Play ambient music');
+    if (musicHint) musicHint.textContent = on ? 'Music playing' : 'Tap for music';
   }
-  function startMusic() {
+  function markMusicNeedsTap() {
+    needsMusicTap = true;
+    musicBtn.classList.add('needs-tap');
+    ctrls.classList.add('music-prompt');
+    musicBtn.setAttribute('aria-pressed', 'false');
+    musicBtn.setAttribute('aria-label', 'Tap to play ambient music');
+    if (musicHint) musicHint.textContent = 'Tap for music';
+  }
+  function startMusic(fromGesture) {
+    if (!fromGesture) { markMusicNeedsTap(); return; }
     try {
       audio.volume = 0.24;
-      audio.play().then(function () { setMusicState(true); }).catch(function () { setMusicState(false); });
-    } catch (e) { /* fail silently */ }
+      var playAttempt = audio.play();
+      if (playAttempt && typeof playAttempt.then === 'function') {
+        playAttempt.then(function () { setMusicState(true); }).catch(markMusicNeedsTap);
+      } else {
+        setMusicState(true);
+      }
+    } catch (e) { markMusicNeedsTap(); }
   }
   musicBtn.addEventListener('click', function () {
     hideHints();
-    if (audio.paused) { startMusic(); } else { audio.pause(); setMusicState(false); }
+    if (audio.paused) { startMusic(true); } else { audio.pause(); setMusicState(false); }
   });
+  audio.addEventListener('play', function () { setMusicState(true); });
+  audio.addEventListener('pause', function () { if (!needsMusicTap) setMusicState(false); });
   audio.addEventListener('error', function () { var r = musicBtn.closest('.ctrl-row'); if (r) r.style.display = 'none'; }, true);
 
   /* ---------- Lenis smooth scroll ---------- */
   var lenisStarted = false;
+  var isTouchLike = (navigator.maxTouchPoints || 0) > 0
+    || (window.matchMedia && (
+      window.matchMedia('(any-pointer: coarse)').matches
+      || window.matchMedia('(pointer: coarse)').matches
+      || window.matchMedia('(hover: none)').matches
+    ));
+  function scheduleScrollRefresh() {
+    if (!HAS_GSAP) return;
+    var refresh = function () { ScrollTrigger.refresh(); };
+    requestAnimationFrame(function () {
+      requestAnimationFrame(refresh);
+    });
+    setTimeout(refresh, 260);
+    setTimeout(refresh, 900);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh).catch(function () {});
+  }
   function initLenis() {
     if (lenisStarted || REDUCED) return;
     /* Lenis runs a rAF loop that forces window scroll to its own target every
@@ -2407,7 +2484,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
        finger-scroll is yanked straight back and the page appears frozen.
        Touch devices already have smooth native momentum scrolling and
        ScrollTrigger works fine on native scroll, so skip Lenis there. */
-    if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
+    if (isTouchLike) return;
     lenisStarted = true;
     import('https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.mjs').then(function (m) {
       var Lenis = m.default || m.Lenis;
@@ -2841,15 +2918,21 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       document.body.classList.remove('gated');
       ctrls.classList.add('show');
       showHints(skipAnimations ? 700 : 1700);
-      initLenis();
+      function afterGateSettles() {
+        initLenis();
+        scheduleScrollRefresh();
+      }
       if (skipAnimations || !ANIM) {
         gate.remove();
+        afterGateSettles();
         playCurtain(true);
       } else {
-        gsap.to(gate, { opacity: 0, duration: 1.2, ease: 'power2.inOut', onComplete: function () { gate.remove(); } });
+        gsap.to(gate, { opacity: 0, duration: 1.2, ease: 'power2.inOut', onComplete: function () {
+          gate.remove();
+          afterGateSettles();
+        } });
         playCurtain(false);
       }
-      if (HAS_GSAP) requestAnimationFrame(function () { ScrollTrigger.refresh(); });
     }
 
     var entered = false;
@@ -2900,12 +2983,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         var t = 0.25 + Math.random() * 0.5;
         spark(a.x + dx * t, a.y + dy * t - sag * 0.4, false);
       }
-      if (dist <= MEET) { connect(); return; }
+      if (dist <= MEET) { connect(false); return; }
       rafId = requestAnimationFrame(update);
     }
     rafId = requestAnimationFrame(update);
 
-    function connect() {
+    function connect(userInitiated) {
       if (connected) return;
       connected = true;
       cancelAnimationFrame(rafId);
@@ -2919,7 +3002,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       bloom.style.left = mx + 'px'; bloom.style.top = my + 'px';
       thread.style.opacity = 0; threadGlow.style.opacity = 0;
       for (var i = 0; i < 32; i++) spark(mx, my, true);
-      startMusic();
+      startMusic(!!userInitiated);
       Sky.liftoff();
       if (ANIM) {
         var tl = gsap.timeline({ onComplete: function () { unlock(false); } });
@@ -2965,7 +3048,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         else if (e.key === 'ArrowRight') dx = step;
         else if (e.key === 'ArrowUp') dy = -step;
         else if (e.key === 'ArrowDown') dy = step;
-        else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); connect(); return; }
+        else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); connect(true); return; }
         else return;
         e.preventDefault();
         if (HAS_GSAP) {
@@ -2978,7 +3061,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       });
     });
 
-    $('connect-btn').addEventListener('click', connect);
+    $('connect-btn').addEventListener('click', function () { connect(true); });
 
     /* Safety net for non-tech-savvy guests: if nothing happens, the Enter button
        starts to breathe after a few seconds, then the gate opens itself. Any
@@ -2990,7 +3073,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     }
     function armGateTimers() {
       nudgeTimer = setTimeout(function () { if (!connected) connectBtn.classList.add('nudge'); }, 9000);
-      autoTimer = setTimeout(function () { if (!connected) connect(); }, 22000);
+      autoTimer = setTimeout(function () { if (!connected) connect(false); }, 22000);
     }
     ['pointerdown', 'keydown'].forEach(function (ev) {
       gate.addEventListener(ev, function (e) {
@@ -3124,7 +3207,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         var beat = mem.getAttribute('data-beat');
         mems[beat] = mem;
       });
-      var memBeats = [
+      var memBeatsDesktop = [
         ['t-child', 0.6, 1.9],
         ['j-child', 1.3, 2.6],
         ['t-school', 2.0, 3.3],
@@ -3136,11 +3219,25 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         ['us-met-1', 6.2, 7.6],
         ['us-met-2', 7.8, 9.0]
       ];
+      var memBeatsMobile = [
+        ['t-child', 0.6, 2.6],
+        ['j-child', 1.4, 3.4],
+        ['t-school', 2.3, 4.4],
+        ['j-school', 3.1, 5.1],
+        ['t-college', 4.0, 6.0],
+        ['j-college', 4.8, 6.8],
+        ['t-work', 5.6, 7.4],
+        ['j-work', 6.2, 7.9],
+        ['us-met-1', 7.5, 9.2],
+        ['us-met-2', 8.6, 9.8]
+      ];
+      var memBeats = MOBILE_PATH ? memBeatsMobile : memBeatsDesktop;
+      var memFade = MOBILE_PATH ? 0.55 : 0.35;
       memBeats.forEach(function (beat) {
         var el = mems[beat[0]];
         if (!el) return;
-        tl.to(el, { autoAlpha: 1, duration: 0.35 }, beat[1])
-          .to(el, { autoAlpha: 0, duration: 0.35 }, beat[2] - 0.35);
+        tl.to(el, { autoAlpha: 1, duration: memFade }, beat[1])
+          .to(el, { autoAlpha: 0, duration: memFade }, beat[2] - memFade);
       });
 
       /* ---- anchor the memory frames + medallion to the arcs at runtime ----
@@ -3275,7 +3372,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         memResizeTimer = setTimeout(positionMems, 150);
       });
 
-      var capTimes = [[0.5, 2.4], [2.6, 4.4], [4.6, 6.4], [6.8, null]];
+      var capTimes = MOBILE_PATH ? [[0.5, 3.0], [3.2, 5.6], [5.8, 7.8], [8.0, null]] : [[0.5, 2.4], [2.6, 4.4], [4.6, 6.4], [6.8, null]];
       caps.forEach(function (cap, i) {
         tl.to(cap, { opacity: 1, duration: 0.6 }, capTimes[i][0]);
         if (capTimes[i][1] !== null) tl.to(cap, { opacity: 0, duration: 0.6 }, capTimes[i][1]);
@@ -3395,7 +3492,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
          it can drift up and un-tilt into place. Rotation here is on the OUTER
          .keepsake (settles to 0); the resting tilt lives on the inner
          .keepsake-tilt, so this entry never disturbs the collage's final angles. */
-      gsap.set('#keepsakes .keepsake', { opacity: 0, y: 34, rotation: function (i) { return [-11, -6, 0, 6, 11][i] || 0; } });
+      var keepsakeEntryRotations = [-13, -9, -5, -1, 1, 5, 9, 13];
+      gsap.set('#keepsakes .keepsake', { opacity: 0, y: 34, rotation: function (i) { return keepsakeEntryRotations[i % keepsakeEntryRotations.length]; } });
       tl.to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, 5.3)
         .to('#arr2', { opacity: 1, y: 0, ease: 'none', duration: 0.7 }, 6.0)
         .to(['#next-date', '#cd', '.cd-cap'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.18 }, 6.5)
