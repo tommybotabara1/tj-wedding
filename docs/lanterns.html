@@ -1038,6 +1038,9 @@ html:not(.reduced) #next-lans .lantern.far{ animation:floaty-far 7s ease-in-out 
   50%{ transform:translateY(-9px) rotate(1.2deg) scale(var(--fs,.2)); }
 }
 #nlanT,#nlanJ{ position:absolute; bottom:-150px; pointer-events:none; }
+/* keep the persistently animated lanterns on their own compositor layers
+   (targeted on purpose: blanket will-change costs memory on iOS) */
+.gate-lan .lantern, #next-lans .lantern, #nlanT, #nlanJ, .chip.guest-lantern{ will-change:transform; }
 #nlanT{ left:10%; } #nlanJ{ right:10%; }
 /* the lit pair has to read against the brightening dawn sky at the finale's end:
    a soft dark grounding shadow (near-invisible on the night sky at the start,
@@ -1234,6 +1237,11 @@ html.simple-finale .keepsake:focus-within .keepsake-tilt{ transform:translateY(-
   58%{ transform:translateY(0); box-shadow:0 0 28px rgba(178,124,117,.32); }
   100%{ transform:translateY(0); box-shadow:0 0 0 rgba(178,124,117,0); }
 }
+/* hold the animated pieces at their entry state until the reveal fires, so the
+   copy never blinks visible-hidden-visible when the class lands mid-view */
+html.simple-finale:not(.reduced):not(.simple-finale-revealed) .next-copy{ opacity:0; }
+html.simple-finale:not(.reduced):not(.simple-finale-revealed) #nlanT .body,
+html.simple-finale:not(.reduced):not(.simple-finale-revealed) #nlanJ .body{ opacity:.2; }
 html.simple-finale:not(.reduced).simple-finale-revealed .next-copy{
   animation:mobile-finale-copy-in .72s var(--ease) both;
 }
@@ -2235,10 +2243,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 <!-- ============================================================
      SCRIPTS
      ============================================================ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+<!-- animation libraries are self-hosted (docs/vendor/) so a CDN hiccup on a
+     guest's phone can never break the invitation -->
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/Draggable.min.js"></script>
+<script src="vendor/MotionPathPlugin.min.js"></script>
 <script>
 (function () {
   'use strict';
@@ -2264,6 +2274,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   if (SIMPLE_FINALE) docEl.classList.add('simple-finale');
   if (HAS_GSAP) {
     gsap.registerPlugin(ScrollTrigger);
+    /* iOS fires resize on every URL-bar collapse mid-scroll; without this,
+       ScrollTrigger refreshes all scrubbed triggers and the page shimmies */
+    ScrollTrigger.config({ ignoreMobileResize: true });
     if (window.Draggable) gsap.registerPlugin(Draggable);
     if (window.MotionPathPlugin) gsap.registerPlugin(MotionPathPlugin);
   }
@@ -2271,22 +2284,38 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
   if (SIMPLE_FINALE) {
     var simpleNext = $('next');
+    var simpleFinaleOn = false;
     var setSimpleFinaleActive = function (active) {
-      docEl.classList.toggle('simple-finale-active', !!active);
+      active = !!active;
+      if (active === simpleFinaleOn) return;   /* only act on real state changes */
+      simpleFinaleOn = active;
+      docEl.classList.toggle('simple-finale-active', active);
       if (active) docEl.classList.add('simple-finale-revealed');
-      if (Sky && Sky.setFinaleQuiet) Sky.setFinaleQuiet(!!active);
+      if (Sky && Sky.setFinaleQuiet) Sky.setFinaleQuiet(active);
     };
     if (simpleNext && 'IntersectionObserver' in window) {
+      /* hysteresis: wake at 25% visible, sleep only when nearly gone. A single
+         threshold flip-flops when the iOS URL bar resizes the viewport mid-scroll,
+         which restarted the canvas and re-hid the dock every few frames. */
       var simpleFinaleObserver = new IntersectionObserver(function (entries) {
-        setSimpleFinaleActive(entries.some(function (entry) {
-          return entry.isIntersecting && entry.intersectionRatio > 0.25;
-        }));
-      }, { threshold: [0, 0.25, 0.6] });
+        var entry = entries[entries.length - 1];
+        var ratio = entry.isIntersecting ? entry.intersectionRatio : 0;
+        if (ratio > 0.25) setSimpleFinaleActive(true);
+        else if (ratio < 0.06) setSimpleFinaleActive(false);
+      }, { threshold: [0, 0.06, 0.25, 0.6] });
       simpleFinaleObserver.observe(simpleNext);
     } else if (simpleNext) {
+      var simpleFinaleTick = false;
       window.addEventListener('scroll', function () {
-        var r = simpleNext.getBoundingClientRect();
-        setSimpleFinaleActive(r.top < window.innerHeight * 0.75 && r.bottom > window.innerHeight * 0.25);
+        if (simpleFinaleTick) return;          /* one layout read per frame */
+        simpleFinaleTick = true;
+        requestAnimationFrame(function () {
+          simpleFinaleTick = false;
+          var r = simpleNext.getBoundingClientRect();
+          var vh = window.innerHeight;
+          if (r.top < vh * 0.75 && r.bottom > vh * 0.25) setSimpleFinaleActive(true);
+          else if (r.top > vh * 0.9 || r.bottom < vh * 0.1) setSimpleFinaleActive(false);
+        });
       }, { passive: true });
     }
   }
@@ -2410,11 +2439,20 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     }
 
     function resize() {
-      W = Math.round(canvas.clientWidth * DPR);
-      H = Math.round(canvas.clientHeight * DPR);
+      var newW = Math.round(canvas.clientWidth * DPR);
+      var newH = Math.round(canvas.clientHeight * DPR);
+      if (newW === W && newH === H) return;
+      /* iOS Safari fires resize whenever the URL bar collapses/expands during
+         scroll. Re-seeding the field then makes the whole sky visibly jump, so
+         only rebuild on a real layout change (first run, rotation, big window
+         resize); for small height-only changes keep every lantern where it is. */
+      var rebuild = !W || !H || newW !== W || Math.abs(newH - H) > H * 0.25;
+      W = newW; H = newH;
       canvas.width = W; canvas.height = H;
-      buildSprites();
-      populate();
+      if (rebuild) {
+        buildSprites();
+        populate();
+      }
       syncProgress();
       if (REDUCED) drawFrame(0, 0);
     }
@@ -2497,7 +2535,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         frameId = requestAnimationFrame(function (nextT) { loop(nextT, id); });
         return;
       }
-      var dt = Math.min(50, elapsed);
+      /* after rAF starvation (scrolling, tab return) drop the backlog instead
+         of integrating it: a large dt makes every lantern leap in one frame */
+      if (elapsed > 250) elapsed = 16;
+      var dt = Math.min(32, elapsed);
       lastT = t;
       drawFrame(t, dt);
       frameId = requestAnimationFrame(function (nextT) { loop(nextT, id); });
@@ -2678,7 +2719,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
        ScrollTrigger works fine on native scroll, so skip Lenis there. */
     if (isTouchLike) return;
     lenisStarted = true;
-    import('https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.mjs').then(function (m) {
+    import('./vendor/lenis.mjs').then(function (m) {
       var Lenis = m.default || m.Lenis;
       var lenis = new Lenis({ lerp: 0.085, smoothWheel: true, wheelMultiplier: 1 });
       window.__lenis = lenis;
