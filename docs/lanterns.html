@@ -1140,10 +1140,11 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
   .keepsake{ width:54px; margin-left:0 !important; margin-top:var(--rise-mobile,0px); }
   .keepsake-btn{ padding:7% 7% 18%; }
 }
-/* short phones: drop the keepsake flourish rather than crowd the RSVP lead-in */
+/* Short phones keep the keepsakes, but make room by dropping only the small
+   countdown caption. Guests should never lose the photos just because their
+   viewport is compact. */
 @media (max-height:620px){
   .cd-cap{ display:none; }
-  .keepsakes{ display:none; }
 }
 
 /* The RSVP finale is deliberately static on phones: a finger-scroll must never
@@ -1165,7 +1166,6 @@ html.simple-finale .sky-dawn{
 html.simple-finale .sky-warm{ opacity:1; }
 html.simple-finale #next-lans,
 html.simple-finale #union-glow,
-html.simple-finale #keepsakes,
 html.simple-finale .cd-cap{ display:none !important; }
 html.simple-finale #nlanT,
 html.simple-finale #nlanJ{
@@ -1178,7 +1178,7 @@ html.simple-finale .next-copy{
   position:relative; top:auto; transform:none; width:100%; max-width:420px;
   padding:clamp(94px,17svh,126px) 24px 0; color:var(--ink);
 }
-html.simple-finale #next .scrub-hide{
+html.simple-finale #next .scrub-hide:not(.keepsake){
   opacity:1 !important; visibility:visible !important; transform:none !important;
 }
 html.simple-finale .next-copy h2{
@@ -1194,6 +1194,69 @@ html.simple-finale .cd strong{ color:var(--ink); font-size:clamp(28px,9vw,38px);
 html.simple-finale .cd span{ color:var(--soft); font-size:8px; letter-spacing:.16em; }
 html.simple-finale .next-copy .add-light{ color:var(--rose-deep); margin-top:16px; }
 html.simple-finale #rsvp-cta{ margin-top:12px; }
+/* On phones the closing photographs are a real, quiet photo grid rather than
+   the desktop's overlapping scroll-settled print stack. All eight supplied
+   images stay available and retain their tap-to-enlarge behaviour. */
+.keepsake-label{ display:none; }
+html.simple-finale .keepsake-label{
+  display:block; margin:26px 0 10px; color:var(--soft); font-family:var(--serif);
+  font-style:italic; font-size:18px;
+}
+html.simple-finale .keepsakes{
+  display:grid !important; grid-template-columns:repeat(4, minmax(0, 62px));
+  justify-content:center; gap:10px 8px; width:100%; max-width:100%; margin:0 auto; padding:0 0 4px;
+}
+html.simple-finale .keepsake{ width:62px; margin:0 !important; }
+html.simple-finale .keepsake-tilt{ transform:none; }
+html.simple-finale .keepsake:hover .keepsake-tilt,
+html.simple-finale .keepsake:focus-within .keepsake-tilt{ transform:translateY(-4px) scale(1.02); }
+@media (max-width:360px){
+  html.simple-finale .keepsakes{ grid-template-columns:repeat(4, minmax(0, 52px)); gap:8px 6px; }
+  html.simple-finale .keepsake{ width:52px; }
+}
+/* A single welcome cue, triggered by the existing IntersectionObserver when
+   this section enters view. Nothing here is tied to the scroll position. */
+@keyframes mobile-finale-copy-in{
+  from{ opacity:0; transform:translateY(14px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+@keyframes mobile-lantern-awaken{
+  0%{ opacity:.2; transform:scale(.72); }
+  68%{ opacity:1; transform:scale(1.07); }
+  100%{ opacity:1; transform:scale(1); }
+}
+@keyframes mobile-keepsake-in{
+  from{ opacity:0; transform:translateY(14px) scale(.96); }
+  to{ opacity:1; transform:translateY(0) scale(1); }
+}
+@keyframes mobile-rsvp-beacon{
+  0%{ transform:translateY(7px); box-shadow:0 0 0 rgba(178,124,117,0); }
+  58%{ transform:translateY(0); box-shadow:0 0 28px rgba(178,124,117,.32); }
+  100%{ transform:translateY(0); box-shadow:0 0 0 rgba(178,124,117,0); }
+}
+html.simple-finale:not(.reduced).simple-finale-revealed .next-copy{
+  animation:mobile-finale-copy-in .72s var(--ease) both;
+}
+html.simple-finale:not(.reduced).simple-finale-revealed #nlanT .body{
+  transform-origin:50% 60%; animation:mobile-lantern-awaken .8s var(--ease) .06s both;
+}
+html.simple-finale:not(.reduced).simple-finale-revealed #nlanJ .body{
+  transform-origin:50% 60%; animation:mobile-lantern-awaken .8s var(--ease) .2s both;
+}
+html.simple-finale:not(.reduced).simple-finale-revealed #rsvp-cta{
+  animation:mobile-rsvp-beacon 1.05s var(--ease) .46s both;
+}
+html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake{
+  animation:mobile-keepsake-in .48s var(--ease) both;
+}
+html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(1){ animation-delay:.32s; }
+html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(2){ animation-delay:.38s; }
+html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(3){ animation-delay:.44s; }
+html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(4){ animation-delay:.50s; }
+html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(5){ animation-delay:.56s; }
+html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(6){ animation-delay:.62s; }
+html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(7){ animation-delay:.68s; }
+html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(8){ animation-delay:.74s; }
 html.simple-finale .story-ctrl-row,
 html.simple-finale .music-hint{ display:none !important; }
 html.simple-finale .ctrls{ gap:8px; }
@@ -1773,6 +1836,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <p class="cd-cap scrub-hide">until forever</p>
         <p class="script-accent add-light scrub-hide">Add your light to our sky.</p>
         <button class="btn dark scrub-hide" id="rsvp-cta" type="button" data-panel="p-rsvp">RSVP to the Journey</button>
+        <p class="keepsake-label">A few of us</p>
         <!-- A few of us — closing keepsakes. Drop these into docs/images/closing/
              and each frame fills automatically (portrait ~1200×1600 .webp, no text):
                · us-candid.webp  — a relaxed, unposed candid of the two of you
@@ -2209,6 +2273,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     var simpleNext = $('next');
     var setSimpleFinaleActive = function (active) {
       docEl.classList.toggle('simple-finale-active', !!active);
+      if (active) docEl.classList.add('simple-finale-revealed');
       if (Sky && Sky.setFinaleQuiet) Sky.setFinaleQuiet(!!active);
     };
     if (simpleNext && 'IntersectionObserver' in window) {
