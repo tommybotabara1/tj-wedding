@@ -116,6 +116,7 @@ section{ position:relative; }
 .tall-200{ height:220vh; height:220svh; }
 @media (max-width:640px){
   #path.tall{ height:430vh; height:430svh; }
+  #next.tall-200{ height:260vh; height:260svh; }
 }
 .stick{
   position:sticky; top:0; height:100vh; height:100svh;
@@ -1139,8 +1140,11 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
   .keepsake{ width:54px; margin-left:0 !important; margin-top:var(--rise-mobile,0px); }
   .keepsake-btn{ padding:7% 7% 18%; }
 }
-/* truly short (landscape phones): drop the keepsake flourish rather than crowd the CTA */
-@media (max-height:560px){ .keepsakes{ display:none; } }
+/* short phones: drop the keepsake flourish rather than crowd the RSVP lead-in */
+@media (max-height:620px){
+  .cd-cap{ display:none; }
+  .keepsakes{ display:none; }
+}
 
 /* Footer — morning after */
 footer{
@@ -3090,8 +3094,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   /* ---------- finale background lanterns (DOM, above dawn overlays) ---------- */
   (function () {
     var host = $('next-lans');
-    /* cohort A (0-8): the rising sea, spawn below the fold and climb through the pin */
-    for (var i = 0; i < 9; i++) {
+    var compactFinale = isTouchLike || window.innerWidth <= 640;
+    var risingCount = compactFinale ? 5 : 9;
+    var ambientCount = compactFinale ? 4 : 8;
+    /* cohort A: the rising sea, spawn below the fold and climb through the pin */
+    for (var i = 0; i < risingCount; i++) {
       var l = document.createElement('div');
       l.className = 'lantern';
       l.innerHTML = '<span class="body"></span><span class="flame"></span>';
@@ -3102,10 +3109,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       l.style.opacity = (0.4 + Math.random() * 0.4).toFixed(2);
       host.appendChild(l);
     }
-    /* cohort B (9-16): distant ambient layer, already inside the viewport, swaying
+    /* cohort B: distant ambient layer, already inside the viewport, swaying
        in place via the floaty CSS animation so the sky stays populated late in
        the pin instead of emptying out as the sea climbs past the top edge. */
-    for (var j = 0; j < 8; j++) {
+    for (var j = 0; j < ambientCount; j++) {
       var f = document.createElement('div');
       f.className = 'lantern far';
       f.innerHTML = '<span class="body"></span><span class="flame"></span>';
@@ -3402,13 +3409,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
          before it: the sky already warms toward dawn while #next is still rising
          into frame, then it pins (CSS sticky) for the lantern + copy beats.
 
-         The pin engages at ~45% of this timeline (one viewport of entry, then
-         220vh - 100vh of pinned scroll). Total timeline length is fixed at 10. */
+         The pin engages after the entry viewport, with extra mobile runway from
+         #next.tall-200. Total timeline length stays near 10. */
       var tl = gsap.timeline({
         scrollTrigger: { trigger: '#next', start: 'top bottom', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true }
       });
       /* mobile: shrink the pair + halo so the meet point clears the copy block below it */
       var M = function () { return window.innerWidth <= 640; };
+      var finaleMobile = M();
       /* PHASE A · entry: cohort A (the rising sea) climbs while the panel slides in.
          Cohort B (".far") is the ambient distant layer — it stays put and only sways
          via the floaty CSS animation, so the sky never empties out late in the pin. */
@@ -3495,14 +3503,21 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
          .keepsake-tilt, so this entry never disturbs the collage's final angles. */
       var keepsakeEntryRotations = [-13, -9, -5, -1, 1, 5, 9, 13];
       gsap.set('#keepsakes .keepsake', { opacity: 0, y: 34, rotation: function (i) { return keepsakeEntryRotations[i % keepsakeEntryRotations.length]; } });
-      tl.to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, 5.3)
-        .to('#arr2', { opacity: 1, y: 0, ease: 'none', duration: 0.7 }, 6.0)
-        .to(['#next-date', '#cd', '.cd-cap'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.18 }, 6.5)
-        .to(['.add-light', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.2 }, 7.5)
+      var copyStart = finaleMobile ? 4.9 : 5.3;
+      var joinStart = finaleMobile ? 5.55 : 6.0;
+      var detailStart = finaleMobile ? 6.05 : 6.5;
+      var ctaStart = finaleMobile ? 7.0 : 7.35;
+      var keepsakeStart = finaleMobile ? 7.6 : 7.85;
+      var keepsakeDuration = finaleMobile ? 0.5 : 0.75;
+      var keepsakeStagger = finaleMobile ? 0.07 : 0.16;
+      tl.to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, copyStart)
+        .to('#arr2', { opacity: 1, y: 0, ease: 'none', duration: 0.7 }, joinStart)
+        .to(['#next-date', '#cd', '.cd-cap'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.18 }, detailStart)
+        .to(['.add-light', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.2 }, ctaStart)
       /* the prints land one-by-one as the guest scrolls the last of the finale —
-         slow and soft (power2.out, big stagger) so they support the RSVP rather
-         than pull focus. They settle just as the dawn wash arrives. */
-        .to('#keepsakes .keepsake', { opacity: 1, y: 0, rotation: 0, ease: 'power2.out', duration: 0.9, stagger: 0.5 }, 7.7)
+         bounded so the eight-print set finishes before the section exits. The old
+         0.5 stagger stretched the finale timeline past its authored scroll range. */
+        .to('#keepsakes .keepsake', { opacity: 1, y: 0, rotation: 0, ease: 'power2.out', duration: keepsakeDuration, stagger: keepsakeStagger }, keepsakeStart)
       /* copy crossfades to ink as dawn washes in, so it stays readable on the light sky */
       /* dawn palette: every text node in .next-copy must stay AA on the brightening sky */
       .to(['.next-copy', '#arr1', '.next-copy .date-stamp', '.cd strong'], { color: '#2e2b27', ease: 'none', duration: 1.0 }, 8.7)
