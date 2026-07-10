@@ -210,9 +210,15 @@ html:not(.reduced) .gate-lan .lantern{ animation:floaty 5.2s ease-in-out infinit
 }
 .gate-copy p{ font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:var(--moon-soft); margin-top:12px; }
 .gate-copy .hint{ font-size:11.5px; letter-spacing:.1em; text-transform:none; color:var(--moon-faint); margin-top:14px; }
-#connect-btn{ pointer-events:auto; margin-top:20px; }
+#connect-btn{ pointer-events:auto; margin-top:14px; }
 /* no double-tap-zoom delay on the primary tap targets (iOS Safari) */
 #connect-btn, .gate-lan, .ctrl-pill, .ctrl-btn{ touch-action:manipulation; }
+/* the tap-to-enter row appears only after guests have had a moment to try
+   dragging the lanterns themselves. Pure CSS delay: it works even while the
+   scripts are still downloading on a first visit. */
+.gate-cta{ opacity:0; visibility:hidden; margin-top:16px; animation:gateCtaIn 1s var(--ease) 7s forwards; }
+@keyframes gateCtaIn{ to{ opacity:1; visibility:visible; } }
+html.reduced .gate-cta{ animation:none; opacity:1; visibility:visible; }
 /* After a short wait, the Enter button breathes so no one gets stuck at the gate */
 #connect-btn.nudge{ animation:gatepulse 1.8s var(--ease) infinite; }
 @keyframes gatepulse{
@@ -927,6 +933,23 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 .swatch{ display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--soft); }
 .swatch .dot{ width:22px; height:22px; border-radius:50%; border:1px solid var(--line); display:inline-block; }
 .attire-no{ margin-top:16px; font-size:13px; color:var(--soft); }
+/* attire close-ups by role: five slots that light up as photos are supplied
+   (same placeholder pattern as the QR codes and story frames) */
+.attire-kicker{ margin:20px 0 10px; font-family:var(--serif); font-style:italic; font-size:16.5px; color:var(--soft); }
+.attire-shots{ display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; }
+@media (max-width:640px){ .attire-shots{ grid-template-columns:repeat(2, 1fr); } }
+.ashot{ margin:0; }
+.ashot-btn{
+  display:block; width:100%; padding:0; position:relative; aspect-ratio:4/5;
+  border:1px solid var(--line); border-radius:10px; overflow:clip; background:var(--ivory);
+}
+.ashot-btn img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.ashot-btn.missing::after{
+  content:'photo to follow'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:8px; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--soft);
+}
+.ashot-btn.mem-open{ cursor:zoom-in; }
+.ashot figcaption{ margin-top:6px; font-size:11.5px; line-height:1.35; color:var(--soft); text-align:center; }
 
 /* Gift fund — boarding pass */
 .gift-pass{ position:relative; border:1px solid var(--line); border-radius:16px; background:var(--ivory); overflow:clip; margin-top:6px; }
@@ -1104,7 +1127,7 @@ html.reduced .next-copy .add-light, html:not(.js-anim) .next-copy .add-light{ co
    over the transform property. A missing file shows "photo to follow"; a loaded
    one becomes tap-to-enlarge (bindSoloOpen, like the story frames). */
 .keepsakes{ display:flex; justify-content:center; align-items:flex-start; margin:clamp(20px,2.8vh,32px) auto 0; padding-bottom:6px; max-width:min(92vw,760px); }
-.keepsake{ position:relative; margin:0; width:clamp(62px,7.2vw,92px); z-index:var(--z,1); margin-top:var(--rise,0px); }  /* margin:0 clears UA <figure> defaults */
+.keepsake{ position:relative; margin:0; width:clamp(62px,7.2vw,92px); z-index:var(--z,1); margin-top:var(--rise,0px); will-change:transform,opacity; }  /* margin:0 clears UA <figure> defaults; will-change keeps the scrubbed entry composited */
 .keepsake:not(:first-child){ margin-left:clamp(-42px,-3.8vw,-30px); }   /* overlap the prints */
 .keepsake:hover, .keepsake:focus-within{ z-index:10; }
 .keepsake-tilt{
@@ -1460,8 +1483,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   <div class="gate-copy">
     <h1>Bring our lights together</h1>
     <p>Two paths. One sky.</p>
-    <span class="hint">Tap below to enter with music. You can turn it off any time.</span><br/>
-    <button id="connect-btn" class="btn" type="button">Enter With Music &rsaquo;</button>
+    <span class="hint">Drag our two lanterns to each other and watch them meet.</span>
+    <div class="gate-cta">
+      <span class="hint">Or tap below to enter with music. You can turn it off any time.</span><br/>
+      <button id="connect-btn" class="btn" type="button">Enter With Music &rsaquo;</button>
+    </div>
   </div>
 </div>
 <script>
@@ -2081,6 +2107,39 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <span class="ag-zoom">Tap to enlarge</span>
       </button>
     </figure>
+    <p class="attire-kicker">A closer look, by role</p>
+    <div class="attire-shots" aria-label="Attire close-ups by role">
+      <figure class="ashot">
+        <button type="button" class="ashot-btn" disabled aria-label="View attire close-up: parents and secondary sponsors">
+          <img data-src="images/attire/parents-sponsors.webp" decoding="async" alt="Attire close-up for the parents and secondary sponsors" onerror="this.closest('.ashot-btn').classList.add('missing'); this.remove();" />
+        </button>
+        <figcaption>Parents &amp; Secondary Sponsors</figcaption>
+      </figure>
+      <figure class="ashot">
+        <button type="button" class="ashot-btn" disabled aria-label="View attire close-up: bridesmaids and maids of honor">
+          <img data-src="images/attire/bridesmaids.webp" decoding="async" alt="Attire close-up for the bridesmaids and maids of honor" onerror="this.closest('.ashot-btn').classList.add('missing'); this.remove();" />
+        </button>
+        <figcaption>Bridesmaids &amp; Maids of Honor</figcaption>
+      </figure>
+      <figure class="ashot">
+        <button type="button" class="ashot-btn" disabled aria-label="View attire close-up: groomsmen and best men">
+          <img data-src="images/attire/groomsmen.webp" decoding="async" alt="Attire close-up for the groomsmen and best men" onerror="this.closest('.ashot-btn').classList.add('missing'); this.remove();" />
+        </button>
+        <figcaption>Groomsmen &amp; Best Men</figcaption>
+      </figure>
+      <figure class="ashot">
+        <button type="button" class="ashot-btn" disabled aria-label="View attire close-up: flower girls and bearers">
+          <img data-src="images/attire/flowergirls-bearers.webp" decoding="async" alt="Attire close-up for the flower girls and bearers" onerror="this.closest('.ashot-btn').classList.add('missing'); this.remove();" />
+        </button>
+        <figcaption>Flower Girls &amp; Bearers</figcaption>
+      </figure>
+      <figure class="ashot">
+        <button type="button" class="ashot-btn" disabled aria-label="View attire close-up: guests">
+          <img data-src="images/attire/guests.webp" decoding="async" alt="Attire close-up for the guests" onerror="this.closest('.ashot-btn').classList.add('missing'); this.remove();" />
+        </button>
+        <figcaption>Guests</figcaption>
+      </figure>
+    </div>
     <div class="swatches">
       <div class="swatch"><span class="dot" style="background:#f3ede2"></span>Cream</div>
       <div class="swatch"><span class="dot" style="background:#fbf9f4"></span>Ivory</div>
@@ -3002,6 +3061,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     });
     var medallionEl = $('merge-medallion');
     bindSoloOpen(medallionEl && medallionEl.querySelector('.mm-btn'), 'our first photo');
+    /* attire close-ups: enlarge on tap once their photo exists (the data-src
+       loads when the panel opens; a 404 leaves the placeholder inert) */
+    Array.prototype.slice.call(document.querySelectorAll('.attire-shots .ashot')).forEach(function (shot) {
+      var cap = shot.querySelector('figcaption');
+      bindSoloOpen(shot.querySelector('.ashot-btn'), cap ? cap.textContent : '');
+    });
     /* finale keepsakes: a browsable gallery — tap any print to enlarge it, then
        arrows/keys move through the set. Deferred like the story frames: each
        print stays inert (disabled) until its own image loads, so a "photo to
@@ -3178,6 +3243,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       ctrls.classList.add('show');
       showHints(skipAnimations ? 700 : 1700);
       function afterGateSettles() {
+        if (window.__initReveals) { window.__initReveals(); window.__initReveals = null; }
         initLenis();
         scheduleScrollRefresh();
       }
@@ -3251,8 +3317,17 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       if (connected) return;
       connected = true;
       cancelAnimationFrame(rafId);
-      if (dragT) dragT.disable();
-      if (dragJ) dragJ.disable();
+      /* The meet usually fires MID-DRAG (finger still on the glass). Disabling
+         a Draggable while its drag is live strands GSAP's document-level
+         touchmove blocker, and the whole page stops scrolling until a reload
+         (the iPhone "can't scroll after entering" bug). End the drag through
+         the API first, then retire the controls. */
+      var wasDragging = !!((dragT && dragT.isDragging) || (dragJ && dragJ.isDragging));
+      [dragT, dragJ].forEach(function (d) {
+        if (!d) return;
+        try { if (d.isDragging) d.endDrag(d.pointerEvent); } catch (e) {}
+        try { d.disable(); } catch (e) {}
+      });
       T.disabled = true; J.disabled = true;
       $('connect-btn').disabled = true;
       var a = center(T), b = center(J);
@@ -3261,7 +3336,22 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       bloom.style.left = mx + 'px'; bloom.style.top = my + 'px';
       thread.style.opacity = 0; threadGlow.style.opacity = 0;
       for (var i = 0; i < 32; i++) spark(mx, my, true);
-      try { startMusic(!!userInitiated); } catch (e) {}
+      try {
+        if (wasDragging) {
+          /* the finger that joined the lanterns is still down; its release is
+             a real user gesture, so let it grant audio playback (dragging in
+             gets the same musical welcome as tapping the button) */
+          var musicOnRelease = function () {
+            window.removeEventListener('pointerup', musicOnRelease, true);
+            window.removeEventListener('touchend', musicOnRelease, true);
+            startMusic(true);
+          };
+          window.addEventListener('pointerup', musicOnRelease, true);
+          window.addEventListener('touchend', musicOnRelease, true);
+        } else {
+          startMusic(!!userInitiated);
+        }
+      } catch (e) {}
       try { Sky.liftoff(); } catch (e) {}
       /* belt-and-suspenders: whatever happens to the animation below, the guest
          must never be left stranded behind a locked gate */
@@ -3409,14 +3499,22 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       });
     }
 
-    /* generic reveals */
-    gsap.utils.toArray('.rv').forEach(function (el) {
-      if (el.closest('#curtain')) return;
-      gsap.to(el, {
-        opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+    /* generic reveals. While the welcome gate is up, body.gated clamps the page
+       to one viewport, so `once` triggers born now think every section is on
+       screen, fire immediately, and self-destruct: a first-time guest then
+       scrolls a page whose reveal animations are already spent. Defer creation
+       until the gate opens (the unlock handler calls the hook). */
+    function initReveals() {
+      gsap.utils.toArray('.rv').forEach(function (el) {
+        if (el.closest('#curtain')) return;
+        gsap.to(el, {
+          opacity: 1, y: 0, duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+        });
       });
-    });
+    }
+    if (document.body.classList.contains('gated')) window.__initReveals = initReveals;
+    else initReveals();
 
     /* Section 1 — lantern path */
     (function () {
@@ -3682,7 +3780,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
          The pin engages after the entry viewport, with extra mobile runway from
          #next.tall-200. Total timeline length stays near 10. */
       var tl = gsap.timeline({
-        scrollTrigger: { trigger: '#next', start: 'top bottom', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true }
+        /* touch: a small scrub lag smooths the sparse scroll events of finger /
+           momentum scrolling (same treatment as the #path timeline's 0.6);
+           desktop keeps the 1:1 wheel feel */
+        scrollTrigger: {
+          trigger: '#next', start: 'top bottom', end: 'bottom bottom',
+          scrub: (isTouchLike || window.innerWidth <= 640) ? 0.45 : true,
+          invalidateOnRefresh: true
+        }
       });
       /* mobile: shrink the pair + halo so the meet point clears the copy block below it */
       var M = function () { return window.innerWidth <= 640; };
@@ -3772,7 +3877,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
          .keepsake (settles to 0); the resting tilt lives on the inner
          .keepsake-tilt, so this entry never disturbs the collage's final angles. */
       var keepsakeEntryRotations = [-13, -9, -5, -1, 1, 5, 9, 13];
-      gsap.set('#keepsakes .keepsake', { opacity: 0, y: 34, rotation: function (i) { return keepsakeEntryRotations[i % keepsakeEntryRotations.length]; } });
+      /* phones skip the entry rotation: eight simultaneously rotating shadowed
+         prints is the single heaviest paint in the finale on mobile GPUs, and
+         the flat grid layout there never shows the settled tilt anyway */
+      if (finaleMobile) {
+        gsap.set('#keepsakes .keepsake', { opacity: 0, y: 22 });
+      } else {
+        gsap.set('#keepsakes .keepsake', { opacity: 0, y: 34, rotation: function (i) { return keepsakeEntryRotations[i % keepsakeEntryRotations.length]; } });
+      }
       var copyStart = finaleMobile ? 4.9 : 5.3;
       var joinStart = finaleMobile ? 5.55 : 6.0;
       var detailStart = finaleMobile ? 6.05 : 6.5;
