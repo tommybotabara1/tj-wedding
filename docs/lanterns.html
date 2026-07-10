@@ -16,6 +16,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<!-- the animation scripts sit at the end of the body; preload them so a first
+     visit on a slow connection reaches an interactive gate sooner -->
+<link rel="preload" href="vendor/gsap.min.js" as="script" />
+<link rel="preload" href="vendor/ScrollTrigger.min.js" as="script" />
+<link rel="preload" href="vendor/Draggable.min.js" as="script" />
+<link rel="preload" href="vendor/MotionPathPlugin.min.js" as="script" />
 
 <style>
 /* ============================================================
@@ -205,6 +211,8 @@ html:not(.reduced) .gate-lan .lantern{ animation:floaty 5.2s ease-in-out infinit
 .gate-copy p{ font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:var(--moon-soft); margin-top:12px; }
 .gate-copy .hint{ font-size:11.5px; letter-spacing:.1em; text-transform:none; color:var(--moon-faint); margin-top:14px; }
 #connect-btn{ pointer-events:auto; margin-top:20px; }
+/* no double-tap-zoom delay on the primary tap targets (iOS Safari) */
+#connect-btn, .gate-lan, .ctrl-pill, .ctrl-btn{ touch-action:manipulation; }
 /* After a short wait, the Enter button breathes so no one gets stuck at the gate */
 #connect-btn.nudge{ animation:gatepulse 1.8s var(--ease) infinite; }
 @keyframes gatepulse{
@@ -1150,10 +1158,9 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
   .cd-cap{ display:none; }
 }
 
-/* The RSVP finale is deliberately static on phones: a finger-scroll must never
-   compete with a long pinned timeline. `?finale=full` remains available for
-   design review, while `?simpleFinale=1` is retained as a backwards-compatible
-   explicit opt-in. */
+/* Static finale variant, opt-in only (`?finale=simple` or `?simpleFinale=1`).
+   Kept as a debugging aid and low-motion fallback; the cinematic scrubbed
+   finale is the default on every device. */
 html.simple-finale #next.tall,
 html.simple-finale #next.tall-200{ height:auto !important; min-height:0; }
 html.simple-finale #next .stick{
@@ -1457,6 +1464,20 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     <button id="connect-btn" class="btn" type="button">Enter With Music &rsaquo;</button>
   </div>
 </div>
+<script>
+/* Cold-load safety: the main script lives at the end of the page and can take
+   seconds to arrive on a first cellular visit, leaving the gate visible but
+   inert. Record an early tap on the Enter button and give visual feedback; the
+   main script honors the pending tap the moment it initializes. */
+(function () {
+  var b = document.getElementById('connect-btn');
+  b.addEventListener('click', function () {
+    if (window.__gateReady) return;
+    window.__gatePendingEnter = true;
+    b.classList.add('nudge');
+  });
+})();
+</script>
 
 <main id="main">
 
@@ -2266,9 +2287,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   var ANIM = HAS_GSAP && !REDUCED;
   var docEl = document.documentElement;
   var qs = new URLSearchParams(window.location.search);
-  var MOBILE_SAFE_FINALE = isTouchLike || compactViewport;
-  var SIMPLE_FINALE = qs.get('finale') !== 'full'
-    && (qs.has('simpleFinale') || qs.get('finale') === 'simple' || MOBILE_SAFE_FINALE);
+  /* The cinematic scrubbed finale is the default on every device (restored per
+     the couple, Jul 10 2026): the iOS jank that motivated a static mobile
+     variant is fixed at the source (canvas resize guard, ignoreMobileResize,
+     dt clamp). The static variant remains an explicit opt-in for debugging. */
+  var SIMPLE_FINALE = qs.has('simpleFinale') || qs.get('finale') === 'simple';
 
   if (REDUCED) docEl.classList.add('reduced');
   if (SIMPLE_FINALE) docEl.classList.add('simple-finale');
@@ -3146,7 +3169,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     var gate = $('gate');
     var KEY = 'tj-lanterns-entered';
 
+    var unlocked = false;
     function unlock(skipAnimations) {
+      if (unlocked) return;   /* the safety timeout and the timeline can both call this */
+      unlocked = true;
       try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
       document.body.classList.remove('gated');
       ctrls.classList.add('show');
@@ -3235,8 +3261,13 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       bloom.style.left = mx + 'px'; bloom.style.top = my + 'px';
       thread.style.opacity = 0; threadGlow.style.opacity = 0;
       for (var i = 0; i < 32; i++) spark(mx, my, true);
-      startMusic(!!userInitiated);
-      Sky.liftoff();
+      try { startMusic(!!userInitiated); } catch (e) {}
+      try { Sky.liftoff(); } catch (e) {}
+      /* belt-and-suspenders: whatever happens to the animation below, the guest
+         must never be left stranded behind a locked gate */
+      setTimeout(function () {
+        if (document.body.classList.contains('gated')) unlock(true);
+      }, 4500);
       if (ANIM) {
         var tl = gsap.timeline({ onComplete: function () { unlock(false); } });
         tl.to(T, { x: '+=' + ((mx - 50) - a.x), y: '+=' + (my - a.y), duration: 0.5, ease: 'power2.inOut' }, 0)
@@ -3311,12 +3342,21 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     ['pointerdown', 'keydown'].forEach(function (ev) {
       gate.addEventListener(ev, function (e) {
         if (e.target === connectBtn) return; /* tapping Enter runs connect() itself */
-        clearTimeout(nudgeTimer); clearTimeout(autoTimer);
-        connectBtn.classList.remove('nudge');
+        /* re-arm rather than cancel: if the guest's interactions go nowhere
+           (or taps land before this script loaded), the gate still opens
+           itself after they pause, instead of stranding them */
+        clearGateTimers();
+        if (!connected) armGateTimers();
       }, true);
     });
     connectBtn.addEventListener('click', clearGateTimers);
     armGateTimers();
+
+    /* honor a tap that landed before this script finished loading (see the
+       inline recorder under the gate markup). The gesture context is gone by
+       now, so music falls back to the "tap for music" prompt gracefully. */
+    window.__gateReady = true;
+    if (window.__gatePendingEnter) connect(true);
   })();
 
   /* ---------- finale background lanterns (DOM, above dawn overlays) ---------- */
