@@ -978,16 +978,22 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
 .qr-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:14px; }
 /* desktop: all gift QR codes on a single row (wider panel keeps them scannable) */
 @media (min-width:600px){
-  .qr-grid{ grid-template-columns:repeat(5,1fr); gap:12px; }
-  #p-gift{ width:min(95vw,820px); }
+  .qr-grid{ grid-template-columns:repeat(6,1fr); gap:10px; }
+  #p-gift{ width:min(95vw,860px); }
 }
 .qr{ margin:0; text-align:center; }
+.qr-note{ margin:-6px 0 14px; font-size:12px; color:var(--soft); text-align:center; }
 .qr-img{
   aspect-ratio:1; border:1px solid var(--line); border-radius:12px; background:#fff;
   display:flex; align-items:center; justify-content:center; overflow:clip; padding:8px;
+  width:100%; font:inherit; cursor:default;   /* it's a <button>: keep the card look */
 }
+.qr-img.mem-open{ cursor:zoom-in; }
 .qr-img img{ width:100%; height:100%; object-fit:contain; }
 .qr-img.missing::after{ content:"QR to follow"; font-size:11px; color:var(--soft); }
+/* download action inside the lightbox, shown only when a QR is enlarged */
+.lb-dl{ display:none; }
+.lb.qr-mode .lb-dl{ display:block; width:fit-content; margin:14px auto 2px; }
 .qr figcaption{ font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; margin-top:8px; color:var(--ink); }
 .qr-cap{ display:block; font-size:10.5px; color:var(--soft); }
 
@@ -2225,12 +2231,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="gp-foot"><small>Passenger: You, with love</small><span class="barcode" aria-hidden="true"></span></div>
     </div>
     <div class="divider-sm">Scan to send a gift</div>
+    <p class="qr-note">Tap any code to enlarge it or download it to your gallery.</p>
     <div class="qr-grid">
-      <figure class="qr"><div class="qr-img"><img data-src="images/qr/bpi.png" alt="BPI QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>BPI</figcaption><span class="qr-cap">Scan with BPI</span></figure>
-      <figure class="qr"><div class="qr-img"><img data-src="images/qr/bdo.png" alt="BDO QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>BDO</figcaption><span class="qr-cap">Scan with BDO</span></figure>
-      <figure class="qr"><div class="qr-img"><img data-src="images/qr/unionbank.png" alt="UnionBank QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>UnionBank</figcaption><span class="qr-cap">Scan with UnionBank</span></figure>
-      <figure class="qr"><div class="qr-img"><img data-src="images/qr/pnb.png" alt="PNB QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>PNB</figcaption><span class="qr-cap">Scan with PNB</span></figure>
-      <figure class="qr"><div class="qr-img"><img data-src="images/qr/gcash.png" alt="GCash QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></div><figcaption>GCash</figcaption><span class="qr-cap">Scan with GCash</span></figure>
+      <figure class="qr"><button type="button" class="qr-img" disabled aria-label="Enlarge the BPI QR code"><img data-src="images/qr/bpi.png" alt="BPI QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></button><figcaption>BPI</figcaption><span class="qr-cap">Scan with BPI</span></figure>
+      <figure class="qr"><button type="button" class="qr-img" disabled aria-label="Enlarge the BDO QR code"><img data-src="images/qr/bdo.png" alt="BDO QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></button><figcaption>BDO</figcaption><span class="qr-cap">Scan with BDO</span></figure>
+      <figure class="qr"><button type="button" class="qr-img" disabled aria-label="Enlarge the UnionBank QR code"><img data-src="images/qr/unionbank.png" alt="UnionBank QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></button><figcaption>UnionBank</figcaption><span class="qr-cap">Scan with UnionBank</span></figure>
+      <figure class="qr"><button type="button" class="qr-img" disabled aria-label="Enlarge the PNB QR code"><img data-src="images/qr/pnb.png" alt="PNB QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></button><figcaption>PNB</figcaption><span class="qr-cap">Scan with PNB</span></figure>
+      <figure class="qr"><button type="button" class="qr-img" disabled aria-label="Enlarge the GCash QR code"><img data-src="images/qr/gcash.png" alt="GCash QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></button><figcaption>GCash</figcaption><span class="qr-cap">Scan with GCash</span></figure>
+      <figure class="qr"><button type="button" class="qr-img" disabled aria-label="Enlarge the Maya QR code"><img data-src="images/qr/maya.png" alt="Maya QR code" onerror="this.closest('.qr-img').classList.add('missing'); this.remove();" /></button><figcaption>Maya</figcaption><span class="qr-cap">Scan with Maya</span></figure>
     </div>
   </div>
 </dialog>
@@ -2284,6 +2292,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     <button class="panel-close lb-close" type="button" aria-label="Close photo">&times;</button>
     <img id="lb-img" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" />
     <figcaption id="lb-cap"></figcaption>
+    <a id="lb-dl" class="btn lb-dl" href="#" download>Download QR</a>
     <div class="lb-nav">
       <button id="lb-prev" type="button" aria-label="Previous photo">&#8592;</button>
       <button id="lb-next" type="button" aria-label="Next photo">&#8594;</button>
@@ -2999,7 +3008,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       t.addEventListener('click', function () {
         lastTrigger = t;
         activeGallery = 'tiles';
-        lb.classList.remove('solo');
+        lb.classList.remove('solo', 'qr-mode');
         show(i);
         if (window.__lenis) window.__lenis.stop();
         lb.setAttribute('data-lenis-prevent', '');
@@ -3019,6 +3028,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     var az = $('attire-zoom');
     if (az) az.addEventListener('click', function () {
       lastTrigger = az;
+      lb.classList.remove('qr-mode');
       lb.classList.add('solo');
       lbImg.src = 'images/attire-guide.webp?v=2';
       lbImg.alt = 'Attire guide, enlarged';
@@ -3043,6 +3053,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         btn.classList.add('mem-open');
         btn.addEventListener('click', function () {
           lastTrigger = btn;
+          lb.classList.remove('qr-mode');
           lb.classList.add('solo');
           lbImg.src = img.currentSrc || img.src;
           lbImg.alt = img.alt || '';
@@ -3067,6 +3078,38 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       var cap = shot.querySelector('figcaption');
       bindSoloOpen(shot.querySelector('.ashot-btn'), cap ? cap.textContent : '');
     });
+    /* gift QRs: tap to enlarge, plus a download button so guests can save the
+       code and scan it from inside their banking app's gallery picker */
+    var lbDl = $('lb-dl');
+    lb.addEventListener('close', function () { lb.classList.remove('qr-mode'); });
+    Array.prototype.slice.call(document.querySelectorAll('.qr-grid .qr')).forEach(function (fig) {
+      var btn = fig.querySelector('.qr-img');
+      var img = btn && btn.querySelector('img');
+      var label = fig.querySelector('figcaption');
+      var name = label ? label.textContent.trim() : 'QR';
+      if (!btn || !img) return;
+      function enableQr() {
+        if (btn.__qrBound) return;
+        btn.__qrBound = true;
+        btn.disabled = false;
+        btn.classList.add('mem-open');
+        btn.addEventListener('click', function () {
+          lastTrigger = btn;
+          lb.classList.add('solo', 'qr-mode');
+          lbImg.src = img.currentSrc || img.src;
+          lbImg.alt = img.alt || '';
+          lbCap.textContent = 'Scan with ' + name + ', or save it to your gallery';
+          if (lbDl) {
+            lbDl.href = img.currentSrc || img.src;
+            lbDl.setAttribute('download', 'tj-wedding-gift-' + name.toLowerCase().replace(/\s+/g, '-') + '.png');
+          }
+          if (window.__lenis) window.__lenis.stop();
+          if (typeof lb.showModal === 'function') lb.showModal(); else lb.setAttribute('open', '');
+        });
+      }
+      if (img.complete && img.naturalWidth > 0) enableQr();
+      else img.addEventListener('load', enableQr);
+    });
     /* finale keepsakes: a browsable gallery — tap any print to enlarge it, then
        arrows/keys move through the set. Deferred like the story frames: each
        print stays inert (disabled) until its own image loads, so a "photo to
@@ -3090,6 +3133,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       if (!keeps[idx] || !keeps[idx].ready) return;
       activeGallery = 'keeps';
       lastTrigger = keeps[idx].btn;
+      lb.classList.remove('qr-mode');
       var readyN = keeps.filter(function (x) { return x.ready; }).length;
       lb.classList.toggle('solo', readyN < 2);   /* one photo → no arrows; two+ → browsable */
       keepShow(idx);
