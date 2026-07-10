@@ -3398,12 +3398,20 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           var musicOnRelease = function () {
             window.removeEventListener('pointerup', musicOnRelease, true);
             window.removeEventListener('touchend', musicOnRelease, true);
+            window.removeEventListener('pointercancel', musicOnRelease, true);
             startMusic(true);
           };
           window.addEventListener('pointerup', musicOnRelease, true);
           window.addEventListener('touchend', musicOnRelease, true);
+          window.addEventListener('pointercancel', musicOnRelease, true);
         } else {
-          startMusic(!!userInitiated);
+          /* the meet often registers a frame AFTER the finger lifts (dropping
+             one lantern onto the other), so there is no release left to wait
+             for. Browsers keep the gesture's transient activation alive
+             briefly: just attempt playback, and a rejection falls back to the
+             tap-for-music prompt via startMusic's own catch. Covers the timer
+             auto-open too (idle = rejected = prompt, same as before). */
+          startMusic(true);
         }
       } catch (e) {}
       try { Sky.liftoff(); } catch (e) {}
