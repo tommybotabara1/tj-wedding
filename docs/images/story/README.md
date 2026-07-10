@@ -11,5 +11,6 @@ Drop photos here with these exact names and they appear on the invitation automa
 - j-college.webp — Jeyan, college
 - j-work.webp — Jeyan, working years
 - us-meet.webp — the earliest photo of the two of you (appears when the two lights meet)
-- us-met-1.webp — a favorite from your first year together
-- us-met-2.webp — another favorite from your first year together
+- us-met-1.webp — a favorite from your first year together ("the year we met")
+- us-met-2.webp — the civil wedding photo ("the day we made it official")
+- us-met-3.webp — a favorite from everyday life together ("and every day after")
