@@ -798,6 +798,13 @@ dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); 
   font-family:var(--serif); font-style:italic; font-size:17px; color:var(--rose-deep);
 }
 .panel-inner > p{ color:var(--soft); font-size:14px; }
+/* Save-the-date film */
+dialog.panel.film{ width:min(94vw, 880px); }
+.film-frame{ margin-top:6px; border-radius:14px; overflow:hidden; background:#0e0907; box-shadow:0 18px 50px -18px rgba(0,0,0,.5); }
+.film-frame video{ display:block; width:100%; aspect-ratio:4/3; }
+.film-cap{ margin-top:12px; font-family:var(--serif); font-style:italic; font-size:15px; text-align:center; }
+.film-btn{ margin-top:22px; }
+.film-btn svg{ width:20px; height:20px; }
 .divider-sm{
   display:flex; align-items:center; gap:12px; margin:18px 0;
   font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--sage-deep);
@@ -1465,6 +1472,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     <symbol id="ic-phone" viewBox="0 0 24 24"><path d="M6.6 3.8 8.8 6a1.6 1.6 0 0 1 0 2.2L7.6 9.4a12.6 12.6 0 0 0 7 7l1.2-1.2a1.6 1.6 0 0 1 2.2 0l2.2 2.2a1.6 1.6 0 0 1 0 2.3l-1.3 1.2c-1.1 1.1-9 .3-13.6-5.4C1.7 11 2.8 6.2 4.3 4.9l1-1.1a1.6 1.6 0 0 1 1.3 0z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
     <symbol id="ic-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="m15 9-1.8 4.2L9 15l1.8-4.2L15 9z" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></symbol>
     <symbol id="ic-paperplane" viewBox="0 0 34 34"><path d="M3 17 31 5 21 29l-4.5-9L3 17z" fill="currentColor" opacity=".9"/><path d="m16.5 20 5-8" stroke="#fff" stroke-width="1.2" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="ic-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.2 8.7v6.6l5.3-3.3-5.3-3.3z" fill="currentColor"/></symbol>
   </defs>
 </svg>
 
@@ -1688,6 +1696,10 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <span class="script-accent rv">where our sky begins</span>
         <h2 class="rv">The Day</h2>
         <p class="sub rv">The journey continues here.</p>
+        <button class="btn ghost film-btn rv" type="button" data-panel="p-film">
+          <svg aria-hidden="true"><use href="#ic-play"/></svg>
+          Watch our save-the-date film
+        </button>
       </div>
 
       <div class="dcards">
@@ -2016,7 +2028,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <ul class="ent-roster"><li>Abigail Cayabyab-Fereras</li><li>Adrianne Micaela Manalaotao</li><li>Ceijas-Lyn Y. Tagana</li><li>Denise M. Beltran</li><li>Gemela Marian A. David</li><li>Josett A. Romano</li><li>Marielle Joy K. Serania</li><li>Michelle A. Alaras</li><li>Micca Ricka Raphaella T. Cantos</li><li>Vanessa Laureen A. Trinidad</li></ul>
       </div>
       <div class="ent-col sage"><span class="role">In Sage</span><h4>Groomsmen</h4>
-        <ul class="ent-roster"><li>Rom D. Fronda Jr.</li><li>Axl John R. Mirabueno</li><li>Emil B. de Dios</li><li>Traviz Keinn T. Climacosa</li><li>Vaunn C. Maribao</li><li>Michael Ryan F. Somosot</li><li>Julian Christopher A. Lopez</li><li>Betlee T. Barraquias</li><li>Jason S. Deichmann</li><li>Piolo G. Barletta</li></ul>
+        <ul class="ent-roster"><li>Rom D. Fronda Jr.</li><li>Axl John R. Mirabueno</li><li>Franco Emil B. de Dios</li><li>Traviz Keinn T. Climacosa</li><li>Vaunn C. Maribao</li><li>Michael Ryan F. Somosot</li><li>Julian Christopher A. Lopez</li><li>Betlee T. Barraquias</li><li>Jason S. Deichmann</li><li>Piolo G. Barletta</li></ul>
       </div>
     </div>
     <div class="ent-block">
@@ -2026,7 +2038,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <div class="ent-tk"><b>Cord</b><div class="ent-role-names"><span>Christian Dino V. Diñoso</span><span>Joana M. Diñoso</span></div></div>
         <div class="ent-tk"><b>Veil</b><div class="ent-role-names"><span>Axl John R. Mirabueno</span><span>Adrianne Micaela Manalaotao</span></div></div>
         <div class="ent-tk"><b>Bible Bearer</b><div class="ent-role-names"><span>Alvin P. Botabara</span></div></div>
-        <div class="ent-tk"><b>Coin Bearer</b><div class="ent-role-names"><span>Luis B. de Dios</span></div></div>
+        <div class="ent-tk"><b>Coin Bearer</b><div class="ent-role-names"><span>Ernesto Luis B. de Dios</span></div></div>
         <div class="ent-tk"><b>Ring Bearer</b><div class="ent-role-names"><span>Seansean B. Aspra</span></div></div>
         <div class="ent-tk"><b>Flower Girls</b><div class="ent-role-names"><span>Bea Bianca B. Botabara</span><span>Nina Ysabelle B. Botabara</span></div></div>
       </div>
@@ -2042,16 +2054,16 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         <li>Mr. and Mrs. Chan</li>
         <li>Mr. and Mrs. Perez</li>
         <li>Mr. and Mrs. Babadilla</li>
-        <li>Christian Dino V. Diñoso and Joana M. Diñoso</li>
+        <li>Mr. Christian Dino V. Diñoso and Mrs. Joana M. Diñoso</li>
         <li>Mr. and Mrs. Ang</li>
-        <li>René Müller and Rachel R. Müller</li>
-        <li>Denley Cyder A. Mirabueno and Grace Chua-Mirabueno</li>
-        <li>Andrew Paul I. Montinola</li>
-        <li>Analiza C. Chiapoco</li>
-        <li>Emalyn E. Lira</li>
-        <li>Voltaire Villareal</li>
-        <li>Godofredo P. Baja Jr.</li>
-        <li>Rosa Maria Q. Gonzales</li>
+        <li>Mr. Renè Ernst Tiefenauer Mueller and Mrs. Raquel Reyes Mueller</li>
+        <li>Mr. Denley Cyder A. Mirabueno and Mrs. Grace Chua-Mirabueno</li>
+        <li>Mr. Andrew Paul I. Montinola</li>
+        <li>Mrs. Analiza C. Chiapoco</li>
+        <li>Mrs. Emalyn E. Lira</li>
+        <li>Mr. Voltaire Villareal</li>
+        <li>Mr. Godofredo P. Baja Jr.</li>
+        <li>Ms. Rosa Maria Q. Gonzales</li>
       </ol>
     </div>
   </div>
@@ -2292,7 +2304,24 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <button class="menu-link" type="button" data-go="p-entourage"><svg aria-hidden="true"><use href="#ic-users"/></svg> <span>Entourage<small>The wedding party</small></span></button>
       <button class="menu-link" type="button" data-go="p-gift"><svg aria-hidden="true"><use href="#ic-gift"/></svg> <span>Gift Fund<small>A small blessing</small></span></button>
       <button class="menu-link" type="button" data-go="p-faq"><svg aria-hidden="true"><use href="#ic-help"/></svg> <span>FAQ &amp; Contact<small>Questions &amp; help</small></span></button>
+      <button class="menu-link wide" type="button" data-go="p-film"><svg aria-hidden="true"><use href="#ic-play"/></svg> <span>Save-the-Date Film<small>Watch our short film</small></span></button>
     </div>
+  </div>
+</dialog>
+
+<!-- Save-the-date film -->
+<dialog class="panel film" id="p-film" aria-label="Save-the-date film">
+  <div class="panel-inner">
+    <div class="panel-head">
+      <div><span class="panel-kicker">press play</span><h3>Our Save-the-Date Film</h3></div>
+      <button class="panel-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="film-frame">
+      <video id="film-video" controls playsinline preload="none"
+        poster="video/save-the-date-poster.webp" src="video/save-the-date.mp4"
+        aria-label="Save-the-date film for Tommy and Jeyan's wedding"></video>
+    </div>
+    <p class="film-cap">Sunday, December 27, 2026 &mdash; save the date.</p>
   </div>
 </dialog>
 
@@ -2996,6 +3025,23 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       if (bk) bk.hidden = false; /* opened from the Menu → offer a way back */
     });
   });
+
+  /* Save-the-date film: rest the guitar while the film plays, resume after */
+  var filmVideo = $('film-video'), filmDlg = $('p-film');
+  if (filmVideo && filmDlg) {
+    var filmPausedMusic = false;
+    filmVideo.addEventListener('play', function () {
+      if (!audio.paused) { filmPausedMusic = true; audio.pause(); }
+    });
+    filmVideo.addEventListener('ended', function () {
+      if (filmPausedMusic) { filmPausedMusic = false; startMusic(true); }
+    });
+    filmDlg.addEventListener('close', function () {
+      filmVideo.pause();
+      if (filmVideo.ended) filmVideo.currentTime = 0; /* rewind for the next viewing */
+      if (filmPausedMusic) { filmPausedMusic = false; startMusic(true); }
+    });
+  }
 
   /* ---------- gallery lightbox ---------- */
   (function () {
