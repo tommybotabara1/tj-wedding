@@ -1003,6 +1003,10 @@ dialog.panel.film{ width:min(94vw, 880px); }
 }
 .step-btn:hover:not(:disabled){ background:rgba(156,170,143,.2); }
 .step-btn:disabled{ opacity:.35; cursor:default; }
+/* a one-seat invitation: show the count, but don't dangle controls that can't move */
+#party-size-group.locked .stepper{ opacity:.6; }
+#party-size-group.locked .step-btn{ display:none; }
+#party-size-group.locked .step-val{ min-width:0; padding:0 10px; }
 .step-val{ min-width:96px; text-align:center; }
 .step-val b{ font-family:var(--serif); font-size:24px; font-weight:400; }
 .step-val span{ display:block; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--soft); }
@@ -1025,6 +1029,93 @@ dialog.panel.film{ width:min(94vw, 880px); }
   text-transform:none; letter-spacing:0; font-weight:300;
 }
 .field-hint.warn{ color:var(--rose-deep); }
+
+/* ── waiting states ───────────────────────────────────────────────────────────
+   Every RSVP round trip talks to a Google Apps Script, which is the one place a
+   guest genuinely waits on the network. Pure CSS so none of it depends on GSAP. */
+
+/* a small lantern ember, used in buttons and on the card being opened */
+.ember{
+  flex:0 0 auto; width:15px; height:15px; border-radius:50%;
+  background:radial-gradient(circle at 50% 45%, #ffd9a0, #e8a33f 55%, rgba(232,163,63,0) 72%);
+  animation:ember-pulse 1.15s var(--ease) infinite;
+}
+@keyframes ember-pulse{
+  0%,100%{ transform:scale(.72); opacity:.55; }
+  50%    { transform:scale(1);   opacity:1; }
+}
+.search-btn .ember{ width:16px; height:16px; }
+
+/* skeleton result cards — same geometry as .match-btn, so nothing jumps when the
+   real names replace them */
+.sk-list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+.sk-card{
+  position:relative; overflow:hidden; min-height:56px; padding:14px 16px;
+  border:1px solid var(--line); border-radius:12px; background:var(--ivory);
+}
+.sk-line{ height:11px; border-radius:6px; background:rgba(46,43,39,.10); }
+.sk-line + .sk-line{ margin-top:9px; height:9px; }
+.sk-card::after{
+  content:""; position:absolute; inset:0; transform:translateX(-100%);
+  background:linear-gradient(90deg, transparent, rgba(207,154,147,.30), transparent);
+  animation:sk-sweep 1.4s ease-in-out infinite;
+}
+.sk-card:nth-child(2)::after{ animation-delay:.18s; }
+@keyframes sk-sweep{ 100%{ transform:translateX(100%); } }
+
+/* the card the guest just tapped keeps focus; its siblings step back */
+.match-list.choosing .match-btn{ opacity:.4; pointer-events:none; }
+.match-list.choosing .match-btn.chosen{ opacity:1; border-color:var(--sage); background:rgba(156,170,143,.24); }
+.match-btn{ display:flex; align-items:center; gap:12px; }
+.match-btn .mb-txt{ flex:1; min-width:0; }
+
+/* submit: an indeterminate band travelling under the label, instead of a dead button */
+#submit-btn{ position:relative; overflow:hidden; }
+#submit-btn.working::after{
+  content:""; position:absolute; inset:0; transform:translateX(-100%);
+  background:linear-gradient(90deg, transparent, rgba(244,237,221,.28), transparent);
+  animation:sk-sweep 1.15s linear infinite;
+}
+
+/* not on the guest list */
+.not-listed{
+  border:1px solid var(--rose-light); background:rgba(207,154,147,.10);
+  border-radius:12px; padding:18px 20px; margin-top:18px;
+}
+.not-listed h4{ font-size:19px; margin-bottom:8px; }
+.not-listed p{ font-size:13.5px; line-height:1.55; color:var(--soft); margin:0 0 14px; }
+.nl-actions{ display:grid; gap:9px; }
+.nl-actions a,.nl-actions button{
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  min-height:48px; padding:12px 18px; border-radius:10px;
+  border:1px solid rgba(46,43,39,.22); background:var(--ivory); color:var(--ink);
+  font-family:var(--sans); font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
+  text-decoration:none; cursor:pointer; transition:background .25s var(--ease);
+}
+.nl-actions a:hover,.nl-actions button:hover{ background:rgba(156,170,143,.18); }
+.nl-actions svg{ width:16px; height:16px; }
+.nl-actions .plain{
+  border:0; background:none; text-transform:none; letter-spacing:0; font-size:13px;
+  color:var(--soft); min-height:44px; text-decoration:underline;
+}
+.nl-note{ font-size:12.5px; color:var(--soft); margin:12px 0 0; line-height:1.5; }
+
+/* results arriving */
+.match-list li{ animation:res-in .18s var(--ease) both; }
+@keyframes res-in{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+
+/* Motion is decoration here — the copy carries the meaning, so strip all of it. */
+@media (prefers-reduced-motion:reduce){
+  .ember,.sk-card::after,#submit-btn.working::after,.match-list li{ animation:none; }
+  .ember{ opacity:.9; transform:none; }
+  .sk-card::after{ display:none; }
+}
+html.reduced .ember,
+html.reduced .sk-card::after,
+html.reduced #submit-btn.working::after,
+html.reduced .match-list li{ animation:none; }
+html.reduced .ember{ opacity:.9; transform:none; }
+html.reduced .sk-card::after{ display:none; }
 
 /* Itinerary / boarding passes */
 /* Venue cards share a grid so the two cards sit in one row and stretch to
@@ -2261,7 +2352,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
               <svg aria-hidden="true"><use href="#ic-search"/></svg><span>Search</span>
             </button>
           </div>
-          <p class="field-hint" id="search-hint">Tap Search. If you&#8217;ve replied before we&#8217;ll bring your answer up so you can change it &mdash; otherwise you&#8217;ll start a fresh reply.</p>
+          <p class="field-hint" id="search-hint">Any part of your name works &mdash; first name, surname, even a few letters. Tap Search and pick yourself from the list.</p>
         </div>
         <div id="search-results" aria-live="polite"></div>
       </div>
@@ -2306,7 +2397,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
               <button class="step-btn" type="button" id="party-plus" aria-label="One more guest">+</button>
             </div>
             <input type="hidden" id="rsvp-party-size" name="party_size" value="1" />
-            <p class="field-hint">Counting you. Seats are by name, so tell us who else is coming.</p>
+            <p class="field-hint" id="party-hint">Counting you. Seats are by name, so tell us who else is coming.</p>
           </div>
           <div id="guest-fields-wrapper"></div>
         </div>
@@ -3452,29 +3543,36 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   }
 
   /* ---------- RSVP ----------
-     One reply per guest, keyed on the guest's NAME, in three steps:
+     One reply per guest, gated on the couple's live Guest List, in three steps:
 
-       1. Who's replying?  A name + a Search button. Matching replies come back
-          as tappable cards; tapping one reopens that reply for editing. No
-          match (or "none of these are you") starts a fresh reply under the name
-          typed. Nothing about the guest list is exposed — the backend only
-          answers on a confident match and never returns a bare list.
-       2. The reply itself, headed by a bar naming who it belongs to.
+       1. Who's replying?  The guest types any part of their name and taps
+          Search; the backend matches it against the Guest List tab of the
+          planner workbook and returns the invitees that fit. They tap their own
+          name. A name that isn't on the list can't reply — it gets a card
+          pointing at the RSVP desk instead.
+       2. The reply itself, headed by a bar naming who it belongs to. Party size
+          is capped to that guest's Pax allowance from the list.
        3. Confirmation with a reference code.
 
      Settling identity BEFORE asking anything is the whole anti-duplicate
-     mechanism: a guest who already replied is steered into editing that reply,
-     and the backend upserts on the same key, so five submissions can never
-     become five seats. A device that has replied is remembered locally and
-     lands straight on its own answer. */
+     mechanism: the name comes from the list rather than free text, a guest who
+     already replied is steered into editing that reply, and the backend upserts
+     on the same key — so five submissions can never become five seats.
+
+     The one rule that outranks the gate: if the guest-list read FAILS, we must
+     not lock a real guest out. Only a successful, empty search gates. */
   (function () {
     var RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxc2joPGiLCcm25n-KZBbxTN3hTAFMf6nQ-qle5hjLlo00rgcsCC6sGnJxYW32QF-Fu/exec';
     var STORE_KEY = 'tj-rsvp-v1';
     var DEADLINE = new Date('2026-11-30T23:59:59+08:00');
     var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     var MAX_PARTY = 8;
+    var BUSY_FLOOR = 350;      /* ms — below this a spinner just flashes and looks broken */
+    var SLOW_AFTER = 6000;     /* ms — say something rather than sit there silently */
+    var DESK_TEL = '+639178251130';
 
-    var guestName = '';        /* settled in step 1 */
+    var guestName = '';        /* settled in step 1, from the Guest List */
+    var paxCap = MAX_PARTY;    /* seats this guest is allowed, from the list */
     var editing = null;        /* the existing record being updated, or null */
     var attendingValue = null; /* 'yes' | 'no' | null */
     var partySize = 1;
@@ -3520,15 +3618,65 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
     /* ================= STEP 1 · who is replying ================= */
 
+    var DEFAULT_HINT = 'Any part of your name works &mdash; first name, surname, even a few letters. Tap Search and pick yourself from the list.';
     function setSearchHint(msg, warn) {
       var h = $('search-hint');
       h.classList.toggle('warn', !!warn);
-      h.innerHTML = msg || 'Tap Search. If you&#8217;ve replied before we&#8217;ll bring your answer up so you can change it &mdash; otherwise you&#8217;ll start a fresh reply.';
+      h.innerHTML = msg || DEFAULT_HINT;
+    }
+
+    /* ----- waiting states -----
+       One helper owns every spinner, so no failure branch can leave one spinning.
+       `slowTimer` softens the copy on a long wait; `since` enforces the floor that
+       stops a fast reply strobing the skeleton for a single frame. */
+    var slowTimer = null, busySince = 0;
+    function setBusy(scope, on) {
+      if (scope === 'search') {
+        var btn = $('search-btn');
+        btn.disabled = on;
+        btn.setAttribute('aria-busy', on ? 'true' : 'false');
+        btn.innerHTML = on
+          ? '<span class="ember" aria-hidden="true"></span><span>Searching</span>'
+          : '<svg aria-hidden="true"><use href="#ic-search"/></svg><span>Search</span>';
+      } else if (scope === 'submit') {
+        var s = $('submit-btn');
+        s.disabled = on;
+        s.classList.toggle('working', on);
+        s.setAttribute('aria-busy', on ? 'true' : 'false');
+      }
+      if (on) {
+        busySince = Date.now();
+        clearTimeout(slowTimer);
+        slowTimer = setTimeout(function () {
+          setSearchHint('Still looking &mdash; our guest list is a big spreadsheet.');
+        }, SLOW_AFTER);
+      } else {
+        clearTimeout(slowTimer);
+      }
+    }
+    /* Run `fn` only once the spinner has been up long enough to read as intentional. */
+    function afterFloor(fn) {
+      var wait = Math.max(0, BUSY_FLOOR - (Date.now() - busySince));
+      if (wait) setTimeout(fn, wait); else fn();
+    }
+    function showSkeletons() {
+      var box = $('search-results');
+      box.innerHTML = '';
+      var ul = document.createElement('ul');
+      ul.className = 'sk-list';
+      ul.setAttribute('aria-hidden', 'true');   /* the live region says "Searching" instead */
+      for (var i = 0; i < 2; i++) {
+        var li = document.createElement('li');
+        li.className = 'sk-card';
+        li.innerHTML = '<div class="sk-line" style="width:' + (i ? 52 : 68) + '%"></div>' +
+                       '<div class="sk-line" style="width:' + (i ? 34 : 41) + '%"></div>';
+        ul.appendChild(li);
+      }
+      box.appendChild(ul);
     }
 
     function doSearch() {
       var q = tidy($('rsvp-search').value);
-      var btn = $('search-btn');
       $('search-results').innerHTML = '';
 
       if (norm(q).length < 3) {
@@ -3537,77 +3685,144 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         return;
       }
       setSearchHint('');
-      btn.disabled = true;
-      /* `website` is the honeypot, deliberately filled on LOOKUPS only.
+      setBusy('search', true);
+      showSkeletons();
+
+      /* `website` is the honeypot, deliberately filled on READ-ONLY calls.
          The current backend routes on `action` before it ever looks at the
-         honeypot, so this is ignored. But an older deployment (one that
-         predates the lookup action) has no routing at all — it would read a
-         lookup as a brand-new RSVP and append a row + email the couple every
-         time someone tapped Search. Filling the honeypot makes such a backend
-         discard the request silently instead. Failing that way is safe: no
-         matches come back, so the guest simply carries on as a new reply. */
-      post({ action: 'lookup', name: q, website: 'lookup' })
+         honeypot, so this is ignored. But an older deployment (one that predates
+         these actions) has no routing at all — it would read this as a brand-new
+         RSVP and append a row + email the couple every time someone tapped
+         Search. Filling the honeypot makes such a backend discard it silently. */
+      post({ action: 'guests', name: q, website: 'lookup' })
         .then(function (d) {
-          btn.disabled = false;
-          renderResults((d && d.status === 'ok' && d.matches) || [], q);
+          afterFloor(function () {
+            setBusy('search', false);
+            /* `source` proves the reply came from a backend that understands the
+               guest list. Without that proof we must NOT tell a real guest they
+               aren't invited — an old deployment would do exactly that. */
+            if (!d || d.source !== 'guests') { renderFallback(q); return; }
+            var matches = d.matches || [];
+            if (matches.length) renderGuestMatches(matches);
+            else renderNotListed(q);
+          });
         })
         .catch(function (err) {
           console.error(err);
-          btn.disabled = false;
-          /* A search that can't reach the backend must never block an RSVP —
-             offer the new-reply path anyway. */
-          renderResults([], q, true);
+          afterFloor(function () {
+            setBusy('search', false);
+            renderFallback(q);
+          });
         });
     }
 
-    function renderResults(matches, q, offline) {
+    function renderGuestMatches(matches) {
       var box = $('search-results');
       box.innerHTML = '';
 
-      if (matches.length) {
-        var head = document.createElement('p');
-        head.className = 'res-head';
-        head.textContent = matches.length === 1
-          ? 'We already have a reply under this name'
-          : 'We already have replies under this name';
-        box.appendChild(head);
+      var head = document.createElement('p');
+      head.className = 'res-head';
+      head.textContent = matches.length === 1 ? 'Is this you?' : 'Tap your name';
+      box.appendChild(head);
 
-        var ul = document.createElement('ul');
-        ul.className = 'match-list';
-        matches.forEach(function (m) {
-          var li = document.createElement('li');
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.className = 'match-btn';
-          b.innerHTML = esc(m.name) + '<small>' +
-            (m.attending === 'yes'
-              ? 'Coming' + (m.party_size > 1 ? ', party of ' + m.party_size : '')
-              : 'Sent regrets') +
-            (m.updated ? ' &middot; ' + esc(niceDate(m.updated)) : '') +
-            ' &mdash; tap to open and change it</small>';
-          b.addEventListener('click', function () { openExisting(m); });
-          li.appendChild(b);
-          ul.appendChild(li);
-        });
-        box.appendChild(ul);
-      }
+      var ul = document.createElement('ul');
+      ul.className = 'match-list';
+      matches.forEach(function (m, i) {
+        var li = document.createElement('li');
+        li.style.animationDelay = (i * 40) + 'ms';
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'match-btn';
+        b.innerHTML = '<span class="mb-txt">' + esc(m.name) + '<small>' +
+          (m.pax > 1 ? m.pax + ' seats reserved' : '1 seat reserved') + '</small></span>';
+        b.addEventListener('click', function () { chooseGuest(m, b, ul); });
+        li.appendChild(b);
+        ul.appendChild(li);
+      });
+      box.appendChild(ul);
 
+      var again = document.createElement('p');
+      again.className = 'nl-note';
+      again.innerHTML = 'Not seeing yourself? Try your surname on its own, or the name on your invitation.';
+      box.appendChild(again);
+    }
+
+    /* Confirmed absent from the guest list. Never a dead end — always a way through. */
+    function renderNotListed(q) {
+      var box = $('search-results');
+      box.innerHTML =
+        '<div class="not-listed">' +
+          '<h4>We can&#8217;t find that name yet</h4>' +
+          '<p>Nothing on our guest list matches <b>' + esc(q) + '</b>. It may be under a full ' +
+            'legal name or a maiden name &mdash; worth one more try. If it should be there, ' +
+            'tell us and we&#8217;ll add you.</p>' +
+          '<div class="nl-actions">' +
+            '<a href="tel:' + DESK_TEL + '"><svg aria-hidden="true"><use href="#ic-phone"/></svg>Call Elaine, our coordinator</a>' +
+            '<a href="sms:' + DESK_TEL + '"><svg aria-hidden="true"><use href="#ic-mail"/></svg>Text Elaine &middot; +63 917 825 1130</a>' +
+            '<button type="button" id="nl-couple"><svg aria-hidden="true"><use href="#ic-help"/></svg>Message Tommy &amp; Jeyan</button>' +
+            '<button type="button" class="plain" id="nl-again">Search a different spelling</button>' +
+          '</div>' +
+        '</div>';
+      $('nl-again').addEventListener('click', function () {
+        $('search-results').innerHTML = '';
+        $('rsvp-search').select();
+        $('rsvp-search').focus();
+      });
+      $('nl-couple').addEventListener('click', function () {
+        closePanel($('p-rsvp'));
+        setTimeout(function () { openPanel('p-faq', null); }, 220);
+      });
+    }
+
+    /* The guest list couldn't be reached. Let them through rather than lock out
+       someone who really is invited — the couple can reconcile one stray row far
+       more easily than chase a guest who gave up. */
+    function renderFallback(q) {
+      var box = $('search-results');
+      box.innerHTML = '';
       var nm = document.createElement('div');
       nm.className = 'no-match';
       var p = document.createElement('p');
-      p.innerHTML = matches.length
-        ? 'None of these you? Start a fresh reply as <b>' + esc(q) + '</b>.'
-        : (offline
-            ? 'We couldn&#8217;t check for an earlier reply just now. Carry on as <b>' + esc(q) + '</b> &mdash; if you have replied before, this will simply update it.'
-            : 'No reply yet under <b>' + esc(q) + '</b>. Let&#8217;s start yours.');
+      p.innerHTML = 'We couldn&#8217;t reach our guest list just now. Carry on as <b>' + esc(q) +
+        '</b> &mdash; we&#8217;ll match you up on our side.';
       nm.appendChild(p);
       var go = document.createElement('button');
       go.type = 'button';
       go.className = 'btn dark';
       go.textContent = 'Continue';
-      go.addEventListener('click', function () { startNew(q); });
+      go.addEventListener('click', function () { startNew(q, MAX_PARTY); });
       nm.appendChild(go);
       box.appendChild(nm);
+    }
+
+    /* They tapped a name. Fetch that guest's existing reply, if any, so a second
+       visit edits rather than duplicates. Feedback stays anchored to the tapped
+       card so it's obvious which name is opening. */
+    function chooseGuest(match, btn, list) {
+      list.classList.add('choosing');
+      btn.classList.add('chosen');
+      if (!btn.querySelector('.ember')) {
+        var e = document.createElement('span');
+        e.className = 'ember';
+        e.setAttribute('aria-hidden', 'true');
+        btn.insertBefore(e, btn.firstChild);
+      }
+      busySince = Date.now();
+
+      post({ action: 'lookup', name: match.name, website: 'lookup' })
+        .then(function (d) {
+          afterFloor(function () {
+            var rec = d && d.matches && d.matches.length ? d.matches[0] : null;
+            if (rec) openExisting(rec, match.pax);
+            else startNew(match.name, match.pax);
+          });
+        })
+        .catch(function (err) {
+          console.error(err);
+          /* Couldn't check for an earlier reply — proceed as new. The backend
+             upserts on name anyway, so an existing row still gets updated. */
+          afterFloor(function () { startNew(match.name, match.pax); });
+        });
     }
 
     $('search-btn').addEventListener('click', doSearch);
@@ -3636,13 +3851,20 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       btn.addEventListener('click', function () { setAttending(btn.getAttribute('data-value')); });
     });
 
-    function setParty(n) {
-      partySize = Math.min(Math.max(parseInt(n, 10) || 1, 1), MAX_PARTY);
+    /* Capped to the seats the Guest List reserves for this person, so the
+       headcount coming out of the sheet can be trusted. */
+    function setParty(n, note) {
+      partySize = Math.min(Math.max(parseInt(n, 10) || 1, 1), paxCap);
       $('rsvp-party-size').value = String(partySize);
       $('party-num').textContent = String(partySize);
       $('party-word').textContent = partySize === 1 ? 'guest' : 'guests';
       $('party-minus').disabled = partySize <= 1;
-      $('party-plus').disabled = partySize >= MAX_PARTY;
+      $('party-plus').disabled = partySize >= paxCap;
+      $('party-size-group').classList.toggle('locked', paxCap <= 1);
+      $('party-hint').innerHTML = note ? note
+        : (paxCap <= 1
+            ? 'Your invitation is for one seat. Need another? Elaine can help &mdash; see FAQ &amp; Contact.'
+            : 'We&#8217;ve reserved ' + paxCap + ' seats for you. Seats are by name, so tell us who else is coming.');
       syncGuestFields();
     }
     /* Rebuild the extra-name fields to match the count, keeping anything typed. */
@@ -3676,8 +3898,9 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       $('submit-btn').disabled = false;
     }
 
-    function startNew(name) {
+    function startNew(name, pax) {
       guestName = tidy(name);
+      paxCap = Math.min(Math.max(parseInt(pax, 10) || 1, 1), MAX_PARTY);
       editing = null;
       $('rsvp-form').reset();
       $('guest-fields-wrapper').innerHTML = '';
@@ -3688,15 +3911,23 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       goStep(2);
     }
 
-    function openExisting(rec) {
+    function openExisting(rec, pax) {
       guestName = tidy(rec.name);
+      paxCap = Math.min(Math.max(parseInt(pax, 10) || parseInt(rec.party_size, 10) || 1, 1), MAX_PARTY);
       editing = rec;
       $('form-error').textContent = '';
       $('rsvp-email').value = rec.email || '';
       $('rsvp-notes').value = rec.notes || '';
       setAttending(rec.attending === 'yes' ? 'yes' : 'no');
       if (rec.attending === 'yes') {
-        setParty(rec.party_size);
+        var wanted = parseInt(rec.party_size, 10) || 1;
+        /* A reply made before the cap existed may claim more seats than the list
+           allows. Clamp, but say so — silently dropping someone's guests would be
+           the kind of quiet data loss nobody notices until the seating plan. */
+        setParty(wanted, wanted > paxCap
+          ? 'Your earlier reply had ' + wanted + ', but our list reserves ' + paxCap +
+            ' for you. We&#8217;ve set it to ' + paxCap + ' &mdash; message Elaine if you need more.'
+          : null);
         syncGuestFields(rec.guests || []);
         $('att-cer').checked = rec.ceremony !== false;
         $('att-rec').checked = rec.reception !== false;
@@ -3743,8 +3974,19 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
     /* Called by openPanel every time the panel opens, so it always reflects the
        latest state instead of whatever the previous visit left behind. */
+    var warmed = false;
     window.__rsvpSync = function () {
       $('late-note').hidden = new Date() <= DEADLINE;
+
+      /* Warm-up ping. Apps Script cold-starts on its first hit in a while, which
+         is exactly the wait a guest would otherwise feel on Search. Firing the
+         health check as the panel opens moves that cost into the seconds they
+         spend typing. Fire-and-forget: it must never surface an error. */
+      if (!warmed) {
+        warmed = true;
+        try { fetch(RSVP_ENDPOINT).catch(function () {}); } catch (e) {}
+      }
+
       if (busy) return;
       var saved = readStore();
       goStep(1);
@@ -3806,12 +4048,13 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       };
 
       busy = true;
-      btn.disabled = true;
-      btn.textContent = editing ? 'Updating...' : 'Sending...';
+      setBusy('submit', true);
+      btn.textContent = editing ? 'Updating your reply…' : 'Sending your reply…';
 
       post(payload)
         .then(function (data) {
           if (!data || data.status !== 'ok') throw new Error((data && data.message) || 'Unexpected response');
+          setBusy('submit', false);
           var wasUpdate = !!data.updated_existing;
           var record = {
             name: guestName, email: emailVal, attending: attendingValue,
@@ -3850,8 +4093,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         .catch(function (err) {
           console.error(err);
           busy = false;
+          setBusy('submit', false);
           errorEl.textContent = 'We could not send your RSVP just now. Please check your connection and try again.';
-          btn.disabled = false;
           btn.textContent = editing ? 'Update my RSVP' : 'Send RSVP';
         });
     });

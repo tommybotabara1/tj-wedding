@@ -59,6 +59,25 @@ const HEADERS = [
   'Timestamp', 'Name', 'Email', 'Attending', 'Party Size', 'Additional Guests',
   'Ceremony', 'Reception', 'Notes', 'Code', 'Key', 'Updated', 'Revisions'
 ];
+
+// ── The GUEST LIST (a different spreadsheet: the couple's "TJ MARRIAGE" planner) ──
+// This is the invitee list the couple actually maintains, and it is what the RSVP
+// form searches. This script executes as the account that OWNS that workbook, so no
+// sharing step is needed.
+const GUEST_SHEET_ID  = '1V2_mY3ytslbclDLdOoOTOklR9hQ_WsuHAQdl15pAuHw';
+const GUEST_TAB       = 'Guest List';
+const GUEST_RANGE     = 'A1:K1000';   // same bound tools/gws.py already uses
+const GUEST_CACHE_KEY = 'guestlist-v1';
+const GUEST_CACHE_TTL = 21600;        // 6h backstop — real freshness comes from the
+                                      // onGuestListChange trigger, not from this clock
+const GUEST_MIN_QUERY = 3;            // normalized chars before we answer at all
+const GUEST_MAX_HITS  = 8;            // enough to pick a cousin out of a family, not a dump
+
+// Titles that must not defeat a name match. Mirrors HONORIFICS in tools/reconcile_rsvps.py.
+const HONORIFICS = {
+  mr: 1, mrs: 1, ms: 1, miss: 1, dr: 1, sir: 1, madam: 1, maam: 1,
+  atty: 1, engr: 1, rev: 1, hon: 1
+};
 // ──────────────────────────────────────────────────────────────────────────────
 
 /**
@@ -87,15 +106,19 @@ function doGet(e) {
  *   website:    string        // HONEYPOT — must be empty (bots fill it)
  * }
  *
- * Lookup body: { action: "lookup", name: string }
+ * Lookup body: { action: "lookup", name: string }   — searches the RSVPs sheet
+ * Guests body: { action: "guests", name: string }   — searches the GUEST LIST
  */
 function doPost(e) {
   try {
     const payload = JSON.parse(e.postData.contents);
+    const action = (payload.action || '');
 
-    if ((payload.action || '') === 'lookup') {
-      return handleLookup(payload);
-    }
+    // Routing happens BEFORE the honeypot is read, deliberately: the form fills the
+    // honeypot on read-only calls so that a stale deployment (one that predates these
+    // actions) discards them instead of mistaking them for new RSVPs.
+    if (action === 'lookup') return handleLookup(payload);
+    if (action === 'guests') return handleGuestList(payload);
     return handleSubmit(payload);
 
   } catch (err) {
@@ -247,6 +270,200 @@ function keyMatches(key, query, qTokens) {
   return true;
 }
 
+// ─── GUEST LIST ───────────────────────────────────────────────────────────────
+
+/**
+ * "Which invited guests match what this person typed?"
+ *
+ * Answers from the couple's live Guest List. The RSVP form gates on this: a name
+ * that isn't here can't reply, and the `Pax` value caps how many seats they can
+ * claim. Returns full names, because the guest has to recognise and tap their own.
+ *
+ * `source: 'guests'` in the response is load-bearing — it is how the form tells
+ * "genuinely not on the list" apart from "this deployment is too old to know this
+ * action". Without it, a stale backend would tell every real guest they aren't invited.
+ */
+function handleGuestList(payload) {
+  const query = normalizeName(payload.name || '');
+  if (query.length < GUEST_MIN_QUERY) {
+    return jsonResponse({ status: 'ok', source: 'guests', matches: [] });
+  }
+
+  const guests = readGuestList();          // [[name, pax, table], ...]
+  const qTokens = query.split(' ');
+  const exact = [], starts = [], contains = [];
+
+  for (let i = 0; i < guests.length; i++) {
+    const row = guests[i];
+    const key = normalizeName(row[0]);
+    if (!key) continue;
+
+    // Every word typed must appear SOMEWHERE in the stored name. Substring rather
+    // than prefix, so "santos", "mar san" and "ria" all find Maria Santos, in any order.
+    let all = true;
+    for (let t = 0; t < qTokens.length; t++) {
+      if (key.indexOf(qTokens[t]) === -1) { all = false; break; }
+    }
+    if (!all) continue;
+
+    const hit = { name: row[0], pax: row[1], table: row[2] };
+    if (key === query) exact.push(hit);
+    else if (key.indexOf(query) === 0) starts.push(hit);
+    else contains.push(hit);
+  }
+
+  const matches = exact.concat(starts, contains).slice(0, GUEST_MAX_HITS);
+  return jsonResponse({ status: 'ok', source: 'guests', matches: matches });
+}
+
+/**
+ * The Guest List as a compact [[name, pax, table], ...], cached.
+ *
+ * Columns are resolved BY HEADER NAME, the same way read_guests() does in
+ * tools/generate_site.py — an honorific column was once inserted mid-sheet and broke
+ * index-based parsing. Rows without an integer in the "#" column are skipped, same rule.
+ */
+function readGuestList() {
+  const cache = CacheService.getScriptCache();
+  const cached = readChunked(cache, GUEST_CACHE_KEY);
+  if (cached) {
+    try { return JSON.parse(cached); } catch (e) { /* fall through and rebuild */ }
+  }
+
+  const rows = fetchGuestRows_();
+  if (!rows.length) return [];
+
+  // Header row = the first one carrying all of name / side / pax.
+  let head = -1, cols = null;
+  for (let r = 0; r < Math.min(rows.length, 10); r++) {
+    const lower = rows[r].map(function (c) { return String(c == null ? '' : c).trim().toLowerCase(); });
+    if (lower.indexOf('name') !== -1 && lower.indexOf('side') !== -1 && lower.indexOf('pax') !== -1) {
+      head = r;
+      cols = {
+        num:   lower.indexOf('#'),
+        name:  lower.indexOf('name'),
+        pax:   lower.indexOf('pax'),
+        table: firstOf(lower, ['table #', 'table#', 'table'])
+      };
+      break;
+    }
+  }
+  if (head === -1) {
+    console.error('Guest List: no header row containing name/side/pax was found.');
+    return [];
+  }
+
+  const out = [];
+  for (let r = head + 1; r < rows.length; r++) {
+    const row = rows[r];
+    const num = parseInt(String(cell(row, cols.num)).trim(), 10);
+    if (isNaN(num)) continue;                       // legend rows, spacers, totals
+    const name = String(cell(row, cols.name)).trim();
+    if (!name) continue;
+    const pax = Math.min(Math.max(parseInt(String(cell(row, cols.pax)).trim(), 10) || 1, 1), 8);
+    const tbl = String(cell(row, cols.table)).trim();
+    out.push([name, pax, tbl || null]);
+  }
+
+  writeChunked(cache, GUEST_CACHE_KEY, JSON.stringify(out), GUEST_CACHE_TTL);
+  return out;
+}
+
+/**
+ * Read the tab over the Sheets REST API rather than SpreadsheetApp.openById().
+ *
+ * The planner workbook is ~35 MB; openById loads the whole spreadsheet model and
+ * costs seconds, while a values-get is a single light request. The OAuth token
+ * already carries the spreadsheets scope because this script uses SpreadsheetApp
+ * elsewhere.
+ */
+function fetchGuestRows_() {
+  const url = 'https://sheets.googleapis.com/v4/spreadsheets/' + GUEST_SHEET_ID +
+    '/values/' + encodeURIComponent(GUEST_TAB + '!' + GUEST_RANGE) +
+    '?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE';
+  const res = UrlFetchApp.fetch(url, {
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true
+  });
+  if (res.getResponseCode() !== 200) {
+    throw new Error('Guest List read failed (' + res.getResponseCode() + '): ' + res.getContentText().slice(0, 200));
+  }
+  return JSON.parse(res.getContentText()).values || [];
+}
+
+/* ── cache freshness ──────────────────────────────────────────────────────────
+   The couple edit the guest list constantly, so a time-based cache would always
+   be showing someone a stale answer. Instead the cache lives for hours and is
+   thrown away the instant the sheet changes. */
+
+/** Installed trigger. RUN ONCE BY HAND from the editor's function dropdown. */
+function installGuestListTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'onGuestListChange') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('onGuestListChange')
+    .forSpreadsheet(GUEST_SHEET_ID)
+    .onChange()
+    .create();
+  console.log('Guest List change trigger installed.');
+}
+
+function onGuestListChange(e) { clearGuestCache(); }
+
+/** Manual escape hatch — run from the editor if a trigger ever misfires. */
+function clearGuestCache() {
+  const cache = CacheService.getScriptCache();
+  const count = parseInt(cache.get(GUEST_CACHE_KEY + '-n'), 10) || 0;
+  const keys = [GUEST_CACHE_KEY, GUEST_CACHE_KEY + '-n'];
+  for (let i = 0; i < count; i++) keys.push(GUEST_CACHE_KEY + '-' + i);
+  cache.removeAll(keys);
+  console.log('Guest List cache cleared.');
+}
+
+/* CacheService caps a value at 100KB. ~300 guests is around 12KB so one key is
+   normally plenty — but silently truncating the guest list would be the worst
+   failure this script could have, so oversize spills into numbered chunks. */
+const CACHE_CHUNK = 90000;
+
+function writeChunked(cache, key, value, ttl) {
+  if (value.length <= CACHE_CHUNK) {
+    cache.putAll(pair(key, value, key + '-n', '0'), ttl);
+    return;
+  }
+  const parts = {};
+  let n = 0;
+  for (let i = 0; i < value.length; i += CACHE_CHUNK) {
+    parts[key + '-' + n] = value.slice(i, i + CACHE_CHUNK);
+    n++;
+  }
+  parts[key + '-n'] = String(n);
+  parts[key] = '';
+  cache.putAll(parts, ttl);
+}
+
+function readChunked(cache, key) {
+  const n = parseInt(cache.get(key + '-n'), 10);
+  if (isNaN(n)) return null;
+  if (n === 0) return cache.get(key) || null;
+  let out = '';
+  for (let i = 0; i < n; i++) {
+    const part = cache.get(key + '-' + i);
+    if (part == null) return null;    // a chunk expired — rebuild rather than serve a stub
+    out += part;
+  }
+  return out;
+}
+
+function pair(k1, v1, k2, v2) { const o = {}; o[k1] = v1; o[k2] = v2; return o; }
+function cell(row, idx) { return (idx == null || idx < 0 || idx >= row.length) ? '' : (row[idx] == null ? '' : row[idx]); }
+function firstOf(lower, aliases) {
+  for (let i = 0; i < aliases.length; i++) {
+    const at = lower.indexOf(aliases[i]);
+    if (at !== -1) return at;
+  }
+  return -1;
+}
+
 // ─── SHEET HELPERS ────────────────────────────────────────────────────────────
 
 /** Open (or create) the RSVPs tab and make sure every header in HEADERS exists. */
@@ -339,6 +556,20 @@ function normalizeKey(s) {
     .replace(/[^a-z0-9 ]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+/**
+ * Like normalizeKey, but also drops honorifics — "Engr. Leslie R. Ang" → "leslie r ang".
+ * Used for guest-list SEARCH only; the RSVP identity key stays normalizeKey so that
+ * existing rows keep matching.
+ */
+function normalizeName(s) {
+  const parts = normalizeKey(s).split(' ');
+  const kept = [];
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i] && !HONORIFICS[parts[i]]) kept.push(parts[i]);
+  }
+  return kept.join(' ');
 }
 
 /** Short, human-readable reference. No I/O/0/1 so it can be read aloud. */
