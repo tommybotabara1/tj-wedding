@@ -3538,7 +3538,15 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       }
       setSearchHint('');
       btn.disabled = true;
-      post({ action: 'lookup', name: q })
+      /* `website` is the honeypot, deliberately filled on LOOKUPS only.
+         The current backend routes on `action` before it ever looks at the
+         honeypot, so this is ignored. But an older deployment (one that
+         predates the lookup action) has no routing at all — it would read a
+         lookup as a brand-new RSVP and append a row + email the couple every
+         time someone tapped Search. Filling the honeypot makes such a backend
+         discard the request silently instead. Failing that way is safe: no
+         matches come back, so the guest simply carries on as a new reply. */
+      post({ action: 'lookup', name: q, website: 'lookup' })
         .then(function (d) {
           btn.disabled = false;
           renderResults((d && d.status === 'ok' && d.matches) || [], q);
