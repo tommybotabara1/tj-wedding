@@ -975,6 +975,8 @@ dialog.panel.film{ width:min(94vw, 880px); }
 }
 .match-list{ list-style:none; margin:0; padding:0; display:grid; gap:10px; }
 .match-btn{
+  /* manipulation kills the double-tap-zoom delay that made these feel dead on iOS */
+  touch-action:manipulation;
   display:block; width:100%; text-align:left; padding:14px 16px; min-height:56px;
   border:1px solid var(--sage-light); border-radius:12px; background:rgba(156,170,143,.12);
   font-family:var(--sans); font-size:15px; color:var(--ink); cursor:pointer;
@@ -2408,7 +2410,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
             <label id="party-label">How many of you are coming?</label>
             <div class="stepper" role="group" aria-labelledby="party-label">
               <button class="step-btn" type="button" id="party-minus" aria-label="One fewer guest">&minus;</button>
-              <output class="step-val" id="party-out" for="party-minus party-plus"><b id="party-num">1</b><span id="party-word">guest</span></output>
+              <!-- Deliberately NOT an <output>. A form reset restores an <output> to its
+                   defaultValue, and WebKit implements that faithfully — on iOS Safari it
+                   replaced these children with the text "1guest", so the very next
+                   setParty() hit a null #party-num and threw. Chromium ignores it, which
+                   is why it only ever broke on iPhones. -->
+              <div class="step-val" id="party-out" role="status" aria-live="polite"><b id="party-num">1</b><span id="party-word">guest</span></div>
               <button class="step-btn" type="button" id="party-plus" aria-label="One more guest">+</button>
             </div>
             <input type="hidden" id="rsvp-party-size" name="party_size" value="1" />
@@ -3824,19 +3831,33 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       }
       busySince = Date.now();
 
+      /* Advancing must be the ONE thing that cannot fail. An earlier build threw
+         inside this continuation on iOS and the guest was simply stranded on the
+         results list with no error — so every path here is wrapped, and a thrown
+         step-2 is reported rather than swallowed. */
+      function advance(rec) {
+        try {
+          if (rec) openExisting(rec, match.pax);
+          else startNew(match.name, match.pax);
+        } catch (e) {
+          console.error('RSVP: could not open step 2', e);
+          list.classList.remove('choosing');
+          btn.classList.remove('chosen');
+          var em = btn.querySelector('.ember'); if (em) em.remove();
+          setSearchHint('Something went wrong opening your form. Please try that name again, or message Elaine &mdash; see FAQ &amp; Contact.', true);
+        }
+      }
+
       post({ action: 'lookup', name: match.name, website: 'lookup' })
         .then(function (d) {
-          afterFloor(function () {
-            var rec = d && d.matches && d.matches.length ? d.matches[0] : null;
-            if (rec) openExisting(rec, match.pax);
-            else startNew(match.name, match.pax);
-          });
+          var rec = d && d.matches && d.matches.length ? d.matches[0] : null;
+          afterFloor(function () { advance(rec); });
         })
         .catch(function (err) {
           console.error(err);
           /* Couldn't check for an earlier reply — proceed as new. The backend
              upserts on name anyway, so an existing row still gets updated. */
-          afterFloor(function () { startNew(match.name, match.pax); });
+          afterFloor(function () { advance(null); });
         });
     }
 
@@ -3871,6 +3892,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     function setParty(n, note) {
       partySize = Math.min(Math.max(parseInt(n, 10) || 1, 1), paxCap);
       $('rsvp-party-size').value = String(partySize);
+      /* Rebuild the readout if anything has eaten its children. Cheap insurance:
+         when this went missing on iOS the whole step-2 transition died silently. */
+      if (!$('party-num') || !$('party-word')) {
+        $('party-out').innerHTML = '<b id="party-num"></b><span id="party-word"></span>';
+      }
       $('party-num').textContent = String(partySize);
       $('party-word').textContent = partySize === 1 ? 'guest' : 'guests';
       $('party-minus').disabled = partySize <= 1;
@@ -3917,7 +3943,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       guestName = tidy(name);
       paxCap = Math.min(Math.max(parseInt(pax, 10) || 1, 1), MAX_PARTY);
       editing = null;
-      $('rsvp-form').reset();
+      /* Clear the fields by hand rather than form.reset(): reset() also applies
+         to elements we don't own and its behaviour varies by engine (see the
+         note on #party-out). Explicit is safer than a blunt reset here. */
+      $('rsvp-email').value = '';
+      $('rsvp-notes').value = '';
+      $('rsvp-website').value = '';
+      $('att-cer').checked = true;
+      $('att-rec').checked = true;
       $('guest-fields-wrapper').innerHTML = '';
       $('form-error').textContent = '';
       setAttending(null);
