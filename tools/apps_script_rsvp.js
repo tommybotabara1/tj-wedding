@@ -370,14 +370,28 @@ function readGuestList() {
 }
 
 /**
- * Read the tab over the Sheets REST API rather than SpreadsheetApp.openById().
+ * Read the tab, preferring the Sheets REST API and falling back to SpreadsheetApp.
  *
- * The planner workbook is ~35 MB; openById loads the whole spreadsheet model and
- * costs seconds, while a values-get is a single light request. The OAuth token
- * already carries the spreadsheets scope because this script uses SpreadsheetApp
- * elsewhere.
+ * REST first because the planner workbook is ~35 MB: openById loads the whole
+ * spreadsheet model and costs seconds, while a values-get is one light request.
+ *
+ * But REST only works if the Sheets API is enabled on the Cloud project behind
+ * this script — it isn't by default, and a fresh project answers 403 "Sheets API
+ * has not been used in project N before or it is disabled". SpreadsheetApp has no
+ * such requirement, so it is the safety net: slower on a cache miss, but it always
+ * works. Enable the Sheets API (Apps Script editor → Services → Google Sheets API)
+ * to get the fast path; nothing breaks either way.
  */
 function fetchGuestRows_() {
+  try {
+    return fetchGuestRowsRest_();
+  } catch (restErr) {
+    console.warn('Guest List REST read unavailable, falling back to SpreadsheetApp: ' + restErr.message);
+    return fetchGuestRowsApp_();
+  }
+}
+
+function fetchGuestRowsRest_() {
   const url = 'https://sheets.googleapis.com/v4/spreadsheets/' + GUEST_SHEET_ID +
     '/values/' + encodeURIComponent(GUEST_TAB + '!' + GUEST_RANGE) +
     '?majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE';
@@ -386,9 +400,19 @@ function fetchGuestRows_() {
     muteHttpExceptions: true
   });
   if (res.getResponseCode() !== 200) {
-    throw new Error('Guest List read failed (' + res.getResponseCode() + '): ' + res.getContentText().slice(0, 200));
+    throw new Error('REST ' + res.getResponseCode() + ': ' + res.getContentText().slice(0, 120));
   }
   return JSON.parse(res.getContentText()).values || [];
+}
+
+function fetchGuestRowsApp_() {
+  const sheet = SpreadsheetApp.openById(GUEST_SHEET_ID).getSheetByName(GUEST_TAB);
+  if (!sheet) throw new Error('Guest List tab "' + GUEST_TAB + '" not found.');
+  // Bound the read to what actually exists, so we don't pull 1000 empty rows.
+  const rows = Math.min(sheet.getLastRow(), 1000);
+  const cols = Math.min(sheet.getLastColumn(), 11);
+  if (!rows || !cols) return [];
+  return sheet.getRange(1, 1, rows, cols).getDisplayValues();
 }
 
 /* ── cache freshness ──────────────────────────────────────────────────────────
