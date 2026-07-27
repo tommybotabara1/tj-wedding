@@ -1357,6 +1357,16 @@ html:not(.reduced) #next-lans .lantern.far{ animation:floaty-far 7s ease-in-out 
    wash out on desktop. */
 #nlanT, #nlanJ{ filter:drop-shadow(0 5px 15px rgba(74,40,16,.42)); }
 #nlanT .body, #nlanJ .body{ border-color:rgba(216,152,78,.72); }
+/* Android (Samsung/Adreno): promoted layers with drop-shadow filters over the
+   animated canvas corrupt compositor tiles — stale rectangles flash around the
+   lanterns and keepsakes, worst in the finale. Strip the hints and filters there;
+   the box-shadow border on .body still grounds the pair against the dawn.
+   iOS keeps all of this (it was added to fix jank on iPhones). */
+html.android .gate-lan .lantern, html.android #next-lans .lantern,
+html.android #nlanT, html.android #nlanJ, html.android .chip.guest-lantern,
+html.android .keepsake{ will-change:auto; }
+html.android #nlanT, html.android #nlanJ{ filter:none; }
+html.android .keepsake-tilt, html.android .keepsake-btn{ filter:none; }
 /* static pair parks above the headline (h2 top is ~16% at common heights) */
 html.reduced #nlanT, html:not(.js-anim) #nlanT{ bottom:auto; top:2%; left:26%; }
 html.reduced #nlanJ, html:not(.js-anim) #nlanJ{ bottom:auto; top:2%; right:26%; }
@@ -1599,6 +1609,11 @@ footer .tag{ font-family:var(--serif); font-style:italic; color:var(--soft); mar
 footer small{ display:block; margin-top:18px; font-size:11.5px; color:var(--soft); }
 footer .credit{ margin-top:14px; font-size:10px; letter-spacing:.2em; text-transform:uppercase; opacity:.85; }
 footer a{ color:var(--sage-deep); }
+/* phones: the fixed Menu/RSVP dock floats over the last thing on the page, so
+   give the footer enough bottom room that the closing lines rest above it */
+@media (max-width:640px){
+  footer{ padding-bottom:calc(150px + env(safe-area-inset-bottom, 0px)); }
+}
 
 /* ============================================================
    MUSIC TOGGLE
@@ -2294,18 +2309,18 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="sp-head" aria-hidden="true"><span>Ninong</span><span>Ninang</span></div>
       <ul class="sp-pairs">
         <li><span>Mr. Benedicto L. Avila</span><span>Mrs. Luz S. Avila</span></li>
-        <li><span>Mr. Capinpin</span><span>Mrs. Capinpin</span></li>
+        <li><span>Mr. Capinpin</span><span>Mrs. Cheryl Imelda V. Capinpin</span></li>
         <li><span>Mr. Patrick M. Santillan</span><span>Mrs. Santillan</span></li>
         <li><span>Mr. William G. Tan</span><span>Mrs. Tan</span></li>
         <li><span>Mr. Joshua De Jesus Austria</span><span>Mrs. Karen Austria Balasan Austria</span></li>
         <li><span>Mr. Jefferson Chan</span><span>Mrs. Sheila Mae Chan</span></li>
         <li><span>Mr. Jaime C. Perez</span><span>Mrs. Perez</span></li>
-        <li><span>Mr. Babadilla</span><span>Mrs. Babadilla</span></li>
+        <li><span>Mr. Russel Babadilla</span><span>Mrs. Ma. Corazon D. Babadilla</span></li>
         <li><span>Mr. Christian Dino V. Diñoso</span><span>Mrs. Joana M. Diñoso</span></li>
         <li><span>Mr. Renè Ernst Tiefenauer Mueller</span><span>Mrs. Raquel Reyes Mueller</span></li>
         <li><span>Mr. Denley Cyder A. Mirabueno</span><span>Mrs. Grace Chua-Mirabueno</span></li>
         <li><span>Mr. Andrew Paul I. Montinola</span><span>Mrs. Analiza C. Chiapoco</span></li>
-        <li><span>Mr. Voltaire Villareal</span><span>Mrs. Emalyn E. Lira</span></li>
+        <li><span>Mr. Voltaire Joseph Villareal</span><span>Mrs. Emalyn E. Lira</span></li>
         <li><span>Mr. Godofredo P. Baja Jr.</span><span>Ms. Rosa Maria Q. Gonzales</span></li>
       </ul>
       <div class="sp-absent">
@@ -2725,6 +2740,12 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
   if (REDUCED) docEl.classList.add('reduced');
   if (SIMPLE_FINALE) docEl.classList.add('simple-finale');
+  /* Samsung/Adreno GPUs on Android Chrome corrupt compositor tiles when an
+     always-animating fullscreen canvas shares the screen with many promoted
+     (will-change) layers carrying drop-shadow filters — stale rectangles
+     flash around the lanterns and keepsakes. The class lets CSS strip those
+     layer hints on Android only; iOS keeps them (they fix jank THERE). */
+  if (/Android/i.test(navigator.userAgent)) docEl.classList.add('android');
   if (HAS_GSAP) {
     gsap.registerPlugin(ScrollTrigger);
     /* iOS fires resize on every URL-bar collapse mid-scroll; without this,
@@ -2780,7 +2801,11 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   Sky = (function () {
     var canvas = $('sky');
     if (!canvas || !canvas.getContext) return { liftoff: function () {} };
-    var ctx = canvas.getContext('2d');
+    /* alpha:false — drawFrame always paints an opaque full-canvas gradient
+       first, so transparency buys nothing, and an opaque canvas skips a whole
+       blending pass in the compositor. On Adreno phones that blending pass is
+       where the stale-tile rectangles were coming from. */
+    var ctx = canvas.getContext('2d', { alpha: false });
     var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
     var W = 0, H = 0;
     var lanterns = [], stars = [];
@@ -2854,12 +2879,28 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       c.fillRect(bx, by, bw, bh);
       return s;
     }
+    var spriteBuild = 0;
     function buildSprites() {
+      sprites.forEach(function (s) { if (s && s.close) s.close(); }); /* free old bitmaps on rotate */
       sprites = [
         makeSprite(7, 22),    /* far  */
         makeSprite(13, 44),   /* mid  */
         makeSprite(24, 86)    /* near */
       ];
+      /* Swap each sprite canvas for an ImageBitmap once it resolves. Bitmaps are
+         immutable, so the GPU uploads them once and never revisits them — canvas
+         sources get re-examined and are the textures Adreno drivers corrupt.
+         The build id guards a resize mid-flight: stale bitmaps must not land in
+         a rebuilt set. Canvases keep drawing until the swap, so nothing blinks. */
+      if (window.createImageBitmap) {
+        var id = ++spriteBuild;
+        sprites.forEach(function (spr, i) {
+          createImageBitmap(spr).then(function (bmp) {
+            if (id === spriteBuild) sprites[i] = bmp;
+            else bmp.close();
+          }).catch(function () { /* canvas fallback keeps working */ });
+        });
+      }
     }
 
     function spawn(tier, fromBottom) {
