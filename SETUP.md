@@ -101,7 +101,7 @@ README.md       # Project overview and reference docs
 ## Google Sheet
 
 Master tracker (budget, vendors, guest list, timeline):
-https://docs.google.com/spreadsheets/d/1XUmzEu2Z2kzwaIX-BAKi4zOKW1mDCTvx/edit
+https://docs.google.com/spreadsheets/d/1V2_mY3ytslbclDLdOoOTOklR9hQ_WsuHAQdl15pAuHw/edit
 
 ---
 

@@ -22,7 +22,7 @@
 
 ## Tracker
 
-Master checklist and budget: [Google Sheets](https://docs.google.com/spreadsheets/u/0/d/1XUmzEu2Z2kzwaIX-BAKi4zOKW1mDCTvx/edit?usp=sheets_home&ths=true&rtpof=true)
+Master checklist and budget: [Google Sheets](https://docs.google.com/spreadsheets/d/1V2_mY3ytslbclDLdOoOTOklR9hQ_WsuHAQdl15pAuHw/edit)
 
 ---
 

@@ -5,7 +5,7 @@ Regenerate `docs/index.html` from the latest data in "TJ MARRIAGE.xlsx" on Googl
 
 ## Required Inputs
 - `credentials.json` in project root (service account with Drive read access)
-- `GOOGLE_DRIVE_FILE_ID` in `.env` (value: `1XUmzEu2Z2kzwaIX-BAKi4zOKW1mDCTvx`)
+- `GOOGLE_DRIVE_FILE_ID` in `.env` (value: `1V2_mY3ytslbclDLdOoOTOklR9hQ_WsuHAQdl15pAuHw`)
 - Python dependencies installed (see below)
 
 ## Dependencies
