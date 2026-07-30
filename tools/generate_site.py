@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """
-generate_site.py — Reads TJ MARRIAGE.xlsx from Google Drive and builds docs/index.html.
+generate_site.py — Reads TJ MARRIAGE.xlsx from Google Drive and builds the
+planner pages (dashboard, seating, floor plan).
 
 Usage:
     python tools/generate_site.py
 
 Output:
-    docs/index.html
+    docs/planner-7k2a/index.html
+    docs/planner-7k2a/reception.html
+    docs/planner-7k2a/floor-plan.html
 """
 
 import json
@@ -20,7 +23,10 @@ from gws import download_workbook
 WEDDING_DATE = date(2026, 12, 27)
 REFRESH_DATE = date(2026, 7, 1)
 PLANNED_PAX = 150
-OUTPUT_PATH  = os.path.join(os.path.dirname(__file__), "..", "docs", "index.html")
+# Planner pages live in an unlinked, noindexed folder: docs/index.html is the
+# guest-facing redirect to the invitation, and these three carry budget and
+# guest data that must not be reachable from the invite or from search.
+OUTPUT_PATH  = os.path.join(os.path.dirname(__file__), "..", "docs", "planner-7k2a", "index.html")
 
 
 def norm_header(cell):
@@ -495,6 +501,7 @@ def build_html(tasks, budget, vendors, schedule, guests):
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
   <title>Tommy &amp; Jeyan — Wedding Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1036,6 +1043,7 @@ def build_reception_html(guests, reception):
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
   <title>Tommy &amp; Jeyan — Reception Seating</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1188,6 +1196,7 @@ def build_floorplan_html(guests, reception):
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="robots" content="noindex,nofollow"/>
   <title>Tommy &amp; Jeyan — Floor Plan Editor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>

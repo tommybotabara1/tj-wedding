@@ -90,7 +90,8 @@ README.md       # Project overview and reference docs
 | File | Purpose |
 |------|---------|
 | `planning/guest-list-clean.xlsx` | Master guest list (Google Sheets is source of truth) |
-| `docs/index.html` | Main wedding website (seating plan app) |
+| `docs/lanterns.html` | The wedding invitation (what guests get; `docs/index.html` redirects here) |
+| `docs/planner-7k2a/` | Couple-only planner pages: dashboard, seating, floor plan (unlinked + noindexed) |
 | `tools/gws.py` | Google Sheets read/write helper |
 | `tools/generate_site.py` | Regenerates the wedding site HTML from guest data |
 | `workflows/generate_site.md` | SOP for regenerating the site |

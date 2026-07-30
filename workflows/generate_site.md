@@ -1,7 +1,7 @@
 # Workflow: Generate & Deploy Wedding Dashboard
 
 ## Objective
-Regenerate `docs/index.html` from the latest data in "TJ MARRIAGE.xlsx" on Google Drive and push it live to GitHub Pages.
+Regenerate the couple-only planner pages in `docs/planner-7k2a/` from the latest data in "TJ MARRIAGE.xlsx" on Google Drive and push it live to GitHub Pages.
 
 ## Required Inputs
 - `credentials.json` in project root (service account with Drive read access)
@@ -22,10 +22,10 @@ python tools/generate_site.py
 This will:
 - Download the xlsx from Drive using the service account
 - Parse all relevant sheets (Timeline, Budget, Vendor Tracker, Schedule)
-- Write a fresh `docs/index.html`
+- Write fresh `docs/planner-7k2a/{index,reception,floor-plan}.html`
 
 ### 2. Review locally
-Open `docs/index.html` in your browser and verify:
+Open `docs/planner-7k2a/index.html` in your browser and verify:
 - [ ] Hero header shows correct countdown
 - [ ] Quick stats bar shows current numbers
 - [ ] Timeline rows show correct statuses (green=Booked, amber=Ongoing, gray=Not Started, red=Overdue)
@@ -35,17 +35,22 @@ Open `docs/index.html` in your browser and verify:
 
 ### 3. Commit & push to deploy
 ```bash
-git add docs/index.html
+git add docs/planner-7k2a/
 git commit -m "update dashboard"
 git push
 ```
-GitHub Pages auto-deploys from the `main` branch `/docs` folder within ~1 minute.
+GitHub Pages auto-deploys from the **`master`** branch `/docs` folder within ~1 minute.
 
-**Live URL:** `https://<your-username>.github.io/tj-wedding/`
+**Planner URL:** `https://tommybotabara1.github.io/tj-wedding/planner-7k2a/`
+
+These pages carry budget, vendor and guest data. They are deliberately kept out of
+`docs/` root, unlinked from the invitation and marked `noindex` — the site root
+(`docs/index.html`) redirects guests to the invitation instead. Do not link to them
+from any guest-facing page, and keep the folder name as-is.
 
 ## GitHub Pages Setup (one-time)
 1. Create repo on GitHub: `gh repo create tj-wedding --public --source=. --push`
-2. Go to repo Settings → Pages → Source: **Deploy from branch** → Branch: `main`, Folder: `/docs`
+2. Go to repo Settings → Pages → Source: **Deploy from branch** → Branch: `master`, Folder: `/docs`
 3. Save. The URL will be `https://<username>.github.io/tj-wedding/`
 
 ## Sheets Read
@@ -68,4 +73,6 @@ GitHub Pages auto-deploys from the `main` branch `/docs` folder within ~1 minute
 - The `Guest List` sheet is currently empty; guest count shows "TBD" on the dashboard.
 - The `Receipts` and `Theme & Pegs` sheets are not displayed (unstructured data).
 - Schedule emojis/special characters are stripped to avoid encoding issues on Windows.
-- Re-run anytime the xlsx is updated — no manual edits to `index.html` needed.
+- Re-run anytime the xlsx is updated — no manual edits to the generated pages needed.
+- The generator writes the three planner pages only. It never touches `docs/lanterns.html`
+  (the invitation) or `docs/index.html` (the guest redirect).

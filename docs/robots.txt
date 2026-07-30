@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /tj-wedding/planner-7k2a/
+Disallow: /planner-7k2a/
