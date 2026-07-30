@@ -834,7 +834,7 @@ dialog.panel.film{ width:min(94vw, 880px); }
 .ent-lead h4{ font-size:20px; margin-bottom:8px; color:var(--rose-deep); }
 .ent-lead.sage h4{ color:var(--sage-deep); }
 .ent-lead .nm{ display:block; font-size:14px; }
-.ent-party{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.ent-party{ display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:28px; }
 @media (max-width:560px){ .ent-party{ grid-template-columns:1fr; } }
 .role{ display:block; font-size:10px; letter-spacing:.28em; text-transform:uppercase; color:var(--rose-deep); margin-bottom:4px; }
 .ent-col.sage .role, .ent-block .role{ color:var(--sage-deep); }
@@ -845,7 +845,7 @@ dialog.panel.film{ width:min(94vw, 880px); }
   padding:9px 2px; border-bottom:1px solid rgba(46,43,39,.11);
   color:var(--ink); font-size:13.5px; line-height:1.35;
 }
-.ent-block{ margin-top:20px; }
+.ent-block{ margin-top:28px; }
 .ent-mini{ display:grid; border-top:1px solid rgba(111,125,101,.24); }
 .ent-tk{
   display:grid; grid-template-columns:minmax(112px,.34fr) 1fr; align-items:start; gap:16px;
@@ -857,15 +857,10 @@ dialog.panel.film{ width:min(94vw, 880px); }
 /* Principal sponsors — two columns, each row a couple standing side by side.
    Stays two-up even on the smallest phone: breaking it to one column would
    scramble who is partnered with whom, which is the whole point of the list. */
-.sp-head, .sp-pairs li{
+.sp-pairs li{
   display:grid; grid-template-columns:1fr 1fr; column-gap:clamp(14px,3.6vw,32px);
 }
-.sp-head{
-  font-size:10px; letter-spacing:.22em; text-transform:uppercase; font-weight:600;
-  color:var(--rose-deep); padding:0 2px 7px; border-bottom:1px solid rgba(148,90,82,.18);
-}
-.sp-head span:last-child{ color:var(--sage-deep); }
-.sp-pairs{ list-style:none; margin:0; padding:0; }
+.sp-pairs{ list-style:none; margin:0; padding:0; border-top:1px solid rgba(148,90,82,.18); }
 .sp-pairs li{
   align-items:start; padding:9px 2px; border-bottom:1px solid rgba(46,43,39,.11);
   color:var(--ink); font-size:13.5px; line-height:1.35;
@@ -877,9 +872,7 @@ dialog.panel.film{ width:min(94vw, 880px); }
 @media (max-width:560px){
   .ent-tk{ grid-template-columns:1fr; gap:5px; padding:11px 2px; }
   .ent-tk .ent-role-names{ grid-template-columns:1fr; }
-  .sp-head, .sp-pairs li{ column-gap:12px; }
-  .sp-pairs li{ font-size:12.5px; }
-  .sp-head{ font-size:9px; letter-spacing:.18em; }
+  .sp-pairs li{ column-gap:12px; font-size:12.5px; }
 }
 
 /* Forms */
@@ -2273,7 +2266,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   <p class="tag">Soaring with TJ</p>
   <small>Sunday, December 27, 2026 · Newport City &amp; Aseana City</small>
   <small style="margin-top:6px;">Music by Franco Emil de Dios</small>
-  <small class="credit">Wedding invitation · concept by Jeyan · design &amp; build by Tommy</small>
+  <small class="credit">Wedding invitation · concept by Jeyan ·<a href="https://tommybotabara1.github.io/" target="_blank" rel="noopener noreferrer"> design &amp; build by Tommy</a></small>
 </footer>
 
 <!-- ============================================================
@@ -2296,41 +2289,35 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       <div class="ent-lead"><h4>Maids of Honor</h4><span class="nm">Hannah C. Santioque</span><span class="nm">Dimples Jenna S. Collera</span></div>
       <div class="ent-lead sage"><h4>Best Men</h4><span class="nm">Joval C. Santioque</span><span class="nm">Teddy M. Botabara</span></div>
     </div>
+    <div class="ent-block">
+      <span class="role">With Gratitude</span><h4>Principal Sponsors</h4>
+      <ul class="sp-pairs">
+        <li><span>Mrs. Emalyn E. Lira</span><span>Mrs. Cheryl Imelda V. Capinpin</span></li>
+        <li><span>Mr. Patrick M. Santillan</span><span>Mrs. Ethel S. Santillan</span></li>
+        <li><span>Mr. Benedicto L. Avila</span><span>Mrs. Luz S. Avila</span></li>
+        <li><span>Mr. Joshua De Jesus Austria</span><span>Mrs. Karen Austria Balasan Austria</span></li>
+        <li><span>Mr. Jefferson Chan</span><span>Mrs. Sheila Mae Chan</span></li>
+        <li><span>Mr. Christian Dino V. Diñoso</span><span>Mrs. Joana M. Diñoso</span></li>
+        <li><span>Mr. Renè Ernst Tiefenauer Mueller</span><span>Mrs. Raquel Reyes Mueller</span></li>
+        <li><span>Mr. Denley Cyder A. Mirabueno</span><span>Mrs. Grace Chua-Mirabueno</span></li>
+        <li><span>Mr. Andrew Paul I. Montinola</span><span>Mrs. Analiza C. Chiapoco</span></li>
+        <li><span>Mr. Godofredo P. Baja Jr.</span><span>Ms. Rosa Maria Q. Gonzales</span></li>
+      </ul>
+      <div class="sp-absent">
+        <span class="divider-sm">In absentia</span>
+        <ul class="sp-pairs">
+          <li><span>Mr. Yshmael I. Calma</span><span>Mrs. Jennifer Calma</span></li>
+          <li><span>Engr. Leslie R. Ang</span><span>Mrs. Geraldine B. Ang</span></li>
+          <li><span></span><span>Mrs. Grace Mirabueno Fondevilla</span></li>
+        </ul>
+      </div>
+    </div>
     <div class="ent-party">
       <div class="ent-col"><span class="role">In Dusty Rose</span><h4>Bridesmaids</h4>
         <ul class="ent-roster"><li>Abigail Cayabyab-Fereras</li><li>Adrianne Micaela Manalaotao</li><li>Ceijas-Lyn Y. Tagana</li><li>Denise M. Beltran</li><li>Gemela Marian A. David</li><li>Josett A. Romano</li><li>Marielle Joy K. Serania</li><li>Michelle A. Alaras</li><li>Micca Ricka Raphaella T. Cantos</li><li>Vanessa Laureen A. Trinidad</li></ul>
       </div>
       <div class="ent-col sage"><span class="role">In Sage</span><h4>Groomsmen</h4>
         <ul class="ent-roster"><li>Rom D. Fronda Jr.</li><li>Axl John R. Mirabueno</li><li>Franco Emil B. de Dios</li><li>Traviz Keinn T. Climacosa</li><li>Vaunn C. Maribao</li><li>Michael Ryan F. Somosot</li><li>Julian Christopher A. Lopez</li><li>Betlee T. Barraquias</li><li>Jason S. Deichmann</li><li>Piolo G. Barletta</li></ul>
-      </div>
-    </div>
-    <div class="ent-block">
-      <span class="role">With Gratitude</span><h4>Principal Sponsors</h4>
-      <div class="sp-head" aria-hidden="true"><span>Ninong</span><span>Ninang</span></div>
-      <ul class="sp-pairs">
-        <li><span>Mr. Benedicto L. Avila</span><span>Mrs. Luz S. Avila</span></li>
-        <li><span>Mr. Capinpin</span><span>Mrs. Cheryl Imelda V. Capinpin</span></li>
-        <li><span>Mr. Patrick M. Santillan</span><span>Mrs. Santillan</span></li>
-        <li><span>Mr. William G. Tan</span><span>Mrs. Tan</span></li>
-        <li><span>Mr. Joshua De Jesus Austria</span><span>Mrs. Karen Austria Balasan Austria</span></li>
-        <li><span>Mr. Jefferson Chan</span><span>Mrs. Sheila Mae Chan</span></li>
-        <li><span>Mr. Jaime C. Perez</span><span>Mrs. Perez</span></li>
-        <li><span>Mr. Russel Babadilla</span><span>Mrs. Ma. Corazon D. Babadilla</span></li>
-        <li><span>Mr. Christian Dino V. Diñoso</span><span>Mrs. Joana M. Diñoso</span></li>
-        <li><span>Mr. Renè Ernst Tiefenauer Mueller</span><span>Mrs. Raquel Reyes Mueller</span></li>
-        <li><span>Mr. Denley Cyder A. Mirabueno</span><span>Mrs. Grace Chua-Mirabueno</span></li>
-        <li><span>Mr. Andrew Paul I. Montinola</span><span>Mrs. Analiza C. Chiapoco</span></li>
-        <li><span>Mr. Voltaire Joseph Villareal</span><span>Mrs. Emalyn E. Lira</span></li>
-        <li><span>Mr. Godofredo P. Baja Jr.</span><span>Ms. Rosa Maria Q. Gonzales</span></li>
-      </ul>
-      <div class="sp-absent">
-        <span class="divider-sm">In absentia</span>
-        <div class="sp-head" aria-hidden="true"><span>Ninong</span><span>Ninang</span></div>
-        <ul class="sp-pairs">
-          <li><span>Mr. Yshmael I. Calma</span><span>Mrs. Jennifer Calma</span></li>
-          <li><span>Engr. Leslie R. Ang</span><span>Mrs. Geraldine B. Ang</span></li>
-          <li><span></span><span>Mrs. Grace Mirabueno Fondevilla</span></li>
-        </ul>
       </div>
     </div>
     <div class="ent-block">
