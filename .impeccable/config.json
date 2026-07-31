@@ -1,0 +1,71 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-color",
+        "value": "*",
+        "files": [
+          "docs/index.html"
+        ],
+        "createdAt": "2026-07-30T21:12:13.321Z",
+        "reason": "DESIGN.md documents the retired invitation.html cream system; the invitation is the lantern night world"
+      },
+      {
+        "rule": "design-system-font-size",
+        "value": "*",
+        "files": [
+          "docs/index.html"
+        ],
+        "createdAt": "2026-07-30T21:12:13.395Z",
+        "reason": "Same stale DESIGN.md ramp as design-system-color"
+      },
+      {
+        "rule": "design-system-radius",
+        "value": "*",
+        "files": [
+          "docs/index.html"
+        ],
+        "createdAt": "2026-07-30T21:12:13.487Z",
+        "reason": "Same stale DESIGN.md as design-system-color"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          "docs/index.html"
+        ],
+        "createdAt": "2026-07-30T21:12:13.579Z",
+        "reason": "Cormorant Garamond + Montserrat are this page's committed type system"
+      },
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "docs/index.html"
+        ],
+        "createdAt": "2026-07-30T21:12:13.658Z",
+        "reason": "Lantern glow is the page's entire concept, confirmed intentional"
+      },
+      {
+        "rule": "radial-halo",
+        "value": "*",
+        "files": [
+          "docs/index.html"
+        ],
+        "createdAt": "2026-07-30T21:12:13.737Z",
+        "reason": "Lantern halo, same committed world as dark-glow"
+      },
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "docs/index.html"
+        ],
+        "createdAt": "2026-07-30T21:12:13.815Z",
+        "reason": "Panel images use data-src and load when the panel opens; verified serving 200"
+      }
+    ]
+  }
+}
