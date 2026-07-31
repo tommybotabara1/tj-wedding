@@ -1475,6 +1475,16 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
    Kept as a debugging aid and low-motion fallback; the cinematic scrubbed
    finale is the default on every device. */
 html.simple-finale #next.tall,
+/* Playback finale (`?finale=play`): the animation no longer consumes scroll, so
+   the section does not need to be 2.6 screens tall. It keeps enough runway for
+   the sticky copy to hold while the sequence plays, and cuts the long empty
+   stretch between the RSVP button and the footer that reads as the page
+   "trying hard" to reach the end. Layout is otherwise untouched. */
+html.finale-play #next.tall-200{ height:150vh; height:150svh; }
+@media (max-width:640px){
+  html.finale-play #next.tall-200{ height:170vh; height:170svh; }
+}
+
 html.simple-finale #next.tall-200{ height:auto !important; min-height:0; }
 html.simple-finale #next .stick{
   position:relative; height:auto; min-height:100vh; min-height:100svh;
@@ -2735,8 +2745,24 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
      dt clamp). The static variant remains an explicit opt-in for debugging. */
   var SIMPLE_FINALE = qs.has('simpleFinale') || qs.get('finale') === 'simple';
 
+  /* Playback finale, opt-in (`?finale=play`) — an A/B against the default, NOT a
+     replacement for the static simple-finale above.
+
+     The default finale is scroll-SCRUBBED: animation state is a function of
+     scrollY. That is what keeps producing artifacts on iOS, because touch scroll
+     is sampled coarsely and in bursts, so opacity beats step instead of fade, and
+     the smoothing that hides the stepping makes the section feel like it settles
+     and shakes after every flick. Tuning the scrub trades one for the other.
+
+     This variant keeps the identical choreography but PLAYS it: scroll decides
+     only that it started, then the timeline runs in real time at whatever rate
+     the device manages. It also needs far less scroll runway, since no scroll
+     distance has to be spent driving the animation. */
+  var FINALE_PLAY = qs.get('finale') === 'play';
+
   if (REDUCED) docEl.classList.add('reduced');
   if (SIMPLE_FINALE) docEl.classList.add('simple-finale');
+  if (FINALE_PLAY && !SIMPLE_FINALE) docEl.classList.add('finale-play');
   /* Samsung/Adreno GPUs on Android Chrome corrupt compositor tiles when an
      always-animating fullscreen canvas shares the screen with many promoted
      (will-change) layers carrying drop-shadow filters — stale rectangles
@@ -4772,7 +4798,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
          The pin engages after the entry viewport, with extra mobile runway from
          #next.tall-200. Total timeline length stays near 10. */
-      var tl = gsap.timeline({
+      var tl = gsap.timeline(FINALE_PLAY ? { paused: true } : {
         /* touch: a small scrub lag smooths the sparse scroll events of finger /
            momentum scrolling; desktop keeps the 1:1 wheel feel.
 
@@ -4792,6 +4818,15 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           invalidateOnRefresh: true
         }
       });
+      if (FINALE_PLAY) {
+        /* the 10 beats are authored as scroll distance; played back 1:1 they
+           would crawl, so compress to a ~4s sequence */
+        tl.timeScale(2.4);
+        ScrollTrigger.create({
+          trigger: '#next', start: 'top 70%', once: true,
+          onEnter: function () { tl.play(); }
+        });
+      }
       /* mobile: shrink the pair + halo so the meet point clears the copy block below it */
       var M = function () { return window.innerWidth <= 640; };
       var finaleMobile = M();
@@ -4938,14 +4973,23 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
          long over this trigger's range, so progress*10 is the same beat scale the
          tweens above are positioned on, and the reveals land where they always
          did. Both functions are idempotent, so firing every frame is harmless. */
-      ScrollTrigger.create({
-        trigger: '#next', start: 'top bottom', end: 'bottom bottom',
-        onUpdate: function (self) {
-          var beat = self.progress * 10;
-          if (beat >= copyStart) revealCopy();
-          if (beat >= keepsakeStart) revealKeepsakes();
-        }
-      });
+      if (FINALE_PLAY) {
+        /* playback: callbacks on a timeline that actually RUNS are reliable —
+           the suppressEvents caveat below only applies to a seeking playhead —
+           so the reveals ride the sequence and stay in step with the lanterns
+           rather than tracking scroll position independently. */
+        tl.call(revealCopy, null, copyStart)
+          .call(revealKeepsakes, null, keepsakeStart);
+      } else {
+        ScrollTrigger.create({
+          trigger: '#next', start: 'top bottom', end: 'bottom bottom',
+          onUpdate: function (self) {
+            var beat = self.progress * 10;
+            if (beat >= copyStart) revealCopy();
+            if (beat >= keepsakeStart) revealKeepsakes();
+          }
+        });
+      }
       tl
       /* copy crossfades to ink as dawn washes in, so it stays readable on the light sky */
       /* dawn palette: every text node in .next-copy must stay AA on the brightening sky */
