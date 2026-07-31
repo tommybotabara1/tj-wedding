@@ -47,7 +47,28 @@ const HISTORY_TAB = 'RSVP History';
 
 // Who gets notified when an RSVP arrives.
 const NOTIFY_TO  = 'tjbo.4824@gmail.com';     // primary inbox for new RSVPs
-const NOTIFY_BCC = 'tommybotabara@gmail.com'; // blind copy for the couple
+
+// EMAIL BUDGET — the reason the BCC is gone and the digest exists.
+// A consumer @gmail.com account may send to 100 recipients per DAY (Workspace
+// gets 1,500). Every RSVP used to cost 3 of them: notification to NOTIFY_TO,
+// blind copy to the couple, and the guest's own confirmation. That capped the
+// day at ~33 replies, and a mass send blows through it in an evening.
+//
+// Now: the guest confirmation (the one guests actually notice) costs 1, the
+// per-RSVP notification costs 1 more if NOTIFY_EACH_RSVP is on, and the daily
+// digest costs 1 per day no matter how many replies arrive.
+//
+// If replies are pouring in, set this to false and rely on the digest. Nothing
+// is lost either way: the sheet is written BEFORE any mail is attempted, and
+// mail failures are swallowed, so a blown quota can never cost you an RSVP.
+const NOTIFY_EACH_RSVP = true;
+
+// Where a guest's reply lands when they hit Reply on their confirmation. This is
+// a reply-to header, not a recipient, so it costs nothing against the quota.
+const COUPLE_REPLY_TO = 'tommybotabara@gmail.com';
+
+// Who the daily digest goes to.
+const DIGEST_TO = NOTIFY_TO;
 
 // Display name + couple name used in outgoing email.
 const SENDER_NAME = 'Tommy & Jeyan';
@@ -192,10 +213,12 @@ function handleSubmit(payload) {
   // The row is already saved above. If email sending throws, we log it and
   // still return ok so the guest isn't prompted to resubmit.
   try {
-    sendCoupleNotification({
-      name, email, attending, partySize, guests, notes, timestamp: now,
-      ceremony, reception, code, wasUpdate
-    });
+    if (NOTIFY_EACH_RSVP) {
+      sendCoupleNotification({
+        name, email, attending, partySize, guests, notes, timestamp: now,
+        ceremony, reception, code, wasUpdate
+      });
+    }
     if (email) {
       sendGuestConfirmation({ name, email, attending, partySize, guests, code, wasUpdate });
     }
@@ -650,7 +673,6 @@ function sendCoupleNotification(r) {
 
   MailApp.sendEmail({
     to:       NOTIFY_TO,
-    bcc:      NOTIFY_BCC,
     replyTo:  r.email || NOTIFY_TO,
     name:     SENDER_NAME + ' · RSVP',
     subject:  subject,
@@ -683,7 +705,7 @@ function sendGuestConfirmation(r) {
   MailApp.sendEmail({
     to:       r.email,
     name:     SENDER_NAME,
-    replyTo:  NOTIFY_BCC,
+    replyTo:  COUPLE_REPLY_TO,
     subject:  (r.wasUpdate ? 'Your RSVP has been updated — ' : 'We\'ve received your RSVP — ') + COUPLE_NAME,
     htmlBody: htmlBody,
   });
@@ -710,4 +732,98 @@ function jsonResponse(data) {
   return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ─── DAILY DIGEST ─────────────────────────────────────────────────────────────
+/**
+ * One email a day summarising the replies that arrived, instead of one email per
+ * reply. This is what keeps the couple informed without spending the Gmail quota
+ * (see the NOTIFY_EACH_RSVP note at the top): the digest costs exactly one
+ * recipient per day whether two people reply or two hundred.
+ *
+ * The sheet is always the source of truth. The digest is a convenience on top of
+ * it and is deliberately written so that failing to send can never affect a
+ * stored RSVP — it only ever READS.
+ *
+ * INSTALL ONCE, BY HAND, from the Apps Script editor: run installDailyDigest().
+ * A time-driven trigger does not need a web-app redeploy to start working.
+ */
+function sendDailyDigest() {
+  const sheet = ensureSheet();
+  const col   = headerMap(sheet);
+  const last  = sheet.getLastRow();
+  if (last < 2) { console.log('Digest: no replies yet.'); return; }
+
+  const values = sheet.getRange(2, 1, last - 1, sheet.getLastColumn()).getValues();
+  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const get = (row, name) => (col[name] ? row[col[name] - 1] : '');
+
+  const fresh = [];
+  let attending = 0, regrets = 0, seats = 0;
+
+  values.forEach(function (row) {
+    const name = String(get(row, 'Name') || '').trim();
+    if (!name || name.indexOf('__') === 0) return;      // skip blanks + test probes
+
+    const isYes = String(get(row, 'Attending')).toLowerCase() === 'yes';
+    const pax   = parseInt(get(row, 'Party Size'), 10) || 1;
+    if (isYes) { attending++; seats += pax; } else { regrets++; }
+
+    const updated = new Date(get(row, 'Updated') || get(row, 'Timestamp'));
+    if (!isNaN(updated) && updated >= cutoff) {
+      fresh.push({
+        name: name,
+        attending: isYes,
+        pax: pax,
+        guests: String(get(row, 'Additional Guests') || ''),
+        notes: String(get(row, 'Notes') || ''),
+        isUpdate: (parseInt(get(row, 'Revisions'), 10) || 1) > 1
+      });
+    }
+  });
+
+  if (!fresh.length) { console.log('Digest: nothing new in the last 24h; not sending.'); return; }
+
+  const rows = fresh.map(function (r) {
+    return '<tr>' +
+      '<td style="padding:8px 10px;border-bottom:1px solid #eee2d5">' + escapeHtml(r.name) +
+        (r.isUpdate ? ' <span style="color:#b08968;font-size:11px">(updated)</span>' : '') +
+        (r.guests ? '<br><span style="color:#8a7a6a;font-size:12px">with ' + escapeHtml(r.guests) + '</span>' : '') +
+        (r.notes ? '<br><span style="color:#8a7a6a;font-size:12px">“' + escapeHtml(r.notes) + '”</span>' : '') +
+      '</td>' +
+      '<td style="padding:8px 10px;border-bottom:1px solid #eee2d5;text-align:right;white-space:nowrap">' +
+        (r.attending ? '✅ ' + r.pax + (r.pax > 1 ? ' seats' : ' seat') : '· regrets') +
+      '</td></tr>';
+  }).join('');
+
+  const htmlBody =
+    '<div style="font-family:Georgia,serif;max-width:560px;margin:0 auto">' +
+      '<h2 style="font-weight:normal;color:#7a2438;margin:0 0 4px">' + fresh.length +
+        (fresh.length === 1 ? ' reply' : ' replies') + ' in the last day</h2>' +
+      '<p style="color:#8a7a6a;margin:0 0 18px;font-size:13px">' + COUPLE_NAME + ' · December 27, 2026</p>' +
+      '<table style="border-collapse:collapse;font-size:14px;width:100%">' + rows + '</table>' +
+      '<p style="color:#3a3733;margin:20px 0 0;font-size:14px">' +
+        '<strong>Running total:</strong> ' + attending + ' attending (' + seats + ' seats) · ' +
+        regrets + ' regrets</p>' +
+      '<p style="color:#8a7a6a;margin:14px 0 0;font-size:12px">' +
+        'The sheet always has the full list, including anything this email missed.</p>' +
+    '</div>';
+
+  MailApp.sendEmail({
+    to:       DIGEST_TO,
+    name:     SENDER_NAME + ' · RSVP digest',
+    subject:  'RSVP digest — ' + fresh.length + (fresh.length === 1 ? ' new reply' : ' new replies') +
+              ' · ' + seats + ' seats so far',
+    htmlBody: htmlBody,
+  });
+  console.log('Digest sent: %s new, %s attending, %s seats.', fresh.length, attending, seats);
+}
+
+/** Run ONCE from the editor to schedule the digest (about 8am daily). */
+function installDailyDigest() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === 'sendDailyDigest') ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('sendDailyDigest').timeBased().atHour(8).everyDays(1).create();
+  console.log('Daily RSVP digest scheduled for ~8am.');
 }
