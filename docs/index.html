@@ -4895,20 +4895,74 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       var keepsakeStart = finaleMobile ? 7.6 : 7.85;
       var keepsakeDuration = finaleMobile ? 0.5 : 0.75;
       var keepsakeStagger = finaleMobile ? 0.07 : 0.16;
-      tl.to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, copyStart)
-        .to('#arr2', { opacity: 1, y: 0, ease: 'none', duration: 0.7 }, joinStart)
-        .to(['#next-date', '#cd', '.cd-cap'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.18 }, detailStart)
-        .to(['.add-light', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'none', duration: 0.7, stagger: 0.2 }, ctaStart)
-      /* the prints land one-by-one as the guest scrolls the last of the finale —
-         bounded so the eight-print set finishes before the section exits. The old
-         0.5 stagger stretched the finale timeline past its authored scroll range. */
-        .to('#keepsakes .keepsake', { opacity: 1, y: 0, rotation: 0, ease: 'power2.out', duration: keepsakeDuration, stagger: keepsakeStagger }, keepsakeStart)
+      /* The copy and the prints are revealed by REAL-TIME timelines triggered at a
+         scroll position, not tweened by the scrub. Scroll still decides WHEN (the
+         same beats as before, so the choreography against the lanterns is
+         unchanged) but no longer decides HOW FAR ALONG each fade is.
+
+         Why: touch scroll arrives in coarse, bursty samples. Anything whose
+         opacity is scrubbed against those samples steps between values instead of
+         fading, which on an iPhone reads as elements flicking on and off — and
+         raising the scrub lag to hide that is what made the whole section feel
+         like it was settling and shaking after every flick. Text and photographs
+         being read should not be driven by the scroll wheel at all; the lanterns
+         and the sky still are.
+
+         Each reveal is one-way: once a guest has seen the copy it stays put, even
+         if they scroll back up and come down again. */
+      var copyShown = false, keepsShown = false;
+      function revealCopy() {
+        if (copyShown) return;
+        copyShown = true;
+        /* offsets preserved from the old scrubbed beats, now in seconds */
+        gsap.timeline()
+          .to('#arr1', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 }, 0)
+          .to('#arr2', { opacity: 1, y: 0, ease: 'power2.out', duration: 0.7 }, joinStart - copyStart)
+          .to(['#next-date', '#cd', '.cd-cap'], { opacity: 1, y: 0, ease: 'power2.out', duration: 0.7, stagger: 0.18 }, detailStart - copyStart)
+          .to(['.add-light', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'power2.out', duration: 0.7, stagger: 0.2 }, ctaStart - copyStart);
+      }
+      /* the prints land one-by-one, in the order the collage fans out */
+      function revealKeepsakes() {
+        if (keepsShown) return;
+        keepsShown = true;
+        gsap.to('#keepsakes .keepsake', {
+          opacity: 1, y: 0, rotation: 0, ease: 'power2.out',
+          duration: keepsakeDuration, stagger: keepsakeStagger
+        });
+      }
+      /* Fired from raw scroll progress rather than as .call() beats on the
+         scrubbed timeline: whether a seeking playhead fires its callbacks depends
+         on GSAP's suppressEvents semantics, which differ between scrub:true and a
+         smoothed scrub, and a reveal that silently never fires would leave the
+         copy invisible. self.progress is unambiguous. The timeline is 10 beats
+         long over this trigger's range, so progress*10 is the same beat scale the
+         tweens above are positioned on, and the reveals land where they always
+         did. Both functions are idempotent, so firing every frame is harmless. */
+      ScrollTrigger.create({
+        trigger: '#next', start: 'top bottom', end: 'bottom bottom',
+        onUpdate: function (self) {
+          var beat = self.progress * 10;
+          if (beat >= copyStart) revealCopy();
+          if (beat >= keepsakeStart) revealKeepsakes();
+        }
+      });
+      tl
       /* copy crossfades to ink as dawn washes in, so it stays readable on the light sky */
       /* dawn palette: every text node in .next-copy must stay AA on the brightening sky */
       .to(['.next-copy', '#arr1', '.next-copy .date-stamp', '.cd strong'], { color: '#2e2b27', ease: 'none', duration: 1.0 }, 8.7)
       .to(['#arr2', '.cd span'], { color: '#5f584f', ease: 'none', duration: 1.0 }, 8.7)
       .to('.add-light', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7)
       .to('.cd-cap', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7);
+
+      /* Safety net. The reveals above are callbacks on a scrubbed timeline, and a
+         hard enough flick can carry the playhead past a callback without firing
+         it. Anyone who has reached the footer must be looking at finished copy,
+         so guarantee it here, independently of the timeline. Cheap, once, and it
+         can only ever make things visible. */
+      ScrollTrigger.create({
+        trigger: 'footer', start: 'top bottom', once: true,
+        onEnter: function () { revealCopy(); revealKeepsakes(); }
+      });
     })();
   }
 })();
