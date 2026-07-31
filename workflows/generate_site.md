@@ -41,12 +41,12 @@ git push
 ```
 GitHub Pages auto-deploys from the **`master`** branch `/docs` folder within ~1 minute.
 
-**Planner URL:** `https://tommybotabara1.github.io/tj-wedding/planner-7k2a/`
+**Planner URL:** `https://tomyjeyan.com/planner-7k2a/`
 
 These pages carry budget, vendor and guest data. They are deliberately kept out of
-`docs/` root, unlinked from the invitation and marked `noindex` — the site root
-(`docs/index.html`) redirects guests to the invitation instead. Do not link to them
-from any guest-facing page, and keep the folder name as-is.
+`docs/` root, unlinked from the invitation and marked `noindex`. Do not link to them
+from any guest-facing page, and keep the folder name as-is — the obscure name is
+part of the protection.
 
 ## GitHub Pages Setup (one-time)
 1. Create repo on GitHub: `gh repo create tj-wedding --public --source=. --push`
@@ -74,5 +74,6 @@ from any guest-facing page, and keep the folder name as-is.
 - The `Receipts` and `Theme & Pegs` sheets are not displayed (unstructured data).
 - Schedule emojis/special characters are stripped to avoid encoding issues on Windows.
 - Re-run anytime the xlsx is updated — no manual edits to the generated pages needed.
-- The generator writes the three planner pages only. It never touches `docs/lanterns.html`
-  (the invitation) or `docs/index.html` (the guest redirect).
+- The generator writes the three planner pages only. It never touches `docs/index.html`,
+  which since Jul 31, 2026 **is the invitation itself**, served at https://tomyjeyan.com.
+  (`docs/lanterns.html` is now just a redirect stub for links shared before the move.)

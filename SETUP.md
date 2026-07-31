@@ -90,7 +90,8 @@ README.md       # Project overview and reference docs
 | File | Purpose |
 |------|---------|
 | `planning/guest-list-clean.xlsx` | Master guest list (Google Sheets is source of truth) |
-| `docs/lanterns.html` | The wedding invitation (what guests get; `docs/index.html` redirects here) |
+| `docs/index.html` | **The wedding invitation** — served at https://tomyjeyan.com (what guests get) |
+| `docs/lanterns.html` | Redirect stub; the invitation lived at this filename until Jul 31, 2026 |
 | `docs/planner-7k2a/` | Couple-only planner pages: dashboard, seating, floor plan (unlinked + noindexed) |
 | `tools/gws.py` | Google Sheets read/write helper |
 | `tools/generate_site.py` | Regenerates the wedding site HTML from guest data |
