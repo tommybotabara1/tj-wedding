@@ -797,7 +797,17 @@ dialog.panel{
   box-shadow:0 0 140px rgba(207,130,110,.3), 0 40px 90px -24px rgba(0,0,0,.55);
 }
 dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); }
-.panel-inner{ padding:clamp(24px,4vw,40px); overflow-y:auto; max-height:86vh; max-height:86svh; }
+.panel-inner{
+  padding:clamp(24px,4vw,40px); overflow-y:auto; max-height:86vh; max-height:86svh;
+  /* Keep the swipe inside the panel. Without `contain`, iOS chains a gesture that
+     starts at this scroller's top edge out to the page behind the dialog —
+     showModal() makes the background inert for taps but not for touch scrolling —
+     and then keeps sending the WHOLE gesture there. On the entourage panel
+     (2957px of content in a ~700px window, the longest on the site) that reads as
+     the list being frozen while the page silently scrolls underneath. */
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
 /* "Back to menu" affordance, shown only when a panel was opened from the Menu */
 .panel-back{
   display:inline-flex; align-items:center; gap:6px; min-height:44px; margin:-10px 0 8px; padding:8px 0;
