@@ -1471,10 +1471,6 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
   .cd-cap{ display:none; }
 }
 
-/* Static finale variant, opt-in only (`?finale=simple` or `?simpleFinale=1`).
-   Kept as a debugging aid and low-motion fallback; the cinematic scrubbed
-   finale is the default on every device. */
-html.simple-finale #next.tall,
 /* Playback finale (`?finale=play`): the animation no longer consumes scroll, so
    the section does not need to be 2.6 screens tall. It keeps enough runway for
    the sticky copy to hold while the sequence plays, and cuts the long empty
@@ -1483,132 +1479,6 @@ html.simple-finale #next.tall,
 html.finale-play #next.tall-200{ height:150vh; height:150svh; }
 @media (max-width:640px){
   html.finale-play #next.tall-200{ height:170vh; height:170svh; }
-}
-
-html.simple-finale #next.tall-200{ height:auto !important; min-height:0; }
-html.simple-finale #next .stick{
-  position:relative; height:auto; min-height:100vh; min-height:100svh;
-  display:flex; align-items:center; justify-content:center; overflow:hidden;
-  padding:clamp(76px,13svh,112px) 0 max(86px, calc(env(safe-area-inset-bottom) + 76px));
-  background:linear-gradient(180deg, #ddd7cd 0%, var(--ivory) 52%, #f8edda 100%);
-}
-html.simple-finale .sky-dawn{
-  opacity:.85;
-  background:linear-gradient(180deg, #8c716a 0%, #d7a08d 44%, #f0c7a5 100%);
-}
-html.simple-finale .sky-warm{ opacity:1; }
-html.simple-finale #next-lans,
-html.simple-finale #union-glow,
-html.simple-finale .cd-cap{ display:none !important; }
-html.simple-finale #nlanT,
-html.simple-finale #nlanJ{
-  position:absolute; top:clamp(22px,6svh,48px); bottom:auto; right:auto;
-  filter:drop-shadow(0 6px 18px rgba(74,40,16,.36));
-}
-html.simple-finale #nlanT{ left:50%; margin-left:-52px; transform:translateX(-50%) scale(.46) !important; }
-html.simple-finale #nlanJ{ left:50%; margin-left:52px; transform:translateX(-50%) scale(.46) !important; }
-html.simple-finale .next-copy{
-  position:relative; top:auto; transform:none; width:100%; max-width:420px;
-  padding:clamp(94px,17svh,126px) 24px 0; color:var(--ink);
-}
-html.simple-finale #next .scrub-hide:not(.keepsake){
-  opacity:1 !important; visibility:visible !important; transform:none !important;
-}
-html.simple-finale .next-copy h2{
-  color:var(--ink); font-size:clamp(34px,10vw,46px); line-height:1.06;
-}
-html.simple-finale .next-copy .join{ color:var(--soft); margin-top:10px; }
-html.simple-finale .next-copy .date-stamp{
-  color:var(--ink); font-size:clamp(24px,7.4vw,32px); margin-top:18px;
-}
-html.simple-finale .cd{ gap:10px; margin-top:16px; }
-html.simple-finale .cd > div{ min-width:52px; }
-html.simple-finale .cd strong{ color:var(--ink); font-size:clamp(28px,9vw,38px); }
-html.simple-finale .cd span{ color:var(--soft); font-size:8px; letter-spacing:.16em; }
-html.simple-finale .next-copy .add-light{ color:var(--rose-deep); margin-top:16px; }
-html.simple-finale #rsvp-cta{ margin-top:12px; }
-/* On phones the closing photographs are a real, quiet photo grid rather than
-   the desktop's overlapping scroll-settled print stack. All eight supplied
-   images stay available and retain their tap-to-enlarge behaviour. */
-.keepsake-label{ display:none; }
-html.simple-finale .keepsake-label{
-  display:block; margin:26px 0 10px; color:var(--soft); font-family:var(--serif);
-  font-style:italic; font-size:18px;
-}
-html.simple-finale .keepsakes{
-  display:grid !important; grid-template-columns:repeat(4, minmax(0, 62px));
-  justify-content:center; gap:10px 8px; width:100%; max-width:100%; margin:0 auto; padding:0 0 4px;
-}
-html.simple-finale .keepsake{ width:62px; margin:0 !important; }
-html.simple-finale .keepsake-tilt{ transform:none; }
-html.simple-finale .keepsake:hover .keepsake-tilt,
-html.simple-finale .keepsake:focus-within .keepsake-tilt{ transform:translateY(-4px) scale(1.02); }
-@media (max-width:360px){
-  html.simple-finale .keepsakes{ grid-template-columns:repeat(4, minmax(0, 52px)); gap:8px 6px; }
-  html.simple-finale .keepsake{ width:52px; }
-}
-/* A single welcome cue, triggered by the existing IntersectionObserver when
-   this section enters view. Nothing here is tied to the scroll position. */
-@keyframes mobile-finale-copy-in{
-  from{ opacity:0; transform:translateY(14px); }
-  to{ opacity:1; transform:translateY(0); }
-}
-@keyframes mobile-lantern-awaken{
-  0%{ opacity:.2; transform:scale(.72); }
-  68%{ opacity:1; transform:scale(1.07); }
-  100%{ opacity:1; transform:scale(1); }
-}
-@keyframes mobile-keepsake-in{
-  from{ opacity:0; transform:translateY(14px) scale(.96); }
-  to{ opacity:1; transform:translateY(0) scale(1); }
-}
-@keyframes mobile-rsvp-beacon{
-  0%{ transform:translateY(7px); box-shadow:0 0 0 rgba(178,124,117,0); }
-  58%{ transform:translateY(0); box-shadow:0 0 28px rgba(178,124,117,.32); }
-  100%{ transform:translateY(0); box-shadow:0 0 0 rgba(178,124,117,0); }
-}
-/* hold the animated pieces at their entry state until the reveal fires, so the
-   copy never blinks visible-hidden-visible when the class lands mid-view */
-html.simple-finale:not(.reduced):not(.simple-finale-revealed) .next-copy{ opacity:0; }
-html.simple-finale:not(.reduced):not(.simple-finale-revealed) #nlanT .body,
-html.simple-finale:not(.reduced):not(.simple-finale-revealed) #nlanJ .body{ opacity:.2; }
-html.simple-finale:not(.reduced).simple-finale-revealed .next-copy{
-  animation:mobile-finale-copy-in .72s var(--ease) both;
-}
-html.simple-finale:not(.reduced).simple-finale-revealed #nlanT .body{
-  transform-origin:50% 60%; animation:mobile-lantern-awaken .8s var(--ease) .06s both;
-}
-html.simple-finale:not(.reduced).simple-finale-revealed #nlanJ .body{
-  transform-origin:50% 60%; animation:mobile-lantern-awaken .8s var(--ease) .2s both;
-}
-html.simple-finale:not(.reduced).simple-finale-revealed #rsvp-cta{
-  animation:mobile-rsvp-beacon 1.05s var(--ease) .46s both;
-}
-html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake{
-  animation:mobile-keepsake-in .48s var(--ease) both;
-}
-html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(1){ animation-delay:.32s; }
-html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(2){ animation-delay:.38s; }
-html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(3){ animation-delay:.44s; }
-html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(4){ animation-delay:.50s; }
-html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(5){ animation-delay:.56s; }
-html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(6){ animation-delay:.62s; }
-html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(7){ animation-delay:.68s; }
-html.simple-finale:not(.reduced).simple-finale-revealed #keepsakes .keepsake:nth-child(8){ animation-delay:.74s; }
-html.simple-finale .story-ctrl-row,
-html.simple-finale .music-hint{ display:none !important; }
-html.simple-finale .ctrls{ gap:8px; }
-html.simple-finale.simple-finale-active .ctrls{
-  opacity:0; transform:translateY(10px); pointer-events:none;
-}
-@media (max-width:360px){
-  html.simple-finale .next-copy{ padding-top:88px; }
-  html.simple-finale .next-copy h2{ font-size:clamp(30px,9.4vw,38px); }
-  html.simple-finale .cd{ display:none; }
-  html.simple-finale #rsvp-cta{ width:100%; max-width:280px; padding-inline:18px; }
-}
-@media (max-height:620px){
-  html.simple-finale .cd{ display:none; }
 }
 
 /* Footer — morning after */
@@ -2743,10 +2613,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
      the couple, Jul 10 2026): the iOS jank that motivated a static mobile
      variant is fixed at the source (canvas resize guard, ignoreMobileResize,
      dt clamp). The static variant remains an explicit opt-in for debugging. */
-  var SIMPLE_FINALE = qs.has('simpleFinale') || qs.get('finale') === 'simple';
-
   /* Playback finale, opt-in (`?finale=play`) — an A/B against the default, NOT a
-     replacement for the static simple-finale above.
+     replacement for anything: it is the only alternative to the default.
 
      The default finale is scroll-SCRUBBED: animation state is a function of
      scrollY. That is what keeps producing artifacts on iOS, because touch scroll
@@ -2761,8 +2629,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   var FINALE_PLAY = qs.get('finale') === 'play';
 
   if (REDUCED) docEl.classList.add('reduced');
-  if (SIMPLE_FINALE) docEl.classList.add('simple-finale');
-  if (FINALE_PLAY && !SIMPLE_FINALE) docEl.classList.add('finale-play');
+  if (FINALE_PLAY) docEl.classList.add('finale-play');
   /* Samsung/Adreno GPUs on Android Chrome corrupt compositor tiles when an
      always-animating fullscreen canvas shares the screen with many promoted
      (will-change) layers carrying drop-shadow filters — stale rectangles
@@ -2779,43 +2646,6 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   }
   if (ANIM) docEl.classList.add('js-anim');
 
-  if (SIMPLE_FINALE) {
-    var simpleNext = $('next');
-    var simpleFinaleOn = false;
-    var setSimpleFinaleActive = function (active) {
-      active = !!active;
-      if (active === simpleFinaleOn) return;   /* only act on real state changes */
-      simpleFinaleOn = active;
-      docEl.classList.toggle('simple-finale-active', active);
-      if (active) docEl.classList.add('simple-finale-revealed');
-      if (Sky && Sky.setFinaleQuiet) Sky.setFinaleQuiet(active);
-    };
-    if (simpleNext && 'IntersectionObserver' in window) {
-      /* hysteresis: wake at 25% visible, sleep only when nearly gone. A single
-         threshold flip-flops when the iOS URL bar resizes the viewport mid-scroll,
-         which restarted the canvas and re-hid the dock every few frames. */
-      var simpleFinaleObserver = new IntersectionObserver(function (entries) {
-        var entry = entries[entries.length - 1];
-        var ratio = entry.isIntersecting ? entry.intersectionRatio : 0;
-        if (ratio > 0.25) setSimpleFinaleActive(true);
-        else if (ratio < 0.06) setSimpleFinaleActive(false);
-      }, { threshold: [0, 0.06, 0.25, 0.6] });
-      simpleFinaleObserver.observe(simpleNext);
-    } else if (simpleNext) {
-      var simpleFinaleTick = false;
-      window.addEventListener('scroll', function () {
-        if (simpleFinaleTick) return;          /* one layout read per frame */
-        simpleFinaleTick = true;
-        requestAnimationFrame(function () {
-          simpleFinaleTick = false;
-          var r = simpleNext.getBoundingClientRect();
-          var vh = window.innerHeight;
-          if (r.top < vh * 0.75 && r.bottom > vh * 0.25) setSimpleFinaleActive(true);
-          else if (r.top > vh * 0.9 || r.bottom < vh * 0.1) setSimpleFinaleActive(false);
-        });
-      }, { passive: true });
-    }
-  }
 
   /* =========================================================
      THE NIGHT SKY — canvas lantern field
@@ -4463,7 +4293,6 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
   /* ---------- finale background lanterns (DOM, above dawn overlays) ---------- */
   (function () {
-    if (SIMPLE_FINALE) return;
     var host = $('next-lans');
     var compactFinale = isTouchLike || window.innerWidth <= 640;
     var risingCount = compactFinale ? 5 : 9;
@@ -4787,7 +4616,6 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
 
     /* Section 4 — next chapter finale */
     (function () {
-      if (SIMPLE_FINALE) return;
       var stick = document.querySelector('#next .stick');
       var W = function () { return stick.clientWidth; };
       /* scrub:true AND start:'top bottom' — the finale begins the instant the
@@ -4902,9 +4730,7 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
       /* the T & J pair deliberately does NOT fade — the two lanterns stay lit,
          parked above the headline, as the sky washes to dawn (they read as two
          lights still hanging in the morning sky over the invitation). */
-      /* dawn only at the exit, as the guest scrolls on into the morning-after footer */
-        .to('.sky-dawn', { opacity: 1, ease: 'none', duration: 1.0 }, 8.6)
-        .to('.sky-warm', { opacity: 1, ease: 'none', duration: 0.9 }, 9.1);
+        ;
       /* Arrival copy — pinned phase only (starts at t5.3, after the ~t4.5 pin), so
          it reveals on screen and then stays put to the end; a fast flick lands on
          fully-visible copy, a slow scroll reveals it line by line. */
@@ -4956,6 +4782,31 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
           .to(['#next-date', '#cd', '.cd-cap'], { opacity: 1, y: 0, ease: 'power2.out', duration: 0.7, stagger: 0.18 }, detailStart - copyStart)
           .to(['.add-light', '#rsvp-cta'], { opacity: 1, y: 0, ease: 'power2.out', duration: 0.7, stagger: 0.2 }, ctaStart - copyStart);
       }
+      /* THE DAWN WASH — the single most expensive thing in the finale, and the
+         part the couple identified as causing the jank.
+
+         .sky-dawn and .sky-warm are full-viewport gradient layers. Fading their
+         opacity means recompositing the entire screen every frame, with the
+         lanterns, the prints and the copy all drawn over the top. Scrubbed, that
+         repaint is driven by coarse touch-scroll samples, so the whole screen
+         steps in brightness and everything above it appears to flicker — the
+         "dimming part" going on and off.
+
+         Played in real time it is the same wash, at a frame rate the device
+         chooses, and the text colours ride with it so the copy stays legible
+         against the brightening sky at every moment of the transition. */
+      var dawnShown = false;
+      function revealDawn() {
+        if (dawnShown) return;
+        dawnShown = true;
+        gsap.timeline()
+          .to('.sky-dawn', { opacity: 1, ease: 'power1.inOut', duration: 1.1 }, 0)
+          .to('.sky-warm', { opacity: 1, ease: 'power1.inOut', duration: 1.0 }, 0.5)
+          /* colours must cross with the sky, not after it */
+          .to(['.next-copy', '#arr1', '.next-copy .date-stamp', '.cd strong'], { color: '#2e2b27', ease: 'none', duration: 1.1 }, 0.1)
+          .to(['#arr2', '.cd span'], { color: '#5f584f', ease: 'none', duration: 1.1 }, 0.1)
+          .to(['.add-light', '.cd-cap'], { color: '#945a52', ease: 'none', duration: 1.1 }, 0.1);
+      }
       /* the prints land one-by-one, in the order the collage fans out */
       function revealKeepsakes() {
         if (keepsShown) return;
@@ -4979,7 +4830,8 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
            so the reveals ride the sequence and stay in step with the lanterns
            rather than tracking scroll position independently. */
         tl.call(revealCopy, null, copyStart)
-          .call(revealKeepsakes, null, keepsakeStart);
+          .call(revealKeepsakes, null, keepsakeStart)
+          .call(revealDawn, null, 8.6);
       } else {
         ScrollTrigger.create({
           trigger: '#next', start: 'top bottom', end: 'bottom bottom',
@@ -4987,25 +4839,17 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
             var beat = self.progress * 10;
             if (beat >= copyStart) revealCopy();
             if (beat >= keepsakeStart) revealKeepsakes();
+            if (beat >= 8.6) revealDawn();
           }
         });
       }
-      tl
-      /* copy crossfades to ink as dawn washes in, so it stays readable on the light sky */
-      /* dawn palette: every text node in .next-copy must stay AA on the brightening sky */
-      .to(['.next-copy', '#arr1', '.next-copy .date-stamp', '.cd strong'], { color: '#2e2b27', ease: 'none', duration: 1.0 }, 8.7)
-      .to(['#arr2', '.cd span'], { color: '#5f584f', ease: 'none', duration: 1.0 }, 8.7)
-      .to('.add-light', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7)
-      .to('.cd-cap', { color: '#945a52', ease: 'none', duration: 1.0 }, 8.7);
-
-      /* Safety net. The reveals above are callbacks on a scrubbed timeline, and a
-         hard enough flick can carry the playhead past a callback without firing
-         it. Anyone who has reached the footer must be looking at finished copy,
-         so guarantee it here, independently of the timeline. Cheap, once, and it
-         can only ever make things visible. */
+      /* Safety net for both wirings: a hard flick can outrun a progress sample,
+         and a seeking playhead can skip a callback. Anyone who has reached the
+         footer must be looking at finished copy on a dawn sky, so guarantee it
+         here. Cheap, once, and it can only ever make things visible. */
       ScrollTrigger.create({
         trigger: 'footer', start: 'top bottom', once: true,
-        onEnter: function () { revealCopy(); revealKeepsakes(); }
+        onEnter: function () { revealCopy(); revealKeepsakes(); revealDawn(); }
       });
     })();
   }
