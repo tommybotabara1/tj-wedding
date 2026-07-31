@@ -4776,16 +4776,19 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
         /* touch: a small scrub lag smooths the sparse scroll events of finger /
            momentum scrolling; desktop keeps the 1:1 wheel feel.
 
-           Held to 0.15, not the 0.45 this used to carry. At 0.45 the finale kept
-           moving for ~1s after the finger left — measured on an iPhone capture as
-           a decaying +14,+13,…,+1 px-per-frame crawl, then ±1px oscillation at
-           rest. Because this timeline transforms the headline, countdown, RSVP
-           button and keepsakes, that lag is read as the page shaking and
-           resisting the footer rather than as smoothing. The lantern beats can
-           afford a little steppiness; the copy cannot afford the wobble. */
+           0.45 is load-bearing, do not lower it. It was tried at 0.15 on Jul 31
+           to cut the post-flick settle, and on a real iPhone that made things
+           worse, not better: with the lag this short the timeline snaps to each
+           sparse touch-scroll sample, so the opacity-driven beats (lanterns,
+           keepsakes) visibly flicker on and off while scrolling. Touch scroll
+           events are too coarse to scrub against directly.
+
+           The settle this smoothing causes is real, but the fix is to stop
+           scrubbing the things people READ (headline, countdown, RSVP button,
+           keepsakes) rather than to shorten the smoothing. */
         scrollTrigger: {
           trigger: '#next', start: 'top bottom', end: 'bottom bottom',
-          scrub: (isTouchLike || window.innerWidth <= 640) ? 0.15 : true,
+          scrub: (isTouchLike || window.innerWidth <= 640) ? 0.45 : true,
           invalidateOnRefresh: true
         }
       });
