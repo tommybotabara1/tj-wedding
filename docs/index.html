@@ -924,6 +924,24 @@ dialog.panel.film{ width:min(94vw, 880px); }
   text-transform:uppercase; color:var(--soft);
 }
 .success .ref b{ font-family:var(--mono,var(--sans)); letter-spacing:.14em; color:var(--ink); }
+.rsvp-card-download{
+  margin:18px 0 16px; padding:18px; border:1px solid var(--line); border-radius:14px;
+  background:rgba(255,253,250,.7); text-align:center;
+}
+.rsvp-card-download .panel-kicker{ display:block; margin-bottom:4px; }
+.rsvp-card-download h4{ font-size:24px; font-weight:400; color:var(--ink); }
+.rsvp-card-download p{ margin:7px auto 14px; max-width:34ch; color:var(--soft); font-size:13px; line-height:1.5; }
+.rsvp-card-preview{
+  margin:0 auto 14px; max-width:270px; border:1px solid rgba(46,43,39,.18);
+  background:var(--night-deep); overflow:hidden; box-shadow:0 8px 26px -12px rgba(0,0,0,.45);
+}
+.rsvp-card-preview img{ display:block; width:100%; height:auto; aspect-ratio:1080/1600; object-fit:cover; }
+.rsvp-card-download .btn{ width:100%; }
+@media (max-width:440px){
+  .rsvp-card-note{ align-items:flex-start; flex-wrap:wrap; }
+  .rsvp-card-note .rsvp-card-link{ width:100%; justify-content:center; }
+  .rsvp-card-download{ padding:15px; }
+}
 
 /* ── RSVP · one reply per guest ───────────────────────────────────────────────
    Three steps: settle WHO is replying (search), then take the reply, then
@@ -1044,6 +1062,18 @@ dialog.panel.film{ width:min(94vw, 880px); }
 }
 .rsvp-known p{ font-size:14.5px; margin:0 0 14px; }
 .rsvp-known .ref{ display:block; margin-top:6px; font-size:12px; color:var(--soft); }
+.rsvp-card-note{
+  display:flex; align-items:center; gap:14px; margin-top:16px; padding-top:16px;
+  border-top:1px solid rgba(86,104,72,.22);
+}
+.rsvp-card-note-copy{ flex:1; min-width:0; }
+.rsvp-card-note-copy strong{ display:block; font-family:var(--serif); font-size:19px; font-weight:400; line-height:1.15; }
+.rsvp-card-note-copy small{ display:block; margin-top:4px; color:var(--soft); font-size:12px; line-height:1.45; }
+.rsvp-card-link{ flex:0 0 auto; min-height:44px; padding:11px 16px; font-size:10.5px; white-space:nowrap; }
+@media (max-width:440px){
+  .rsvp-card-note{ align-items:flex-start; flex-wrap:wrap; }
+  .rsvp-card-note .rsvp-card-link{ width:100%; justify-content:center; }
+}
 .rsvp-known-btns{ display:flex; gap:10px; flex-wrap:wrap; }
 .rsvp-known-btns .btn{ flex:1; min-width:170px; padding-inline:20px; font-size:11.5px; }
 .edit-note{
@@ -2311,6 +2341,13 @@ html.android #next-lans .lantern.far{ animation:none !important; }
     <section id="rsvp-s1" aria-label="Step 1, find your name">
       <div class="rsvp-known" id="rsvp-known" hidden>
         <p id="known-line"></p>
+        <div class="rsvp-card-note">
+          <div class="rsvp-card-note-copy">
+            <strong>Keep the details close</strong>
+            <small>Save the phone-sized invitation card for the day.</small>
+          </div>
+          <a class="btn dark rsvp-card-link" href="images/invitation-card.png?v=1" download="tommy-jeyan-invitation.png">Download invitation image</a>
+        </div>
         <div class="rsvp-known-btns">
           <button class="btn dark" type="button" id="known-edit">Change my response</button>
           <button class="btn quiet" type="button" id="known-notme">Not you? Start fresh</button>
@@ -2389,6 +2426,15 @@ html.android #next-lans .lantern.far{ animation:none !important; }
     <!-- ── STEP 3 · confirmed ─────────────────────────────────────────────── -->
     <section id="rsvp-s3" hidden aria-label="Step 3, confirmed">
       <div class="success" id="rsvp-success" role="status" aria-live="polite"></div>
+      <div class="rsvp-card-download">
+        <span class="panel-kicker">keep the details close</span>
+        <h4>Save the invitation</h4>
+        <p>Download a phone-sized card with the date, venues, times, and dress code.</p>
+        <figure class="rsvp-card-preview">
+          <img src="images/invitation-card.png?v=1" width="1080" height="1600" loading="lazy" alt="Tommy and Jeyan wedding invitation card with the date, ceremony, reception, and Smart Formal dress code" />
+        </figure>
+        <a class="btn dark" href="images/invitation-card.png?v=1" download="tommy-jeyan-invitation.png">Download invitation image</a>
+      </div>
       <div class="rsvp-known-btns">
         <button class="btn quiet" type="button" id="done-edit">Change my response</button>
         <button class="btn dark" type="button" id="done-close">Back to the journey</button>
@@ -4808,10 +4854,17 @@ html.android #next-lans .lantern.far{ animation:none !important; }
                  its top equals the headline's settled top. The desktop branch
                  below has always done this - the same trap, twice. */
               var headM = document.querySelector('.next-copy').getBoundingClientRect();
+              /* CENTRE-based, like the desktop branch, and for the same reason:
+                 this tween also applies scale(0.55), and scaling happens about
+                 the element's centre. Moving its TOP to a target therefore
+                 leaves the rendered top about (1-0.55)*118/2 = 27px lower than
+                 asked for - which is exactly how far the pair was sitting into
+                 the headline on the device while emulation looked fine.
+                 Centres are unaffected by scale. */
               var hM = 118 * 0.55;                       /* height at landing scale */
-              var targetTop = (headM.top - 24) - hM;     /* sit clear above the headline */
-              targetTop = Math.max(stickM.top + 40, targetTop);
-              return targetTop - rm.top;
+              var targetCenterM = (headM.top - 24) - hM / 2;
+              targetCenterM = Math.max(stickM.top + 40 + hM / 2, targetCenterM);
+              return targetCenterM - (rm.top + rm.height / 2);
             }
             var r = document.getElementById('nlanT').getBoundingClientRect();
             var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
@@ -4847,10 +4900,17 @@ html.android #next-lans .lantern.far{ animation:none !important; }
                  its top equals the headline's settled top. The desktop branch
                  below has always done this - the same trap, twice. */
               var headM = document.querySelector('.next-copy').getBoundingClientRect();
+              /* CENTRE-based, like the desktop branch, and for the same reason:
+                 this tween also applies scale(0.55), and scaling happens about
+                 the element's centre. Moving its TOP to a target therefore
+                 leaves the rendered top about (1-0.55)*118/2 = 27px lower than
+                 asked for - which is exactly how far the pair was sitting into
+                 the headline on the device while emulation looked fine.
+                 Centres are unaffected by scale. */
               var hM = 118 * 0.55;                       /* height at landing scale */
-              var targetTop = (headM.top - 24) - hM;     /* sit clear above the headline */
-              targetTop = Math.max(stickM.top + 40, targetTop);
-              return targetTop - rm.top;
+              var targetCenterM = (headM.top - 24) - hM / 2;
+              targetCenterM = Math.max(stickM.top + 40 + hM / 2, targetCenterM);
+              return targetCenterM - (rm.top + rm.height / 2);
             }
             var r = document.getElementById('nlanJ').getBoundingClientRect();
             var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
