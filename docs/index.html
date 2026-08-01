@@ -1487,6 +1487,20 @@ html.finale-play #next.tall-200{ height:150vh; height:150svh; }
   html.finale-play #next.tall-200{ height:170vh; height:170svh; }
 }
 
+/* ---- flicker bisect (only active with ?off=...) ------------------------- */
+.bisect-tag{
+  position:fixed; left:8px; bottom:8px; z-index:99;
+  padding:4px 8px; border-radius:6px; background:rgba(0,0,0,.72); color:#fff;
+  font-family:ui-monospace,Menlo,Consolas,monospace; font-size:10px; letter-spacing:.04em;
+  pointer-events:none;
+}
+html.off-dawn .sky-dawn, html.off-dawn .sky-warm{ display:none !important; }
+html.off-lanterns #next-lans{ display:none !important; }
+html.off-pair #nlanT, html.off-pair #nlanJ, html.off-pair #union-glow{ display:none !important; }
+html.off-canvas #sky{ display:none !important; }
+html.off-shadow #next *, html.off-shadow #next{ filter:none !important; box-shadow:none !important; text-shadow:none !important; }
+html.off-anim #next *, html.off-anim .lantern *, html.off-anim .lantern{ animation:none !important; }
+
 /* Footer — morning after */
 footer{
   position:relative; z-index:1; background:var(--ivory); color:var(--ink);
@@ -2615,6 +2629,34 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
   var ANIM = HAS_GSAP && !REDUCED;
   var docEl = document.documentElement;
   var qs = new URLSearchParams(window.location.search);
+
+  /* ---------------- FLICKER BISECT (diagnostic, default off) ----------------
+     Four rounds of fixing this by reasoning about a device none of us can
+     inspect have not landed it, so this exists to answer the question by
+     elimination instead. Add ?off=<thing> and reload on the phone that
+     flickers; whichever one makes it stop is the culprit.
+
+       ?off=dawn      the two full-viewport gradient layers that fade in
+       ?off=lanterns  the finale's DOM lantern field
+       ?off=pair      the T & J lanterns
+       ?off=canvas    the animated sky canvas behind everything
+       ?off=shadow    every glow, drop-shadow and blur in the finale
+       ?off=anim      all CSS keyframe animations (flames, sway)
+
+     Combine with commas: ?off=dawn,shadow. A small tag appears bottom-left so
+     it is obvious which build is on screen in a screen recording.
+     Nothing here runs unless the parameter is present. */
+  var OFF = new Set((qs.get('off') || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean));
+  if (OFF.size) {
+    docEl.classList.add('bisect');
+    OFF.forEach(function (k) { docEl.classList.add('off-' + k); });
+    window.addEventListener('DOMContentLoaded', function () {
+      var tag = document.createElement('div');
+      tag.className = 'bisect-tag';
+      tag.textContent = 'OFF: ' + Array.from(OFF).join(', ');
+      document.body.appendChild(tag);
+    });
+  }
   /* The cinematic scrubbed finale is the default on every device (restored per
      the couple, Jul 10 2026): the iOS jank that motivated a static mobile
      variant is fixed at the source (canvas resize guard, ignoreMobileResize,
