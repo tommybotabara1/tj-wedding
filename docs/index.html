@@ -4794,13 +4794,24 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         .to('#nlanT', {
           y: function () {
             if (M()) {
-              /* same floor on phones: land no higher than 56px below the top of
-                 the sticky, so the pair is never clipped by the URL bar */
+              /* Phones: measure, don't hand-math. The old fixed offset
+                 (-innerHeight*0.93) happened to clear the headline at some
+                 viewport sizes and landed the pair right on top of the text at
+                 others. Derive the landing from the headline's own rect, the
+                 same way the desktop branch does, and floor it so the URL bar
+                 can never clip it. */
               var rm = document.getElementById('nlanT').getBoundingClientRect();
-              var stickTopM = document.querySelector('#next .stick').getBoundingClientRect().top;
-              var wanted = -(window.innerHeight * 0.93 + 15);
-              var floorY = (stickTopM + 44) - rm.top;
-              return Math.max(wanted, floorY);
+              var stickM = document.querySelector('#next .stick').getBoundingClientRect();
+              /* .next-copy, NOT the h2: the headline carries its own reveal tween
+                 (y:20 -> 0), so reading it mid-reveal lands the pair ~20px low
+                 and it ends up sitting ON the text. The parent is untweened and
+                 its top equals the headline's settled top. The desktop branch
+                 below has always done this - the same trap, twice. */
+              var headM = document.querySelector('.next-copy').getBoundingClientRect();
+              var hM = 118 * 0.55;                       /* height at landing scale */
+              var targetTop = (headM.top - 24) - hM;     /* sit clear above the headline */
+              targetTop = Math.max(stickM.top + 40, targetTop);
+              return targetTop - rm.top;
             }
             var r = document.getElementById('nlanT').getBoundingClientRect();
             var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
@@ -4822,13 +4833,24 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         .to('#nlanJ', {
           y: function () {
             if (M()) {
-              /* same floor on phones: land no higher than 56px below the top of
-                 the sticky, so the pair is never clipped by the URL bar */
+              /* Phones: measure, don't hand-math. The old fixed offset
+                 (-innerHeight*0.93) happened to clear the headline at some
+                 viewport sizes and landed the pair right on top of the text at
+                 others. Derive the landing from the headline's own rect, the
+                 same way the desktop branch does, and floor it so the URL bar
+                 can never clip it. */
               var rm = document.getElementById('nlanJ').getBoundingClientRect();
-              var stickTopM = document.querySelector('#next .stick').getBoundingClientRect().top;
-              var wanted = -(window.innerHeight * 0.93 + 15);
-              var floorY = (stickTopM + 44) - rm.top;
-              return Math.max(wanted, floorY);
+              var stickM = document.querySelector('#next .stick').getBoundingClientRect();
+              /* .next-copy, NOT the h2: the headline carries its own reveal tween
+                 (y:20 -> 0), so reading it mid-reveal lands the pair ~20px low
+                 and it ends up sitting ON the text. The parent is untweened and
+                 its top equals the headline's settled top. The desktop branch
+                 below has always done this - the same trap, twice. */
+              var headM = document.querySelector('.next-copy').getBoundingClientRect();
+              var hM = 118 * 0.55;                       /* height at landing scale */
+              var targetTop = (headM.top - 24) - hM;     /* sit clear above the headline */
+              targetTop = Math.max(stickM.top + 40, targetTop);
+              return targetTop - rm.top;
             }
             var r = document.getElementById('nlanJ').getBoundingClientRect();
             var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
