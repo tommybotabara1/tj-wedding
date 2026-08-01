@@ -134,7 +134,7 @@ button{ font-family:var(--sans); cursor:pointer; }
 section{ position:relative; }
 .copy-center{ text-align:center; max-width:680px; margin:0 auto; padding:0 24px; width:100%; }
 .tall{ height:260vh; height:260svh; }
-.tall-200{ height:220vh; height:220svh; }
+.tall-200{ height:150vh; height:150svh; }
 @media (max-width:640px){
   #path.tall{ height:430vh; height:430svh; }
   /* 170, down from 260. The copy inside .stick is sticky, so every screen of
@@ -143,7 +143,7 @@ section{ position:relative; }
      couple describe. The content from the RSVP button to the footer is about a
      third of a screen; the rest was runway for the scrubbed animation, which
      simply compresses into less scroll. */
-  #next.tall-200{ height:170vh; height:170svh; }
+  #next.tall-200{ height:130vh; height:130svh; }
 }
 .stick{
   position:sticky; top:0; height:100vh; height:100svh;
@@ -1477,6 +1477,29 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
   .cd-cap{ display:none; }
 }
 
+/* Short viewports - most laptops are 720-800 tall. .next-copy is centred inside
+   the sticky, so once it outgrows the viewport it is clipped at both ends: the
+   headline off the top, the photographs off the bottom. It also eats the
+   headroom the T & J pair needs to land in. Tighten the rhythm rather than
+   letting it overflow. */
+@media (max-height:820px){
+  /* -45% deliberately sits the block slightly low on tall screens; on short ones
+     that offset is what pushes the photographs past the bottom edge */
+  .next-copy{ transform:translateY(-50%); }
+  .next-copy h2{ font-size:clamp(26px,3.4vw,36px); }
+  .next-copy .join{ margin-top:6px; font-size:15px; }
+  .next-copy .date-stamp{ margin-top:12px; }
+  .cd{ margin-top:12px; }
+  .cd strong{ font-size:clamp(24px,3vw,32px); }
+  .next-copy .add-light{ margin-top:10px; }
+  #rsvp-cta{ margin-top:10px; }
+  /* the block must also leave room ABOVE it: the T & J pair lands over the
+     headline, and at 720px tall there is only headroom for both if the copy
+     stays under ~600px */
+  .keepsakes{ margin-top:10px; }
+  .keepsake{ width:clamp(54px,5.4vw,72px); }
+}
+
 /* Playback finale (`?finale=play`): the animation no longer consumes scroll, so
    the section does not need to be 2.6 screens tall. It keeps enough runway for
    the sticky copy to hold while the sequence plays, and cuts the long empty
@@ -2116,7 +2139,6 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <p class="cd-cap scrub-hide">until forever</p>
         <p class="script-accent add-light scrub-hide">Add your light to our sky.</p>
         <button class="btn dark scrub-hide" id="rsvp-cta" type="button" data-panel="p-rsvp">RSVP to the Journey</button>
-        <p class="keepsake-label">A few of us</p>
         <!-- A few of us — closing keepsakes. Drop these into docs/images/closing/
              and each frame fills automatically (portrait ~1200×1600 .webp, no text):
                · us-candid.webp  — a relaxed, unposed candid of the two of you
@@ -4734,6 +4756,14 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         });
       }
       /* mobile: shrink the pair + halo so the meet point clears the copy block below it */
+      /* how far the pair can still rise while staying comfortably on screen */
+      function finaleDrift(id) {
+        var el = document.getElementById(id);
+        var stick = document.querySelector('#next .stick');
+        if (!el || !stick) return 0;
+        var room = el.getBoundingClientRect().top - stick.getBoundingClientRect().top - (window.innerWidth <= 640 ? 44 : 12);
+        return Math.max(0, Math.min(window.innerHeight * 0.08, room));
+      }
       var M = function () { return window.innerWidth <= 640; };
       var finaleMobile = M();
       /* PHASE A · entry: cohort A (the rising sea) climbs while the panel slides in.
@@ -4763,11 +4793,26 @@ html.android #next-lans .lantern.far{ animation:none !important; }
          instead of chasing a fixed percentage that only happened to work at one size. */
         .to('#nlanT', {
           y: function () {
-            if (M()) return -(window.innerHeight * 0.93 + 15);
+            if (M()) {
+              /* same floor on phones: land no higher than 56px below the top of
+                 the sticky, so the pair is never clipped by the URL bar */
+              var rm = document.getElementById('nlanT').getBoundingClientRect();
+              var stickTopM = document.querySelector('#next .stick').getBoundingClientRect().top;
+              var wanted = -(window.innerHeight * 0.93 + 15);
+              var floorY = (stickTopM + 44) - rm.top;
+              return Math.max(wanted, floorY);
+            }
             var r = document.getElementById('nlanT').getBoundingClientRect();
             var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
             var deskH = 118 * 0.56, clear = 16;
             var targetCenterY = copyTop - clear - deskH / 2;
+            /* Never above the fold, and never under the browser chrome. The
+               landing is derived from the copy's top, and the copy is centred,
+               so a taller copy block drags this target upward until the pair
+               leaves the screen entirely (desktop) or sits half-cut at the very
+               top (phone). Clamp it to a floor instead. */
+            var stickTop = document.querySelector('#next .stick').getBoundingClientRect().top;
+            targetCenterY = Math.max(stickTop + 12 + deskH / 2, targetCenterY);
             return targetCenterY - (r.top + r.height / 2);
           },
           x: function () { var r = document.getElementById('nlanT').getBoundingClientRect(); return (W() / 2 - (M() ? 22 : 28)) - (r.left + r.width / 2); },
@@ -4776,11 +4821,26 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         }, 4.6)
         .to('#nlanJ', {
           y: function () {
-            if (M()) return -(window.innerHeight * 0.93 + 15);
+            if (M()) {
+              /* same floor on phones: land no higher than 56px below the top of
+                 the sticky, so the pair is never clipped by the URL bar */
+              var rm = document.getElementById('nlanJ').getBoundingClientRect();
+              var stickTopM = document.querySelector('#next .stick').getBoundingClientRect().top;
+              var wanted = -(window.innerHeight * 0.93 + 15);
+              var floorY = (stickTopM + 44) - rm.top;
+              return Math.max(wanted, floorY);
+            }
             var r = document.getElementById('nlanJ').getBoundingClientRect();
             var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
             var deskH = 118 * 0.56, clear = 16;
             var targetCenterY = copyTop - clear - deskH / 2;
+            /* Never above the fold, and never under the browser chrome. The
+               landing is derived from the copy's top, and the copy is centred,
+               so a taller copy block drags this target upward until the pair
+               leaves the screen entirely (desktop) or sits half-cut at the very
+               top (phone). Clamp it to a floor instead. */
+            var stickTop = document.querySelector('#next .stick').getBoundingClientRect().top;
+            targetCenterY = Math.max(stickTop + 12 + deskH / 2, targetCenterY);
             return targetCenterY - (r.top + r.height / 2);
           },
           x: function () { var r = document.getElementById('nlanJ').getBoundingClientRect(); return (W() / 2 + (M() ? 22 : 28)) - (r.left + r.width / 2); },
@@ -4798,8 +4858,8 @@ html.android #next-lans .lantern.far{ animation:none !important; }
          Function-based relative strings (not a pre-computed '-=N') so GSAP resolves
          the delta lazily against innerHeight at render time, matching the other
          function-based tweens in this timeline. */
-        .to('#nlanT', { y: function () { return '-=' + window.innerHeight * 0.08; }, ease: 'none', duration: 1.2 }, 8.4)
-        .to('#nlanJ', { y: function () { return '-=' + window.innerHeight * 0.08; }, ease: 'none', duration: 1.2 }, 8.4)
+        .to('#nlanT', { y: function () { return '-=' + finaleDrift('nlanT'); }, ease: 'none', duration: 1.2 }, 8.4)
+        .to('#nlanJ', { y: function () { return '-=' + finaleDrift('nlanJ'); }, ease: 'none', duration: 1.2 }, 8.4)
         .to('#union-glow', { y: function () { return '-=' + window.innerHeight * 0.08; }, ease: 'none', duration: 1.2 }, 8.4)
       /* the glow fades first and faster, on its own — its hot core is bright enough
          that leaving it in the shared t9.5 fade let it wash out the headline right as
