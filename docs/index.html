@@ -134,7 +134,7 @@ button{ font-family:var(--sans); cursor:pointer; }
 section{ position:relative; }
 .copy-center{ text-align:center; max-width:680px; margin:0 auto; padding:0 24px; width:100%; }
 .tall{ height:260vh; height:260svh; }
-.tall-200{ height:150vh; height:150svh; }
+.tall-200{ height:185vh; height:185svh; }
 @media (max-width:640px){
   #path.tall{ height:430vh; height:430svh; }
   /* 170, down from 260. The copy inside .stick is sticky, so every screen of
@@ -143,7 +143,7 @@ section{ position:relative; }
      couple describe. The content from the RSVP button to the footer is about a
      third of a screen; the rest was runway for the scrubbed animation, which
      simply compresses into less scroll. */
-  #next.tall-200{ height:130vh; height:130svh; }
+  #next.tall-200{ height:200vh; height:200svh; }
 }
 .stick{
   position:sticky; top:0; height:100vh; height:100svh;
@@ -1534,7 +1534,7 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
    the sticky copy to hold while the sequence plays, and cuts the long empty
    stretch between the RSVP button and the footer that reads as the page
    "trying hard" to reach the end. Layout is otherwise untouched. */
-html.finale-play #next.tall-200{ height:150vh; height:150svh; }
+html.finale-play #next.tall-200{ height:185vh; height:185svh; }
 @media (max-width:640px){
   html.finale-play #next.tall-200{ height:170vh; height:170svh; }
 }
@@ -4964,13 +4964,17 @@ html.android #next-lans .lantern.far{ animation:none !important; }
       function revealDawn() {
         if (dawnShown) return;
         dawnShown = true;
+        /* Night to morning takes its time. At 1.1s the change read as a jump
+           rather than a dawn, and it swallowed the lanterns still rising
+           through it. This is real time, not scroll-driven, so it is the same
+           unhurried wash whether the guest creeps or flicks. */
         gsap.timeline()
-          .to('.sky-dawn', { opacity: 1, ease: 'power1.inOut', duration: 1.1 }, 0)
-          .to('.sky-warm', { opacity: 1, ease: 'power1.inOut', duration: 1.0 }, 0.5)
+          .to('.sky-dawn', { opacity: 1, ease: 'power1.inOut', duration: 2.0 }, 0)
+          .to('.sky-warm', { opacity: 1, ease: 'power1.inOut', duration: 1.8 }, 0.9)
           /* colours must cross with the sky, not after it */
-          .to(['.next-copy', '#arr1', '.next-copy .date-stamp', '.cd strong'], { color: '#2e2b27', ease: 'none', duration: 1.1 }, 0.1)
-          .to(['#arr2', '.cd span'], { color: '#5f584f', ease: 'none', duration: 1.1 }, 0.1)
-          .to(['.add-light', '.cd-cap'], { color: '#945a52', ease: 'none', duration: 1.1 }, 0.1);
+          .to(['.next-copy', '#arr1', '.next-copy .date-stamp', '.cd strong'], { color: '#2e2b27', ease: 'none', duration: 2.0 }, 0.2)
+          .to(['#arr2', '.cd span'], { color: '#5f584f', ease: 'none', duration: 2.0 }, 0.2)
+          .to(['.add-light', '.cd-cap'], { color: '#945a52', ease: 'none', duration: 2.0 }, 0.2);
       }
       /* the prints land one-by-one, in the order the collage fans out */
       function revealKeepsakes() {
