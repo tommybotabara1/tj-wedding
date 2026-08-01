@@ -930,16 +930,14 @@ dialog.panel.film{ width:min(94vw, 880px); }
 }
 .rsvp-card-download .panel-kicker{ display:block; margin-bottom:4px; }
 .rsvp-card-download h4{ font-size:24px; font-weight:400; color:var(--ink); }
-.rsvp-card-download p{ margin:7px auto 14px; max-width:34ch; color:var(--soft); font-size:13px; line-height:1.5; }
+.rsvp-card-download p{ margin:7px auto 14px; max-width:38ch; color:var(--soft); font-size:13px; line-height:1.5; }
 .rsvp-card-preview{
   margin:0 auto 14px; max-width:270px; border:1px solid rgba(46,43,39,.18);
   background:var(--night-deep); overflow:hidden; box-shadow:0 8px 26px -12px rgba(0,0,0,.45);
 }
-.rsvp-card-preview img{ display:block; width:100%; height:auto; aspect-ratio:1080/1600; object-fit:cover; }
+.rsvp-card-preview img{ display:block; width:100%; height:auto; max-height:520px; aspect-ratio:1080/3400; object-fit:contain; }
 .rsvp-card-download .btn{ width:100%; }
 @media (max-width:440px){
-  .rsvp-card-note{ align-items:flex-start; flex-wrap:wrap; }
-  .rsvp-card-note .rsvp-card-link{ width:100%; justify-content:center; }
   .rsvp-card-download{ padding:15px; }
 }
 
@@ -1428,6 +1426,7 @@ html.reduced #union-glow, html:not(.js-anim) #union-glow{ display:none; }
   text-align:center; padding:0 24px; color:var(--moon);
 }
 html.reduced .next-copy, html:not(.js-anim) .next-copy{ position:relative; top:auto; transform:none; padding:130px 24px 100px; color:var(--ink); }
+.pair-slot{ height:clamp(46px,7.6vh,78px); margin:0 auto clamp(6px,1.4vh,14px); pointer-events:none; }
 .next-copy h2{ font-size:clamp(34px,5.8vw,62px); max-width:780px; margin:0 auto; color:var(--moon); }
 html.reduced .next-copy h2, html:not(.js-anim) .next-copy h2{ color:var(--ink); }
 .next-copy .join{ font-family:var(--serif); font-style:italic; font-size:clamp(19px,2.8vw,27px); color:var(--moon-soft); margin-top:14px; }
@@ -2157,6 +2156,14 @@ html.android #next-lans .lantern.far{ animation:none !important; }
       <div id="union-glow" class="scrub-hide" aria-hidden="true"></div>
 
       <div class="next-copy">
+        <!-- Reserved landing for the T & J pair. They are absolutely positioned,
+             so without this the copy starts at the very top of the sticky and
+             the pair has nowhere to be except on top of the headline - which is
+             what kept happening on phones no matter how the landing maths was
+             adjusted. This slot pushes the copy down by exactly the room they
+             need, and its measured box drives BOTH their position and their
+             size, so the two can never disagree again. -->
+        <div class="pair-slot" id="pair-slot" aria-hidden="true"></div>
         <h2 class="scrub-hide" id="arr1">The best part of the journey is still ahead.</h2>
         <p class="join scrub-hide" id="arr2">Join us as we begin our next chapter.</p>
         <p class="date-stamp scrub-hide" id="next-date">Sunday, December 27, 2026</p>
@@ -2346,7 +2353,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
             <strong>Keep the details close</strong>
             <small>Save the phone-sized invitation card for the day.</small>
           </div>
-          <a class="btn dark rsvp-card-link" href="images/invitation-card.png?v=1" download="tommy-jeyan-invitation.png">Download invitation image</a>
+          <a class="btn dark rsvp-card-link" href="images/invitation-card.png?v=2" download="tommy-jeyan-invitation.png">Download invitation image</a>
         </div>
         <div class="rsvp-known-btns">
           <button class="btn dark" type="button" id="known-edit">Change my response</button>
@@ -2429,11 +2436,11 @@ html.android #next-lans .lantern.far{ animation:none !important; }
       <div class="rsvp-card-download">
         <span class="panel-kicker">keep the details close</span>
         <h4>Save the invitation</h4>
-        <p>Download a phone-sized card with the date, venues, times, and dress code.</p>
+        <p>Download the full phone-sized guide with the share-preview cover, itinerary, map, and attire guide.</p>
         <figure class="rsvp-card-preview">
-          <img src="images/invitation-card.png?v=1" width="1080" height="1600" loading="lazy" alt="Tommy and Jeyan wedding invitation card with the date, ceremony, reception, and Smart Formal dress code" />
+          <img src="images/invitation-card.png?v=2" width="1080" height="3400" loading="lazy" alt="Tommy and Jeyan wedding guide with the share-preview cover, itinerary, map, and Smart Formal attire guide" />
         </figure>
-        <a class="btn dark" href="images/invitation-card.png?v=1" download="tommy-jeyan-invitation.png">Download invitation image</a>
+        <a class="btn dark" href="images/invitation-card.png?v=2" download="tommy-jeyan-invitation.png">Download invitation image</a>
       </div>
       <div class="rsvp-known-btns">
         <button class="btn quiet" type="button" id="done-edit">Change my response</button>
@@ -4839,94 +4846,32 @@ html.android #next-lans .lantern.far{ animation:none !important; }
          instead of chasing a fixed percentage that only happened to work at one size. */
         .to('#nlanT', {
           y: function () {
-            if (M()) {
-              /* Phones: measure, don't hand-math. The old fixed offset
-                 (-innerHeight*0.93) happened to clear the headline at some
-                 viewport sizes and landed the pair right on top of the text at
-                 others. Derive the landing from the headline's own rect, the
-                 same way the desktop branch does, and floor it so the URL bar
-                 can never clip it. */
-              var rm = document.getElementById('nlanT').getBoundingClientRect();
-              var stickM = document.querySelector('#next .stick').getBoundingClientRect();
-              /* .next-copy, NOT the h2: the headline carries its own reveal tween
-                 (y:20 -> 0), so reading it mid-reveal lands the pair ~20px low
-                 and it ends up sitting ON the text. The parent is untweened and
-                 its top equals the headline's settled top. The desktop branch
-                 below has always done this - the same trap, twice. */
-              var headM = document.querySelector('.next-copy').getBoundingClientRect();
-              /* CENTRE-based, like the desktop branch, and for the same reason:
-                 this tween also applies scale(0.55), and scaling happens about
-                 the element's centre. Moving its TOP to a target therefore
-                 leaves the rendered top about (1-0.55)*118/2 = 27px lower than
-                 asked for - which is exactly how far the pair was sitting into
-                 the headline on the device while emulation looked fine.
-                 Centres are unaffected by scale. */
-              var hM = 118 * 0.55;                       /* height at landing scale */
-              var targetCenterM = (headM.top - 24) - hM / 2;
-              targetCenterM = Math.max(stickM.top + 40 + hM / 2, targetCenterM);
-              return targetCenterM - (rm.top + rm.height / 2);
-            }
+            /* Land centred on the reserved slot. Centres, not tops: this tween
+               also scales, and scale pivots on the centre. */
             var r = document.getElementById('nlanT').getBoundingClientRect();
-            var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
-            var deskH = 118 * 0.56, clear = 16;
-            var targetCenterY = copyTop - clear - deskH / 2;
-            /* Never above the fold, and never under the browser chrome. The
-               landing is derived from the copy's top, and the copy is centred,
-               so a taller copy block drags this target upward until the pair
-               leaves the screen entirely (desktop) or sits half-cut at the very
-               top (phone). Clamp it to a floor instead. */
-            var stickTop = document.querySelector('#next .stick').getBoundingClientRect().top;
-            targetCenterY = Math.max(stickTop + 12 + deskH / 2, targetCenterY);
-            return targetCenterY - (r.top + r.height / 2);
+            var slot = document.getElementById('pair-slot').getBoundingClientRect();
+            return (slot.top + slot.height / 2) - (r.top + r.height / 2);
           },
           x: function () { var r = document.getElementById('nlanT').getBoundingClientRect(); return (W() / 2 - (M() ? 22 : 28)) - (r.left + r.width / 2); },
-          scale: function () { return M() ? 0.55 : 0.56; },
+          scale: function () {
+            var slotH = document.getElementById('pair-slot').getBoundingClientRect().height;
+            return Math.max(0.34, Math.min(0.62, slotH / 118));
+          },
           ease: 'power1.inOut', duration: 3.4
         }, 4.6)
         .to('#nlanJ', {
           y: function () {
-            if (M()) {
-              /* Phones: measure, don't hand-math. The old fixed offset
-                 (-innerHeight*0.93) happened to clear the headline at some
-                 viewport sizes and landed the pair right on top of the text at
-                 others. Derive the landing from the headline's own rect, the
-                 same way the desktop branch does, and floor it so the URL bar
-                 can never clip it. */
-              var rm = document.getElementById('nlanJ').getBoundingClientRect();
-              var stickM = document.querySelector('#next .stick').getBoundingClientRect();
-              /* .next-copy, NOT the h2: the headline carries its own reveal tween
-                 (y:20 -> 0), so reading it mid-reveal lands the pair ~20px low
-                 and it ends up sitting ON the text. The parent is untweened and
-                 its top equals the headline's settled top. The desktop branch
-                 below has always done this - the same trap, twice. */
-              var headM = document.querySelector('.next-copy').getBoundingClientRect();
-              /* CENTRE-based, like the desktop branch, and for the same reason:
-                 this tween also applies scale(0.55), and scaling happens about
-                 the element's centre. Moving its TOP to a target therefore
-                 leaves the rendered top about (1-0.55)*118/2 = 27px lower than
-                 asked for - which is exactly how far the pair was sitting into
-                 the headline on the device while emulation looked fine.
-                 Centres are unaffected by scale. */
-              var hM = 118 * 0.55;                       /* height at landing scale */
-              var targetCenterM = (headM.top - 24) - hM / 2;
-              targetCenterM = Math.max(stickM.top + 40 + hM / 2, targetCenterM);
-              return targetCenterM - (rm.top + rm.height / 2);
-            }
+            /* Land centred on the reserved slot. Centres, not tops: this tween
+               also scales, and scale pivots on the centre. */
             var r = document.getElementById('nlanJ').getBoundingClientRect();
-            var copyTop = document.querySelector('.next-copy').getBoundingClientRect().top;
-            var deskH = 118 * 0.56, clear = 16;
-            var targetCenterY = copyTop - clear - deskH / 2;
-            /* Never above the fold, and never under the browser chrome. The
-               landing is derived from the copy's top, and the copy is centred,
-               so a taller copy block drags this target upward until the pair
-               leaves the screen entirely (desktop) or sits half-cut at the very
-               top (phone). Clamp it to a floor instead. */
-            var stickTop = document.querySelector('#next .stick').getBoundingClientRect().top;
-            targetCenterY = Math.max(stickTop + 12 + deskH / 2, targetCenterY);
-            return targetCenterY - (r.top + r.height / 2);
+            var slot = document.getElementById('pair-slot').getBoundingClientRect();
+            return (slot.top + slot.height / 2) - (r.top + r.height / 2);
           },
           x: function () { var r = document.getElementById('nlanJ').getBoundingClientRect(); return (W() / 2 + (M() ? 22 : 28)) - (r.left + r.width / 2); },
-          scale: function () { return M() ? 0.55 : 0.56; },
+          scale: function () {
+            var slotH = document.getElementById('pair-slot').getBoundingClientRect().height;
+            return Math.max(0.34, Math.min(0.62, slotH / 118));
+          },
           ease: 'power1.inOut', duration: 3.4
         }, 4.6)
       /* the union halo blooms behind the pair once they've met. Fix 4 note: at very
