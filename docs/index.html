@@ -137,7 +137,13 @@ section{ position:relative; }
 .tall-200{ height:220vh; height:220svh; }
 @media (max-width:640px){
   #path.tall{ height:430vh; height:430svh; }
-  #next.tall-200{ height:260vh; height:260svh; }
+  /* 170, down from 260. The copy inside .stick is sticky, so every screen of
+     this section is a screen you swipe through while nothing appears to get
+     closer to the footer — which is exactly the "barrier before the footer" the
+     couple describe. The content from the RSVP button to the footer is about a
+     third of a screen; the rest was runway for the scrubbed animation, which
+     simply compresses into less scroll. */
+  #next.tall-200{ height:170vh; height:170svh; }
 }
 .stick{
   position:sticky; top:0; height:100vh; height:100svh;
@@ -2641,6 +2647,14 @@ html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !importan
     /* iOS fires resize on every URL-bar collapse mid-scroll; without this,
        ScrollTrigger refreshes all scrubbed triggers and the page shimmies */
     ScrollTrigger.config({ ignoreMobileResize: true });
+    /* Android only: cap the tick rate at 60. A 120Hz phone (the S23 is one) asks
+       GSAP, ScrollTrigger and Lenis for twice the frames an iPhone does, and
+       every one of those frames re-rasterises the finale's layers over a live
+       canvas — which is where the flicker is reported. The canvas loop already
+       throttles itself on mobile (see MOBILE_SKY, ~30fps); this is the other
+       half. Deliberately NOT applied to iOS: the couple report iOS as fine, and
+       the two platforms have needed opposite treatments throughout this page. */
+    if (/Android/i.test(navigator.userAgent)) gsap.ticker.fps(60);
     if (window.Draggable) gsap.registerPlugin(Draggable);
     if (window.MotionPathPlugin) gsap.registerPlugin(MotionPathPlugin);
   }
