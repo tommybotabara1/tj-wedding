@@ -1625,6 +1625,28 @@ html.reduced .tall, html:not(.js-anim) .tall{ height:auto; }
 html.reduced .stick, html:not(.js-anim) .stick{ position:relative; height:auto; min-height:100vh; min-height:100svh; }
 html.reduced #path .stick, html:not(.js-anim) #path .stick{ padding:100px 0 0; }
 html.reduced .lantern, html.reduced .gate-lan .lantern{ animation:none !important; }
+
+/* ---- Android: still lanterns ---------------------------------------------
+   Isolated on a Galaxy S23 by elimination (?off= bisect, Aug 2026). Switching
+   OFF any one of four things stopped the flicker: the dawn gradient fade, the
+   lantern field, the glow shadows, or the CSS keyframes. Switching off the sky
+   canvas did NOT, and neither did the T & J pair — so neither is the cause.
+
+   The flicker needs all four legs at once: dozens of small layers, each
+   carrying a blurred glow, each running an infinite keyframe, while a
+   full-viewport gradient cross-fades over them. That is Adreno tile corruption,
+   and it is why iOS is unaffected — a different compositor entirely.
+
+   Of the four legs, the keyframes are the one that can go without the finale
+   losing anything a guest would notice: the lanterns stay, the glow stays, the
+   light simply stops twitching. The couple compared all six builds on the
+   device and picked this one. iOS keeps its flames — it has never had the
+   problem, and the two platforms have needed opposite treatments throughout. */
+html.android .lantern .flame,
+html.android .chip .flame,
+html.android #arcs .flame-c{ animation:none !important; }
+html.android .gate-lan .lantern,
+html.android #next-lans .lantern.far{ animation:none !important; }
 @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
 </style>
 </head>
