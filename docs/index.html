@@ -1467,8 +1467,25 @@ html.reduced .next-copy .add-light, html:not(.js-anim) .next-copy .add-light{ co
 /* Photobook: a plain, still grid - no tilt, no overlap, no drift. The finale's
    collage is a composition; this is a contact sheet, and it reflows to any
    number of photographs. */
-.photobook-btn{ margin-top:clamp(12px,2vh,20px); }
+/* The finale ends on a BRIGHT dawn, so .btn.ghost - light text on a translucent
+   light fill, built for the night sky - is nearly invisible there. This one
+   carries ink on paper instead. */
+.btn.ghost.photobook-btn{
+  margin-top:clamp(12px,2vh,20px);
+  background:rgba(255,253,250,.82); color:var(--ink);
+  border-color:rgba(46,43,39,.34); box-shadow:0 8px 24px -14px rgba(74,64,52,.5);
+}
+.btn.ghost.photobook-btn:hover, .btn.ghost.photobook-btn:focus-visible{
+  background:#fffdfa; border-color:rgba(46,43,39,.55); box-shadow:0 10px 28px -12px rgba(74,64,52,.55);
+}
 .photobook-btn svg{ width:18px; height:18px; }
+.book-pager{
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  margin-top:18px; padding-top:16px; border-top:1px solid var(--line);
+}
+.book-count{ font-family:var(--sans); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft); }
+.btn.sm{ min-height:40px; padding:9px 18px; font-size:10.5px; }
+.book-pager .btn[disabled]{ opacity:.35; pointer-events:none; }
 .photobook-grid{
   display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr));
   gap:12px; margin:18px 0 0; max-width:none; padding-bottom:0;
@@ -2619,7 +2636,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 1 of 86">
-              <img src="images/album/album-01-t.webp" data-full="images/album/album-01.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-01-t.webp" data-full="images/album/album-01.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 1 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2627,7 +2644,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 2 of 86">
-              <img src="images/album/album-02-t.webp" data-full="images/album/album-02.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-02-t.webp" data-full="images/album/album-02.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 2 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2635,7 +2652,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 3 of 86">
-              <img src="images/album/album-03-t.webp" data-full="images/album/album-03.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-03-t.webp" data-full="images/album/album-03.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 3 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2643,7 +2660,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 4 of 86">
-              <img src="images/album/album-04-t.webp" data-full="images/album/album-04.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-04-t.webp" data-full="images/album/album-04.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 4 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2651,7 +2668,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 5 of 86">
-              <img src="images/album/album-05-t.webp" data-full="images/album/album-05.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-05-t.webp" data-full="images/album/album-05.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 5 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2659,7 +2676,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 6 of 86">
-              <img src="images/album/album-06-t.webp" data-full="images/album/album-06.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-06-t.webp" data-full="images/album/album-06.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 6 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2667,7 +2684,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 7 of 86">
-              <img src="images/album/album-07-t.webp" data-full="images/album/album-07.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-07-t.webp" data-full="images/album/album-07.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 7 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2675,7 +2692,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 8 of 86">
-              <img src="images/album/album-08-t.webp" data-full="images/album/album-08.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-08-t.webp" data-full="images/album/album-08.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 8 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2683,7 +2700,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 9 of 86">
-              <img src="images/album/album-09-t.webp" data-full="images/album/album-09.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-09-t.webp" data-full="images/album/album-09.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 9 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2691,7 +2708,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 10 of 86">
-              <img src="images/album/album-10-t.webp" data-full="images/album/album-10.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-10-t.webp" data-full="images/album/album-10.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 10 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2699,7 +2716,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 11 of 86">
-              <img src="images/album/album-11-t.webp" data-full="images/album/album-11.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-11-t.webp" data-full="images/album/album-11.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 11 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2707,7 +2724,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 12 of 86">
-              <img src="images/album/album-12-t.webp" data-full="images/album/album-12.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-12-t.webp" data-full="images/album/album-12.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 12 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2715,7 +2732,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 13 of 86">
-              <img src="images/album/album-13-t.webp" data-full="images/album/album-13.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-13-t.webp" data-full="images/album/album-13.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 13 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2723,7 +2740,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 14 of 86">
-              <img src="images/album/album-14-t.webp" data-full="images/album/album-14.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-14-t.webp" data-full="images/album/album-14.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 14 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2731,7 +2748,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 15 of 86">
-              <img src="images/album/album-15-t.webp" data-full="images/album/album-15.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-15-t.webp" data-full="images/album/album-15.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 15 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2739,7 +2756,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 16 of 86">
-              <img src="images/album/album-16-t.webp" data-full="images/album/album-16.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-16-t.webp" data-full="images/album/album-16.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 16 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2747,7 +2764,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 17 of 86">
-              <img src="images/album/album-17-t.webp" data-full="images/album/album-17.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-17-t.webp" data-full="images/album/album-17.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 17 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2755,7 +2772,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 18 of 86">
-              <img src="images/album/album-18-t.webp" data-full="images/album/album-18.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-18-t.webp" data-full="images/album/album-18.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 18 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2763,7 +2780,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 19 of 86">
-              <img src="images/album/album-19-t.webp" data-full="images/album/album-19.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-19-t.webp" data-full="images/album/album-19.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 19 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2771,7 +2788,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 20 of 86">
-              <img src="images/album/album-20-t.webp" data-full="images/album/album-20.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-20-t.webp" data-full="images/album/album-20.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 20 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2779,7 +2796,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 21 of 86">
-              <img src="images/album/album-21-t.webp" data-full="images/album/album-21.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-21-t.webp" data-full="images/album/album-21.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 21 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2787,7 +2804,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 22 of 86">
-              <img src="images/album/album-22-t.webp" data-full="images/album/album-22.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-22-t.webp" data-full="images/album/album-22.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 22 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2795,7 +2812,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 23 of 86">
-              <img src="images/album/album-23-t.webp" data-full="images/album/album-23.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-23-t.webp" data-full="images/album/album-23.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 23 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2803,7 +2820,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 24 of 86">
-              <img src="images/album/album-24-t.webp" data-full="images/album/album-24.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-24-t.webp" data-full="images/album/album-24.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 24 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2811,7 +2828,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 25 of 86">
-              <img src="images/album/album-25-t.webp" data-full="images/album/album-25.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-25-t.webp" data-full="images/album/album-25.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 25 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2819,7 +2836,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 26 of 86">
-              <img src="images/album/album-26-t.webp" data-full="images/album/album-26.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-26-t.webp" data-full="images/album/album-26.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 26 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2827,7 +2844,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 27 of 86">
-              <img src="images/album/album-27-t.webp" data-full="images/album/album-27.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-27-t.webp" data-full="images/album/album-27.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 27 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2835,7 +2852,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 28 of 86">
-              <img src="images/album/album-28-t.webp" data-full="images/album/album-28.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-28-t.webp" data-full="images/album/album-28.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 28 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2843,7 +2860,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 29 of 86">
-              <img src="images/album/album-29-t.webp" data-full="images/album/album-29.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-29-t.webp" data-full="images/album/album-29.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 29 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2851,7 +2868,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 30 of 86">
-              <img src="images/album/album-30-t.webp" data-full="images/album/album-30.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-30-t.webp" data-full="images/album/album-30.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 30 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2859,7 +2876,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 31 of 86">
-              <img src="images/album/album-31-t.webp" data-full="images/album/album-31.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-31-t.webp" data-full="images/album/album-31.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 31 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2867,7 +2884,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 32 of 86">
-              <img src="images/album/album-32-t.webp" data-full="images/album/album-32.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-32-t.webp" data-full="images/album/album-32.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 32 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2875,7 +2892,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 33 of 86">
-              <img src="images/album/album-33-t.webp" data-full="images/album/album-33.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-33-t.webp" data-full="images/album/album-33.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 33 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2883,7 +2900,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 34 of 86">
-              <img src="images/album/album-34-t.webp" data-full="images/album/album-34.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-34-t.webp" data-full="images/album/album-34.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 34 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2891,7 +2908,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 35 of 86">
-              <img src="images/album/album-35-t.webp" data-full="images/album/album-35.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-35-t.webp" data-full="images/album/album-35.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 35 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2899,7 +2916,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 36 of 86">
-              <img src="images/album/album-36-t.webp" data-full="images/album/album-36.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-36-t.webp" data-full="images/album/album-36.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 36 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2907,7 +2924,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 37 of 86">
-              <img src="images/album/album-37-t.webp" data-full="images/album/album-37.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-37-t.webp" data-full="images/album/album-37.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 37 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2915,7 +2932,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 38 of 86">
-              <img src="images/album/album-38-t.webp" data-full="images/album/album-38.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-38-t.webp" data-full="images/album/album-38.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 38 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2923,7 +2940,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 39 of 86">
-              <img src="images/album/album-39-t.webp" data-full="images/album/album-39.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-39-t.webp" data-full="images/album/album-39.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 39 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2931,7 +2948,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 40 of 86">
-              <img src="images/album/album-40-t.webp" data-full="images/album/album-40.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-40-t.webp" data-full="images/album/album-40.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 40 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2939,7 +2956,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 41 of 86">
-              <img src="images/album/album-41-t.webp" data-full="images/album/album-41.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-41-t.webp" data-full="images/album/album-41.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 41 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2947,7 +2964,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 42 of 86">
-              <img src="images/album/album-42-t.webp" data-full="images/album/album-42.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-42-t.webp" data-full="images/album/album-42.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 42 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2955,7 +2972,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 43 of 86">
-              <img src="images/album/album-43-t.webp" data-full="images/album/album-43.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-43-t.webp" data-full="images/album/album-43.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 43 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2963,7 +2980,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 44 of 86">
-              <img src="images/album/album-44-t.webp" data-full="images/album/album-44.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-44-t.webp" data-full="images/album/album-44.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 44 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2971,7 +2988,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 45 of 86">
-              <img src="images/album/album-45-t.webp" data-full="images/album/album-45.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-45-t.webp" data-full="images/album/album-45.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 45 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2979,7 +2996,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 46 of 86">
-              <img src="images/album/album-46-t.webp" data-full="images/album/album-46.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-46-t.webp" data-full="images/album/album-46.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 46 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2987,7 +3004,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 47 of 86">
-              <img src="images/album/album-47-t.webp" data-full="images/album/album-47.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-47-t.webp" data-full="images/album/album-47.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 47 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -2995,7 +3012,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 48 of 86">
-              <img src="images/album/album-48-t.webp" data-full="images/album/album-48.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-48-t.webp" data-full="images/album/album-48.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 48 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3003,7 +3020,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 49 of 86">
-              <img src="images/album/album-49-t.webp" data-full="images/album/album-49.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-49-t.webp" data-full="images/album/album-49.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 49 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3011,7 +3028,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 50 of 86">
-              <img src="images/album/album-50-t.webp" data-full="images/album/album-50.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-50-t.webp" data-full="images/album/album-50.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 50 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3019,7 +3036,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 51 of 86">
-              <img src="images/album/album-51-t.webp" data-full="images/album/album-51.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-51-t.webp" data-full="images/album/album-51.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 51 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3027,7 +3044,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 52 of 86">
-              <img src="images/album/album-52-t.webp" data-full="images/album/album-52.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-52-t.webp" data-full="images/album/album-52.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 52 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3035,7 +3052,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 53 of 86">
-              <img src="images/album/album-53-t.webp" data-full="images/album/album-53.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-53-t.webp" data-full="images/album/album-53.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 53 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3043,7 +3060,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 54 of 86">
-              <img src="images/album/album-54-t.webp" data-full="images/album/album-54.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-54-t.webp" data-full="images/album/album-54.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 54 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3051,7 +3068,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 55 of 86">
-              <img src="images/album/album-55-t.webp" data-full="images/album/album-55.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-55-t.webp" data-full="images/album/album-55.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 55 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3059,7 +3076,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 56 of 86">
-              <img src="images/album/album-56-t.webp" data-full="images/album/album-56.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-56-t.webp" data-full="images/album/album-56.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 56 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3067,7 +3084,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 57 of 86">
-              <img src="images/album/album-57-t.webp" data-full="images/album/album-57.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-57-t.webp" data-full="images/album/album-57.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 57 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3075,7 +3092,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 58 of 86">
-              <img src="images/album/album-58-t.webp" data-full="images/album/album-58.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-58-t.webp" data-full="images/album/album-58.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 58 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3083,7 +3100,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 59 of 86">
-              <img src="images/album/album-59-t.webp" data-full="images/album/album-59.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-59-t.webp" data-full="images/album/album-59.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 59 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3091,7 +3108,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 60 of 86">
-              <img src="images/album/album-60-t.webp" data-full="images/album/album-60.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-60-t.webp" data-full="images/album/album-60.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 60 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3099,7 +3116,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 61 of 86">
-              <img src="images/album/album-61-t.webp" data-full="images/album/album-61.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-61-t.webp" data-full="images/album/album-61.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 61 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3107,7 +3124,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 62 of 86">
-              <img src="images/album/album-62-t.webp" data-full="images/album/album-62.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-62-t.webp" data-full="images/album/album-62.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 62 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3115,7 +3132,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 63 of 86">
-              <img src="images/album/album-63-t.webp" data-full="images/album/album-63.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-63-t.webp" data-full="images/album/album-63.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 63 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3123,7 +3140,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 64 of 86">
-              <img src="images/album/album-64-t.webp" data-full="images/album/album-64.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-64-t.webp" data-full="images/album/album-64.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 64 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3131,7 +3148,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 65 of 86">
-              <img src="images/album/album-65-t.webp" data-full="images/album/album-65.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-65-t.webp" data-full="images/album/album-65.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 65 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3139,7 +3156,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 66 of 86">
-              <img src="images/album/album-66-t.webp" data-full="images/album/album-66.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-66-t.webp" data-full="images/album/album-66.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 66 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3147,7 +3164,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 67 of 86">
-              <img src="images/album/album-67-t.webp" data-full="images/album/album-67.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-67-t.webp" data-full="images/album/album-67.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 67 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3155,7 +3172,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 68 of 86">
-              <img src="images/album/album-68-t.webp" data-full="images/album/album-68.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-68-t.webp" data-full="images/album/album-68.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 68 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3163,7 +3180,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 69 of 86">
-              <img src="images/album/album-69-t.webp" data-full="images/album/album-69.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-69-t.webp" data-full="images/album/album-69.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 69 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3171,7 +3188,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 70 of 86">
-              <img src="images/album/album-70-t.webp" data-full="images/album/album-70.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-70-t.webp" data-full="images/album/album-70.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 70 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3179,7 +3196,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 71 of 86">
-              <img src="images/album/album-71-t.webp" data-full="images/album/album-71.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-71-t.webp" data-full="images/album/album-71.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 71 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3187,7 +3204,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 72 of 86">
-              <img src="images/album/album-72-t.webp" data-full="images/album/album-72.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-72-t.webp" data-full="images/album/album-72.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 72 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3195,7 +3212,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 73 of 86">
-              <img src="images/album/album-73-t.webp" data-full="images/album/album-73.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-73-t.webp" data-full="images/album/album-73.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 73 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3203,7 +3220,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 74 of 86">
-              <img src="images/album/album-74-t.webp" data-full="images/album/album-74.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-74-t.webp" data-full="images/album/album-74.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 74 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3211,7 +3228,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 75 of 86">
-              <img src="images/album/album-75-t.webp" data-full="images/album/album-75.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-75-t.webp" data-full="images/album/album-75.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 75 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3219,7 +3236,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 76 of 86">
-              <img src="images/album/album-76-t.webp" data-full="images/album/album-76.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-76-t.webp" data-full="images/album/album-76.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 76 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3227,7 +3244,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 77 of 86">
-              <img src="images/album/album-77-t.webp" data-full="images/album/album-77.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-77-t.webp" data-full="images/album/album-77.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 77 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3235,7 +3252,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 78 of 86">
-              <img src="images/album/album-78-t.webp" data-full="images/album/album-78.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-78-t.webp" data-full="images/album/album-78.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 78 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3243,7 +3260,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 79 of 86">
-              <img src="images/album/album-79-t.webp" data-full="images/album/album-79.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-79-t.webp" data-full="images/album/album-79.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 79 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3251,7 +3268,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 80 of 86">
-              <img src="images/album/album-80-t.webp" data-full="images/album/album-80.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-80-t.webp" data-full="images/album/album-80.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 80 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3259,7 +3276,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 81 of 86">
-              <img src="images/album/album-81-t.webp" data-full="images/album/album-81.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-81-t.webp" data-full="images/album/album-81.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 81 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3267,7 +3284,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 82 of 86">
-              <img src="images/album/album-82-t.webp" data-full="images/album/album-82.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-82-t.webp" data-full="images/album/album-82.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 82 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3275,7 +3292,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 83 of 86">
-              <img src="images/album/album-83-t.webp" data-full="images/album/album-83.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-83-t.webp" data-full="images/album/album-83.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 83 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3283,7 +3300,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 84 of 86">
-              <img src="images/album/album-84-t.webp" data-full="images/album/album-84.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-84-t.webp" data-full="images/album/album-84.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 84 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3291,7 +3308,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 85 of 86">
-              <img src="images/album/album-85-t.webp" data-full="images/album/album-85.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-85-t.webp" data-full="images/album/album-85.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 85 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
@@ -3299,11 +3316,16 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         <figure class="keepsake">
           <div class="keepsake-tilt">
             <button type="button" class="keepsake-btn" disabled aria-label="View photograph 86 of 86">
-              <img src="images/album/album-86-t.webp" data-full="images/album/album-86.webp" loading="lazy" decoding="async"
+              <img data-thumb="images/album/album-86-t.webp" data-full="images/album/album-86.webp" loading="lazy" decoding="async"
                    alt="Tommy and Jeyan, photograph 86 of 86" onerror="this.closest('.keepsake-btn').classList.add('missing'); this.remove();" />
             </button>
           </div>
         </figure>
+    </div>
+    <div class="book-pager" id="book-pager" hidden>
+      <button class="btn quiet sm" type="button" id="book-prev" aria-label="Previous page of photographs">&larr; Back</button>
+      <span class="book-count" id="book-count" aria-live="polite"></span>
+      <button class="btn quiet sm" type="button" id="book-next" aria-label="Next page of photographs">More &rarr;</button>
     </div>
     <p class="photobook-empty">More photographs are on their way.</p>
   </div>
@@ -4377,15 +4399,50 @@ html.android #next-lans .lantern.far{ animation:none !important; }
     });
     book.forEach(function (slot, idx) {
       if (!slot.btn || !slot.img) return;
-      function enable() {
-        if (slot.btn.__bookBound) return;
-        slot.btn.__bookBound = true; slot.ready = true;
-        slot.btn.disabled = false; slot.btn.classList.add('mem-open');
-        slot.btn.addEventListener('click', function () { openBook(idx); });
-      }
-      if (slot.img.complete && slot.img.naturalWidth > 0) enable();
-      else slot.img.addEventListener('load', enable);
+      /* Unlike the finale prints, every photobook file is known to exist - they
+         were generated here - so a print does not have to wait for its thumbnail
+         to decode before it can be opened. That matters now that thumbnails load
+         a page at a time: an unloaded page must still be browsable from the
+         lightbox arrows. */
+      slot.ready = true;
+      slot.btn.disabled = false;
+      slot.btn.classList.add('mem-open');
+      slot.btn.addEventListener('click', function () { openBook(idx); });
     });
+
+    /* ---- paging: ten photographs at a time --------------------------------
+       Eighty-six thumbnails at once is a wall of pictures and 2.6MB of them on
+       a phone. A page loads only its own ten (they carry data-src, so nothing
+       is fetched until its page is shown). The lightbox is unaffected - its
+       arrows still run the whole book. */
+    var BOOK_PAGE = 10, bookPage = 0;
+    var bookPager = $('book-pager'), bookCount = $('book-count');
+    function bookPages() { return Math.max(1, Math.ceil(book.length / BOOK_PAGE)); }
+    function showBookPage(page) {
+      if (!book.length) return;
+      bookPage = Math.max(0, Math.min(bookPages() - 1, page));
+      var from = bookPage * BOOK_PAGE, to = from + BOOK_PAGE;
+      book.forEach(function (slot, i) {
+        var fig = slot.btn ? slot.btn.closest('.keepsake') : null;
+        if (!fig) return;
+        var on = i >= from && i < to;
+        fig.hidden = !on;
+        if (on && slot.img && !slot.img.getAttribute('src')) {
+          slot.img.setAttribute('src', slot.img.getAttribute('data-thumb'));
+        }
+      });
+      bookCount.textContent = (from + 1) + '–' + Math.min(to, book.length) + ' of ' + book.length;
+      $('book-prev').disabled = bookPage === 0;
+      $('book-next').disabled = bookPage >= bookPages() - 1;
+      var inner = document.querySelector('#p-photobook .panel-inner');
+      if (inner) inner.scrollTop = 0;
+    }
+    if (book.length) {
+      bookPager.hidden = false;
+      $('book-prev').addEventListener('click', function () { showBookPage(bookPage - 1); });
+      $('book-next').addEventListener('click', function () { showBookPage(bookPage + 1); });
+      showBookPage(0);
+    }
 
     keeps = Array.prototype.slice.call(document.querySelectorAll('#keepsakes .keepsake')).map(function (k) {
       var btn = k.querySelector('.keepsake-btn');
