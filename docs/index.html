@@ -4179,7 +4179,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
     /* the lightbox chrome (#lb-prev/#lb-next/keys) is shared by two galleries:
        'tiles' (Pieces of Us) and 'keeps' (the finale keepsakes). activeGallery
        routes the nav to whichever one is open. */
-    var activeGallery = 'tiles', keeps = [], keepPos = 0;
+    var activeGallery = 'tiles', keeps = [], keepPos = 0, book = [], bookPos = 0;
     function show(i) {
       current = (i + tiles.length) % tiles.length;
       var t = tiles[current];
@@ -4200,8 +4200,20 @@ html.android #next-lans .lantern.far{ animation:none !important; }
         if (ANIM) gsap.fromTo(lb.querySelector('.lb-card'), { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power3.out', clearProps: 'transform,opacity' });
       });
     });
-    function galPrev() { if (activeGallery === 'keeps') keepShow(keepStep(keepPos, -1)); else show(current - 1); }
-    function galNext() { if (activeGallery === 'keeps') keepShow(keepStep(keepPos, 1)); else show(current + 1); }
+    /* three galleries share this one lightbox: the Pieces-of-Us tiles, the
+       finale prints, and the photobook. They stay SEPARATE sets - stepping off
+       the end of the finale's eight must not walk the guest into the
+       photobook's eighty-six. */
+    function galPrev() {
+      if (activeGallery === 'keeps') keepShow(keepStep(keepPos, -1));
+      else if (activeGallery === 'book') bookShow(bookStep(bookPos, -1));
+      else show(current - 1);
+    }
+    function galNext() {
+      if (activeGallery === 'keeps') keepShow(keepStep(keepPos, 1));
+      else if (activeGallery === 'book') bookShow(bookStep(bookPos, 1));
+      else show(current + 1);
+    }
     $('lb-prev').addEventListener('click', galPrev);
     $('lb-next').addEventListener('click', galNext);
     lb.addEventListener('keydown', function (e) {
@@ -4329,7 +4341,53 @@ html.android #next-lans .lantern.far{ animation:none !important; }
       if (typeof lb.showModal === 'function') lb.showModal(); else lb.setAttribute('open', '');
       if (ANIM) gsap.fromTo(lb.querySelector('.lb-card'), { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power3.out', clearProps: 'transform,opacity' });
     }
-    keeps = Array.prototype.slice.call(document.querySelectorAll('#keepsakes .keepsake, #photobook .keepsake')).map(function (k) {
+    /* ---- photobook: its own set, same machinery ---------------------------
+       Thumbnails in the grid, full-size on open (data-full). Kept separate from
+       `keeps` so the arrows never cross from the finale's eight into these. */
+    function bookShow(idx) {
+      if (!book[idx] || !book[idx].ready) return;
+      bookPos = idx;
+      var b = book[idx];
+      lbImg.src = b.img.getAttribute('data-full') || b.img.currentSrc || b.img.src;
+      lbImg.alt = b.img.alt || '';
+      lbCap.textContent = b.cap;
+      if (ANIM) gsap.fromTo(lbImg, { opacity: 0, scale: 0.985 }, { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' });
+    }
+    function bookStep(from, dir) {
+      var n = book.length;
+      for (var s2 = 1; s2 <= n; s2++) { var j = ((from + dir * s2) % n + n) % n; if (book[j] && book[j].ready) return j; }
+      return from;
+    }
+    function openBook(idx) {
+      if (!book[idx] || !book[idx].ready) return;
+      activeGallery = 'book';
+      lastTrigger = book[idx].btn;
+      lb.classList.remove('qr-mode');
+      var readyN = book.filter(function (x) { return x.ready; }).length;
+      lb.classList.toggle('solo', readyN < 2);
+      bookShow(idx);
+      if (window.__lenis) window.__lenis.stop();
+      lb.setAttribute('data-lenis-prevent', '');
+      if (typeof lb.showModal === 'function') lb.showModal(); else lb.setAttribute('open', '');
+      if (ANIM) gsap.fromTo(lb.querySelector('.lb-card'), { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power3.out', clearProps: 'transform,opacity' });
+    }
+    book = Array.prototype.slice.call(document.querySelectorAll('#photobook .keepsake')).map(function (k) {
+      var btn = k.querySelector('.keepsake-btn');
+      return { btn: btn, img: btn ? btn.querySelector('img') : null, cap: '', ready: false };
+    });
+    book.forEach(function (slot, idx) {
+      if (!slot.btn || !slot.img) return;
+      function enable() {
+        if (slot.btn.__bookBound) return;
+        slot.btn.__bookBound = true; slot.ready = true;
+        slot.btn.disabled = false; slot.btn.classList.add('mem-open');
+        slot.btn.addEventListener('click', function () { openBook(idx); });
+      }
+      if (slot.img.complete && slot.img.naturalWidth > 0) enable();
+      else slot.img.addEventListener('load', enable);
+    });
+
+    keeps = Array.prototype.slice.call(document.querySelectorAll('#keepsakes .keepsake')).map(function (k) {
       var btn = k.querySelector('.keepsake-btn');
       var capEl = k.querySelector('figcaption');
       return { btn: btn, img: btn ? btn.querySelector('img') : null, cap: capEl ? capEl.textContent : '', ready: false };
@@ -5740,6 +5798,10 @@ html.android #next-lans .lantern.far{ animation:none !important; }
       function revealKeepsakes() {
         if (keepsShown) return;
         keepsShown = true;
+        /* the photobook button rides in with them - it is .scrub-hide, which CSS
+           holds at opacity 0, so without this it stays invisible while still
+           being clickable: a button nobody can see but everybody can hit */
+        gsap.to('.photobook-btn', { opacity: 1, ease: 'power2.out', duration: 0.6 }, 0.35);
         gsap.to('#keepsakes .keepsake', {
           opacity: 1, y: 0, rotation: 0, ease: 'power2.out',
           duration: keepsakeDuration, stagger: keepsakeStagger
