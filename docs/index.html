@@ -1486,11 +1486,13 @@ html.reduced .next-copy .add-light, html:not(.js-anim) .next-copy .add-light{ co
 .book-count{ font-family:var(--sans); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--soft); }
 .btn.sm{ min-height:40px; padding:9px 18px; font-size:10.5px; }
 .book-pager .btn[disabled]{ opacity:.35; pointer-events:none; }
-.photobook-grid{
-  display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr));
-  gap:12px; margin:18px 0 0; max-width:none; padding-bottom:0;
+#p-photobook .photobook-grid{
+  /* eight to a page, so each print can be big enough to actually read - a
+     larger minimum than the finale's contact-sheet tiles */
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));
+  gap:14px; margin:18px 0 0; max-width:none; padding-bottom:0;
 }
-.photobook-grid .keepsake{
+#p-photobook .photobook-grid .keepsake{
   width:auto; margin:0 !important; z-index:auto; will-change:auto;
   opacity:1 !important; transform:none !important;
 }
@@ -1502,7 +1504,10 @@ html.reduced .next-copy .add-light, html:not(.js-anim) .next-copy .add-light{ co
 .photobook-empty{ margin-top:16px; font-style:italic; color:var(--soft); text-align:center; }
 .photobook-grid:not(:empty) + .photobook-empty{ display:none; }
 @media (max-width:640px){
-  .photobook-grid{ grid-template-columns:repeat(auto-fill, minmax(84px, 1fr)); gap:10px; }
+  /* id-scoped so the finale's mobile .keepsakes grid (4 x 48px, later in the
+     sheet, equal specificity) cannot claim the photobook as well */
+  #p-photobook .photobook-grid{ grid-template-columns:repeat(2, 1fr); gap:12px; }
+  #p-photobook .photobook-grid .keepsake{ width:auto; }
 }
 
 .keepsakes{ display:flex; justify-content:center; align-items:flex-start; margin:clamp(20px,2.8vh,32px) auto 0; padding-bottom:6px; max-width:min(92vw,760px); }
@@ -1547,10 +1552,28 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
 }
 @media (max-width:640px){
   .keepsakes{
-    display:grid; grid-template-columns:repeat(4, 54px); justify-content:center;
-    gap:8px 4px; margin-top:14px; max-width:100%;
+    display:grid; grid-template-columns:repeat(4, 48px); justify-content:center;
+    gap:6px 4px; margin-top:12px; max-width:100%;
   }
-  .keepsake{ width:54px; margin-left:0 !important; margin-top:var(--rise-mobile,0px); }
+  .keepsake{ width:48px; margin-left:0 !important; margin-top:var(--rise-mobile,0px); }
+  /* The finale's copy has to end ABOVE the fixed Menu/RSVP dock, or the
+     photobook button lands underneath it - and off-screen entirely once the URL
+     bar is showing. These trims buy the ~35px that costs. The pair slot shrinks
+     with them, and since the lanterns are sized from the slot they scale down
+     to match rather than needing their own rule. */
+  /* Phones only: lift the block so it ends above the fixed Menu/RSVP dock. The
+     dock sits bottom-right and the button is centre-wide, so they genuinely
+     overlap; without this the button lands under it, or off-screen once the URL
+     bar shows. */
+  #next .next-copy{ transform:translateY(-61%); }   /* id-scoped: the max-height block below would otherwise win on order */
+  .pair-slot{ height:clamp(42px,6.2vh,64px); margin-bottom:6px; }
+  .next-copy .join{ margin-top:5px; }
+  .next-copy .date-stamp{ margin-top:10px; }
+  .cd{ margin-top:10px; }
+  .next-copy .add-light{ margin-top:8px; }
+  #rsvp-cta{ margin-top:8px; }
+  .keepsakes{ margin-top:10px; }
+  .btn.ghost.photobook-btn{ margin-top:10px; }
   .keepsake-btn{ padding:7% 7% 18%; }
 }
 /* Short phones keep the keepsakes, but make room by dropping only the small
@@ -1566,8 +1589,10 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
    headroom the T & J pair needs to land in. Tighten the rhythm rather than
    letting it overflow. */
 @media (max-height:960px){
-  /* -45% deliberately sits the block slightly low on tall screens; on short ones
-     that offset is what pushes the photographs past the bottom edge */
+  /* -45% sits the block slightly low; on short screens that is what pushed the
+     photographs past the bottom edge. True centring is enough here - the bigger
+     lift needed to clear the phone dock lives in the max-width:640 block, since
+     on a laptop it would push the copy off the TOP instead. */
   .next-copy{ transform:translateY(-50%); }
   .next-copy h2{ font-size:clamp(26px,3.4vw,36px); }
   .next-copy .join{ margin-top:6px; font-size:15px; }
@@ -4415,7 +4440,7 @@ html.android #next-lans .lantern.far{ animation:none !important; }
        a phone. A page loads only its own ten (they carry data-src, so nothing
        is fetched until its page is shown). The lightbox is unaffected - its
        arrows still run the whole book. */
-    var BOOK_PAGE = 10, bookPage = 0;
+    var BOOK_PAGE = 8, bookPage = 0;
     var bookPager = $('book-pager'), bookCount = $('book-count');
     function bookPages() { return Math.max(1, Math.ceil(book.length / BOOK_PAGE)); }
     function showBookPage(page) {
