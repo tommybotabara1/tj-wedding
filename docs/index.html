@@ -1552,7 +1552,7 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
 }
 @media (max-width:640px){
   .keepsakes{
-    display:grid; grid-template-columns:repeat(4, 48px); justify-content:center;
+    display:grid; grid-template-columns:repeat(4, 38px); justify-content:center;
     gap:6px 4px; margin-top:12px; max-width:100%;
   }
   .keepsake{ width:48px; margin-left:0 !important; margin-top:var(--rise-mobile,0px); }
@@ -1565,15 +1565,29 @@ html.reduced .keepsake-tilt, html.reduced .keepsake-btn{ transition:none; }
      dock sits bottom-right and the button is centre-wide, so they genuinely
      overlap; without this the button lands under it, or off-screen once the URL
      bar shows. */
-  #next .next-copy{ transform:translateY(-61%); }   /* id-scoped: the max-height block below would otherwise win on order */
-  .pair-slot{ height:clamp(42px,6.2vh,64px); margin-bottom:6px; }
-  .next-copy .join{ margin-top:5px; }
-  .next-copy .date-stamp{ margin-top:10px; }
-  .cd{ margin-top:10px; }
-  .next-copy .add-light{ margin-top:8px; }
-  #rsvp-cta{ margin-top:8px; }
+  #next .next-copy{ transform:translateY(-50%); }   /* id-scoped: the max-height block below would otherwise win on order */
+  /* Everything from the pair down to the photobook button has to fit between
+     the top of the sticky and the top of the fixed dock - about 620px on a
+     790-tall phone. These sizes are what makes that true; loosening any of them
+     puts the button back under the dock. */
+  .pair-slot{ height:clamp(38px,5.4vh,58px); margin-bottom:4px; }
+  .next-copy h2{ font-size:clamp(22px,3vw,30px); line-height:1.18; }
+  .next-copy .join{ margin-top:4px; font-size:14px; }
+  .next-copy .date-stamp{ margin-top:8px; font-size:19px; }
+  .cd{ margin-top:8px; }
+  .cd strong{ font-size:clamp(20px,2.6vw,26px); }
+  .next-copy .add-light{ margin-top:6px; }
+  #rsvp-cta{ margin-top:6px; min-height:44px; padding:11px 26px; }
   .keepsakes{ margin-top:10px; }
-  .btn.ghost.photobook-btn{ margin-top:10px; }
+  /* Small and close to the prints, rather than a full-size button pushed to the
+     bottom of the block where it collides with the dock. */
+  .btn.ghost.photobook-btn{
+    margin-top:4px; min-height:34px; padding:7px 14px;
+    font-size:9.5px; letter-spacing:.12em; gap:7px;
+  }
+  .btn.ghost.photobook-btn svg{ width:14px; height:14px; }
+  .keepsakes{ margin-top:8px; }
+  .keepsake{ width:38px; }
   .keepsake-btn{ padding:7% 7% 18%; }
 }
 /* Short phones keep the keepsakes, but make room by dropping only the small
