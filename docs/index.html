@@ -1373,6 +1373,34 @@ html.reduced .sk-card::after{ display:none; }
    NEXT CHAPTER — dawn finale
    ============================================================ */
 #next .stick{ display:block; }
+/* The sticky panel is sized in svh - the SMALL viewport, measured with the URL
+   bar showing. The moment the bar hides, the visual viewport grows taller than
+   the panel and a strip at the bottom of the screen is left uncovered, showing
+   the night-black body behind: the dark band the couple saw between the dawn
+   and the ivory footer.
+
+   Nothing inside the panel can reach that strip - it is clipped, and the strip
+   is below the panel entirely - so the section itself has to paint it. The
+   catch is that `main` is z-index 1 and the sky canvas is 0, so a section
+   background paints OVER the night sky: make it light too early and a bright
+   band creeps up the screen long before dawn.
+
+   Hence light only across the last few percent of the section. That is exactly
+   where the uncovered strip lands as the finale ends, and it does not enter the
+   viewport until about 89% through - after the dawn has already washed in. */
+#next{
+  background:linear-gradient(180deg,
+    rgba(251,249,244,0) 0%,
+    rgba(251,249,244,0) 92%,
+    rgba(251,249,244,.92) 96.5%,
+    var(--ivory) 100%);
+}
+
+/* Dock out of the way at the finale. The section ends with its own RSVP button
+   and the photobook button, and on a phone the fixed dock sits exactly where
+   they land - so it steps aside once the copy is up, and comes back on the way
+   out. */
+html.dock-away .ctrls{ opacity:0 !important; transform:translateY(10px) !important; pointer-events:none !important; }
 .sky-dawn{
   position:absolute; inset:0; opacity:0;
   background:linear-gradient(180deg, #6f5a55 0%, #a87e76 45%, #d9a08c 78%, #eec2a0 100%);
@@ -5927,6 +5955,8 @@ html.android #next-lans .lantern.far{ animation:none !important; }
             if (beat >= copyStart) revealCopy();
             if (beat >= keepsakeStart) revealKeepsakes();
             if (beat >= 8.6) revealDawn();
+            /* stand the dock down once the finale's own buttons are on screen */
+            docEl.classList.toggle('dock-away', beat >= copyStart);
           }
         });
       }
