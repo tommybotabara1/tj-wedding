@@ -799,12 +799,22 @@ dialog.lb::backdrop{ background:rgba(14,9,7,.86); backdrop-filter:blur(7px); }
 /* Panels (dialogs) — lit paper against the night */
 dialog.panel{
   border:0; border-radius:22px; padding:0; background:var(--paper); color:var(--ink);
-  width:min(94vw, 720px); max-height:86vh; max-height:86svh; margin:auto;
+  width:min(94vw, 720px); margin:auto;
+  /* --vvh tracks the VISUAL viewport (see the visualViewport block in the
+     script): svh is measured with the URL bar showing but knows nothing about
+     the on-screen keyboard, so a panel sized in svh stays as tall as the whole
+     screen while the keyboard covers the bottom half of it - which is how the
+     RSVP field ended up hidden behind the keyboard. */
+  max-height:86vh; max-height:86svh;
+  max-height:min(86svh, calc(var(--vvh, 100svh) - 20px));
   box-shadow:0 0 140px rgba(207,130,110,.3), 0 40px 90px -24px rgba(0,0,0,.55);
 }
+html.kb-open dialog.panel{ margin-top:8px; margin-bottom:8px; }
 dialog.panel::backdrop{ background:rgba(14,9,7,.78); backdrop-filter:blur(6px); }
 .panel-inner{
-  padding:clamp(24px,4vw,40px); overflow-y:auto; max-height:86vh; max-height:86svh;
+  padding:clamp(24px,4vw,40px); overflow-y:auto;
+  max-height:86vh; max-height:86svh;
+  max-height:min(86svh, calc(var(--vvh, 100svh) - 20px));
   /* Keep the swipe inside the panel. Without `contain`, iOS chains a gesture that
      starts at this scroller's top edge out to the page behind the dialog —
      showModal() makes the background inert for taps but not for touch scrolling —
@@ -3600,6 +3610,39 @@ function imgFail(img, wrapSel) {
   var HAS_GSAP = !!(window.gsap && window.ScrollTrigger);
   var ANIM = HAS_GSAP && !REDUCED;
   var docEl = document.documentElement;
+
+  /* Mobile keyboards: the visual viewport shrinks, the layout viewport does not.
+     Publish the visible height so panels can size to it, and lift the focused
+     field into view once the keyboard has finished animating in. Without this a
+     guest typing their name in the RSVP cannot see what they are typing. */
+  (function () {
+    var vv = window.visualViewport;
+    if (vv) {
+      var syncVV = function () {
+        docEl.style.setProperty('--vvh', Math.round(vv.height) + 'px');
+        /* A <dialog> centres itself in the LAYOUT viewport, so shrinking it is
+           not enough - a shorter panel centred on the whole screen still sits
+           half behind the keyboard. Anchor it to the top while the keyboard is
+           up. 0.85 rather than something tighter: iOS reports small viewport
+           changes for the URL bar alone, which must not trip this. */
+        docEl.classList.toggle('kb-open', vv.height < window.innerHeight * 0.85);
+      };
+      vv.addEventListener('resize', syncVV);
+      vv.addEventListener('scroll', syncVV);
+      syncVV();
+    }
+    document.addEventListener('focusin', function (e) {
+      var f = e.target;
+      if (!f || !f.closest || !f.closest('dialog.panel')) return;
+      if (!/^(INPUT|TEXTAREA|SELECT)$/.test(f.tagName)) return;
+      /* the delay is the keyboard's own animation; scrolling sooner scrolls to
+         where the field WAS */
+      setTimeout(function () {
+        try { f.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+        catch (err) { f.scrollIntoView(); }
+      }, 320);
+    });
+  })();
   var qs = new URLSearchParams(window.location.search);
 
   /* ---------------- FLICKER BISECT (diagnostic, default off) ----------------
