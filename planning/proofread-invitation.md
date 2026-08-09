@@ -305,7 +305,7 @@ BPI · BDO · UnionBank · PNB · GCash · Maya
 ## RSVP
 
 ```
-Kindly respond by November 30, 2026 so we can finalize seats with Gallio Events
+Kindly respond by October 30, 2026 so we can finalize seats with Gallio Events
 Hall. One reply per guest — you can come back and change it any time.
 
 [after the deadline] Our reply-by date has passed, but please still send this —
