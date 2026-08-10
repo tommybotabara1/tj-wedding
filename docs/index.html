@@ -909,6 +909,9 @@ dialog.panel.film{ width:min(94vw, 880px); }
   background:var(--ivory); color:var(--ink); font-family:var(--sans); font-size:15px;
 }
 .field textarea{ min-height:96px; resize:vertical; }
+/* Meal notes are usually a line ("no pork"), not a paragraph — a short box
+   keeps the two-textarea stack from pushing Send RSVP off a phone screen. */
+.field textarea.compact{ min-height:64px; }
 .field input::placeholder,.field textarea::placeholder{ color:var(--soft); opacity:1; }
 .field input:focus,.field select:focus,.field textarea:focus{ outline:2px solid var(--sage); outline-offset:1px; }
 .toggle-group{ display:flex; gap:10px; flex-wrap:wrap; }
@@ -2594,7 +2597,11 @@ function imgFail(img, wrapSel) {
           <div id="guest-fields-wrapper"></div>
         </div>
         <div class="field"><label for="rsvp-email">Email <span class="opt">optional</span></label><input id="rsvp-email" name="email" type="email" autocomplete="email" placeholder="your@email.com" /><p class="field-hint">Only used to send you a copy of this reply.</p></div>
-        <div class="field"><label for="rsvp-notes">Meal notes or a message for us <span class="opt">optional</span></label><textarea id="rsvp-notes" name="notes" placeholder="Allergies, dietary needs, or a message for the couple"></textarea></div>
+        <!-- Two boxes so a peanut allergy never gets buried inside a paragraph of
+             well-wishes. They are joined back into one string for the sheet's
+             single Notes column — see combineNotes()/splitNotes(). -->
+        <div class="field"><label for="rsvp-meal">Meal notes <span class="opt">optional</span></label><textarea id="rsvp-meal" name="meal_notes" class="compact" placeholder="Allergies or dietary needs"></textarea></div>
+        <div class="field"><label for="rsvp-message">A message for us <span class="opt">optional</span></label><textarea id="rsvp-message" name="message" placeholder="Anything you&#8217;d like to say to the couple"></textarea></div>
         <div class="form-error" id="form-error" role="alert"></div>
         <button class="btn dark" id="submit-btn" type="submit" style="width:100%">Send RSVP</button>
       </form>
@@ -4615,7 +4622,9 @@ function imgFail(img, wrapSel) {
       chip.appendChild(s);
     });
     document.body.appendChild(chip);
-    Sky.liftoff();
+    /* Same guard as the gate's liftoff: the burst is decoration, and a throw
+       from inside the canvas field must not take the chip's flight with it. */
+    try { Sky.liftoff(); } catch (e) {}
     gsap.to(chip, { opacity: 1, duration: 0.5, ease: 'power1.out' });
     gsap.fromTo(chip, { y: 0 }, {
       y: -(window.innerHeight + 300), ease: 'power1.in', duration: 4.8,
@@ -4671,6 +4680,28 @@ function imgFail(img, wrapSel) {
         .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
     }
     function tidy(s) { return String(s || '').trim().replace(/\s+/g, ' '); }
+
+    /* The RSVP sheet has ONE Notes column, and the form has two boxes. Join them
+       with labels so the couple can tell a dietary need from a greeting at a
+       glance, and so openExisting() can pull them back apart when a guest edits
+       their reply. Replies sent before the split have no prefix — those fall
+       through to the message box rather than being guessed at. */
+    function combineNotes(meal, message) {
+      var parts = [];
+      if (meal) parts.push('Meal: ' + meal);
+      if (message) parts.push('Message: ' + message);
+      return parts.join(' | ');
+    }
+    function splitNotes(s) {
+      s = String(s || '').trim();
+      var m = s.match(/^Meal:\s*([\s\S]*?)\s*\|\s*Message:\s*([\s\S]*)$/);
+      if (m) return { meal: m[1].trim(), message: m[2].trim() };
+      m = s.match(/^Meal:\s*([\s\S]*)$/);
+      if (m) return { meal: m[1].trim(), message: '' };
+      m = s.match(/^Message:\s*([\s\S]*)$/);
+      if (m) return { meal: '', message: m[1].trim() };
+      return { meal: '', message: s };
+    }
     function post(body) {
       return fetch(RSVP_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body) })
         .then(function (res) { return res.json(); });
@@ -5008,7 +5039,8 @@ function imgFail(img, wrapSel) {
          to elements we don't own and its behaviour varies by engine (see the
          note on #party-out). Explicit is safer than a blunt reset here. */
       $('rsvp-email').value = '';
-      $('rsvp-notes').value = '';
+      $('rsvp-meal').value = '';
+      $('rsvp-message').value = '';
       $('rsvp-website').value = '';
       $('att-cer').checked = true;
       $('att-rec').checked = true;
@@ -5026,7 +5058,9 @@ function imgFail(img, wrapSel) {
       editing = rec;
       $('form-error').textContent = '';
       $('rsvp-email').value = rec.email || '';
-      $('rsvp-notes').value = rec.notes || '';
+      var priorNotes = splitNotes(rec.notes);
+      $('rsvp-meal').value = priorNotes.meal;
+      $('rsvp-message').value = priorNotes.message;
       setAttending(rec.attending === 'yes' ? 'yes' : 'no');
       if (rec.attending === 'yes') {
         var wanted = parseInt(rec.party_size, 10) || 1;
@@ -5120,7 +5154,7 @@ function imgFail(img, wrapSel) {
       if (busy) return;
       var errorEl = $('form-error'), btn = $('submit-btn');
       var emailVal = tidy($('rsvp-email').value);
-      var notesVal = $('rsvp-notes').value.trim();
+      var notesVal = combineNotes($('rsvp-meal').value.trim(), $('rsvp-message').value.trim());
       errorEl.textContent = '';
 
       if (norm(guestName).length < 2) { goStep(1); return; }

@@ -323,7 +323,8 @@ WHICH PARTS OF THE DAY?      Ceremony · seated by 1:00 PM
 HOW MANY OF YOU ARE COMING?  [stepper]
 We've reserved N seats for you. Seats are by name, so tell us who else is coming.
 EMAIL (optional)             Only used to send you a copy of this reply.
-MEAL NOTES OR A MESSAGE FOR US (optional)
+MEAL NOTES (optional)        Allergies or dietary needs
+A MESSAGE FOR US (optional)  Anything you'd like to say to the couple
 SEND RSVP
 ```
 
