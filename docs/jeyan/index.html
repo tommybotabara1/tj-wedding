@@ -193,7 +193,43 @@
     justify-content: center;
     color: var(--black);
   }
-  .seal svg { width: 100%; height: 100%; display: block; }
+  .seal { cursor: zoom-in; font: inherit; }
+  .seal svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+
+  .zoom {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 22px;
+    background: rgba(11, 11, 12, .95);
+  }
+  .zoom.open { display: flex; }
+  .zoomfig { display: flex; flex-direction: column; align-items: center; gap: 15px; margin: 0; }
+  .zoompanel {
+    width: min(86vw, calc(88vh - 88px), 520px);
+    aspect-ratio: 1;
+    background: var(--cream);
+    border: 1px solid var(--hair);
+    padding: 16px;
+    color: var(--black);
+    animation: pop .18s ease;
+  }
+  .zoompanel svg { width: 100%; height: 100%; display: block; }
+  .zoomcap {
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--champagne);
+    text-align: center;
+    margin: 0;
+  }
+  .zoomcap.dim { color: var(--taupe); }
+  @keyframes pop { from { transform: scale(.94); opacity: .35; } to { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .zoompanel { animation: none; } }
   .cap {
     font-size: 8.5px;
     font-weight: 500;
@@ -391,7 +427,7 @@
           <div class="lower">
             <p class="blurb">A procurement professional by trade, and a part-time professor preparing entrants for the real estate board.</p>
             <div class="qrcol">
-              <div class="seal" id="tileCard"></div>
+              <button type="button" class="seal" id="tileCard" aria-label="Enlarge the contact QR code"></button>
               <p class="cap">Save contact</p>
             </div>
           </div>
@@ -418,7 +454,7 @@
 
         <div class="backbody">
           <div class="qrcol">
-            <div class="seal" id="tileSite"></div>
+            <button type="button" class="seal" id="tileSite" aria-label="Enlarge the practice site QR code"></button>
             <p class="cap">Practice site</p>
           </div>
 
@@ -456,6 +492,14 @@
   </div>
 </div>
 
+<div class="zoom" id="zoom" role="dialog" aria-modal="true" aria-label="Enlarged QR code">
+  <figure class="zoomfig">
+    <div class="zoompanel" id="zoomPanel"></div>
+    <figcaption class="zoomcap" id="zoomCap"></figcaption>
+    <p class="zoomcap dim">Tap anywhere to close</p>
+  </figure>
+</div>
+
 <p class="turn">Turn your phone sideways</p>
 
 <script>
@@ -490,14 +534,38 @@
       '<path d="' + d + '" fill="currentColor" shape-rendering="crispEdges"/></svg>';
   }
 
-  function paint(id, text, ecc, label) {
+  var zoom = document.getElementById("zoom");
+  var zoomPanel = document.getElementById("zoomPanel");
+  var zoomCap = document.getElementById("zoomCap");
+  var lastFocus = null;
+  var openedAt = 0;
+
+  function openZoom(svg, cap) {
+    if (!svg) return;
+    zoomPanel.innerHTML = svg;
+    zoomCap.textContent = cap;
+    lastFocus = document.activeElement;
+    openedAt = Date.now();
+    zoom.classList.add("open");
+  }
+  function closeZoom() {
+    if (!zoom.classList.contains("open")) return;
+    if (Date.now() - openedAt < 320) return;
+    zoom.classList.remove("open");
+    if (lastFocus) lastFocus.focus({ preventScroll: true });
+  }
+  zoom.addEventListener("click", closeZoom);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeZoom(); });
+
+  function paint(id, text, ecc, label, cap) {
     var el = document.getElementById(id);
     var svg = svgFor(text, ecc);
     el.innerHTML = svg || '<p class="fallback">' + label + "</p>";
+    el.addEventListener("click", function () { openZoom(svg, cap); });
   }
 
-  paint("tileCard", VCARD, "L", "realestatebyjeyan@gmail.com");
-  paint("tileSite", SITE, "M", "realestatebyjeyan.com");
+  paint("tileCard", VCARD, "L", "realestatebyjeyan@gmail.com", "Save contact");
+  paint("tileSite", SITE, "M", "realestatebyjeyan.com", "realestatebyjeyan.com");
 
   var flipper = document.getElementById("flipper");
   var front = document.getElementById("faceFront");
