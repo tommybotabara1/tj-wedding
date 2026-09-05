@@ -4,70 +4,54 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Jeyan Santioque</title>
-<meta name="description" content="Licensed real estate broker and appraiser, procurement professional, and part-time professor. Scan for Real Estate by Jeyan or save the contact card.">
+<meta name="description" content="Real Estate Broker and Appraiser, REBAP Global-Taguig-Pateros. Save the contact card or scan through to Real Estate by Jeyan.">
 <meta property="og:type" content="profile">
 <meta property="og:title" content="Jeyan Santioque">
-<meta property="og:description" content="Licensed real estate broker and appraiser. Real Estate by Jeyan.">
+<meta property="og:description" content="Real Estate Broker &amp; Appraiser. Real Estate by Jeyan.">
 <meta property="og:url" content="https://tomyjeyan.com/jeyan/">
-<meta name="theme-color" content="#f7f6f2">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2312242f'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='28' font-weight='600' fill='%23f7f6f2' text-anchor='middle'%3EJS%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#0b0b0c">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b0b0c'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='27' font-weight='600' fill='%23c9a24d' text-anchor='middle'%3EJ%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <style>
+  /* Palette, faces and rules follow the Real Estate by Jeyan brand kit:
+     midnight black, aurium gold, champagne gold, warm taupe, Cinzel + Montserrat.
+     The card commits to that one dark look in every viewer's theme. */
   :root {
-    --bg: #f7f6f2;
-    --card: #ffffff;
-    --ink: #101820;
-    --muted: #5b6572;
-    --line: #dcd8d0;
-    --anchor: #12242f;
-    --brass: #a8792c;
-    --shadow: 0 1px 2px rgba(16,24,32,.06), 0 18px 44px -28px rgba(16,24,32,.4);
+    --black: #0b0b0c;
+    --surface: #101011;
+    --cream: #e9e4da;
+    --gold: #c9a24d;
+    --champagne: #e6c77a;
+    --taupe: #6f6b66;
+    --hair: rgba(201, 162, 77, .34);
 
-    --panel-bg: #12242f;
-    --panel-ink: #eef1f0;
-    --panel-muted: rgba(238,241,240,.68);
-    --panel-chip: rgba(238,241,240,.1);
-    --panel-line: rgba(238,241,240,.16);
+    --display: "Cinzel", "Trajan Pro", "Times New Roman", serif;
+    --sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
 
-    --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
-    --sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-
-    --name-size: 41px;
-    --role-size: 14.5px;
-    --blurb-size: 14px;
-    --link-size: 12.5px;
-    --pad: 38px;
-    --panel-w: 268px;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0b1218;
-      --card: #131e26;
-      --ink: #eef1f0;
-      --muted: #9aa7b0;
-      --line: #26343e;
-      --brass: #d2a457;
-      --shadow: 0 1px 2px rgba(0,0,0,.5), 0 22px 50px -28px rgba(0,0,0,.9);
-      --panel-bg: #0a141b;
-      --panel-line: rgba(238,241,240,.13);
-    }
+    --name: 31px;
+    --body: 12.5px;
+    --label: 10px;
+    --pad: 32px;
+    --photo: 262px;
+    --seal: 104px;
   }
 
   * { box-sizing: border-box; }
-  html { background: var(--bg); }
+  html { background: var(--black); }
 
   body {
     margin: 0;
-    background: var(--bg);
-    color: var(--ink);
+    background: var(--black);
+    color: var(--cream);
     font-family: var(--sans);
+    font-weight: 300;
     -webkit-font-smoothing: antialiased;
     min-height: 100dvh;
-    padding: 32px 20px;
+    padding: 30px 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,275 +59,401 @@
 
   .stage { width: 100%; display: flex; align-items: center; justify-content: center; }
 
-  .card {
+  .scene {
     width: 100%;
-    max-width: 760px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    box-shadow: var(--shadow);
-    display: grid;
-    grid-template-columns: 1fr auto;
-    overflow: hidden;
+    max-width: 830px;
+    aspect-ratio: 1.76;
+    perspective: 1800px;
   }
 
-  .identity {
-    padding: var(--pad) calc(var(--pad) - 4px) calc(var(--pad) - 6px);
+  .flipper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .78s cubic-bezier(.22, .68, .18, 1);
+  }
+  .flipper.flipped { transform: rotateY(180deg); }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: var(--surface);
+    border: 1px solid var(--hair);
+    overflow: hidden;
+  }
+  .back { transform: rotateY(180deg); }
+  .flipper:not(.flipped) .back { pointer-events: none; }
+  .flipper.flipped .front { pointer-events: none; }
+
+  @media (prefers-reduced-motion: reduce) { .flipper { transition: none; } }
+
+  /* ---------- front ---------- */
+
+  .front { display: grid; grid-template-columns: var(--photo) 1fr; }
+
+  .portrait { position: relative; overflow: hidden; background: #000; }
+  .portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 30%;
+    display: block;
+  }
+  .portrait::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-right: 1px solid var(--hair);
+    background: linear-gradient(90deg, rgba(11,11,12,.42) 0%, rgba(11,11,12,0) 42%, rgba(11,11,12,.5) 100%);
+    pointer-events: none;
+  }
+
+  .panel {
+    padding: var(--pad);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 22px;
+    gap: 15px;
     min-width: 0;
     min-height: 0;
   }
 
-  .eyebrow {
-    font-family: var(--mono);
-    font-size: 10.5px;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: var(--brass);
-    margin: 0 0 14px;
-  }
+  .mark { color: var(--gold); }
+  .mark svg { display: block; height: 46px; width: auto; }
+  .mark.center { display: flex; justify-content: center; }
 
   h1 {
-    font-family: var(--serif);
-    font-size: var(--name-size);
+    font-family: var(--display);
+    font-size: var(--name);
     font-weight: 600;
-    letter-spacing: -.012em;
-    line-height: 1.06;
-    margin: 0 0 10px;
-    text-wrap: balance;
-  }
-  .role { font-size: var(--role-size); font-weight: 500; margin: 0 0 12px; }
-  .blurb {
-    font-size: var(--blurb-size);
-    line-height: 1.62;
-    color: var(--muted);
-    margin: 0;
-    max-width: 44ch;
-  }
-  .blurb em { font-style: normal; color: var(--ink); }
-
-  .contact {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    border-top: 1px solid var(--line);
-    padding-top: 18px;
-  }
-  .row { display: flex; align-items: center; gap: 12px; min-width: 0; }
-  .key {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .12em;
+    letter-spacing: .072em;
+    line-height: 1.12;
     text-transform: uppercase;
-    color: var(--muted);
-    width: 62px;
-    flex: none;
+    color: var(--cream);
+    margin: 0 0 9px;
   }
-  .row a {
-    font-family: var(--mono);
-    font-size: var(--link-size);
-    color: var(--ink);
-    text-decoration: none;
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+
+  .titles { margin: 0; }
+  .titles .role {
+    display: block;
+    font-family: var(--sans);
+    font-size: var(--label);
+    font-weight: 500;
+    letter-spacing: .26em;
+    text-transform: uppercase;
+    color: var(--champagne);
+  }
+  .titles .chapter {
+    display: block;
+    font-size: calc(var(--label) - .5px);
+    font-weight: 300;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    margin-top: 5px;
+  }
+
+  .motto { display: flex; align-items: center; gap: 13px; }
+  .motto .taper { flex: 1; height: 3px; color: var(--gold); opacity: .75; }
+  .motto .taper svg { display: block; width: 100%; height: 100%; }
+  .motto p {
+    font-family: var(--display);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    color: var(--taupe);
+    margin: 0;
     white-space: nowrap;
   }
-  .row a:hover, .row a:focus-visible { color: var(--brass); border-bottom-color: var(--brass); }
-  .social { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; }
-  .social .sep { font-family: var(--mono); font-size: 11px; color: var(--line); }
+  .motto .re { color: var(--gold); }
+  .motto .sep { color: var(--gold); opacity: .5; margin: 0 3px; }
 
-  .copy {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    background: transparent;
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    padding: 3px 8px;
-    cursor: pointer;
-    flex: none;
-    margin-left: auto;
-  }
-  .copy:hover, .copy:focus-visible { color: var(--brass); border-color: var(--brass); }
-
-  .panel {
-    background: var(--panel-bg);
-    color: var(--panel-ink);
-    padding: 30px 28px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    width: var(--panel-w);
-    flex: none;
+  .lower { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+  .blurb {
+    font-size: var(--body);
+    font-weight: 300;
+    line-height: 1.72;
+    color: var(--cream);
+    opacity: .82;
+    margin: 0;
   }
 
-  .switch { display: flex; background: var(--panel-chip); border-radius: 3px; padding: 3px; gap: 3px; width: 100%; }
-  .switch button {
-    flex: 1;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--panel-muted);
-    background: transparent;
-    border: 0;
-    border-radius: 2px;
-    padding: 7px 4px;
-    cursor: pointer;
-  }
-  .switch button[aria-pressed="true"] { background: #f7f6f2; color: #12242f; }
-
-  .qr-tile {
-    background: #ffffff;
-    border-radius: 3px;
-    padding: 12px;
+  .qrcol { display: flex; flex-direction: column; align-items: center; gap: 9px; width: var(--seal); }
+  .seal {
+    background: var(--cream);
+    border: 1px solid var(--hair);
+    padding: 7px;
     width: 100%;
     aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #101820;
+    color: var(--black);
   }
-  .qr-tile svg { width: 100%; height: 100%; display: block; }
-  .qr-tile.swap { animation: fade .18s ease; }
-  @keyframes fade { from { opacity: .25; } to { opacity: 1; } }
+  .seal svg { width: 100%; height: 100%; display: block; }
+  .cap {
+    font-size: 8.5px;
+    font-weight: 500;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    text-align: center;
+    margin: 0;
+    line-height: 1.5;
+  }
+  .fallback { font-size: 9px; color: var(--black); text-align: center; line-height: 1.5; word-break: break-all; margin: 0; }
 
-  .caption { font-family: var(--mono); font-size: 10.5px; line-height: 1.5; color: var(--panel-muted); text-align: center; margin: 0; }
-  .caption a { color: var(--panel-ink); text-decoration: none; border-bottom: 1px solid var(--panel-line); }
-  .caption a:hover, .caption a:focus-visible { color: var(--brass); border-bottom-color: var(--brass); }
+  .actions { display: flex; justify-content: flex-end; }
+  .flip {
+    font-family: var(--sans);
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: transparent;
+    border: 1px solid var(--hair);
+    border-radius: 0;
+    padding: 9px 17px;
+    cursor: pointer;
+    transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+  }
+  .flip:hover, .flip:focus-visible { color: var(--black); background: var(--gold); border-color: var(--gold); }
 
-  .fallback { font-family: var(--mono); font-size: 11px; color: #101820; text-align: center; line-height: 1.6; word-break: break-all; margin: 0; }
+  /* ---------- back ---------- */
+
+  .back { padding: var(--pad); display: flex; flex-direction: column; gap: 16px; }
+  .backhead { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+  .backhead .taper { width: 190px; height: 3px; color: var(--gold); opacity: .75; }
+  .backhead .taper svg { display: block; width: 100%; height: 100%; }
+
+  .backbody { display: grid; grid-template-columns: auto auto; gap: 34px; align-items: center; align-content: center; justify-content: center; flex: 1; min-height: 0; }
+  .back .qrcol { width: calc(var(--seal) + 30px); }
+
+  .links { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+  .link { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+  .link .key {
+    font-size: 8.5px;
+    font-weight: 500;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    width: 74px;
+    flex: none;
+  }
+  .link a {
+    font-size: var(--body);
+    font-weight: 300;
+    color: var(--cream);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .link a:hover, .link a:focus-visible { color: var(--champagne); border-bottom-color: var(--hair); }
+  .copy {
+    font-family: var(--sans);
+    font-size: 8.5px;
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    flex: none;
+  }
+  .copy:hover, .copy:focus-visible { color: var(--gold); }
 
   .turn {
     display: none;
     position: fixed;
     left: 50%;
-    bottom: 13px;
+    bottom: 12px;
     transform: translateX(-50%);
     z-index: 5;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: .12em;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: .2em;
     text-transform: uppercase;
-    color: var(--muted);
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 6px 12px;
+    color: var(--taupe);
     animation: hint 1.2s ease 6s forwards;
   }
   @keyframes hint { to { opacity: 0; visibility: hidden; } }
+  @media (prefers-reduced-motion: reduce) { .turn { animation: none; } }
 
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+  a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-offset: 3px; }
 
-  @media (prefers-reduced-motion: reduce) {
-    .qr-tile.swap { animation: none; }
-    .turn { animation: none; }
+  /* Narrow desktop window: portrait on top */
+  @media (max-width: 700px) {
+    :root { --name: 25px; --pad: 24px; --seal: 96px; }
+    .scene { max-width: 390px; aspect-ratio: .78; }
+    .front { grid-template-columns: 1fr; grid-template-rows: 190px 1fr; }
+    .portrait::after { border-right: 0; border-bottom: 1px solid var(--hair); }
+    .lower { grid-template-columns: 1fr; justify-items: center; gap: 16px; text-align: center; }
+    .backbody { grid-template-columns: 1fr; justify-items: center; gap: 20px; }
+    .link .key { width: 66px; }
   }
 
-  /* Narrow desktop window: stack */
-  @media (max-width: 620px) {
-    .card { grid-template-columns: 1fr; }
-    .identity { padding: 30px 24px 24px; }
-    .panel { width: 100%; max-width: 320px; margin: 0 auto; padding: 24px; }
-  }
-
-  /* Phone held upright: rotate the card so it presents landscape */
+  /* Phone held upright: turn the card so it presents landscape */
   @media (orientation: portrait) and (max-width: 820px) and (pointer: coarse) {
     body { padding: 0; overflow: hidden; }
     .stage {
       position: fixed;
       top: 50%;
       left: 50%;
-      width: calc(100dvh - 46px);
+      width: calc(100dvh - 44px);
       height: 100dvw;
-      transform: translate(-50%, calc(-50% - 23px)) rotate(90deg);
-      padding: 16px;
+      transform: translate(-50%, calc(-50% - 22px)) rotate(90deg);
+      padding: 14px;
     }
-    .card { grid-template-columns: 1fr auto; max-width: none; width: 100%; height: 100%; }
-    .panel { width: var(--panel-w); max-width: none; margin: 0; padding: 20px; }
+    .scene { max-width: none; width: 100%; height: 100%; aspect-ratio: auto; }
+    .front { grid-template-columns: var(--photo) 1fr; grid-template-rows: none; }
+    .portrait::after { border-right: 1px solid var(--hair); border-bottom: 0; }
+    .lower { grid-template-columns: 1fr auto; justify-items: stretch; text-align: left; gap: 18px; }
+    .backbody { grid-template-columns: auto auto; justify-items: center; gap: 26px; }
     .turn { display: block; }
   }
 
-  /* Phone turned sideways: no rotation needed, fill the screen */
+  /* Phone turned sideways: no rotation needed */
   @media (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
-    body { padding: 14px; overflow: hidden; }
-    .stage { height: calc(100dvh - 28px); }
-    .card { grid-template-columns: 1fr auto; max-width: none; width: 100%; height: 100%; }
-    .panel { width: var(--panel-w); max-width: none; margin: 0; padding: 20px; }
+    body { padding: 12px; overflow: hidden; }
+    .stage { height: calc(100dvh - 24px); }
+    .scene { max-width: none; width: 100%; height: 100%; aspect-ratio: auto; }
+    .front { grid-template-columns: var(--photo) 1fr; grid-template-rows: none; }
+    .portrait::after { border-right: 1px solid var(--hair); border-bottom: 0; }
+    .lower { grid-template-columns: 1fr auto; justify-items: stretch; text-align: left; gap: 18px; }
+    .backbody { grid-template-columns: auto auto; justify-items: center; gap: 26px; }
   }
 
-  /* Compact type whenever the card is filling a phone screen */
+  /* Type for a card filling a phone screen */
   @media (pointer: coarse) and (max-width: 820px) {
-    :root {
-      --name-size: 31px;
-      --role-size: 13px;
-      --blurb-size: 12.5px;
-      --link-size: 11.5px;
-      --pad: 22px;
-      --panel-w: 244px;
-    }
-    .identity { gap: 16px; overflow-y: auto; }
-    .contact { padding-top: 14px; gap: 6px; }
-    .key { width: 56px; font-size: 9.5px; }
-    .caption { font-size: 10px; }
+    :root { --name: 23px; --body: 11px; --label: 8.5px; --pad: 20px; --photo: 178px; --seal: 88px; }
+    .panel { gap: 11px; }
+    .mark svg { height: 34px; }
+    .back { gap: 12px; }
+    .back .qrcol { width: calc(var(--seal) + 18px); }
+    .backhead { gap: 7px; }
+    .backhead .taper { width: 150px; }
+    .links { gap: 6px; }
+    .link .key { width: 62px; }
+    .flip { padding: 7px 13px; font-size: 8.5px; }
   }
   @media (pointer: coarse) and (max-width: 700px) and (max-height: 380px) {
-    :root { --name-size: 26px; --blurb-size: 11.5px; --pad: 18px; --panel-w: 208px; }
+    :root { --name: 20px; --pad: 15px; --photo: 150px; --seal: 76px; }
   }
 </style>
 </head>
 <body>
 
 <div class="stage">
-  <main class="card">
-    <div class="identity">
-      <div>
-        <p class="eyebrow">Real Estate by Jeyan</p>
-        <h1>Jeyan Santioque</h1>
-        <p class="role">Licensed real estate broker &amp; appraiser</p>
-        <p class="blurb">Brokerage and appraisal under Real Estate by Jeyan. A procurement professional by trade, and a part-time professor preparing entrants for the real estate board. Teaching runs on the 3Rs: <em>REMarkable, REMember, REMain professional.</em></p>
-      </div>
+  <div class="scene">
+    <div class="flipper" id="flipper">
 
-      <div class="contact">
-        <div class="row">
-          <span class="key">Email</span>
-          <a href="mailto:realestatebyjeyan@gmail.com">realestatebyjeyan@gmail.com</a>
-          <button class="copy" id="copyBtn" type="button">Copy</button>
+      <section class="face front" id="faceFront" aria-label="Front of card">
+        <div class="portrait">
+          <img src="portrait.jpg" alt="Jeyan Santioque">
         </div>
-        <div class="row">
-          <span class="key">Site</span>
-          <a href="https://realestatebyjeyan.com" target="_blank" rel="noopener">realestatebyjeyan.com</a>
+
+        <div class="panel">
+          <div class="mark" aria-hidden="true">
+            <svg viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+              <text x="140" y="38" font-family="'Cinzel','Trajan Pro','Times New Roman',serif" font-size="13" font-weight="600" letter-spacing="4.6" text-anchor="middle" fill="currentColor">REAL ESTATE BY</text>
+              <path d="M38 54 L140 52.8 L242 54 L140 55.2 Z" fill="currentColor"></path>
+              <text x="140" y="112" font-family="'Cinzel','Trajan Pro','Times New Roman',serif" font-size="58" font-weight="600" letter-spacing="4.2" text-anchor="middle" fill="currentColor">JEYAN</text>
+            </svg>
+          </div>
+
+          <div>
+            <h1>Jeyan Santioque</h1>
+            <p class="titles">
+              <span class="role">Real Estate Broker &amp; Appraiser</span>
+              <span class="chapter">REBAP Global-Taguig-Pateros</span>
+            </p>
+          </div>
+
+          <div class="motto">
+            <span class="taper" aria-hidden="true">
+              <svg viewBox="0 0 200 3" preserveAspectRatio="none"><path d="M0 1.5 L100 0.75 L200 1.5 L100 2.25 Z" fill="currentColor"/></svg>
+            </span>
+            <p><span class="re">REM</span>arkable<span class="sep">&middot;</span><span class="re">REM</span>ember<span class="sep">&middot;</span><span class="re">REM</span>ain professional</p>
+            <span class="taper" aria-hidden="true">
+              <svg viewBox="0 0 200 3" preserveAspectRatio="none"><path d="M0 1.5 L100 0.75 L200 1.5 L100 2.25 Z" fill="currentColor"/></svg>
+            </span>
+          </div>
+
+          <div class="lower">
+            <p class="blurb">A procurement professional by trade, and a part-time professor preparing entrants for the real estate board.</p>
+            <div class="qrcol">
+              <div class="seal" id="tileCard"></div>
+              <p class="cap">Save contact</p>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="flip" id="toBack">Links &amp; site</button>
+          </div>
         </div>
-        <div class="row social">
-          <span class="key">Social</span>
-          <a href="https://www.linkedin.com/in/jeyansantioque/" target="_blank" rel="noopener">LinkedIn</a>
-          <span class="sep">/</span>
-          <a href="https://www.instagram.com/realestatebyjeyan/" target="_blank" rel="noopener">Instagram</a>
-          <span class="sep">/</span>
-          <a href="https://www.facebook.com/jeyansantioque" target="_blank" rel="noopener">Facebook</a>
+      </section>
+
+      <section class="face back" id="faceBack" aria-label="Back of card">
+        <div class="backhead">
+          <div class="mark center" aria-hidden="true">
+            <svg viewBox="0 0 280 140" xmlns="http://www.w3.org/2000/svg">
+              <text x="140" y="38" font-family="'Cinzel','Trajan Pro','Times New Roman',serif" font-size="13" font-weight="600" letter-spacing="4.6" text-anchor="middle" fill="currentColor">REAL ESTATE BY</text>
+              <path d="M38 54 L140 52.8 L242 54 L140 55.2 Z" fill="currentColor"></path>
+              <text x="140" y="112" font-family="'Cinzel','Trajan Pro','Times New Roman',serif" font-size="58" font-weight="600" letter-spacing="4.2" text-anchor="middle" fill="currentColor">JEYAN</text>
+            </svg>
+          </div>
+          <span class="taper" aria-hidden="true">
+            <svg viewBox="0 0 200 3" preserveAspectRatio="none"><path d="M0 1.5 L100 0.75 L200 1.5 L100 2.25 Z" fill="currentColor"/></svg>
+          </span>
         </div>
-      </div>
+
+        <div class="backbody">
+          <div class="qrcol">
+            <div class="seal" id="tileSite"></div>
+            <p class="cap">Practice site</p>
+          </div>
+
+          <div class="links">
+            <div class="link">
+              <span class="key">Email</span>
+              <a href="mailto:realestatebyjeyan@gmail.com">realestatebyjeyan@gmail.com</a>
+              <button class="copy" id="copyBtn" type="button">copy</button>
+            </div>
+            <div class="link">
+              <span class="key">Website</span>
+              <a href="https://realestatebyjeyan.com" target="_blank" rel="noopener">realestatebyjeyan.com</a>
+            </div>
+            <div class="link">
+              <span class="key">LinkedIn</span>
+              <a href="https://www.linkedin.com/in/jeyansantioque/" target="_blank" rel="noopener">in/jeyansantioque</a>
+            </div>
+            <div class="link">
+              <span class="key">Instagram</span>
+              <a href="https://www.instagram.com/realestatebyjeyan/" target="_blank" rel="noopener">@realestatebyjeyan</a>
+            </div>
+            <div class="link">
+              <span class="key">Facebook</span>
+              <a href="https://www.facebook.com/jeyansantioque" target="_blank" rel="noopener">facebook.com/jeyansantioque</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="flip" id="toFront">Back to card</button>
+        </div>
+      </section>
+
     </div>
-
-    <aside class="panel">
-      <div class="switch" role="group" aria-label="QR code contents">
-        <button type="button" id="btnSite" aria-pressed="true">Practice</button>
-        <button type="button" id="btnCard" aria-pressed="false">Contact</button>
-      </div>
-      <div class="qr-tile" id="tile"></div>
-      <p class="caption" id="caption">Scan for <a href="https://realestatebyjeyan.com" target="_blank" rel="noopener">realestatebyjeyan.com</a></p>
-    </aside>
-  </main>
+  </div>
 </div>
 
 <p class="turn">Turn your phone sideways</p>
@@ -361,11 +471,6 @@
     "URL:https://realestatebyjeyan.com",
     "END:VCARD"
   ].join("\r\n");
-
-  var tile = document.getElementById("tile");
-  var caption = document.getElementById("caption");
-  var btnSite = document.getElementById("btnSite");
-  var btnCard = document.getElementById("btnCard");
 
   function svgFor(text, ecc) {
     if (typeof qrcode !== "function") return null;
@@ -385,43 +490,42 @@
       '<path d="' + d + '" fill="currentColor" shape-rendering="crispEdges"/></svg>';
   }
 
-  function render(text, ecc) {
+  function paint(id, text, ecc, label) {
+    var el = document.getElementById(id);
     var svg = svgFor(text, ecc);
-    if (svg) {
-      tile.innerHTML = svg;
-      tile.classList.remove("swap");
-      void tile.offsetWidth;
-      tile.classList.add("swap");
-    } else {
-      tile.innerHTML = '<p class="fallback">QR unavailable<br>realestatebyjeyan.com</p>';
-    }
+    el.innerHTML = svg || '<p class="fallback">' + label + "</p>";
   }
 
-  function show(which) {
-    var site = which === "site";
-    btnSite.setAttribute("aria-pressed", String(site));
-    btnCard.setAttribute("aria-pressed", String(!site));
-    render(site ? SITE : VCARD, site ? "M" : "L");
-    caption.innerHTML = site
-      ? 'Scan for <a href="' + SITE + '" target="_blank" rel="noopener">realestatebyjeyan.com</a>'
-      : "Scan to save Jeyan to your contacts";
+  paint("tileCard", VCARD, "L", "realestatebyjeyan@gmail.com");
+  paint("tileSite", SITE, "M", "realestatebyjeyan.com");
+
+  var flipper = document.getElementById("flipper");
+  var front = document.getElementById("faceFront");
+  var back = document.getElementById("faceBack");
+  var toBack = document.getElementById("toBack");
+  var toFront = document.getElementById("toFront");
+
+  function setFace(showBack, focusIt) {
+    flipper.classList.toggle("flipped", showBack);
+    front.setAttribute("aria-hidden", String(showBack));
+    back.setAttribute("aria-hidden", String(!showBack));
+    if (focusIt) (showBack ? toFront : toBack).focus({ preventScroll: true });
   }
 
-  btnSite.addEventListener("click", function () { show("site"); });
-  btnCard.addEventListener("click", function () { show("card"); });
+  setFace(false, false);
+  toBack.addEventListener("click", function () { setFace(true, true); });
+  toFront.addEventListener("click", function () { setFace(false, true); });
 
   document.getElementById("copyBtn").addEventListener("click", function () {
     var btn = this;
     navigator.clipboard.writeText("realestatebyjeyan@gmail.com").then(function () {
-      btn.textContent = "Copied";
-      setTimeout(function () { btn.textContent = "Copy"; }, 1600);
+      btn.textContent = "copied";
+      setTimeout(function () { btn.textContent = "copy"; }, 1600);
     }, function () {
-      btn.textContent = "Select it";
-      setTimeout(function () { btn.textContent = "Copy"; }, 2200);
+      btn.textContent = "select it";
+      setTimeout(function () { btn.textContent = "copy"; }, 2200);
     });
   });
-
-  show("site");
 </script>
 </body>
 </html>
