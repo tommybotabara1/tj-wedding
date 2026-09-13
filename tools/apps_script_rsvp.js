@@ -37,7 +37,9 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 // The Google Sheet that stores responses ("TJ Weddings RSVPs").
 // (This is the long string from the Sheet's URL, between /d/ and /edit.)
-const SHEET_ID  = '1Jp_XgBngLZdp3x72IampqIi88QIIfh7mxFnnzC6NJlg';
+// The real ID is RSVP_SHEET_ID in .env. Paste it here in the Apps Script editor
+// only; never commit it, this repo is public.
+const SHEET_ID  = 'PASTE_RSVP_SHEET_ID';
 
 // The sheet tab name where responses will be written.
 const SHEET_TAB = 'RSVPs';
@@ -85,7 +87,8 @@ const HEADERS = [
 // This is the invitee list the couple actually maintains, and it is what the RSVP
 // form searches. This script executes as the account that OWNS that workbook, so no
 // sharing step is needed.
-const GUEST_SHEET_ID  = '1V2_mY3ytslbclDLdOoOTOklR9hQ_WsuHAQdl15pAuHw';
+// Real ID: GOOGLE_DRIVE_FILE_ID in .env. Paste in the editor only; never commit it.
+const GUEST_SHEET_ID  = 'PASTE_GOOGLE_DRIVE_FILE_ID';
 const GUEST_TAB       = 'Guest List';
 const GUEST_RANGE     = 'A1:K1000';   // same bound tools/gws.py already uses
 const GUEST_CACHE_KEY = 'guestlist-v1';

@@ -8,3 +8,6 @@ __pycache__/
 .DS_Store
 .claude/
 .playwright-mcp/
+.dev.vars
+.wrangler/
+node_modules/

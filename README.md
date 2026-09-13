@@ -22,7 +22,7 @@
 
 ## Tracker
 
-Master checklist and budget: [Google Sheets](https://docs.google.com/spreadsheets/d/1V2_mY3ytslbclDLdOoOTOklR9hQ_WsuHAQdl15pAuHw/edit)
+Master checklist and budget: the "TJ MARRIAGE" Google Sheet (ID in `.env` as `GOOGLE_DRIVE_FILE_ID`)
 
 ---
 

@@ -1,0 +1,13 @@
+name = "tj-rsvp-relay"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+workers_dev = false
+
+# Custom domain on the tomyjeyan.com zone. Cloudflare creates the rsvp DNS
+# record itself; the apex/www records pointing at GitHub Pages are untouched.
+routes = [
+  { pattern = "rsvp.tomyjeyan.com", custom_domain = true }
+]
+
+# Secret, not a var: set with `npx wrangler secret put GAS_URL`.
+# GAS_URL = the Apps Script web app /exec URL.

@@ -103,7 +103,7 @@ README.md       # Project overview and reference docs
 ## Google Sheet
 
 Master tracker (budget, vendors, guest list, timeline):
-https://docs.google.com/spreadsheets/d/1V2_mY3ytslbclDLdOoOTOklR9hQ_WsuHAQdl15pAuHw/edit
+"TJ MARRIAGE" in Google Drive. The file ID is `GOOGLE_DRIVE_FILE_ID` in `.env`; it is kept out of this public repo.
 
 ---
 

@@ -5,7 +5,7 @@ Regenerate the couple-only planner pages in `docs/planner-7k2a/` from the latest
 
 ## Required Inputs
 - `credentials.json` in project root (service account with Drive read access)
-- `GOOGLE_DRIVE_FILE_ID` in `.env` (value: `1V2_mY3ytslbclDLdOoOTOklR9hQ_WsuHAQdl15pAuHw`)
+- `GOOGLE_DRIVE_FILE_ID` in `.env` (the "TJ MARRIAGE" planner workbook; never commit the ID, the repo is public)
 - Python dependencies installed (see below)
 
 ## Dependencies

@@ -23,7 +23,7 @@ Usage:
 Setup (one-time):
   • Share the "TJ Weddings RSVPs" Google Sheet (Viewer is enough) with the
     service account:  tj-wedding-bot@river-karma-489806-i7.iam.gserviceaccount.com
-  • Optionally set RSVP_SHEET_ID in .env (defaults to the known sheet).
+  • Set RSVP_SHEET_ID in .env (the ID is not committed; the repo is public).
 
 Credentials:
   • credentials.json  : service account key (project root)  — reused from gws.py
@@ -52,7 +52,7 @@ except Exception:
 
 CREDS_FILE     = os.path.join(os.path.dirname(__file__), "..", "credentials.json")
 SCOPES         = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
-RSVP_SHEET_ID  = os.environ.get("RSVP_SHEET_ID", "1Jp_XgBngLZdp3x72IampqIi88QIIfh7mxFnnzC6NJlg")
+RSVP_SHEET_ID  = os.environ.get("RSVP_SHEET_ID")  # in .env; kept out of the public repo
 RSVP_TAB       = "RSVPs"
 
 # Confidence thresholds for fuzzy name matching (0..1).

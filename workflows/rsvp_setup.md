@@ -68,6 +68,16 @@
 4. Save the file. Do not update the older `invitation.html` examples unless
    that page is intentionally brought back into service.
 
+> **Live setup (since Sep 2026): the page never holds the Google URL.** A guest
+> spotted the `/exec` URL in View Source, so `docs/index.html` now posts to
+> `https://rsvp.tomyjeyan.com/`, a Cloudflare Worker (`workers/rsvp-relay/`) that
+> forwards to Apps Script. The real `/exec` URL is `RSVP_GAS_URL` in `.env` and
+> the Worker secret `GAS_URL`; it must never be committed (the repo is public).
+> If the Apps Script URL ever changes, update the secret instead of the HTML:
+> `cd workers/rsvp-relay && npx wrangler secret put GAS_URL` then paste the URL.
+> The relay only accepts requests whose Origin is tomyjeyan.com or localhost.
+> Sheet IDs likewise live only in `.env` (`RSVP_SHEET_ID`, `GOOGLE_DRIVE_FILE_ID`).
+
 ---
 
 ## Step 5 — Test the integration
