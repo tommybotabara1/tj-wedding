@@ -4654,7 +4654,9 @@ function imgFail(img, wrapSel) {
      The one rule that outranks the gate: if the guest-list read FAILS, we must
      not lock a real guest out. Only a successful, empty search gates. */
   (function () {
-    var RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxc2joPGiLCcm25n-KZBbxTN3hTAFMf6nQ-qle5hjLlo00rgcsCC6sGnJxYW32QF-Fu/exec';
+    /* Our own relay (workers/rsvp-relay), which forwards to the Apps Script. The
+       Google URL is a Worker secret, so it never reaches the page or the browser. */
+    var RSVP_ENDPOINT = 'https://rsvp.tomyjeyan.com/';
     var STORE_KEY = 'tj-rsvp-v1';
     var DEADLINE = new Date('2026-10-30T23:59:59+08:00');
     var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
