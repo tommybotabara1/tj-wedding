@@ -11,9 +11,10 @@
  * The owner proves herself with `Authorization: Bearer <key>`, where the key is
  * the Worker secret OWNER_KEY (set with `npx wrangler secret put OWNER_KEY`,
  * copy kept in the repo's .env as CARD_OWNER_KEY). A GET that carries the
- * header also answers `"owner": true|false`, so her phone knows whether to
- * show the switch. The key reaches her phone once, through the private link
- * tomyjeyan.com/jeyan/#owner=<key>; the page keeps it and strips the hash.
+ * header also answers `"owner": true|false`, so her switch page knows the key
+ * is good. Her switch lives on its own page, tomyjeyan.com/jeyan/switch/; the
+ * key reaches her phone once through tomyjeyan.com/jeyan/switch/#key=<key>,
+ * and the page keeps it and strips the hash. The card page never sees it.
  *
  * The choice lives in the KV namespace CARD_MODE. KV is eventually
  * consistent, so a change can take up to a minute to reach every edge.

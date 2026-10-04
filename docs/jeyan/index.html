@@ -18,33 +18,12 @@
      the answer is usually back by first paint; the card stays hidden until
      then, for 1.5 s at most.
 
-     Her phone unlocks the switch once through #owner=<key> (#owner=off forgets
-     it). The key is kept on her phone only and sent as a Bearer header. */
+     She changes it from her own page, switch/, never from here. */
   (function () {
-    var API = "https://card.tomyjeyan.com/jeyan";
-    var KEY_STORE = "jeyan-card-owner";
-    var key = null;
-    try { key = localStorage.getItem(KEY_STORE); } catch (e) {}
-
-    var hash = location.hash.match(/owner=([^&]+)/);
-    if (hash) {
-      key = hash[1] === "off" ? null : decodeURIComponent(hash[1]);
-      try {
-        if (key) localStorage.setItem(KEY_STORE, key);
-        else localStorage.removeItem(KEY_STORE);
-      } catch (e) {}
-      history.replaceState(null, "", location.pathname + location.search);
-    }
-
     document.documentElement.classList.add("pending");
     window.cardMode = {
-      api: API,
-      keyStore: KEY_STORE,
-      key: key,
-      request: fetch(API, {
-        cache: "no-store",
-        headers: key ? { Authorization: "Bearer " + key } : {}
-      }).then(function (r) { return r.ok ? r.json() : null; })
+      request: fetch("https://card.tomyjeyan.com/jeyan", { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
         .catch(function () { return null; })
     };
   })();
@@ -482,54 +461,6 @@
     html[data-card="pal"] .scene { max-width: 830px; aspect-ratio: 1.75; }
   }
 
-  /* ---------- owner switch (Jeyan's phone only) ---------- */
-
-  .owner {
-    position: fixed;
-    left: 50%;
-    bottom: max(8px, env(safe-area-inset-bottom));
-    transform: translateX(-50%);
-    z-index: 30;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 4px 4px 4px 14px;
-    border: 1px solid rgba(255, 255, 255, .2);
-    border-radius: 999px;
-    background: rgba(8, 10, 18, .72);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    color: #fff;
-    font-family: var(--sans);
-    font-size: 11px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-  .owner[hidden] { display: none; }
-  .owner .label { color: rgba(255, 255, 255, .7); }
-  .owner .seg { display: flex; padding: 2px; border-radius: 999px; background: rgba(255, 255, 255, .1); }
-  .owner .seg button {
-    font: inherit;
-    font-weight: 600;
-    color: rgba(255, 255, 255, .78);
-    background: transparent;
-    border: 0;
-    border-radius: 999px;
-    padding: 6px 13px;
-    cursor: pointer;
-  }
-  .owner .seg button[aria-pressed="true"] { background: #fff; color: #0b0b0c; }
-  .owner .seg button:focus-visible { outline: 1px solid #fff; outline-offset: 2px; }
-  .owner .status { position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); color: #fff; font-weight: 400; font-size: 10.5px; text-shadow: 0 1px 6px rgba(0, 0, 0, .8); }
-  .owner .status:empty { display: none; }
-
-  /* Leave the switch its own strip below the card. */
-  html.owner-on body { padding-bottom: 76px; }
-  html.owner-on .turn { display: none; }
-  @media (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
-    html.owner-on body { padding-bottom: 54px; }
-    html.owner-on .stage { height: calc(100dvh - 66px); }
-  }
 </style>
 </head>
 <body>
@@ -690,15 +621,6 @@
   </div>
 </div>
 
-<div class="owner" id="owner" hidden>
-  <span class="label">Your tag opens</span>
-  <div class="seg" role="group" aria-label="Card everyone sees when they tap your tag">
-    <button type="button" data-mode="pal" aria-pressed="true">PAL</button>
-    <button type="button" data-mode="personal" aria-pressed="false">Personal</button>
-  </div>
-  <span class="status" id="ownerStatus" role="status" aria-live="polite"></span>
-</div>
-
 <div class="zoom" id="zoom" role="dialog" aria-modal="true" aria-label="Enlarged QR code">
   <figure class="zoomfig">
     <div class="zoompanel" id="zoomPanel"></div>
@@ -809,16 +731,10 @@
   var LAST_SEEN = "jeyan-card-mode";
   var root = document.documentElement;
   var themeColor = document.querySelector('meta[name="theme-color"]');
-  var owner = document.getElementById("owner");
-  var ownerStatus = document.getElementById("ownerStatus");
-  var ownerButtons = owner.querySelectorAll("button[data-mode]");
   var current = null;
 
   function store(name, value) {
-    try {
-      if (value === null) localStorage.removeItem(name);
-      else localStorage.setItem(name, value);
-    } catch (e) {}
+    try { localStorage.setItem(name, value); } catch (e) {}
   }
   function recall(name) {
     try { return localStorage.getItem(name); } catch (e) { return null; }
@@ -831,12 +747,7 @@
     document.title = mode === "pal" ? "Jeyan C. Santioque" : "Jeyan Santioque";
     themeColor.setAttribute("content", mode === "pal" ? "#062a86" : "#0b0b0c");
     if (mode === "personal") setFace(false, false);
-    for (var i = 0; i < ownerButtons.length; i++) {
-      ownerButtons[i].setAttribute("aria-pressed", String(ownerButtons[i].dataset.mode === mode));
-    }
   }
-
-  function reveal() { root.classList.remove("pending"); }
 
   // Jeyan's choice from card.tomyjeyan.com. If it can't be reached in time,
   // fall back to the last card this browser saw, then to PAL.
@@ -844,80 +755,18 @@
   Promise.race([cardMode.request, timeout]).then(function (answer) {
     var mode = answer && answer.mode ? answer.mode : (recall(LAST_SEEN) || DEFAULT_MODE);
     applyMode(mode);
-    reveal();
+    root.classList.remove("pending");
     if (answer && answer.mode) store(LAST_SEEN, answer.mode);
 
     // Slow network: a late answer still wins.
     if (answer === "timeout") {
       cardMode.request.then(function (late) {
-        if (late && late.mode) {
-          store(LAST_SEEN, late.mode);
-          if (late.mode !== current) applyMode(late.mode);
-        }
-        setUpOwner(late);
+        if (!late || !late.mode) return;
+        store(LAST_SEEN, late.mode);
+        if (late.mode !== current) applyMode(late.mode);
       });
-    } else {
-      setUpOwner(answer);
     }
   });
-
-  function setUpOwner(answer) {
-    if (!cardMode.key) return;
-    // The Worker said this key is wrong (rotated, or mistyped): forget it.
-    if (answer && answer.owner === false) {
-      store(cardMode.keyStore, null);
-      cardMode.key = null;
-      return;
-    }
-    owner.hidden = false;
-    root.classList.add("owner-on");
-  }
-
-  var saving = false;
-  var statusTimer = null;
-  function say(text, linger) {
-    clearTimeout(statusTimer);
-    ownerStatus.textContent = text;
-    if (linger) statusTimer = setTimeout(function () { ownerStatus.textContent = ""; }, linger);
-  }
-
-  function choose(mode) {
-    if (saving || !cardMode.key || mode === current) return;
-    var previous = current;
-    saving = true;
-    applyMode(mode);
-    say("Saving…");
-    fetch(cardMode.api, {
-      method: "PUT",
-      cache: "no-store",
-      headers: { "Authorization": "Bearer " + cardMode.key, "Content-Type": "application/json" },
-      body: JSON.stringify({ mode: mode })
-    }).then(function (r) {
-      if (r.status === 401) {
-        store(cardMode.keyStore, null);
-        cardMode.key = null;
-        setTimeout(function () {
-          owner.hidden = true;
-          root.classList.remove("owner-on");
-        }, 5000);
-        throw new Error("owner");
-      }
-      if (!r.ok) throw new Error("save");
-      store(LAST_SEEN, mode);
-      say(mode === "pal"
-        ? "Saved. Taps now open your PAL card."
-        : "Saved. Taps now open your personal card.", 4000);
-    }).catch(function (err) {
-      applyMode(previous);
-      say(err.message === "owner"
-        ? "This phone is no longer set up to change the card."
-        : "Not saved. Check your connection and try again.", 5000);
-    }).then(function () { saving = false; });
-  }
-
-  for (var b = 0; b < ownerButtons.length; b++) {
-    ownerButtons[b].addEventListener("click", function () { choose(this.dataset.mode); });
-  }
 </script>
 </body>
 </html>
