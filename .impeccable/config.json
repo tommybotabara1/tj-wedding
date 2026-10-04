@@ -65,6 +65,26 @@
         ],
         "createdAt": "2026-07-30T21:12:13.815Z",
         "reason": "Panel images use data-src and load when the panel opens; verified serving 200"
+      },
+      {
+        "rule": "overused-font",
+        "value": "montserrat",
+        "files": [
+          "docs/jeyan/index.html",
+          "docs/jeyan/switch/index.html"
+        ],
+        "createdAt": "2026-10-04T15:45:47.866Z",
+        "reason": "Tommy confirmed: Montserrat is the face on Jeyan's printed PAL card and her Real Estate by Jeyan brand kit; the switch page matches the cards it previews"
+      },
+      {
+        "rule": "overused-font",
+        "value": "*",
+        "files": [
+          "docs/jeyan/index.html",
+          "docs/jeyan/switch/index.html"
+        ],
+        "createdAt": "2026-10-04T15:46:45.133Z",
+        "reason": "Tommy confirmed Montserrat on these pages. The by-name entry can't match because Google Fonts findings carry no extractable font name, so the rule is scoped off here; Montserrat is the only face it flags on these pages"
       }
     ]
   }
