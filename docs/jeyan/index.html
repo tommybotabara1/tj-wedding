@@ -1,20 +1,59 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-card="pal">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Jeyan Santioque</title>
-<meta name="description" content="Real Estate Broker and Appraiser, REBAP Global-Taguig-Pateros. Save the contact card or scan through to Real Estate by Jeyan.">
+<title>Jeyan C. Santioque</title>
+<meta name="description" content="Jeyan C. Santioque, REB, REA. Save the contact card.">
 <meta property="og:type" content="profile">
-<meta property="og:title" content="Jeyan Santioque">
-<meta property="og:description" content="Real Estate Broker &amp; Appraiser. Real Estate by Jeyan.">
+<meta property="og:title" content="Jeyan C. Santioque, REB, REA">
+<meta property="og:description" content="Digital business card.">
 <meta property="og:url" content="https://tomyjeyan.com/jeyan/">
-<meta name="theme-color" content="#0b0b0c">
+<meta name="theme-color" content="#062a86">
 <meta name="color-scheme" content="dark">
+<script>
+  /* Two cards share this URL: her PAL work card and her personal Real Estate
+     by Jeyan card. Which one it opens on is Jeyan's call, kept by
+     card.tomyjeyan.com (workers/card-mode). Ask before anything else loads so
+     the answer is usually back by first paint; the card stays hidden until
+     then, for 1.5 s at most.
+
+     Her phone unlocks the switch once through #owner=<key> (#owner=off forgets
+     it). The key is kept on her phone only and sent as a Bearer header. */
+  (function () {
+    var API = "https://card.tomyjeyan.com/jeyan";
+    var KEY_STORE = "jeyan-card-owner";
+    var key = null;
+    try { key = localStorage.getItem(KEY_STORE); } catch (e) {}
+
+    var hash = location.hash.match(/owner=([^&]+)/);
+    if (hash) {
+      key = hash[1] === "off" ? null : decodeURIComponent(hash[1]);
+      try {
+        if (key) localStorage.setItem(KEY_STORE, key);
+        else localStorage.removeItem(KEY_STORE);
+      } catch (e) {}
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+
+    document.documentElement.classList.add("pending");
+    window.cardMode = {
+      api: API,
+      keyStore: KEY_STORE,
+      key: key,
+      request: fetch(API, {
+        cache: "no-store",
+        headers: key ? { Authorization: "Bearer " + key } : {}
+      }).then(function (r) { return r.ok ? r.json() : null; })
+        .catch(function () { return null; })
+    };
+  })();
+</script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230b0b0c'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='27' font-weight='600' fill='%23c9a24d' text-anchor='middle'%3EJ%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Montserrat:wght@300;400;500;600;700&display=swap">
+<link rel="preload" href="pal-bg.webp" as="image" type="image/webp">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <style>
   /* Palette, faces and rules follow the Real Estate by Jeyan brand kit:
@@ -60,6 +99,7 @@
   .stage { width: 100%; display: flex; align-items: center; justify-content: center; }
 
   .scene {
+    position: relative;
     width: 100%;
     max-width: 830px;
     aspect-ratio: 1.76;
@@ -384,6 +424,112 @@
   @media (pointer: coarse) and (max-width: 700px) and (max-height: 380px) {
     :root { --name: 20px; --pad: 15px; --photo: 150px; --seal: 76px; }
   }
+
+  /* ---------- which card ---------- */
+
+  /* Hidden until card.tomyjeyan.com answers. The script reveals it within
+     1.5 s; this animation is the backstop if the script never runs. */
+  html.pending .stage { visibility: hidden; animation: reveal 0s 2.5s forwards; }
+  @keyframes reveal { to { visibility: visible; } }
+
+  .pal { display: none; }
+  html[data-card="pal"] .flipper { display: none; }
+  html[data-card="pal"] .pal { display: block; }
+
+  /* ---------- PAL card ----------
+     A replica of her Philippine Airlines card (3.5 x 2 in). Every position
+     below is in the original's points (viewBox 252 x 144), so the SVG scales
+     it whole. On a screen wider than the card's 1.75:1, the art stays centred
+     and the gradient and stripe run on past the edges. */
+
+  html[data-card="pal"],
+  html[data-card="pal"] body { background: #03123c; }
+
+  .pal {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: #0131c9 url("pal-bg.webp") center / cover no-repeat;
+    box-shadow: 0 22px 60px rgba(0, 0, 0, .45);
+  }
+  .pal svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .pal text {
+    font-family: var(--sans);
+    font-weight: 400;
+    fill: #fff;
+  }
+  .pal .pal-name { font-weight: 700; }
+  .pal .pal-save text { font-weight: 500; }
+
+  .pal a { cursor: pointer; }
+  .pal .hit { fill: transparent; }
+  .pal a:hover text, .pal a:focus-visible text { fill: #d9e6ff; }
+  .pal a:focus-visible { outline: none; }
+  .pal a:focus-visible .hit { stroke: #fff; stroke-width: .35; }
+  .pal .pal-save rect.btn { fill: rgba(255, 255, 255, .1); stroke: #fff; stroke-width: .4; }
+  .pal .pal-save:hover rect.btn, .pal .pal-save:focus-visible rect.btn { fill: rgba(255, 255, 255, .22); }
+
+  html[data-card="pal"] .turn { color: rgba(255, 255, 255, .6); }
+
+  /* A narrow desktop window keeps the PAL card landscape. */
+  @media (max-width: 700px) and (pointer: fine) {
+    html[data-card="pal"] .scene { max-width: 830px; aspect-ratio: 1.75; }
+  }
+
+  /* ---------- owner switch (Jeyan's phone only) ---------- */
+
+  .owner {
+    position: fixed;
+    left: 50%;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 4px 4px 14px;
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 999px;
+    background: rgba(8, 10, 18, .72);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .owner[hidden] { display: none; }
+  .owner .label { color: rgba(255, 255, 255, .7); }
+  .owner .seg { display: flex; padding: 2px; border-radius: 999px; background: rgba(255, 255, 255, .1); }
+  .owner .seg button {
+    font: inherit;
+    font-weight: 600;
+    color: rgba(255, 255, 255, .78);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 6px 13px;
+    cursor: pointer;
+  }
+  .owner .seg button[aria-pressed="true"] { background: #fff; color: #0b0b0c; }
+  .owner .seg button:focus-visible { outline: 1px solid #fff; outline-offset: 2px; }
+  .owner .status { position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); color: #fff; font-weight: 400; font-size: 10.5px; text-shadow: 0 1px 6px rgba(0, 0, 0, .8); }
+  .owner .status:empty { display: none; }
+
+  /* Leave the switch its own strip below the card. */
+  html.owner-on body { padding-bottom: 76px; }
+  html.owner-on .turn { display: none; }
+  @media (orientation: landscape) and (max-height: 560px) and (pointer: coarse) {
+    html.owner-on body { padding-bottom: 54px; }
+    html.owner-on .stage { height: calc(100dvh - 66px); }
+  }
 </style>
 </head>
 <body>
@@ -489,7 +635,68 @@
       </section>
 
     </div>
+
+    <section class="pal" id="palCard" aria-label="Jeyan C. Santioque, Philippine Airlines">
+      <svg viewBox="0 0 252 144" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
+        <!-- The stripe, extended past the card so wider screens never show a cut end. -->
+        <path d="M236.098 -27.014 -90.656 260 -72.052 260 217.663 6.368 198.727 108.815 440 -100.132 440 -119.003 217.837 75.326Z" fill="#fff" fill-opacity=".14"/>
+      </svg>
+
+      <svg viewBox="0 0 252 144" preserveAspectRatio="xMidYMid meet">
+        <!-- "Jeyan" in Roustel, as outlines taken from the card's PDF. -->
+        <g fill="#fff" aria-hidden="true">
+          <path transform="matrix(26.2457 0 0 -26.6625 13.8721 27.124)" d="M.062-.1963C.048-.1963  .0332-.1946  .0175-.1913  .0018-.188-.0128-.1823-.0265-.1743-.0402-.1663-.0515-.1558-.0605-.1428-.0695-.1298-.0747-.1139-.076-.0953-.078-.0733-.0688-.0521-.0485-.0318-.0282-.0114-.0015  .0076  .0315  .0252  .0645  .0429  .1015  .0591  .1425  .0737  .1835  .0884  .2238  .1014  .2635  .1127  .3032  .1241  .3398  .1336  .3735  .1413  .4072  .1489  .4333  .1541  .452  .1568  .4613  .1688  .4757  .1878  .495  .2138  .5143  .2398  .536  .2694  .56  .3028  .584  .3361  .6087  .3714  .634  .4088  .6593  .4461  .6823  .4815  .703  .5148  .7237  .5481  .7405  .5778  .7535  .6038  .7665  .6298  .7727  .6488  .772  .6608  .7707  .6668  .7668  .6705  .7605  .6718  .7542  .6732  .7483  .6738  .743  .6738  .7283  .6738  .7085  .671  .6835  .6653  .6585  .6597  .6312  .652  .6015  .6423  .5718  .6327  .5413  .6215  .51  .6088  .4787  .5962  .4492  .5832  .4215  .5698  .3938  .5565  .3697  .543  .349  .5293  .3283  .5157  .3137  .5032  .305  .4918  .3117  .4892  .3182  .4852  .3245  .4798  .3308  .4745  .3347  .4672  .336  .4578  .3373  .4492  .3347  .4448  .328  .4448  .3213  .4448  .314  .4467  .306  .4503  .298  .454  .2908  .4587  .2845  .4643  .2782  .47  .2727  .4765  .268  .4838  .2633  .4912  .261  .4982  .261  .5048  .2603  .5182  .2693  .5328  .288  .5488  .3067  .5648  .3308  .581  .3605  .5973  .3902  .6137  .4233  .6297  .46  .6453  .4967  .661  .5327  .675  .568  .6872  .6033  .6995  .6355  .7093  .6645  .7166  .6935  .7239  .7153  .7275  .73  .7275  .7553  .7275  .7738  .7212  .7855  .7085  .7972  .6959  .8037  .6772  .805  .6526  .8063  .6366  .802  .6151  .792  .5881  .782  .5611  .7685  .5314  .7515  .4991  .7345  .4668  .7153  .4334  .694  .3991  .6727  .3648  .6517  .3321  .631  .3011  .6103  .2701  .5912  .2426  .5735  .2186  .5558  .1946  .5417  .1766  .531  .1646  .5403  .162  .55  .1608  .56  .1611  .57  .1615  .5793  .1608  .588  .1591  .5967  .1575  .604  .154  .61  .1487  .616  .1433  .6193  .134  .62  .1207  .6207  .1186  .6203  .117  .619  .1156  .6163  .1143  .6133  .1135  .61  .1131  .6067  .1128  .6037  .1127  .601  .1127  .5883  .1127  .576  .113  .564  .1136  .552  .1143  .5397  .1147  .527  .1147  .521  .1147  .5148  .1147  .5085  .1147  .5022  .1147  .4957  .114  .489  .1127  .4737  .0953  .4562  .0757  .4365  .0537  .4168  .0317  .3953  .0092  .372-.0138  .3487-.0368  .3242-.0591  .2985-.0808  .2728-.1025  .2468-.122  .2205-.1393  .1942-.1566  .1675-.1705  .1405-.1808  .1135-.1911  .0873-.1963  .062-.1963M.022-.1523C.0573-.1523  .0927-.1438  .128-.1268  .1633-.1098  .1973-.0888  .23-.0638  .2627-.0388  .2933-.0117  .322  .0176  .3507  .047  .376  .0736  .398  .0977  .3867  .095  .368  .09  .342  .0826  .316  .0753  .2868  .0662  .2545  .0551  .2222  .0441  .189  .032  .155  .0186  .121  .0053  .09-.0089  .062-.0238  .034-.0389  .0112-.0542-.0065-.0699-.0242-.0855-.0323-.1007-.031-.1154-.0297-.1287-.023-.1382-.011-.1438  .001-.1495  .012-.1523  .022-.1523Z"/>
+          <path transform="matrix(26.2457 0 0 -26.6625 30.8006 27.124)" d="M.04  .0697C.04  .0977  .0483  .1271  .065  .1578  .0817  .1885  .1027  .2167  .128  .2424  .1533  .2682  .1813  .2892  .212  .3055  .2427  .3219  .272  .3301  .3  .3301  .32  .3301  .3338  .3229  .3415  .3085  .3492  .2942  .353  .279  .353  .263  .353  .2443  .3443  .2257  .327  .2074  .3097  .189  .2887  .1728  .264  .1588  .2393  .1447  .2137  .1334  .187  .1247  .1603  .116  .1377  .1117  .119  .1117  .1157  .1117  .1123  .1117  .109  .1117  .1057  .1117  .1027  .1124  .1  .1137  .098  .1097  .096  .1048  .094  .0992  .092  .0935  .0902  .0876  .0885  .0816  .0868  .0756  .0855  .07  .0845  .0646  .0835  .0593  .083  .0553  .083  .0526  .083  .0306  .0947  .0195  .118  .0195  .1373  .0195  .1605  .0245  .1875  .0345  .2145  .0445  .2428  .057  .2725  .072  .3022  .087  .3317  .1034  .361  .121  .3903  .1387  .4167  .155  .44  .17  .4633  .185  .4827  .1975  .498  .2075  .5133  .2175  .5217  .2225  .523  .2225  .5303  .2225  .538  .2197  .546  .214  .554  .2084  .558  .2012  .558  .1925  .558  .1879  .5498  .1792  .5335  .1665  .5172  .1539  .496  .1395  .47  .1235  .444  .1075  .4152  .0909  .3835  .0735  .3518  .0562  .3203  .0404  .289  .026  .2577  .0117  .2285-.0001  .2015-.0094  .1745-.0188  .153-.0234  .137-.0234  .1263-.0234  .1152-.0211  .1035-.0164  .0918-.0117  .0813-.0054  .072  .0026  .0627  .0106  .055  .0203  .049  .0316  .043  .043  .04  .0557  .04  .0697M.125  .1572H.131C.1457  .1572  .1612  .1604  .1775  .1668  .1938  .1732  .2097  .1811  .225  .1905  .2403  .1999  .2547  .2101  .268  .2212  .2813  .2323  .2922  .2425  .3005  .2519  .3088  .2613  .3142  .2692  .3165  .2756  .3188  .282  .3167  .2852  .31  .2852  .2927  .2852  .2753  .2816  .258  .2746  .2407  .2675  .224  .2585  .208  .2474  .192  .2363  .1773  .2237  .164  .2096  .1507  .1955  .1393  .1814  .13  .1673L.125  .1572Z"/>
+          <path transform="matrix(26.2457 0 0 -26.6625 41.6401 27.124)" d="M-.053-.3252C-.0663-.3252-.0797-.3235-.093-.3202-.1063-.3169-.1187-.3115-.13-.3042-.1413-.2968-.1505-.2878-.1575-.2772-.1645-.2665-.168-.2535-.168-.2382-.168-.2155-.1588-.1933-.1405-.1716-.1222-.15-.0987-.129-.07-.1086-.0413-.0883-.0092-.069  .0265-.0506  .0622-.0323  .0977-.0154  .133-.0001  .1683  .0152  .2015  .0289  .2325  .0409  .2635  .0529  .2883  .0626  .307  .0699  .3163  .0926  .3247  .1149  .332  .1369  .3393  .1589  .3497  .1799  .363  .2  .3483  .1906  .3302  .1776  .3085  .1609  .2868  .1442  .2642  .1276  .2405  .1109  .2168  .0942  .1935  .0798  .1705  .0678  .1475  .0558  .1273  .0498  .11  .0498  .0967  .0498  .0833  .0541  .07  .0628  .0567  .0715  .05  .0838  .05  .0999  .05  .1052  .0523  .1137  .057  .1254  .0617  .1371  .0675  .1499  .0745  .1639  .0815  .1779  .0897  .1924  .099  .2075  .1083  .2225  .1175  .236  .1265  .248  .1355  .26  .1442  .27  .1525  .278  .1608  .286  .1677  .29  .173  .29  .1803  .29  .1867  .2874  .192  .282  .1973  .2767  .2  .2704  .2  .263  .1927  .2523  .1837  .24  .173  .226  .1623  .212  .1518  .1974  .1415  .1824  .1312  .1674  .1218  .1526  .1135  .1379  .1052  .1232  .099  .1099  .095  .0978L.1  .0928C.118  .0968  .1395  .1069  .1645  .1229  .1895  .1389  .2152  .1564  .2415  .1754  .2678  .1944  .294  .2133  .32  .232  .346  .2507  .3693  .265  .39  .275  .3993  .2737  .4072  .2699  .4135  .2635  .4198  .2572  .423  .2493  .423  .24  .423  .2333  .421  .2231  .417  .2095  .413  .1958  .408  .1811  .402  .1654  .396  .1497  .3898  .1345  .3835  .1199  .3772  .1052  .372  .0932  .368  .0838  .406  .1012  .4453  .121  .486  .1433  .5267  .1657  .5623  .1895  .593  .2148  .5957  .2162  .5973  .2178  .598  .2198  .5987  .2218  .6003  .2228  .603  .2228  .6103  .2228  .6172  .2205  .6235  .2158  .6298  .2112  .633  .2042  .633  .1948  .633  .1935  .6325  .1918  .6315  .1898  .6305  .1878  .63  .1862  .63  .1848  .6127  .1688  .5918  .1528  .5675  .1368  .5432  .1208  .5177  .1057  .491  .0913  .4643  .077  .4377  .0637  .411  .0513  .3843  .039  .3593  .0278  .336  .0178  .316-.0182  .2917-.0563  .263-.0967  .2343-.137  .203-.1742  .169-.2082  .135-.2422  .099-.2702  .061-.2922  .023-.3142-.015-.3252-.053-.3252M-.123-.24C-.123-.2566-.1177-.2696-.107-.279-.0963-.2883-.0833-.293-.068-.293-.05-.293-.0307-.2883-.01-.279  .0107-.2696  .0317-.2571  .053-.2415  .0743-.2258  .0958-.2078  .1175-.1875  .1392-.1671  .1597-.1458  .179-.1235  .1983-.1011  .2163-.0788  .233-.0565  .2497-.0341  .264-.0133  .276  .006  .2567-.0013  .2332-.0103  .2055-.021  .1778-.0316  .1493-.0435  .12-.0565  .0907-.0695  .0615-.0835  .0325-.0985  .0035-.1135-.0225-.1288-.0455-.1445-.0685-.1601-.0872-.1761-.1015-.1925-.1158-.2088-.123-.2246-.123-.24Z"/>
+          <path transform="matrix(26.2457 0 0 -26.6625 54.5004 27.124)" d="M.01  .0378C.01  .0544  .014  .0733  .022  .0943  .03  .1153  .0408  .1367  .0545  .1584  .0682  .1801  .0838  .2011  .1015  .2215  .1192  .2418  .1375  .2602  .1565  .2765  .1755  .2929  .1947  .3059  .214  .3156  .2333  .3252  .2513  .3301  .268  .3301  .284  .3301  .2972  .3271  .3075  .3211  .3178  .315  .3287  .3064  .34  .295  .3413  .2957  .3438  .2972  .3475  .2995  .3512  .3019  .3553  .3042  .36  .3065  .3647  .3089  .3688  .3109  .3725  .3125  .3762  .3142  .3787  .315  .38  .315  .3873  .315  .3942  .3115  .4005  .3045  .4068  .2975  .41  .2903  .41  .283V.28C.398  .2673  .3847  .2522  .37  .2349  .3553  .2175  .3408  .1993  .3265  .1803  .3122  .1612  .2987  .1425  .286  .1241  .2733  .1058  .2627  .0891  .254  .074  .2453  .059  .2395  .047  .2365  .0379  .2335  .0289  .2347  .0244  .24  .0244  .2453  .0244  .2542  .0274  .2665  .0334  .2788  .0394  .2932  .0473  .3095  .0569  .3258  .0666  .3432  .0774  .3615  .0894  .3798  .1014  .3977  .1133  .415  .1249  .4323  .1366  .4478  .1474  .4615  .1574  .4752  .1674  .4857  .1758  .493  .1824  .495  .1838  .4982  .1866  .5025  .1909  .5068  .1953  .5115  .1998  .5165  .2044  .5215  .2091  .526  .2133  .53  .2169  .534  .2206  .5367  .2224  .538  .2224  .5453  .2224  .5525  .2196  .5595  .2139  .5665  .2082  .57  .2018  .57  .1944  .57  .1851  .563  .1733  .549  .1589  .535  .1446  .517  .1291  .495  .1124  .473  .0957  .4487  .0791  .422  .0624  .3953  .0457  .3693  .0306  .344  .017  .3187  .0034  .2957-.0076  .275-.0159  .2543-.0242  .2393-.0283  .23-.0283  .2187-.0283  .2088-.0226  .2005-.0113  .1922  .0001  .188  .0114  .188  .0227  .188  .0301  .1897  .0396  .193  .0513  .1963  .0629  .2007  .0735  .206  .0828  .196  .0761  .1842  .0673  .1705  .0563  .1568  .0453  .1428  .0346  .1285  .0242  .1142  .0139  .1007  .0051  .088-.0023  .0753-.0096  .0653-.0133  .058-.0133  .052-.0133  .0462-.0118  .0405-.0088  .0348-.0058  .0298-.0018  .0255  .0032  .0212  .0082  .0175  .0137  .0145  .0197  .0115  .0257  .01  .0317  .01  .0378M.065  .0452C.069  .0452  .0778  .0499  .0915  .0592  .1052  .0685  .1208  .0804  .1385  .0947  .1562  .109  .1748  .1249  .1945  .1422  .2142  .1595  .2322  .1765  .2485  .1932  .2648  .2099  .2783  .2252  .289  .2392  .2997  .2532  .305  .2639  .305  .2712  .305  .2772  .302  .2807  .296  .2817  .29  .2827  .2857  .2832  .283  .2832  .2717  .2832  .2583  .2789  .243  .2702  .2277  .2615  .212  .2502  .196  .2362  .18  .2222  .1642  .2064  .1485  .1887  .1328  .171  .1188  .1534  .1065  .1357  .0942  .118  .0842  .1012  .0765  .0852  .0688  .0692  .065  .0559  .065  .0452Z"/>
+          <path transform="matrix(26.2457 0 0 -26.6625 65.7336 27.124)" d="M-.033-.0027C-.033  .002-.0282  .013-.0185  .0303-.0088  .0476  .0035  .0679  .0185  .0913  .0335  .1146  .0498  .1394  .0675  .1658  .0852  .1921  .102  .2161  .118  .2378  .134  .2594  .148  .2774  .16  .2918  .172  .3061  .1797  .3133  .183  .3133  .189  .3133  .1955  .3094  .2025  .3018  .2095  .2941  .213  .2869  .213  .2803  .213  .2783  .2088  .2711  .2005  .2588  .1922  .2464  .1825  .2326  .1715  .2173  .1605  .2019  .15  .1876  .14  .1743  .13  .1609  .1233  .1523  .12  .1483  .1253  .1529  .1335  .1599  .1445  .1693  .1555  .1786  .1682  .1889  .1825  .2003  .1968  .2116  .2118  .2234  .2275  .2358  .2432  .2481  .2583  .2593  .273  .2693  .2877  .2793  .301  .2874  .313  .2938  .325  .3001  .334  .3033  .34  .3033  .3493  .3033  .3583  .2988  .367  .2898  .3757  .2808  .38  .2719  .38  .2633  .38  .2566  .3773  .2463  .372  .2323  .3667  .2183  .3602  .2026  .3525  .1853  .3448  .1679  .3368  .1501  .3285  .1318  .3202  .1134  .313  .0968  .307  .0818  .301  .0668  .2968  .0544  .2945  .0448  .2922  .0351  .2933  .0303  .298  .0303  .3033  .0303  .3115  .0338  .3225  .0408  .3335  .0478  .346  .0568  .36  .0678  .374  .0788  .389  .0911  .405  .1048  .421  .1184  .4368  .1323  .4525  .1463  .4682  .1603  .483  .1738  .497  .1868  .511  .1998  .523  .2109  .533  .2203  .535  .2223  .5377  .2233  .541  .2233  .547  .2233  .5533  .2203  .56  .2143  .5667  .2083  .57  .2013  .57  .1933  .57  .1886  .5643  .1801  .553  .1678  .5417  .1554  .5272  .1416  .5095  .1263  .4918  .1109  .4723  .0949  .451  .0783  .4297  .0616  .4087  .0464  .388  .0328  .3673  .0191  .3485  .0078  .3315-.0012  .3145-.0102  .3017-.0146  .293-.0146  .2803-.0146  .2683-.0098  .257-.0002  .2457  .0095  .24  .0206  .24  .0333  .24  .0413  .243  .0538  .249  .0708  .255  .0878  .2622  .1064  .2705  .1268  .2788  .1471  .2877  .1674  .297  .1878  .3063  .2081  .314  .2249  .32  .2383  .2967  .2223  .2712  .2039  .2435  .1833  .2158  .1626  .1883  .1406  .161  .1173  .1337  .0939  .1075  .0698  .0825  .0448  .0575  .0198  .036-.005  .018-.0296L.005-.0327C-.0123-.03-.025-.02-.033-.0027Z"/>
+        </g>
+
+        <text class="pal-name" transform="matrix(.98225 0 0 1 16.3438 47.0825)" font-size="12">Jeyan C. Santioque, REB, REA</text>
+        <text font-size="6.7">
+          <tspan x="16.338" y="54.998">Associate</tspan>
+          <tspan x="16.338" y="63.038">Flight Support Procurement Division</tspan>
+          <tspan x="16.338" y="71.078">Aircraft Operations &amp; Inflight Procurement Sub-Department</tspan>
+          <tspan x="16.338" y="79.118">Procurement and Logistics Department</tspan>
+        </text>
+
+        <line x1="16.21" y1="84.096" x2="235.991" y2="84.096" stroke="#fff" stroke-width=".55"/>
+
+        <a href="tel:+639171624139" aria-label="Call +63 917 162 4139">
+          <rect class="hit" x="14" y="88.4" width="76" height="12.6" rx="1.5"/>
+          <path fill="#fff" d="M24.497 99.083L24.405 99.146C23.960 99.451 23.415 99.557 22.892 99.415C22.008 99.182 20.565 98.573 18.953 96.962C17.334 95.342 16.726 93.899 16.493 93.016C16.358 92.500 16.457 91.947 16.761 91.503L16.825 91.411C17.150 90.943 17.532 90.533 17.985 90.181L18.267 89.968C18.571 89.734 19.017 89.812 19.215 90.151L20.353 92.139C20.509 92.394 20.459 92.726 20.247 92.937L19.675 93.511C19.675 93.511 19.462 94.062 20.657 95.257C21.852 96.453 22.404 96.239 22.404 96.239L22.977 95.668C23.189 95.455 23.521 95.405 23.776 95.562L25.763 96.699C26.095 96.891 26.180 97.343 25.947 97.647L25.727 97.923C25.374 98.376 24.971 98.765 24.497 99.083Z"/>
+          <text x="32.334" y="97.584" font-size="6.3">+63 917 162 4139</text>
+        </a>
+
+        <a href="mailto:jeyan_santioque@pal.com.ph" aria-label="Email jeyan_santioque@pal.com.ph">
+          <rect class="hit" x="14" y="104" width="113" height="12" rx="1.5"/>
+          <path fill="#fff" d="M21.749 110.854L26.005 108.046C26.826 107.504 26.442 106.227 25.459 106.227L17.205 106.227C16.221 106.227 15.837 107.504 16.658 108.046L20.914 110.854C21.167 111.021 21.496 111.021 21.749 110.854M26.433 108.477L26.433 113.048C26.433 113.622 25.968 114.087 25.395 114.087L17.272 114.087C16.698 114.087 16.233 113.622 16.233 113.048L16.233 108.477C16.263 108.507 16.293 108.527 16.323 108.547L20.583 111.356C20.803 111.507 21.063 111.577 21.333 111.577C21.593 111.577 21.853 111.507 22.083 111.356L26.333 108.547C26.373 108.527 26.403 108.497 26.433 108.477Z"/>
+          <text x="32.334" y="112.288" font-size="6.3">jeyan_santioque@pal.com.ph</text>
+        </a>
+
+        <!-- Not on the printed card: a tap-to-save for people who tap her tag. -->
+        <a class="pal-save" href="jeyan-pal.vcf" aria-label="Save Jeyan's contact">
+          <rect class="btn" x="188" y="96.2" width="48" height="12" rx="6"/>
+          <text x="212" y="103.95" font-size="5" text-anchor="middle">Save contact</text>
+        </a>
+
+        <text transform="matrix(.99018 0 0 1 126 131.995)" font-size="4.3812" text-anchor="middle">PAL Gate 1-A, Andrews Avenue, Pasay City, Philippines 1300</text>
+        <a href="https://www.philippineairlines.com" target="_blank" rel="noopener">
+          <rect class="hit" x="93" y="133.3" width="66" height="5.9" rx="1"/>
+          <text transform="matrix(.99018 0 0 1 126 137.353)" font-size="4.3812" text-anchor="middle">www.philippineairlines.com</text>
+        </a>
+      </svg>
+    </section>
   </div>
+</div>
+
+<div class="owner" id="owner" hidden>
+  <span class="label">Your tag opens</span>
+  <div class="seg" role="group" aria-label="Card everyone sees when they tap your tag">
+    <button type="button" data-mode="pal" aria-pressed="true">PAL</button>
+    <button type="button" data-mode="personal" aria-pressed="false">Personal</button>
+  </div>
+  <span class="status" id="ownerStatus" role="status" aria-live="polite"></span>
 </div>
 
 <div class="zoom" id="zoom" role="dialog" aria-modal="true" aria-label="Enlarged QR code">
@@ -594,6 +801,123 @@
       setTimeout(function () { btn.textContent = "copy"; }, 2200);
     });
   });
+
+  /* ---------- which card ---------- */
+
+  var MODES = ["pal", "personal"];
+  var DEFAULT_MODE = "pal";
+  var LAST_SEEN = "jeyan-card-mode";
+  var root = document.documentElement;
+  var themeColor = document.querySelector('meta[name="theme-color"]');
+  var owner = document.getElementById("owner");
+  var ownerStatus = document.getElementById("ownerStatus");
+  var ownerButtons = owner.querySelectorAll("button[data-mode]");
+  var current = null;
+
+  function store(name, value) {
+    try {
+      if (value === null) localStorage.removeItem(name);
+      else localStorage.setItem(name, value);
+    } catch (e) {}
+  }
+  function recall(name) {
+    try { return localStorage.getItem(name); } catch (e) { return null; }
+  }
+
+  function applyMode(mode) {
+    if (MODES.indexOf(mode) < 0) mode = DEFAULT_MODE;
+    current = mode;
+    root.setAttribute("data-card", mode);
+    document.title = mode === "pal" ? "Jeyan C. Santioque" : "Jeyan Santioque";
+    themeColor.setAttribute("content", mode === "pal" ? "#062a86" : "#0b0b0c");
+    if (mode === "personal") setFace(false, false);
+    for (var i = 0; i < ownerButtons.length; i++) {
+      ownerButtons[i].setAttribute("aria-pressed", String(ownerButtons[i].dataset.mode === mode));
+    }
+  }
+
+  function reveal() { root.classList.remove("pending"); }
+
+  // Jeyan's choice from card.tomyjeyan.com. If it can't be reached in time,
+  // fall back to the last card this browser saw, then to PAL.
+  var timeout = new Promise(function (resolve) { setTimeout(function () { resolve("timeout"); }, 1500); });
+  Promise.race([cardMode.request, timeout]).then(function (answer) {
+    var mode = answer && answer.mode ? answer.mode : (recall(LAST_SEEN) || DEFAULT_MODE);
+    applyMode(mode);
+    reveal();
+    if (answer && answer.mode) store(LAST_SEEN, answer.mode);
+
+    // Slow network: a late answer still wins.
+    if (answer === "timeout") {
+      cardMode.request.then(function (late) {
+        if (late && late.mode) {
+          store(LAST_SEEN, late.mode);
+          if (late.mode !== current) applyMode(late.mode);
+        }
+        setUpOwner(late);
+      });
+    } else {
+      setUpOwner(answer);
+    }
+  });
+
+  function setUpOwner(answer) {
+    if (!cardMode.key) return;
+    // The Worker said this key is wrong (rotated, or mistyped): forget it.
+    if (answer && answer.owner === false) {
+      store(cardMode.keyStore, null);
+      cardMode.key = null;
+      return;
+    }
+    owner.hidden = false;
+    root.classList.add("owner-on");
+  }
+
+  var saving = false;
+  var statusTimer = null;
+  function say(text, linger) {
+    clearTimeout(statusTimer);
+    ownerStatus.textContent = text;
+    if (linger) statusTimer = setTimeout(function () { ownerStatus.textContent = ""; }, linger);
+  }
+
+  function choose(mode) {
+    if (saving || !cardMode.key || mode === current) return;
+    var previous = current;
+    saving = true;
+    applyMode(mode);
+    say("Saving…");
+    fetch(cardMode.api, {
+      method: "PUT",
+      cache: "no-store",
+      headers: { "Authorization": "Bearer " + cardMode.key, "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: mode })
+    }).then(function (r) {
+      if (r.status === 401) {
+        store(cardMode.keyStore, null);
+        cardMode.key = null;
+        setTimeout(function () {
+          owner.hidden = true;
+          root.classList.remove("owner-on");
+        }, 5000);
+        throw new Error("owner");
+      }
+      if (!r.ok) throw new Error("save");
+      store(LAST_SEEN, mode);
+      say(mode === "pal"
+        ? "Saved. Taps now open your PAL card."
+        : "Saved. Taps now open your personal card.", 4000);
+    }).catch(function (err) {
+      applyMode(previous);
+      say(err.message === "owner"
+        ? "This phone is no longer set up to change the card."
+        : "Not saved. Check your connection and try again.", 5000);
+    }).then(function () { saving = false; });
+  }
+
+  for (var b = 0; b < ownerButtons.length; b++) {
+    ownerButtons[b].addEventListener("click", function () { choose(this.dataset.mode); });
+  }
 </script>
 </body>
 </html>
