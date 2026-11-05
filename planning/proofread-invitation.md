@@ -250,11 +250,11 @@ PRINCIPAL SPONSORS (with gratitude)
 
 BRIDESMAIDS (in dusty rose)
   Abigail Cayabyab-Fereras
-  Adrianne Micaela Manalaotao
   Ceijas-Lyn Y. Tagana
   Denise M. Beltran
   Gemela Marian A. David
   Josett A. Romano
+  Louise Litonjua
   Marielle Joy K. Serania
   Michelle A. Alaras
   Micca Ricka Raphaella T. Cantos
@@ -275,7 +275,7 @@ GROOMSMEN (in sage)
 CEREMONY ROLES
   CANDLE         Julian Christopher A. Lopez   Michelle A. Alaras
   CORD           Christian Dino V. Diñoso      Joana M. Diñoso
-  VEIL           Axl John R. Mirabueno         Adrianne Micaela Manalaotao
+  VEIL           Axl John R. Mirabueno         Louise Litonjua
   BIBLE BEARER   Alvin P. Botabara
   COIN BEARER    Ernesto Luis B. de Dios
   RING BEARER    Seansean B. Aspra
