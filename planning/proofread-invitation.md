@@ -254,7 +254,7 @@ BRIDESMAIDS (in dusty rose)
   Denise M. Beltran
   Gemela Marian A. David
   Josett A. Romano
-  Louise Litonjua
+  Louise C. Litonjua
   Marielle Joy K. Serania
   Michelle A. Alaras
   Micca Ricka Raphaella T. Cantos
@@ -264,7 +264,7 @@ GROOMSMEN (in sage)
   Rom D. Fronda Jr.
   Axl John R. Mirabueno
   Franco Emil B. de Dios
-  Traviz Keinn T. Climacosa
+  Travis Keinn T. Climacosa
   Vaunn C. Maribao
   Michael Ryan F. Somosot
   Julian Christopher A. Lopez
@@ -275,7 +275,7 @@ GROOMSMEN (in sage)
 CEREMONY ROLES
   CANDLE         Julian Christopher A. Lopez   Michelle A. Alaras
   CORD           Christian Dino V. Diñoso      Joana M. Diñoso
-  VEIL           Axl John R. Mirabueno         Louise Litonjua
+  VEIL           Axl John R. Mirabueno         Louise C. Litonjua
   BIBLE BEARER   Alvin P. Botabara
   COIN BEARER    Ernesto Luis B. de Dios
   RING BEARER    Seansean B. Aspra
