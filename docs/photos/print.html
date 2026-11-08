@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Photo QR card · Tommy &amp; Jeyan</title>
+<meta name="robots" content="noindex" />
+<!-- Printable 4R (4 x 6 in) table card for the reception. The QR inside is written
+     by tools/make_photo_qr.py, which checks that it decodes to
+     https://tomyjeyan.com/photos/ before it writes it. Don't paste a code in by
+     hand: rerun the tool. Print: paper 4 x 6 in, margins none, scale 100%. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2316121f'/%3E%3Cellipse cx='16' cy='15' rx='8' ry='10' fill='%23f6dcbe'/%3E%3Cellipse cx='16' cy='24' rx='3' ry='2.4' fill='%23ffefc9'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* Tokens from the invitation (docs/index.html): the paper world, for print */
+:root{
+  --ivory:#fbf9f4;
+  --paper:#fffdfa;
+  --ink:#2e2b27;
+  --soft:#5f584f;
+  --rose-deep:#945a52;
+  --gold:#b8964e;
+  --line:rgba(46,43,39,.14);
+  --serif:'Cormorant Garamond', Georgia, serif;
+  --sans:'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+}
+@page{ size:4in 6in; margin:0; }
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ margin:0; }
+/* dark surround on screen only, so a print never spends ink outside the card */
+@media screen{ html, body{ background:#2a211c; } }
+body{
+  color:var(--ink); font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:20px; padding:28px 16px;
+}
+
+/* On-screen helper, never printed */
+.howto{
+  max-width:384px; color:#f4eddd; font-size:12px; line-height:1.6; text-align:center;
+}
+.howto b{ font-weight:500; }
+.howto button{
+  margin-top:12px; min-height:44px; padding:0 26px; border-radius:999px; cursor:pointer;
+  border:1px solid rgba(244,237,221,.4); background:rgba(244,237,221,.08); color:#f4eddd;
+  font:500 11px/1 var(--sans); letter-spacing:.16em; text-transform:uppercase;
+}
+.howto button:hover{ background:rgba(244,237,221,.16); }
+.howto button:focus-visible{ outline:2px solid #cf9a93; outline-offset:3px; }
+
+/* The card: exactly 4 x 6 in */
+.card{
+  position:relative; width:4in; height:6in; flex:none; overflow:hidden;
+  /* lantern light warming the paper at the top (opaque stops: ivory + 13% amber) */
+  background-color:var(--ivory);
+  background-image:radial-gradient(62% 26% at 50% 9%, #fcecd9, var(--ivory) 100%);
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.6);
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  padding:.3in .36in .28in;
+}
+/* thin gold frame, inset from the trim so a slightly off cut never shows it */
+.card::before{
+  content:""; position:absolute; inset:.14in; border:1px solid rgba(184,150,78,.45);
+  border-radius:12px; pointer-events:none;
+}
+.lans{ display:flex; align-items:flex-end; gap:16px; height:48px; margin-top:2px; }
+.lans svg{ width:31px; height:46px; display:block; }
+.lans svg:last-child{ transform:translateY(-7px); }
+
+.kicker{
+  margin:12px 0 0; font-family:var(--serif); font-style:italic; font-size:16px; line-height:1.2;
+  color:var(--rose-deep);
+}
+h1{
+  margin:4px 0 0; font-family:var(--serif); font-weight:500; font-size:31px; line-height:1.04;
+  letter-spacing:.005em; text-wrap:balance;
+}
+.lede{ margin:9px 0 0; font-size:12px; line-height:1.45; color:var(--soft); max-width:30ch; text-wrap:balance; }
+
+.qr{
+  margin-top:14px; width:2.16in; height:2.16in; flex:none; border-radius:12px;
+  background:var(--paper); border:1px solid var(--line);
+}
+.qr svg{ display:block; width:100%; height:100%; }
+.url{
+  margin:10px 0 0; font-size:11.5px; font-weight:500; letter-spacing:.16em; color:var(--ink);
+}
+
+.foot{ margin-top:auto; }
+.rule{ width:44px; height:1px; margin:0 auto 9px; background:var(--gold); opacity:.7; }
+.names{ margin:0; font-family:var(--serif); font-size:20px; line-height:1.1; }
+.meta{ margin:4px 0 0; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--rose-deep); }
+
+/* ?bare: the card alone, edge to edge (the tool screenshots this for the PNG) */
+html.bare, html.bare body{ background:var(--ivory); }
+html.bare body{ display:block; padding:0; min-height:0; }
+html.bare .howto{ display:none; }
+html.bare .card{ box-shadow:none; }
+
+@media print{
+  body{ display:block; padding:0; min-height:0; }
+  .howto{ display:none; }
+  .card{ box-shadow:none; }
+}
+</style>
+<script>if (/[?&]bare\b/.test(location.search)) document.documentElement.classList.add('bare');</script>
+</head>
+<body>
+
+<div class="howto">
+  <b>Photo QR table card, 4R (4 × 6 in).</b><br />
+  Print at 100% on 4 × 6 in paper with no margins, or take the PNG to a photo shop.
+  The code opens tomyjeyan.com/photos.<br />
+  <button type="button" onclick="window.print()">Print</button>
+</div>
+
+<main class="card">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <radialGradient id="lan-fill" cx="50%" cy="64%" r="60%">
+        <stop offset="0" stop-color="#fff1a8" />
+        <stop offset=".5" stop-color="#ffb84f" />
+        <stop offset="1" stop-color="#c85f18" />
+      </radialGradient>
+      <radialGradient id="lan-halo" cx="50%" cy="50%" r="50%">
+        <stop offset="0" stop-color="#ff9726" stop-opacity=".34" />
+        <stop offset="1" stop-color="#ff9726" stop-opacity="0" />
+      </radialGradient>
+      <g id="lan">
+        <ellipse cx="42" cy="56" rx="42" ry="58" fill="url(#lan-halo)" />
+        <rect x="28" y="-4" width="28" height="7" rx="3.5" fill="#6d331a" />
+        <path d="M28 0h28c13 0 21 12 21 30v28c0 24-12 40-35 40S7 82 7 58V30C7 12 15 0 28 0z"
+              fill="url(#lan-fill)" stroke="#e19a52" stroke-opacity=".7" />
+        <path d="M9 24h66M8 38h68M8 52h68M9 66h66M12 80h60" stroke="#62260c" stroke-opacity=".14" />
+        <rect x="23" y="98" width="38" height="6" rx="3" fill="#6d331a" />
+        <circle cx="42" cy="110" r="5" fill="#ffc955" />
+      </g>
+    </defs>
+  </svg>
+
+  <div class="lans" aria-hidden="true">
+    <svg viewBox="-2 -8 88 128"><use href="#lan" /><text x="42" y="64" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="44" font-weight="500" fill="#5f2c16">T</text></svg>
+    <svg viewBox="-2 -8 88 128"><use href="#lan" /><text x="42" y="64" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="44" font-weight="500" fill="#5f2c16">J</text></svg>
+  </div>
+
+  <p class="kicker">through your eyes</p>
+  <h1>Share the moments you caught</h1>
+  <p class="lede">Scan to add your photos and videos to our shared album.</p>
+
+  <div class="qr"><!-- qr:start --><svg role="img" aria-label="QR code for tomyjeyan.com/photos" shape-rendering="crispEdges" viewBox="0 0 37 37" class="qr-svg"><path stroke="#2e2b27" d="M4 4.5h7m3 0h1m2 0h2m1 0h2m1 0h2m1 0h7m-29 1h1m5 0h1m1 0h3m1 0h2m1 0h1m1 0h2m3 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m1 0h1m7 0h1m1 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m1 0h1m3 0h1m1 0h1m1 0h1m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m1 0h9m2 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m2 0h1m1 0h1m2 0h4m1 0h2m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-18 1h1m1 0h2m1 0h4m-19 1h3m1 0h2m2 0h2m6 0h1m8 0h2m-28 1h1m1 0h1m5 0h1m1 0h1m1 0h2m1 0h1m1 0h4m1 0h5m1 0h1m-28 1h1m3 0h2m1 0h2m1 0h4m2 0h1m2 0h1m1 0h1m1 0h1m2 0h1m-27 1h5m1 0h1m5 0h3m2 0h3m2 0h2m3 0h1m-29 1h1m1 0h2m2 0h3m1 0h4m1 0h3m3 0h1m1 0h1m2 0h3m-26 1h3m1 0h1m2 0h1m1 0h1m2 0h1m3 0h1m2 0h2m1 0h2m1 0h1m-28 1h4m1 0h1m1 0h3m3 0h2m1 0h3m2 0h4m2 0h1m-29 1h1m2 0h1m4 0h1m1 0h1m2 0h3m4 0h2m2 0h2m1 0h2m-29 1h3m1 0h5m5 0h4m3 0h1m1 0h3m1 0h2m-28 1h1m2 0h1m2 0h2m2 0h2m3 0h2m2 0h1m4 0h1m-26 1h1m5 0h4m2 0h2m1 0h4m1 0h1m1 0h5m-25 1h4m2 0h1m1 0h1m1 0h3m2 0h1m1 0h1m1 0h2m1 0h4m-27 1h2m1 0h1m1 0h1m4 0h3m2 0h3m1 0h8m-20 1h1m3 0h3m1 0h1m1 0h3m3 0h2m1 0h2m-29 1h7m4 0h4m1 0h2m1 0h2m1 0h1m1 0h1m1 0h2m-28 1h1m5 0h1m1 0h3m1 0h1m3 0h1m3 0h1m3 0h1m2 0h2m-29 1h1m1 0h3m1 0h1m3 0h1m1 0h1m5 0h1m1 0h8m-28 1h1m1 0h3m1 0h1m1 0h3m1 0h3m1 0h2m1 0h1m4 0h2m1 0h1m-28 1h1m1 0h3m1 0h1m1 0h3m2 0h4m1 0h1m1 0h1m2 0h1m2 0h1m1 0h1m-29 1h1m5 0h1m1 0h2m2 0h1m1 0h1m1 0h1m3 0h3m1 0h2m1 0h1m-28 1h7m2 0h1m1 0h1m2 0h3m1 0h3m2 0h1m3 0h1"/></svg><!-- qr:end --></div>
+  <p class="url">tomyjeyan.com/photos</p>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <p class="names">Tommy &amp; Jeyan</p>
+    <p class="meta">December 27, 2026 · #ToMyJeyan</p>
+  </div>
+</main>
+
+</body>
+</html>

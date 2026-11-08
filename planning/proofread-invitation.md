@@ -354,6 +354,11 @@ Q: Are children invited?
 A: We love your little ones. Seats are limited, so please include everyone
    joining you by name in your RSVP so we can plan their places with care.
 
+Q: Where can we share our photos and videos?
+A: We'd love to see them. Scan the photo code at the reception, or open
+   tomyjeyan.com/photos. The shared album opens on the day, and everything you
+   add lands in one place for us to keep.
+
 STILL NEED US? THE HELP DESK
 Questions about seats, directions, or the day itself? Our crew is happy to help.
 
@@ -384,6 +389,50 @@ Save-the-Date Film  Watch our short film
 ```
 Sunday, December 27, 2026 — save the date.
 FILMED & EDITED WITH LOVE BY AXL JOHN R. MIRABUENO
+```
+
+---
+
+# Photo sharing (added November 8, 2026)
+
+Not part of the invitation itself: the page the photo QR opens, and the printed
+table card. Same rule, mark anything wrong and send me the list.
+
+## tomyjeyan.com/photos
+
+```
+through your eyes
+Share the moments you caught
+Every photo and video you add lands in one shared album, so we can relive the
+day the way you saw it. Candid, blurry, mid-laugh: all of it is welcome.
+
+OPEN OUR ALBUM
+(until the album link is set:) The album opens on our wedding day, December 27.
+Come back to this page then and it will take you straight there.
+
+HOW TO ADD YOURS
+1  Tap Open our album, above.
+2  Tap Add photos, the picture icon with a plus. If it asks, sign in with your
+   Google account.
+3  Pick your photos and videos, as many as you like, and confirm.
+Videos take a little longer. Keep your screen on until the upload finishes.
+
+NO GOOGLE ACCOUNT?
+Send them to us on our socials, or post them with #ToMyJeyan so we can find them.
+
+Tommy & Jeyan · DECEMBER 27, 2026 · Back to our invitation
+```
+
+## Photo QR table card (4R)
+
+```
+through your eyes
+Share the moments you caught
+Scan to add your photos and videos to our shared album.
+[QR code]
+tomyjeyan.com/photos
+Tommy & Jeyan
+DECEMBER 27, 2026 · #TOMYJEYAN
 ```
 
 ---

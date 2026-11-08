@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Share your photos &amp; videos · Tommy &amp; Jeyan</title>
+<meta name="description" content="Add your photos and videos from Tommy &amp; Jeyan's wedding to our shared album. #ToMyJeyan" />
+<!-- The printed photo QR codes open this page. Keep it at /photos/ for good:
+     the album link lives here, not in the code, so it can change without
+     reprinting anything. -->
+<link rel="canonical" href="https://tomyjeyan.com/photos/" />
+<meta name="robots" content="noindex" />
+<meta property="og:site_name" content="Tommy &amp; Jeyan · #ToMyJeyan" />
+<meta property="og:title" content="Share your photos &amp; videos · Tommy &amp; Jeyan" />
+<meta property="og:description" content="Every photo and video you add lands in one shared album for us to keep. #ToMyJeyan" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="en_PH" />
+<meta property="og:url" content="https://tomyjeyan.com/photos/" />
+<meta property="og:image" content="https://tomyjeyan.com/images/og-image.jpg?v=3" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Tommy and Jeyan hand in hand beneath a canopy of glowing lanterns." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="theme-color" content="#090706" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2316121f'/%3E%3Cellipse cx='16' cy='15' rx='8' ry='10' fill='%23f6dcbe'/%3E%3Cellipse cx='16' cy='24' rx='3' ry='2.4' fill='%23ffefc9'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* Tokens from the invitation (docs/index.html) */
+:root{
+  --night-deep:#050403;
+  --night:#090706;
+  --dusk:#1b1110;
+  --ivory:#fbf9f4;
+  --paper:#fffdfa;
+  --ink:#2e2b27;
+  --soft:#5f584f;
+  --moon:#f4eddd;
+  --moon-soft:rgba(244,237,221,.82);
+  --sage-deep:#566848;
+  --rose-light:#cf9a93;
+  --rose-deep:#945a52;
+  --gold-light:#d8bc82;
+  --lan-core:#fff1a8;
+  --lan-mid:#ffb84f;
+  --lan-edge:#c85f18;
+  --lan-glow:255,151,38;
+  --lan-halo:188,74,18;
+  --serif:'Cormorant Garamond', Georgia, serif;
+  --sans:'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --line:rgba(46,43,39,.12);
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{
+  /* Lantern light pooling at the top of a night sky. Dark on purpose: guests
+     open this in a dim reception hall, and a white page would glare. */
+  background:
+    radial-gradient(80% 42% at 50% 0%, rgba(var(--lan-glow),.2), rgba(var(--lan-halo),.06) 55%, transparent 80%),
+    linear-gradient(180deg, var(--dusk) 0%, var(--night) 46%, var(--night-deep) 100%);
+  background-color:var(--night-deep);
+  min-height:100%;
+}
+body{
+  margin:0; color:var(--moon);
+  font-family:var(--sans); font-weight:300; font-size:16px; line-height:1.7;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+h1,h2{ font-family:var(--serif); font-weight:400; line-height:1.08; margin:0; }
+p{ margin:0 0 1em; }
+:focus-visible{ outline:2px solid var(--rose-light); outline-offset:3px; border-radius:4px; }
+
+.wrap{
+  width:100%; max-width:560px; margin:0 auto;
+  padding:calc(36px + env(safe-area-inset-top, 0px)) 16px calc(32px + env(safe-area-inset-bottom, 0px));
+}
+
+/* Two lanterns, T and J: the invitation's lantern component, smaller and still */
+.lans{ display:flex; justify-content:center; align-items:flex-end; gap:30px; height:96px; margin-bottom:26px; }
+.lantern{ position:relative; display:block; width:56px; height:79px; }
+.lantern .body{
+  position:absolute; inset:0 5px 13px 5px; border-radius:30% 30% 36% 36% / 22% 22% 42% 42%;
+  border:1px solid rgba(255,180,90,.46);
+  background:radial-gradient(60% 46% at 50% 64%, var(--lan-core), var(--lan-mid) 50%, var(--lan-edge) 100%) var(--lan-mid);
+  box-shadow:
+    0 0 24px 8px rgba(var(--lan-glow),.55),
+    0 0 70px 24px rgba(var(--lan-halo),.3),
+    inset 0 -8px 16px rgba(132,54,18,.38),
+    inset 0 5px 8px rgba(255,238,170,.5);
+}
+.lantern .body::before{
+  content:""; position:absolute; inset:0; border-radius:inherit;
+  background:repeating-linear-gradient(180deg, transparent 0 9px, rgba(98,38,12,.16) 9px 10px);
+}
+.lantern .crown, .lantern .base{ position:absolute; left:50%; transform:translateX(-50%); background:#6d331a; border-radius:3px; }
+.lantern .crown{ top:-3px; width:19px; height:5px; }
+.lantern .base{ bottom:9px; width:25px; height:4px; }
+.lantern .flame{
+  position:absolute; bottom:1px; left:50%; width:8px; height:8px; transform:translateX(-50%);
+  border-radius:50%;
+  background:radial-gradient(circle, #fff8d8 0%, #ffc955 42%, rgba(255,151,38,0) 75%);
+  box-shadow:0 0 16px 7px rgba(var(--lan-glow),.75);
+}
+/* the letter sits inside the lit body, so it reads against the amber paper */
+.lantern .mono{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:30px; font-weight:500; color:#4a200e;
+  text-shadow:0 1px 0 rgba(255,216,132,.56);
+}
+.lantern.j{ transform:translateY(-14px); }
+
+/* Lit paper against the night, as the invitation's panels are */
+.card{
+  background:var(--paper); color:var(--ink); border-radius:22px;
+  padding:clamp(26px,6vw,40px) clamp(20px,6vw,40px);
+  box-shadow:0 0 120px rgba(207,130,110,.24), 0 40px 90px -24px rgba(0,0,0,.6);
+  text-align:center;
+}
+.kicker{ font-family:var(--serif); font-style:italic; font-size:19px; color:var(--rose-deep); margin:0 0 4px; }
+h1{ font-size:clamp(34px,8.6vw,46px); font-weight:500; color:var(--ink); text-wrap:balance; }
+.lede{ margin:14px auto 0; max-width:40ch; color:var(--soft); font-size:15px; }
+
+.btn{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  width:100%; max-width:340px; min-height:54px; margin:24px auto 0; padding:14px 26px;
+  border-radius:999px; border:1px solid var(--rose-deep);
+  /* rose-deep, not the invitation's --rose: white on --rose is 3.5:1 and fails
+     AA, white on rose-deep is 5.5:1 */
+  background:var(--rose-deep); color:#fff; text-decoration:none;
+  font-family:var(--sans); font-size:13px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+  transition:transform .3s var(--ease), box-shadow .3s var(--ease), background .3s var(--ease);
+  touch-action:manipulation;
+}
+.btn svg{ width:20px; height:20px; flex:none; }
+.btn:hover{ transform:translateY(-2px); background:#7d4a43; box-shadow:0 8px 30px rgba(178,124,117,.45); }
+
+/* Until the album link is set (href without http), the button rests as a dashed
+   placeholder and the "opens on the day" note shows. CSS alone decides this, so
+   the page is right even before the script runs. */
+.soon{ display:none; margin:12px auto 0; max-width:36ch; font-size:13.5px; color:var(--soft); }
+#album:not([href^="http"]){
+  background:transparent; color:var(--soft); border:1px dashed rgba(46,43,39,.34);
+  cursor:default; pointer-events:none; box-shadow:none; transform:none;
+}
+#album:not([href^="http"]) ~ .soon{ display:block; }
+
+.divider{
+  display:flex; align-items:center; gap:12px; margin:30px 0 16px;
+  font-size:11px; font-weight:500; letter-spacing:.24em; text-transform:uppercase; color:var(--sage-deep);
+}
+.divider::before,.divider::after{ content:""; flex:1; height:1px; background:var(--line); }
+
+.steps{ list-style:none; margin:0; padding:0; text-align:left; counter-reset:step; }
+.steps li{
+  position:relative; counter-increment:step;
+  padding:0 0 14px 46px; min-height:34px; font-size:15px; color:var(--soft);
+}
+.steps li::before{
+  content:counter(step); position:absolute; left:0; top:-2px;
+  width:32px; height:32px; border-radius:50%; border:1px solid rgba(148,90,82,.45);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--serif); font-size:19px; font-weight:500; color:var(--rose-deep); background:var(--ivory);
+}
+.steps b{ font-weight:500; color:var(--ink); }
+.tip{
+  margin:6px 0 0; padding:12px 16px; border-radius:14px; background:var(--ivory); border:1px solid var(--line);
+  font-size:13.5px; color:var(--soft); text-align:left;
+}
+.alt{ margin:0; font-size:15px; color:var(--soft); }
+.alt b{ font-weight:500; color:var(--rose-deep); letter-spacing:.02em; }
+
+footer{ margin-top:30px; text-align:center; color:var(--moon-soft); }
+footer .names{ font-family:var(--serif); font-size:24px; color:var(--moon); margin:0; }
+footer .meta{ font-size:11px; letter-spacing:.26em; text-transform:uppercase; color:var(--gold-light); margin:4px 0 0; }
+footer a{ color:var(--moon-soft); font-size:13px; text-underline-offset:3px; }
+footer p:last-child{ margin:14px 0 0; }
+
+@media (prefers-reduced-motion:reduce){
+  .btn{ transition:none; }
+  .btn:hover{ transform:none; }
+}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+  <div class="lans" aria-hidden="true">
+    <span class="lantern"><span class="crown"></span><span class="body"><span class="mono">T</span></span><span class="base"></span><span class="flame"></span></span>
+    <span class="lantern j"><span class="crown"></span><span class="body"><span class="mono">J</span></span><span class="base"></span><span class="flame"></span></span>
+  </div>
+
+  <article class="card">
+    <p class="kicker">through your eyes</p>
+    <h1>Share the moments you caught</h1>
+    <p class="lede">Every photo and video you add lands in one shared album, so we can relive the day the way you saw it. Candid, blurry, mid-laugh: all of it is welcome.</p>
+
+    <!-- THE ALBUM LINK. Paste the shared album's link into href (it must start
+         with https://). While href is empty the button shows as "opens on the
+         day" instead. -->
+    <a class="btn" id="album" href="" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.2l1.1-1.8A1 1 0 0 1 8.6 4.7h6.8a1 1 0 0 1 .8.5L17.3 7h2.2A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.6" r="3.4"/></svg>
+      Open our album
+    </a>
+    <p class="soon" id="album-soon">The album opens on our wedding day, December 27. Come back to this page then and it will take you straight there.</p>
+
+    <div class="divider">How to add yours</div>
+    <ol class="steps">
+      <li>Tap <b>Open our album</b>, above.</li>
+      <li>Tap <b>Add photos</b>, the picture icon with a plus. If it asks, sign in with your Google account.</li>
+      <li>Pick your photos and videos, as many as you like, and confirm.</li>
+    </ol>
+    <p class="tip">Videos take a little longer. Keep your screen on until the upload finishes.</p>
+
+    <div class="divider">No Google account?</div>
+    <p class="alt">Send them to us on our socials, or post them with <b>#ToMyJeyan</b> so we can find them.</p>
+  </article>
+
+  <footer>
+    <p class="names">Tommy &amp; Jeyan</p>
+    <p class="meta">December 27, 2026</p>
+    <p><a href="/">Back to our invitation</a></p>
+  </footer>
+</main>
+
+<script>
+/* Placeholder state for keyboards and screen readers, which CSS can't reach:
+   with no album link yet, the button is announced as unavailable and points at
+   the note explaining when it opens. */
+(function () {
+  var a = document.getElementById('album');
+  if (/^https?:\/\//.test(a.getAttribute('href') || '')) return;
+  a.setAttribute('aria-disabled', 'true');
+  a.setAttribute('aria-describedby', 'album-soon');
+  a.setAttribute('tabindex', '-1');
+  a.removeAttribute('target');
+  a.addEventListener('click', function (e) { e.preventDefault(); });
+})();
+</script>
+</body>
+</html>
