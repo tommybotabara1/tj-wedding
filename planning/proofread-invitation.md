@@ -355,9 +355,10 @@ A: We love your little ones. Seats are limited, so please include everyone
    joining you by name in your RSVP so we can plan their places with care.
 
 Q: Where can we share our photos and videos?
-A: We'd love to see them. Scan the photo code at the reception, or open
-   tomyjeyan.com/photos. The shared album opens on the day, and everything you
-   add lands in one place for us to keep.
+A: We'd love to see them. At the reception, scan the photo code on your table
+   and type the password printed under it, or open tomyjeyan.com/photos. The
+   shared album opens on the day, and everything you add lands in one place for
+   us to keep.
 
 STILL NEED US? THE HELP DESK
 Questions about seats, directions, or the day itself? Our crew is happy to help.
@@ -396,7 +397,8 @@ FILMED & EDITED WITH LOVE BY AXL JOHN R. MIRABUENO
 # Photo sharing (added November 8, 2026)
 
 Not part of the invitation itself: the page the photo QR opens, and the printed
-table card. Same rule, mark anything wrong and send me the list.
+table card. Same rule, mark anything wrong and send me the list. Guest password:
+**ToMyJeyan** (capitals, spaces and a leading # don't matter).
 
 ## tomyjeyan.com/photos
 
@@ -406,6 +408,13 @@ Share the moments you caught
 Every photo and video you add lands in one shared album, so we can relive the
 day the way you saw it. Candid, blurry, mid-laugh: all of it is welcome.
 
+PASSWORD   [box]
+It's printed on the photo card at your table.
+(empty:) Type the password from the photo card at your table.
+(wrong:) That's not quite it. Check the photo card at your table and try again.
+UNLOCK THE ALBUM
+
+(after the right password, and on later visits from the same phone:)
 OPEN OUR ALBUM
 (until the album link is set:) The album opens on our wedding day, December 27.
 Come back to this page then and it will take you straight there.
@@ -428,9 +437,10 @@ Tommy & Jeyan · DECEMBER 27, 2026 · Back to our invitation
 ```
 through your eyes
 Share the moments you caught
-Scan to add your photos and videos to our shared album.
+Scan, type the password, and add your photos and videos to our shared album.
 [QR code]
 tomyjeyan.com/photos
+PASSWORD  ToMyJeyan
 Tommy & Jeyan
 DECEMBER 27, 2026 · #TOMYJEYAN
 ```

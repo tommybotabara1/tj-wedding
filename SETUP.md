@@ -21,10 +21,10 @@ cd tj-wedding
 pip install gspread google-auth google-auth-oauthlib openpyxl
 ```
 
-For the photo QR card (`tools/make_photo_qr.py`):
+For the photo QR card and its password (`tools/make_photo_qr.py`, `tools/set_photo_album.py`):
 
 ```bash
-pip install segno zxing-cpp pillow
+pip install segno zxing-cpp pillow cryptography
 ```
 
 ---

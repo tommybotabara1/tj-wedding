@@ -11,8 +11,11 @@ What it does
   2. Decodes the PNG it just wrote with zxing-cpp and stops if the result is not the
      exact URL. A printed code that doesn't scan is the one failure nobody can fix
      at the reception.
-  3. Writes the code into docs/photos/print.html between the qr:start / qr:end
-     markers, so the printable card always carries the code that was just checked.
+  3. Writes the code into planning/photo-card.html between the qr:start / qr:end
+     markers, so the printable card always carries the code that was just checked,
+     and the guests' password (PASSWORD in set_photo_album.py) between pw:start /
+     pw:end. The card lives in planning/, which never deploys, because it shows
+     the password.
   4. With --render, prints that card to PDF and PNG with headless Chrome, then
      decodes the card PNG as well, so the code is checked in the final layout too.
 
@@ -28,7 +31,7 @@ Usage
   python tools/make_photo_qr.py --render --chrome "C:/Program Files/Google/Chrome/Application/chrome.exe"
 
 Dependencies
-  pip install segno zxing-cpp pillow
+  pip install segno zxing-cpp pillow cryptography
 """
 
 import argparse
@@ -39,12 +42,15 @@ import re
 import shutil
 import subprocess
 import sys
+from html import escape
 from pathlib import Path
 
 import segno
 
+from set_photo_album import PASSWORD
+
 ROOT = Path(__file__).resolve().parent.parent
-PRINT_PAGE = ROOT / "docs" / "photos" / "print.html"
+PRINT_PAGE = ROOT / "planning" / "photo-card.html"
 OUT_DIR = ROOT / ".tmp" / "photo-qr"
 
 # The trailing slash matters: GitHub Pages answers /photos with a redirect to
@@ -59,6 +65,8 @@ DPI_SCALE = 300 / 96
 
 MARK_START = "<!-- qr:start -->"
 MARK_END = "<!-- qr:end -->"
+PW_START = "<!-- pw:start -->"
+PW_END = "<!-- pw:end -->"
 
 
 def build(url):
@@ -98,17 +106,22 @@ def inline_svg(qr):
                        'shape-rendering="crispEdges" ', 1)
 
 
+def fill(html, start, end, content):
+    pattern = re.compile(re.escape(start) + r".*?" + re.escape(end), re.S)
+    if not pattern.search(html):
+        sys.exit(f"  x {PRINT_PAGE.relative_to(ROOT)} has no {start} ... {end} block")
+    return pattern.sub(lambda _: f"{start}{content}{end}", html, count=1)
+
+
 def write_into_page(svg):
     html = PRINT_PAGE.read_text(encoding="utf-8")
-    pattern = re.compile(re.escape(MARK_START) + r".*?" + re.escape(MARK_END), re.S)
-    if not pattern.search(html):
-        sys.exit(f"  x {PRINT_PAGE.relative_to(ROOT)} has no {MARK_START} ... {MARK_END} block")
-    new = pattern.sub(lambda _: f"{MARK_START}{svg}{MARK_END}", html, count=1)
+    new = fill(html, MARK_START, MARK_END, svg)
+    new = fill(new, PW_START, PW_END, escape(PASSWORD))
     if new != html:
         PRINT_PAGE.write_text(new, encoding="utf-8", newline="\n")
-        print(f"  ok wrote the code into {PRINT_PAGE.relative_to(ROOT)}")
+        print(f"  ok wrote the code and the password ({PASSWORD}) into {PRINT_PAGE.relative_to(ROOT)}")
     else:
-        print(f"  ok {PRINT_PAGE.relative_to(ROOT)} already carries this code")
+        print(f"  ok {PRINT_PAGE.relative_to(ROOT)} already carries this code and password ({PASSWORD})")
 
 
 def find_chrome(explicit):
@@ -176,7 +189,7 @@ def main():
     if ARGS.render:
         binary = find_chrome(ARGS.chrome)
         if not binary:
-            sys.exit("  x no Chrome or Edge found. Pass --chrome PATH, or open docs/photos/print.html "
+            sys.exit("  x no Chrome or Edge found. Pass --chrome PATH, or open planning/photo-card.html "
                      "in a browser and Print > Save as PDF (paper 4 x 6 in, margins none).")
         render(binary)
 

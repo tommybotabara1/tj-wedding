@@ -90,7 +90,8 @@
         "rule": "design-system-font",
         "value": "*",
         "files": [
-          "docs/photos/*.html"
+          "docs/photos/*.html",
+          "planning/photo-card.html"
         ],
         "createdAt": "2026-11-08T01:58:59.561Z",
         "reason": "Cormorant Garamond + Montserrat are the invitation's committed type system; these pages belong to the invitation. DESIGN.md still documents the retired cream build"
@@ -99,7 +100,8 @@
         "rule": "overused-font",
         "value": "*",
         "files": [
-          "docs/photos/*.html"
+          "docs/photos/*.html",
+          "planning/photo-card.html"
         ],
         "createdAt": "2026-11-08T01:59:00.100Z",
         "reason": "Montserrat is the invitation's committed body face and these pages match it. Scoped by '*' because Google Fonts findings carry no extractable font name"
@@ -117,7 +119,8 @@
         "rule": "design-system-color",
         "value": "*",
         "files": [
-          "docs/photos/*.html"
+          "docs/photos/*.html",
+          "planning/photo-card.html"
         ],
         "createdAt": "2026-11-08T01:59:01.332Z",
         "reason": "Same stale DESIGN.md as design-system-font; these pages use the invitation's lantern tokens"
@@ -126,7 +129,8 @@
         "rule": "design-system-radius",
         "value": "*",
         "files": [
-          "docs/photos/*.html"
+          "docs/photos/*.html",
+          "planning/photo-card.html"
         ],
         "createdAt": "2026-11-08T01:59:01.880Z",
         "reason": "Same stale DESIGN.md as design-system-font; these pages use the invitation's lantern tokens"
@@ -135,7 +139,8 @@
         "rule": "design-system-font-size",
         "value": "*",
         "files": [
-          "docs/photos/*.html"
+          "docs/photos/*.html",
+          "planning/photo-card.html"
         ],
         "createdAt": "2026-11-08T01:59:02.390Z",
         "reason": "Same stale DESIGN.md as design-system-font; these pages use the invitation's lantern tokens"
