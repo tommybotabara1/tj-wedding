@@ -33,12 +33,14 @@ import { Fail, corsHeaders, json, secretMatches } from './http.js';
 import { makeGoogle, configured } from './google.js';
 import * as upload from './upload.js';
 import * as entries from './entries.js';
+import { makeGemini } from './gemini.js';
+import { runCron } from './checks.js';
 
 export function makeSvc(env) {
   return {
     db: env.DB,
     google: makeGoogle(env),
-    gemini: null, // Task 4
+    gemini: makeGemini(env),
     now: () => Date.now(),
   };
 }
@@ -85,5 +87,10 @@ export async function handle(request, env, ctx, svc) {
 export default {
   async fetch(request, env, ctx) {
     return handle(request, env, ctx, makeSvc(env));
+  },
+
+  // Every minute: retry checks and small copies that didn't happen the first time.
+  async scheduled(controller, env, ctx) {
+    ctx.waitUntil(runCron(env, makeSvc(env)));
   },
 };

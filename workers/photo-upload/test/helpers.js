@@ -109,13 +109,14 @@ export function fakeGoogle() {
   };
 }
 
-/* A stand-in Gemini: verdictFn receives whatever the caller asks to judge and
-   returns the verdict. Every request is kept in calls. */
+/* A stand-in Gemini with the real interface: check({jpeg, moment}). verdictFn
+   gets the same input and returns the verdict; if it throws, the check rejects
+   (use it to simulate a Gemini error). Every request is kept in calls. */
 export function fakeGemini(verdictFn) {
   const calls = [];
   return {
     calls,
-    async judge(input) {
+    async check(input) {
       calls.push(input);
       return verdictFn(input);
     },
