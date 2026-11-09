@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Big screen · Tommy &amp; Jeyan</title>
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#090706" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2316121f'/%3E%3Cellipse cx='16' cy='15' rx='8' ry='10' fill='%23f6dcbe'/%3E%3Cellipse cx='16' cy='24' rx='3' ry='2.4' fill='%23ffefc9'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* Tokens from the photos page (docs/photos/index.html) */
+:root{
+  --night-deep:#050403; --night:#090706; --dusk:#1b1110;
+  --moon:#f4eddd; --moon-soft:rgba(244,237,221,.82);
+  --rose-light:#cf9a93; --rose-deep:#945a52; --gold-light:#d8bc82;
+  --lan-core:#fff1a8; --lan-mid:#ffb84f; --lan-glow:255,151,38; --lan-halo:188,74,18;
+  --serif:'Cormorant Garamond', Georgia, serif;
+  --sans:'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ margin:0; height:100%; overflow:hidden; background:var(--night-deep); }
+body{ color:var(--moon); font-family:var(--sans); font-weight:400; -webkit-font-smoothing:antialiased; }
+:focus-visible{ outline:3px solid var(--rose-light); outline-offset:3px; border-radius:4px; }
+[hidden]{ display:none !important; }
+
+/* A fixed 1920 x 1080 stage, scaled to fit the window and centred. */
+#stage{
+  position:absolute; left:50%; top:50%; width:1920px; height:1080px;
+  transform:translate(-50%,-50%) scale(var(--s,1)); transform-origin:center;
+  overflow:hidden;
+  background:
+    radial-gradient(70% 40% at 50% 0%, rgba(var(--lan-glow),.2), rgba(var(--lan-halo),.06) 55%, transparent 80%),
+    linear-gradient(180deg, var(--dusk) 0%, var(--night) 46%, var(--night-deep) 100%);
+}
+.mode{ position:absolute; inset:0; padding:40px; animation:fade .6s var(--ease) both; }
+@keyframes fade{ from{ opacity:0; } to{ opacity:1; } }
+
+.tile{ position:relative; overflow:hidden; border-radius:14px; background:#1a1311; margin:0; }
+.tile img,.tile video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.tile .cap{
+  position:absolute; left:0; right:0; bottom:0; padding:44px 20px 16px;
+  background:linear-gradient(180deg, transparent, rgba(5,4,3,.88));
+  font-size:24px; line-height:1.25; font-weight:500; color:#fff;
+}
+.tile .cap small{ display:block; font-size:19px; font-weight:400; color:var(--gold-light); margin-top:2px; }
+.tile .play{
+  position:absolute; right:14px; top:14px; width:56px; height:56px; border-radius:50%;
+  background:rgba(5,4,3,.72); border:2px solid #fff;
+}
+.tile .play::after{
+  content:''; position:absolute; left:22px; top:15px; border-left:19px solid #fff;
+  border-top:12px solid transparent; border-bottom:12px solid transparent;
+}
+.tile .num{
+  position:absolute; left:16px; top:16px; min-width:64px; height:64px; padding:0 14px; border-radius:32px;
+  background:var(--rose-deep); color:#fff; font:500 40px/64px var(--serif); text-align:center; font-variant-numeric:lining-nums;
+}
+
+/* Wall */
+#wall .feature{ position:absolute; left:40px; top:40px; width:1060px; height:1000px; }
+#wall .feature .cap{ font-size:40px; padding:80px 32px 28px; }
+#wall .feature .cap small{ font-size:28px; }
+#wall .feature .play{ width:96px; height:96px; right:28px; top:28px; }
+#wall .feature .play::after{ left:38px; top:26px; border-left-width:32px; border-top-width:20px; border-bottom-width:20px; }
+#wall .grid{
+  position:absolute; left:1140px; top:40px; width:740px; height:716px;
+  display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(4,1fr); gap:10px;
+}
+#wall .grid .tile .cap{ font-size:18px; padding:30px 10px 8px; }
+#wall .grid .tile .cap small{ font-size:15px; }
+#wall .grid .tile .play{ width:36px; height:36px; right:8px; top:8px; border-width:2px; }
+#wall .grid .tile .play::after{ left:14px; top:9px; border-left-width:12px; border-top-width:8px; border-bottom-width:8px; }
+.corner{
+  position:absolute; left:1140px; top:780px; width:740px; height:260px;
+  display:flex; align-items:center; gap:28px;
+}
+.corner .qr{ width:220px; height:220px; border-radius:12px; background:#fff; padding:8px; flex:none; }
+.corner .qr img{ width:100%; height:100%; display:block; }
+.tag{ font:italic 400 56px/1.05 var(--serif); color:var(--lan-core); margin:0 0 12px; }
+.share{ font-size:26px; line-height:1.35; color:var(--moon); margin:0; }
+.empty{
+  position:absolute; left:40px; top:0; width:1060px; height:780px; display:flex; align-items:center; justify-content:center; text-align:center;
+  font:400 64px/1.2 var(--serif); color:var(--moon-soft); margin:0;
+}
+
+/* Shortlist */
+h1.big{ font:400 84px/1.05 var(--serif); margin:0; text-align:center; color:var(--moon); }
+.kicker{ text-align:center; font-size:26px; letter-spacing:.28em; text-transform:uppercase; color:var(--gold-light); margin:0 0 14px; font-weight:500; }
+#shortlist .row{
+  position:absolute; left:40px; right:40px; top:200px; height:600px;
+  display:flex; justify-content:center; gap:20px;
+}
+#shortlist .row .tile{ flex:0 0 340px; height:100%; }
+#shortlist .row .tile .cap{ font-size:26px; }
+.foot{ position:absolute; left:40px; right:40px; bottom:40px; height:200px; display:flex; align-items:center; justify-content:center; gap:44px; }
+.foot .qr{ width:190px; height:190px; border-radius:12px; background:#fff; padding:8px; flex:none; }
+.foot .qr img{ width:100%; height:100%; display:block; }
+.foot .vote{ font:500 64px/1.1 var(--serif); color:var(--lan-core); margin:0 0 10px; }
+.foot .count{ font-size:36px; color:var(--moon); margin:0; }
+.head{ position:absolute; left:40px; right:40px; top:40px; }
+
+/* Winner */
+#winner .tile{ position:absolute; left:50%; top:170px; width:1100px; height:690px; transform:translateX(-50%); }
+#winner .name{ position:absolute; left:0; right:0; top:890px; text-align:center; font:400 64px/1.1 var(--serif); color:var(--lan-core); margin:0; }
+#winner .none{ position:absolute; left:0; right:0; top:420px; text-align:center; font:400 80px/1.2 var(--serif); color:var(--moon-soft); margin:0; }
+
+/* Overlays */
+#note{
+  position:fixed; left:50%; bottom:12px; transform:translateX(-50%); z-index:5;
+  background:rgba(5,4,3,.85); color:var(--moon); border:1px solid var(--gold-light);
+  border-radius:999px; padding:6px 22px; font-size:20px; letter-spacing:.04em;
+}
+#fs{
+  position:fixed; right:16px; top:16px; z-index:20; font:500 16px var(--sans); min-height:44px; padding:0 20px;
+  border:0; border-radius:999px; background:var(--rose-deep); color:#fff; cursor:pointer;
+}
+#gate{
+  position:fixed; inset:0; z-index:30; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(180deg, var(--dusk), var(--night-deep));
+}
+#gate form{ width:min(420px,90vw); text-align:center; }
+#gate h1{ font:400 48px/1.1 var(--serif); margin:0 0 18px; }
+#gate label{ display:block; margin-bottom:8px; }
+#gate input{
+  width:100%; font:400 16px var(--sans); min-height:48px; padding:0 16px; border-radius:10px;
+  border:1px solid var(--gold-light); background:rgba(255,255,255,.06); color:var(--moon);
+}
+#gate button{ margin-top:14px; width:100%; min-height:48px; border:0; border-radius:999px; background:var(--rose-deep); color:#fff; font:500 16px var(--sans); cursor:pointer; }
+#gate p{ min-height:1.5em; margin:12px 0 0; color:var(--rose-light); }
+
+@media (prefers-reduced-motion:reduce){ .mode{ animation:none; } }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="note" hidden role="status">Reconnecting…</div>
+<button id="fs" type="button" hidden>Full screen</button>
+<div id="gate" hidden>
+  <form id="gateForm">
+    <h1>Big screen</h1>
+    <label for="pw">Password</label>
+    <input id="pw" type="password" autocomplete="off" autocapitalize="off" />
+    <button type="submit">Show the screen</button>
+    <p id="gateMsg" role="alert"></p>
+  </form>
+</div>
+<script type="module" src="screen.js"></script>
+</body>
+</html>
