@@ -137,7 +137,7 @@ async function guarded(svc, m, allowed, fields) {
   if (!(await updateMomentIf(svc.db, m.id, allowed, fields))) throw new Fail(409, 'wrong-phase');
 }
 
-const CLEAR_BATCH = 12; // practice rows per call, to stay under the subrequest cap
+const CLEAR_BATCH = 6; // practice rows per call, to stay under the free plan's 50 D1 queries per request
 
 const ACTIONS = {
   async screen({ svc, body }) {

@@ -261,15 +261,18 @@ describe('control-page API', () => {
     expect((await act({ action: 'practice-clear' })).status).toBe(409);
   });
 
-  it('practice-clear works in passes of 12 and finishes on the next call', async () => {
+  it('practice-clear works in passes of 6 and finishes on the third call', async () => {
     await act({ action: 'practice-start' });
     for (let i = 0; i < 15; i++) await mk('q' + i, { practice: 1, moment: 'groufie' });
     const first = await (await act({ action: 'practice-clear' })).json();
-    expect(first.clearing).toEqual({ remaining: 3 });
+    expect(first.clearing).toEqual({ remaining: 9 });
     expect(first.settings.practice).toBe(true);
     const second = await (await act({ action: 'practice-clear' })).json();
-    expect(second.clearing).toBeUndefined();
-    expect(second.settings.practice).toBe(false);
+    expect(second.clearing).toEqual({ remaining: 3 });
+    expect(second.settings.practice).toBe(true);
+    const third = await (await act({ action: 'practice-clear' })).json();
+    expect(third.clearing).toBeUndefined();
+    expect(third.settings.practice).toBe(false);
     for (let i = 0; i < 15; i++) {
       expect(await getEntry(env.DB, 'q' + i)).toBeNull();
       expect(google.calls).toContainEqual({ fn: 'trash', id: 'drive-q' + i });
