@@ -2,10 +2,17 @@
    env and the injected svc (svc.google), and returns a plain object for json(). */
 
 import { Fail, clean, stamp } from './http.js';
+import { startEntry, onOriginalDone } from './entries.js';
 
 const MAX_FILE = 4 * 1024 ** 3;   // 4 GB: a long 4K video, not a whole phone backup
 const MAX_CHUNK = 64 * 1024 ** 2; // the page sends 8 MB; Workers accept up to 100 MB
 const TYPES = /^(image|video)\//;
+
+// When the last piece has landed, tell the contest which Drive file it is.
+async function finished(svc, session, result) {
+  if (result && result.done && result.file) await onOriginalDone(svc, session, result.file.id);
+  return result;
+}
 
 export async function start(request, env, svc) {
   let body;
@@ -28,7 +35,7 @@ export async function start(request, env, svc) {
     type,
     size,
   });
-  return { session, name };
+  return { session, name, ...(await startEntry(env, svc, body, session)) };
 }
 
 export async function chunk(request, env, svc) {
@@ -42,12 +49,12 @@ export async function chunk(request, env, svc) {
   const bytes = await request.arrayBuffer();
   if (bytes.byteLength !== to - from + 1) throw new Fail(400, 'short-chunk');
 
-  return svc.google.putPiece(session, range, bytes);
+  return finished(svc, session, await svc.google.putPiece(session, range, bytes));
 }
 
 export async function status(request, env, svc) {
   const session = svc.google.sessionUrl(request.headers.get('X-Upload-Session'));
   const total = Number(new URL(request.url).searchParams.get('size'));
   if (!Number.isInteger(total) || total <= 0 || total > MAX_FILE) throw new Fail(400, 'bad-size');
-  return svc.google.pieceStatus(session, total);
+  return finished(svc, session, await svc.google.pieceStatus(session, total));
 }

@@ -9,6 +9,8 @@
  *   GET  /ping                       → {ok, drive}          password + config check
  *   POST /start  {name,type,size,guest} → {session}         opens a Drive upload
  *   PUT  /chunk  Content-Range, bytes → {next} | {done,file} one piece of it
+ *   POST /copy   X-Entry, X-Entry-Key, jpeg → {ok}          the small copy of an entry
+ *   POST /remove {entry,key}          → {ok}             take an entry back
  *   GET  /status?size=N  (X-Upload-Session) → {next} | {done,file}  where it got to
  *
  * Every call carries the guests' password in X-Photo-Password, checked against
@@ -30,6 +32,7 @@
 import { Fail, corsHeaders, json, secretMatches } from './http.js';
 import { makeGoogle, configured } from './google.js';
 import * as upload from './upload.js';
+import * as entries from './entries.js';
 
 export function makeSvc(env) {
   return {
@@ -64,6 +67,9 @@ export async function handle(request, env, ctx, svc) {
     if (path === '/start' && request.method === 'POST') return json(await upload.start(request, env, svc), 200, origin);
     if (path === '/chunk' && request.method === 'PUT') return json(await upload.chunk(request, env, svc), 200, origin);
     if (path === '/status' && request.method === 'GET') return json(await upload.status(request, env, svc), 200, origin);
+
+    if (path === '/copy' && request.method === 'POST') return json(await entries.saveCopy(request, env, ctx, svc), 200, origin);
+    if (path === '/remove' && request.method === 'POST') return json(await entries.removeEntry(request, env, svc), 200, origin);
 
     throw new Fail(404, 'not-found');
   } catch (err) {
