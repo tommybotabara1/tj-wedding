@@ -11,6 +11,7 @@
  *   PUT  /chunk  Content-Range, bytes → {next} | {done,file} one piece of it
  *   POST /copy   X-Entry, X-Entry-Key, jpeg → {ok}          the small copy of an entry
  *   POST /remove {entry,key}          → {ok}             take an entry back
+ *   GET  /admin/state, POST /admin/act   X-Admin-Password   the control page
  *   GET  /status?size=N  (X-Upload-Session) → {next} | {done,file}  where it got to
  *
  * Every call carries the guests' password in X-Photo-Password, checked against
@@ -37,6 +38,7 @@ import * as pub from './public.js';
 import { serveMedia } from './media.js';
 import { makeGemini } from './gemini.js';
 import { runCron } from './checks.js';
+import * as admin from './admin.js';
 
 export function makeSvc(env) {
   return {
@@ -58,6 +60,15 @@ export async function handle(request, env, ctx, svc) {
   try {
     // Signed media links carry their own proof, so they skip the password.
     if (path.startsWith('/m/') && request.method === 'GET') return await serveMedia(request, env, svc, ctx);
+
+    // The control page has its own password and doesn't need the guests'.
+    if (path.startsWith('/admin/')) {
+      await admin.requireAdmin(request, env);
+      const origin2 = new URL(request.url).origin;
+      if (path === '/admin/state' && request.method === 'GET') return json(await admin.state(env, svc, origin2), 200, origin);
+      if (path === '/admin/act' && request.method === 'POST') return json(await admin.act(request, env, svc, origin2), 200, origin);
+      throw new Fail(404, 'not-found');
+    }
 
     if (!(await secretMatches(request.headers.get('X-Photo-Password'), env.PHOTO_PASSWORD))) {
       throw new Fail(403, 'password');
@@ -86,7 +97,7 @@ export async function handle(request, env, ctx, svc) {
   } catch (err) {
     if (err instanceof Fail) {
       if (err.detail) console.log(err.code, err.detail);
-      return json({ ok: false, error: err.code }, err.status, origin);
+      return json({ ok: false, error: err.code, ...err.extra }, err.status, origin);
     }
     console.log('unexpected', err && err.stack);
     return json({ ok: false, error: 'unexpected' }, 502, origin);

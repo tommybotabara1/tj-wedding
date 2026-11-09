@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { env } from 'cloudflare:workers';
 import { createExecutionContext, waitOnExecutionContext } from 'cloudflare:test';
 import { handle } from '../src/index.js';
-import { putSetting, updateMoment, getEntry, castVote, voteCounts } from '../src/store.js';
+import { putSetting, updateMoment, getEntry, castVote, voteCounts, createEntry } from '../src/store.js';
+import { trashEntry } from '../src/entries.js';
 import { fakeGoogle, svcFor, req, resetDb } from './helpers.js';
 
 const OPEN_DAY = Date.UTC(2026, 11, 27, 10, 0, 0);
@@ -162,6 +163,13 @@ describe('contest entries', () => {
     const again = await call(removeReq(e.entry, e.key), svc);
     expect(again.status).toBe(200);
     expect(await again.json()).toEqual({ ok: true });
+  });
+
+  it('a failing trash still leaves the entry removed', async () => {
+    await createEntry(env.DB, { id: 'tr1', device: 'd', kind: 'photo', drive_id: 'f1', copy_id: 'f2', created_at: 1 });
+    const bad = { ...google, trash: async () => { throw new Error('drive down'); } };
+    await trashEntry({ ...svc, google: bad }, await getEntry(env.DB, 'tr1'), OPEN_DAY);
+    expect((await getEntry(env.DB, 'tr1')).removed_at).toBe(OPEN_DAY);
   });
 
   it('remove before the last piece lands trashes the original when it arrives', async () => {

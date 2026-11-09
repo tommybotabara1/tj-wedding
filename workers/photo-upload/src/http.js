@@ -30,11 +30,12 @@ export function json(obj, status, origin) {
 }
 
 export class Fail extends Error {
-  constructor(status, code, detail) {
+  constructor(status, code, detail, extra) {
     super(code);
     this.status = status;
     this.code = code;
     this.detail = detail;
+    this.extra = extra; // more fields for the JSON body, e.g. {leaders}
   }
 }
 

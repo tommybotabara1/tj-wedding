@@ -24,12 +24,12 @@ export async function toItem(entry, moment, origin, env, nowMs, n) {
   return item;
 }
 
-const isLive = (e) => !!e && !e.removed_at && e.operator !== 'hidden';
+export const isLive = (e) => !!e && !e.removed_at && e.operator !== 'hidden';
 
 // The moment's shortlist as live entries with their stored position (1-5),
 // plus the ids that dropped out (removed or hidden). Positions never shift, so
 // numbers guests already saw on the screen stay true.
-async function liveShortlist(svc, moment) {
+export async function liveShortlist(svc, moment) {
   const byId = new Map((await entriesByIds(svc.db, moment.shortlist)).map((r) => [r.id, r]));
   const live = [];
   const gone = new Set();
@@ -42,7 +42,7 @@ async function liveShortlist(svc, moment) {
 }
 
 // A removed or hidden winner reads as no winner, the same as 'none'.
-async function winnerItem(env, moment, live, origin, now) {
+export async function winnerItem(env, moment, live, origin, now) {
   if (moment.phase !== 'revealed' || !moment.winner || moment.winner === 'none') return null;
   const hit = live.find((x) => x.entry.id === moment.winner);
   return hit ? toItem(hit.entry, moment, origin, env, now, hit.n) : null;
