@@ -4,15 +4,15 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Share your photos &amp; videos · Tommy &amp; Jeyan</title>
-<meta name="description" content="Add your photos and videos from Tommy &amp; Jeyan's wedding to our shared album. #ToMyJeyan" />
+<meta name="description" content="Send your photos and videos from Tommy &amp; Jeyan's wedding straight to us. #ToMyJeyan" />
 <!-- The printed photo QR codes open this page. Keep it at /photos/ for good:
-     the album link lives here, not in the code, so it can change without
-     reprinting anything. -->
+     where uploads go (workers/photo-upload) and the album link live behind
+     this page, not in the code, so either can change without reprinting. -->
 <link rel="canonical" href="https://tomyjeyan.com/photos/" />
 <meta name="robots" content="noindex" />
 <meta property="og:site_name" content="Tommy &amp; Jeyan · #ToMyJeyan" />
 <meta property="og:title" content="Share your photos &amp; videos · Tommy &amp; Jeyan" />
-<meta property="og:description" content="Every photo and video you add lands in one shared album for us to keep. #ToMyJeyan" />
+<meta property="og:description" content="Take a photo or video and it comes straight to us. #ToMyJeyan" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="en_PH" />
 <meta property="og:url" content="https://tomyjeyan.com/photos/" />
@@ -136,15 +136,9 @@ h1{ font-size:clamp(34px,8.6vw,46px); font-weight:500; color:var(--ink); text-wr
 .btn svg{ width:20px; height:20px; flex:none; }
 .btn:hover{ transform:translateY(-2px); background:#7d4a43; box-shadow:0 8px 30px rgba(178,124,117,.45); }
 
-/* Until the album link is set (href without http), the button rests as a dashed
-   placeholder and the "opens on the day" note shows. CSS alone decides this, so
-   the page is right even before the script runs. */
-.soon{ display:none; margin:12px auto 0; max-width:36ch; font-size:13.5px; color:var(--soft); }
-#album:not([href^="http"]){
-  background:transparent; color:var(--soft); border:1px dashed rgba(46,43,39,.34);
-  cursor:default; pointer-events:none; box-shadow:none; transform:none;
-}
-#album:not([href^="http"]) ~ .soon{ display:block; }
+.btn.ghost{ background:transparent; color:var(--ink); border-color:rgba(46,43,39,.34); }
+.btn.ghost:hover{ background:var(--ivory); box-shadow:0 8px 26px rgba(46,43,39,.12); }
+.soon{ margin:14px auto 0; max-width:36ch; font-size:13.5px; color:var(--soft); }
 
 .divider{
   display:flex; align-items:center; gap:12px; margin:30px 0 16px;
@@ -152,24 +146,72 @@ h1{ font-size:clamp(34px,8.6vw,46px); font-weight:500; color:var(--ink); text-wr
 }
 .divider::before,.divider::after{ content:""; flex:1; height:1px; background:var(--line); }
 
-.steps{ list-style:none; margin:0; padding:0; text-align:left; counter-reset:step; }
-.steps li{
-  position:relative; counter-increment:step;
-  padding:0 0 14px 46px; min-height:34px; font-size:15px; color:var(--soft);
-}
-.steps li::before{
-  content:counter(step); position:absolute; left:0; top:-2px;
-  width:32px; height:32px; border-radius:50%; border:1px solid rgba(148,90,82,.45);
-  display:flex; align-items:center; justify-content:center;
-  font-family:var(--serif); font-size:19px; font-weight:500; color:var(--rose-deep); background:var(--ivory);
-}
-.steps b{ font-weight:500; color:var(--ink); }
 .tip{
-  margin:6px 0 0; padding:12px 16px; border-radius:14px; background:var(--ivory); border:1px solid var(--line);
+  margin:18px 0 0; padding:12px 16px; border-radius:14px; background:var(--ivory); border:1px solid var(--line);
   font-size:13.5px; color:var(--soft); text-align:left;
 }
-.alt{ margin:0; font-size:15px; color:var(--soft); }
+.tip b{ font-weight:500; color:var(--sage-deep); }
+.alt{ margin:12px auto 0; max-width:38ch; font-size:13.5px; color:var(--soft); }
 .alt b{ font-weight:500; color:var(--rose-deep); letter-spacing:.02em; }
+.alt.hash{ margin-top:22px; }
+
+/* Your name, before the camera buttons */
+.who{ margin:22px auto 0; max-width:340px; text-align:left; }
+.who label, .lock label{
+  display:block; margin-bottom:7px;
+  font-size:11px; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--soft);
+}
+.who .opt{ letter-spacing:.06em; text-transform:none; font-weight:400; }
+.who .opt::before{ content:"· "; }
+.who input, .lock input{
+  display:block; width:100%; min-height:52px; padding:12px 16px; border-radius:12px;
+  border:1px solid rgba(46,43,39,.28); background:var(--ivory); color:var(--ink);
+  /* 16px, not the invitation's 15: below 16 iOS zooms the page on focus */
+  font-family:var(--sans); font-size:16px; font-weight:400; letter-spacing:.02em;
+}
+.who input:focus, .lock input:focus{ outline:2px solid var(--sage-deep); outline-offset:1px; }
+.hint{ margin:8px 0 0; font-size:13.5px; line-height:1.5; color:var(--soft); }
+
+/* The camera buttons: a real file input under each label, kept focusable for
+   keyboards, so a tap opens the phone's camera (capture) or gallery natively. */
+.shoot{ display:grid; gap:12px; max-width:340px; margin:20px auto 0; }
+.shoot .btn{ margin:0; max-width:none; cursor:pointer; }
+.pick{ position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.pick:focus-visible + .btn{ outline:2px solid var(--sage-deep); outline-offset:3px; }
+.shoot.closed .btn{
+  background:transparent; color:var(--soft); border:1px dashed rgba(46,43,39,.34);
+  cursor:default; pointer-events:none; box-shadow:none; transform:none;
+}
+
+/* What's sending */
+.queue{ list-style:none; margin:16px 0 0; padding:0; text-align:left; display:grid; gap:10px; }
+.queue:empty{ display:none; }
+.item{
+  display:grid; grid-template-columns:48px 1fr auto; gap:12px; align-items:center;
+  padding:10px 12px; border-radius:14px; border:1px solid var(--line); background:var(--paper);
+}
+.thumb{
+  width:48px; height:48px; border-radius:10px; overflow:hidden; background:var(--ivory);
+  display:flex; align-items:center; justify-content:center; color:var(--rose-deep);
+}
+.thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.thumb svg{ width:22px; height:22px; }
+.what{ min-width:0; }
+.what .nm{ display:block; font-size:14px; font-weight:400; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.what .st{ display:block; font-size:12.5px; line-height:1.4; color:var(--soft); }
+.bar{ display:block; height:4px; margin-top:6px; border-radius:4px; background:var(--line); overflow:hidden; }
+.bar i{ display:block; height:100%; width:0; background:var(--sage-deep); border-radius:4px; transition:width .25s linear; }
+.item[data-state="done"] .st{ color:var(--sage-deep); font-weight:500; }
+.item[data-state="done"] .bar{ display:none; }
+.item[data-state="failed"] .st{ color:var(--rose-deep); }
+.item[data-state="failed"] .bar i{ background:var(--rose-deep); }
+.retry{
+  min-height:40px; padding:0 14px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--rose-deep); background:transparent; color:var(--rose-deep);
+  font:500 11px/1 var(--sans); letter-spacing:.12em; text-transform:uppercase;
+}
+.retry:hover{ background:var(--ivory); }
+.tally{ margin:14px 0 0; font-family:var(--serif); font-style:italic; font-size:19px; color:var(--rose-deep); }
 
 footer{ margin-top:30px; text-align:center; color:var(--moon-soft); }
 footer .names{ font-family:var(--serif); font-size:24px; color:var(--moon); margin:0; }
@@ -181,19 +223,7 @@ footer p:last-child{ margin:14px 0 0; }
 
 /* The password step, before anything else */
 .lock{ margin:26px auto 0; max-width:340px; text-align:left; }
-.lock label{
-  display:block; margin-bottom:7px;
-  font-size:11px; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--soft);
-}
-.lock input{
-  display:block; width:100%; min-height:52px; padding:12px 16px; border-radius:12px;
-  border:1px solid rgba(46,43,39,.28); background:var(--ivory); color:var(--ink);
-  /* 16px, not the invitation's 15: below 16 iOS zooms the page on focus */
-  font-family:var(--sans); font-size:16px; font-weight:400; letter-spacing:.02em;
-}
-.lock input:focus{ outline:2px solid var(--sage-deep); outline-offset:1px; }
 .lock input[aria-invalid="true"]{ border-color:var(--rose-deep); }
-.lock .hint{ margin:8px 0 0; font-size:13.5px; line-height:1.5; color:var(--soft); }
 .lock .err{ margin:8px 0 0; font-size:13.5px; line-height:1.5; color:var(--rose-deep); font-weight:400; }
 .lock .err:empty{ display:none; }
 .lock .btn{ margin-top:18px; max-width:none; }
@@ -218,7 +248,7 @@ button.btn:disabled{ opacity:.6; cursor:default; transform:none; box-shadow:none
   <article class="card">
     <p class="kicker">through your eyes</p>
     <h1>Share the moments you caught</h1>
-    <p class="lede">Every photo and video you add lands in one shared album, so we can relive the day the way you saw it. Candid, blurry, mid-laugh: all of it is welcome.</p>
+    <p class="lede">Take a photo or video right here and it comes straight to us, so we can relive the day the way you saw it. Candid, blurry, mid-laugh: all of it is welcome.</p>
 
     <!-- Step 1: the password, printed on the table cards. -->
     <form class="lock" id="lock" novalidate>
@@ -227,30 +257,52 @@ button.btn:disabled{ opacity:.6; cursor:default; transform:none; box-shadow:none
              spellcheck="false" enterkeyhint="go" aria-describedby="pw-hint pw-err" required />
       <p class="hint" id="pw-hint">It's printed on the photo card at your table.</p>
       <p class="err" id="pw-err" role="alert"></p>
-      <button class="btn" id="unlock" type="submit">Unlock the album</button>
+      <button class="btn" id="unlock" type="submit">Unlock</button>
     </form>
-    <noscript><p class="soon" style="display:block">This page needs JavaScript turned on to open the album.</p></noscript>
+    <noscript><p class="soon">This page needs JavaScript turned on to send photos and videos.</p></noscript>
 
-    <!-- Step 2, shown once the password is right. The album link is NOT written
-         here: it is encrypted with the password in the vault below, and the
-         script fills this href in. Set it with tools/set_photo_album.py. -->
+    <!-- Step 2, shown once the password is right: shoot or pick, and each file
+         goes straight to the couple's Google Drive through upload.tomyjeyan.com
+         (workers/photo-upload). No Google sign-in for the guest. -->
     <div class="unlocked" id="unlocked" hidden>
-    <a class="btn" id="album" href="" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.2l1.1-1.8A1 1 0 0 1 8.6 4.7h6.8a1 1 0 0 1 .8.5L17.3 7h2.2A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.6" r="3.4"/></svg>
-      Open our album
-    </a>
-    <p class="soon" id="album-soon">The album opens on our wedding day, December 27. Come back to this page then and it will take you straight there.</p>
+      <div class="who">
+        <label for="guest">Your name <span class="opt">optional</span></label>
+        <input id="guest" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="done" maxlength="60" aria-describedby="guest-hint" />
+        <p class="hint" id="guest-hint">So we know who to thank.</p>
+      </div>
 
-    <div class="divider">How to add yours</div>
-    <ol class="steps">
-      <li>Tap <b>Open our album</b>, above.</li>
-      <li>Tap <b>Add photos</b>, the picture icon with a plus. If it asks, sign in with your Google account.</li>
-      <li>Pick your photos and videos, as many as you like, and confirm.</li>
-    </ol>
-    <p class="tip">Videos take a little longer. Keep your screen on until the upload finishes.</p>
+      <div class="shoot" id="shoot">
+        <input class="pick" type="file" id="in-photo" accept="image/*" capture="environment" />
+        <label class="btn" for="in-photo">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.2l1.1-1.8A1 1 0 0 1 8.6 4.7h6.8a1 1 0 0 1 .8.5L17.3 7h2.2A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z"/><circle cx="12" cy="12.6" r="3.4"/></svg>
+          Take a photo
+        </label>
+        <input class="pick" type="file" id="in-video" accept="video/*" capture="environment" />
+        <label class="btn" for="in-video">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="12.5" height="11" rx="2"/><path d="m15.5 10.5 5-3v9l-5-3z"/></svg>
+          Record a video
+        </label>
+        <input class="pick" type="file" id="in-pick" accept="image/*,video/*" multiple />
+        <label class="btn ghost" for="in-pick">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 4.5-4.5 3.5 3.5 2.5-2.5 5 4.5"/></svg>
+          From your gallery
+        </label>
+      </div>
+      <p class="soon" id="up-soon" hidden>Sending from here opens on our wedding day, December 27. Come back to this page then.</p>
 
-    <div class="divider">No Google account?</div>
-    <p class="alt">Send them to us on our socials, or post them with <b>#ToMyJeyan</b> so we can find them.</p>
+      <p class="tip" id="tip">Videos take a little longer. Keep this page open until each one says <b>Sent</b>.</p>
+      <ul class="queue" id="queue" aria-live="polite" aria-label="Your photos and videos"></ul>
+      <p class="tally" id="tally" hidden></p>
+
+      <!-- The Google Photos album, a second way in. Its link is NOT written here:
+           it is encrypted with the password in the vault below, and the script
+           fills this href in. Set it with tools/set_photo_album.py. -->
+      <div id="album-wrap" hidden>
+        <div class="divider">Or</div>
+        <a class="btn ghost" id="album" href="" target="_blank" rel="noopener">Our Google Photos album</a>
+        <p class="alt">Opens Google Photos, where everyone's photos are together. You'll need a Google account.</p>
+      </div>
+      <p class="alt hash">Posting online too? Tag <b>#ToMyJeyan</b>.</p>
     </div>
   </article>
 
@@ -263,7 +315,7 @@ button.btn:disabled{ opacity:.6; cursor:default; transform:none; box-shadow:none
 
 <!-- The album link, encrypted with the password (PBKDF2-SHA256 + AES-256-GCM).
      Written by tools/set_photo_album.py; don't edit by hand. -->
-<script type="application/json" id="vault">{"v":1,"iter":210000,"salt":"FRXmRK7Vli5PEWqtk31n3g==","iv":"9xoNCLS7W67qA9r9","ct":"3X8tCEiSfTlICy1msIQ2rZ+RzUjJRk6VH8oBdg=="}</script>
+<script type="application/json" id="vault">{"v":1,"iter":210000,"salt":"SYE4ccfJ+b67XvEW24ojBA==","iv":"ou0UhHZT2HboTvgt","ct":"cgRfdxU1HCz7tpAqbpx2gG7Hch1uLt8zFz33a5R6NpGH1wnxBsCwCvKq0WICEQrIY5GMsyElTxkrJpFvfYg96J1aqTPGqiQ="}</script>
 
 <script>
 (function () {
@@ -304,21 +356,254 @@ button.btn:disabled{ opacity:.6; cursor:default; transform:none; box-shadow:none
       .then(function (plain) { return JSON.parse(new TextDecoder().decode(plain)); });
   }
 
-  function show(data) {
+  /* ---------------------------------------------------------------
+     Uploads: straight to the couple's Google Drive through the Worker at
+     upload.tomyjeyan.com. Each file goes in 8 MB pieces; a piece that fails
+     is retried, and the file resumes from wherever Drive got to.
+     --------------------------------------------------------------- */
+  var API = 'https://upload.tomyjeyan.com';
+  (function () { // local testing only: ?api=http://127.0.0.1:8787 on localhost
+    var q = new URLSearchParams(location.search).get('api');
+    if (q && /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) API = q;
+  })();
+  var CHUNK = 8 * 1024 * 1024; // a multiple of 256 KB, as Drive requires
+  var NAME_KEY = 'tj-photos-name';
+  var shoot = document.getElementById('shoot');
+  var upSoon = document.getElementById('up-soon');
+  var tip = document.getElementById('tip');
+  var list = document.getElementById('queue');
+  var tally = document.getElementById('tally');
+  var guest = document.getElementById('guest');
+  var inputs = ['in-photo', 'in-video', 'in-pick'].map(function (id) { return document.getElementById(id); });
+  var password = '';
+  var queue = [];
+  var running = false;
+  var sent = 0;
+
+  try { guest.value = localStorage.getItem(NAME_KEY) || ''; } catch (x) {}
+  guest.addEventListener('change', function () {
+    try { localStorage.setItem(NAME_KEY, guest.value.trim()); } catch (x) {}
+  });
+
+  function call(method, path, opts) {
+    opts = opts || {};
+    return new Promise(function (resolve) {
+      var xhr = new XMLHttpRequest();
+      xhr.open(method, API + path);
+      xhr.setRequestHeader('X-Photo-Password', password);
+      var h = opts.headers || {};
+      Object.keys(h).forEach(function (k) { xhr.setRequestHeader(k, h[k]); });
+      if (opts.progress && xhr.upload) {
+        xhr.upload.onprogress = function (e) { if (e.lengthComputable) opts.progress(e.loaded); };
+      }
+      xhr.onload = function () {
+        var body = {};
+        try { body = JSON.parse(xhr.responseText); } catch (x) {}
+        resolve({ ok: xhr.status >= 200 && xhr.status < 300, status: xhr.status, body: body });
+      };
+      xhr.onerror = xhr.ontimeout = function () { resolve({ ok: false, status: 0, body: {} }); };
+      xhr.timeout = 120000; // one 8 MB piece on a slow connection
+      if (opts.json) {
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(opts.json));
+      } else {
+        xhr.send(opts.body || null);
+      }
+    });
+  }
+
+  function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  // Some phones leave file.type empty for videos; go by the extension then.
+  function typeOf(file) {
+    if (file.type) return file.type;
+    var ext = (file.name.split('.').pop() || '').toLowerCase();
+    return { mov: 'video/quicktime', mp4: 'video/mp4', m4v: 'video/x-m4v', '3gp': 'video/3gpp', webm: 'video/webm',
+             jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', heic: 'image/heic', heif: 'image/heif',
+             webp: 'image/webp', gif: 'image/gif' }[ext] || '';
+  }
+  function mb(n) { return n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / 1048576).toFixed(n < 104857600 ? 1 : 0) + ' MB'; }
+
+  var ICON_VIDEO = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6.5" width="12.5" height="11" rx="2"/><path d="m15.5 10.5 5-3v9l-5-3z"/></svg>';
+  var ICON_PHOTO = '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 4.5-4.5 3.5 3.5 2.5-2.5 5 4.5"/></svg>';
+
+  function add(file) {
+    var type = typeOf(file);
+    var video = type.indexOf('video/') === 0;
+    var li = document.createElement('li');
+    li.className = 'item';
+    li.innerHTML = '<span class="thumb"></span><span class="what"><span class="nm"></span>' +
+      '<span class="st"></span><span class="bar"><i></i></span></span><span class="act"></span>';
+    var thumb = li.querySelector('.thumb');
+    if (!video && /^image\/(jpeg|png|webp|gif)$/.test(type)) {
+      var img = new Image();
+      img.alt = '';
+      img.onerror = function () { thumb.innerHTML = ICON_PHOTO; };
+      img.src = URL.createObjectURL(file);
+      thumb.appendChild(img);
+    } else {
+      thumb.innerHTML = video ? ICON_VIDEO : ICON_PHOTO;
+    }
+    li.querySelector('.nm').textContent = (video ? 'Video' : 'Photo') + ' · ' + mb(file.size);
+    list.insertBefore(li, list.firstChild);
+    var item = { file: file, type: type, li: li, session: null, next: 0 };
+    set(item, 'waiting', 'Waiting…', 0);
+    queue.push(item);
+    pump();
+  }
+
+  function set(item, state, text, frac) {
+    item.li.setAttribute('data-state', state);
+    item.li.querySelector('.st').textContent = text;
+    if (frac != null) item.li.querySelector('.bar i').style.width = Math.round(frac * 100) + '%';
+    var act = item.li.querySelector('.act');
+    act.innerHTML = '';
+    if (state === 'failed' && item.retryable) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'retry';
+      b.textContent = 'Try again';
+      b.addEventListener('click', function () {
+        set(item, 'waiting', 'Waiting…', item.next / item.file.size);
+        queue.push(item);
+        pump();
+      });
+      act.appendChild(b);
+    }
+  }
+
+  var MESSAGES = {
+    'too-big': "Too large to send from here (over 4 GB).",
+    'not-photo-or-video': 'Only photos and videos can be sent.',
+    'bad-size': "This file is empty and can't be sent.",
+    'not-configured': "Sending isn't open yet. Try again on the day.",
+    'drive-refused': "Our album is full right now. Please tell Tommy or Jeyan!",
+    'password': 'Please reload this page and type the password again.',
+  };
+
+  /* Send one file, piece by piece. Resolves when it's done or has given up. */
+  function send(item) {
+    var file = item.file, size = file.size, tries = 0;
+    set(item, 'sending', 'Sending…', item.next / size);
+
+    function begin() {
+      return call('POST', '/start', { json: { name: file.name, type: item.type, size: size, guest: guest.value.trim() } })
+        .then(function (r) {
+          if (!r.ok) return r;
+          item.session = r.body.session;
+          item.next = 0;
+          return piece();
+        });
+    }
+    function piece() {
+      var end = Math.min(item.next + CHUNK, size);
+      var from = item.next;
+      return call('PUT', '/chunk', {
+        headers: { 'X-Upload-Session': item.session, 'Content-Range': 'bytes ' + from + '-' + (end - 1) + '/' + size },
+        body: file.slice(from, end),
+        progress: function (loaded) {
+          var f = Math.min(1, (from + loaded) / size);
+          set(item, 'sending', 'Sending… ' + Math.floor(f * 100) + '%', f);
+        },
+      }).then(function (r) {
+        if (!r.ok) return r;
+        tries = 0;
+        if (r.body.done) return r;
+        item.next = r.body.next;
+        return piece();
+      });
+    }
+    function step() {
+      return (item.session ? piece() : begin()).then(function (r) {
+        if (r.ok) return finish(true);
+        var code = r.body && r.body.error;
+        if (MESSAGES[code]) { item.retryable = code === 'not-configured'; return finish(false, MESSAGES[code]); }
+        if (r.status === 410) { item.session = null; item.next = 0; }       // Drive closed the session: start over
+        if (++tries > 6) { item.retryable = true; return finish(false, "Didn't send. Check your signal, then tap Try again."); }
+        set(item, 'sending', 'Connection hiccup, retrying…', item.next / size);
+        // 1, 2, 4, 8, 16, 30 seconds, then ask Drive how much it already has.
+        return wait(Math.min(30000, 1000 * Math.pow(2, tries - 1))).then(function () {
+          if (!item.session) return step();
+          return call('GET', '/status?size=' + size, { headers: { 'X-Upload-Session': item.session } }).then(function (s) {
+            if (s.ok && s.body.done) return finish(true);
+            if (s.ok) item.next = s.body.next;
+            else if (s.status === 410) { item.session = null; item.next = 0; }
+            return step();
+          });
+        });
+      });
+    }
+    function finish(ok, why) {
+      if (ok) {
+        sent++;
+        set(item, 'done', 'Sent ✓', 1);
+        var img = item.li.querySelector('.thumb img');
+        if (img) img.addEventListener('load', function () { URL.revokeObjectURL(img.src); });
+        tally.hidden = false;
+        tally.textContent = sent === 1 ? 'Sent to us. Thank you!' : sent + ' sent to us. Thank you!';
+      } else {
+        set(item, 'failed', why, null);
+      }
+    }
+    return step();
+  }
+
+  /* One file at a time: a reception's mobile signal shared by a hundred phones
+     does better with one steady upload than several fighting each other. */
+  var lock = null;
+  function pump() {
+    if (running) return;
+    var item = queue.shift();
+    if (!item) { running = false; release(); return; }
+    running = true;
+    awake();
+    send(item).then(function () { running = false; pump(); });
+  }
+  // Keep the screen on while something is sending (where the phone allows it).
+  function awake() {
+    if (lock || !('wakeLock' in navigator)) return;
+    navigator.wakeLock.request('screen').then(function (l) {
+      lock = l;
+      l.addEventListener('release', function () { lock = null; });
+    }, function () {});
+  }
+  function release() { if (lock) { lock.release(); lock = null; } }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible' && running) awake();
+  });
+  window.addEventListener('beforeunload', function (e) {
+    if (running || queue.length) { e.preventDefault(); e.returnValue = ''; }
+  });
+
+  inputs.forEach(function (inp) {
+    inp.addEventListener('change', function () {
+      Array.prototype.slice.call(inp.files || []).forEach(add);
+      inp.value = ''; // so the same photo can be picked again
+    });
+  });
+
+  /* Is sending open? Until the Worker is set up (or if it can't reach Drive),
+     the buttons rest as placeholders and say when to come back. */
+  function checkOpen() {
+    return call('GET', '/ping').then(function (r) {
+      var open = r.ok && r.body.drive === true;
+      shoot.classList.toggle('closed', !open);
+      inputs.forEach(function (inp) { inp.disabled = !open; });
+      upSoon.hidden = open;
+      tip.hidden = !open;
+    });
+  }
+
+  function show(data, pw) {
+    password = norm(pw);
     var link = data && typeof data.album === 'string' ? data.album : '';
     if (/^https:\/\//.test(link)) {
       album.setAttribute('href', link);
-    } else {
-      /* No album yet: the button rests as a placeholder (CSS) and is announced
-         as unavailable, pointing at the "opens on the day" note. */
-      album.setAttribute('aria-disabled', 'true');
-      album.setAttribute('aria-describedby', 'album-soon');
-      album.setAttribute('tabindex', '-1');
-      album.removeAttribute('target');
-      album.addEventListener('click', function (e) { e.preventDefault(); });
+      document.getElementById('album-wrap').hidden = false;
     }
     form.hidden = true;
     unlocked.hidden = false;
+    return checkOpen();
   }
 
   form.addEventListener('submit', function (e) {
@@ -334,11 +619,11 @@ button.btn:disabled{ opacity:.6; cursor:default; transform:none; box-shadow:none
     btn.textContent = 'Checking…';
     open(pw).then(function (data) {
       try { localStorage.setItem(KEY, norm(pw)); } catch (x) {}
-      show(data);
-      album.focus({ preventScroll: true });
+      show(data, pw);
+      guest.focus({ preventScroll: true });
     }, function (x) {
       btn.disabled = false;
-      btn.textContent = 'Unlock the album';
+      btn.textContent = 'Unlock';
       input.setAttribute('aria-invalid', 'true');
       err.textContent = x && x.message === 'unsupported'
         ? "This browser can't open the album. Try Chrome or Safari, or message us on our socials."
@@ -354,7 +639,7 @@ button.btn:disabled{ opacity:.6; cursor:default; transform:none; box-shadow:none
   var saved = null;
   try { saved = localStorage.getItem(KEY); } catch (x) {}
   if (saved) {
-    open(saved).then(show, function () {
+    open(saved).then(function (data) { return show(data, saved); }, function () {
       try { localStorage.removeItem(KEY); } catch (x) {}
     });
   }

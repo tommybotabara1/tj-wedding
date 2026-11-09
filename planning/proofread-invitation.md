@@ -356,9 +356,9 @@ A: We love your little ones. Seats are limited, so please include everyone
 
 Q: Where can we share our photos and videos?
 A: We'd love to see them. At the reception, scan the photo code on your table
-   and type the password printed under it, or open tomyjeyan.com/photos. The
-   shared album opens on the day, and everything you add lands in one place for
-   us to keep.
+   and type the password printed under it, or open tomyjeyan.com/photos. Take
+   photos and videos right there and they come straight to us, no sign-in
+   needed.
 
 STILL NEED US? THE HELP DESK
 Questions about seats, directions, or the day itself? Our crew is happy to help.
@@ -405,29 +405,42 @@ table card. Same rule, mark anything wrong and send me the list. Guest password:
 ```
 through your eyes
 Share the moments you caught
-Every photo and video you add lands in one shared album, so we can relive the
-day the way you saw it. Candid, blurry, mid-laugh: all of it is welcome.
+Take a photo or video right here and it comes straight to us, so we can relive
+the day the way you saw it. Candid, blurry, mid-laugh: all of it is welcome.
 
 PASSWORD   [box]
 It's printed on the photo card at your table.
 (empty:) Type the password from the photo card at your table.
 (wrong:) That's not quite it. Check the photo card at your table and try again.
-UNLOCK THE ALBUM
+UNLOCK
 
 (after the right password, and on later visits from the same phone:)
-OPEN OUR ALBUM
-(until the album link is set:) The album opens on our wedding day, December 27.
-Come back to this page then and it will take you straight there.
+YOUR NAME · optional   [box]
+So we know who to thank.
+TAKE A PHOTO
+RECORD A VIDEO
+FROM YOUR GALLERY
+(before the uploader is switched on:) Sending from here opens on our wedding
+day, December 27. Come back to this page then.
+Videos take a little longer. Keep this page open until each one says Sent.
 
-HOW TO ADD YOURS
-1  Tap Open our album, above.
-2  Tap Add photos, the picture icon with a plus. If it asks, sign in with your
-   Google account.
-3  Pick your photos and videos, as many as you like, and confirm.
-Videos take a little longer. Keep your screen on until the upload finishes.
+(each file:) Photo · 3.2 MB / Video · 48 MB
+  Waiting… / Sending… 42% / Connection hiccup, retrying… / Sent ✓
+  Didn't send. Check your signal, then tap Try again.   [TRY AGAIN]
+  Too large to send from here (over 4 GB).
+  Only photos and videos can be sent.
+  This file is empty and can't be sent.
+  Sending isn't open yet. Try again on the day.
+  Our album is full right now. Please tell Tommy or Jeyan!
+  Please reload this page and type the password again.
+Sent to us. Thank you! / 3 sent to us. Thank you!
 
-NO GOOGLE ACCOUNT?
-Send them to us on our socials, or post them with #ToMyJeyan so we can find them.
+OR
+OUR GOOGLE PHOTOS ALBUM
+Opens Google Photos, where everyone's photos are together. You'll need a Google
+account.
+
+Posting online too? Tag #ToMyJeyan.
 
 Tommy & Jeyan · DECEMBER 27, 2026 · Back to our invitation
 ```
@@ -437,7 +450,7 @@ Tommy & Jeyan · DECEMBER 27, 2026 · Back to our invitation
 ```
 through your eyes
 Share the moments you caught
-Scan, type the password, and add your photos and videos to our shared album.
+Scan, type the password, and send us your photos and videos right from your phone.
 [QR code]
 tomyjeyan.com/photos
 PASSWORD  ToMyJeyan

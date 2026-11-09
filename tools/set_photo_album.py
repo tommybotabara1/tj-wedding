@@ -17,8 +17,8 @@ capitals, spaces and a leading # don't matter ("#ToMyJeyan", "to my jeyan").
 
 Usage
   python tools/set_photo_album.py --album "https://photos.app.goo.gl/..."
-  python tools/set_photo_album.py --album ""        # no album yet: the page
-                                                    # unlocks to "opens on Dec 27"
+  python tools/set_photo_album.py --album ""        # no album: the page shows
+                                                    # only the camera buttons
   python tools/set_photo_album.py --album URL --password NewPassword
 
 Changing the password: change PASSWORD below, rerun this with the album link,
@@ -97,6 +97,7 @@ def main():
                     encoding="utf-8", newline="\n")
     print(f"  ok locked {'the album link' if album else 'an empty album (page will say it opens on Dec 27)'} "
           f"behind the password into {PAGE.relative_to(ROOT)}")
+    # (the camera buttons don't depend on this: they send through the Worker)
 
 
 if __name__ == "__main__":
