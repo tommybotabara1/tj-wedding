@@ -141,5 +141,14 @@ export function req(method, path, { json, body, headers = {}, password = 'ToMyJe
   return new Request('https://upload.test' + path, { method, headers: h, body: payload });
 }
 
-// Tables arrive with Task 2, which gives this its real body.
-export async function resetDb() {}
+// Back to a freshly migrated database: no entries, votes, log or settings,
+// and every moment in the entries phase.
+export async function resetDb() {
+  await env.DB.batch([
+    env.DB.prepare('DELETE FROM votes'),
+    env.DB.prepare('DELETE FROM entries'),
+    env.DB.prepare('DELETE FROM log'),
+    env.DB.prepare('DELETE FROM settings'),
+    env.DB.prepare("UPDATE moments SET phase = 'entries', shortlist = '[]', winner = NULL"),
+  ]);
+}
