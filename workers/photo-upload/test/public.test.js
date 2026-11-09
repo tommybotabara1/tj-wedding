@@ -136,6 +136,29 @@ describe('contest status, voting and the screen feed', () => {
     expect(aisle(await contest()).winner).toBeNull();
   });
 
+  it('a winner awarded directly (off any shortlist) shows on /contest and /screen', async () => {
+    await mk('a');
+    await updateMoment(env.DB, 'aisle', { phase: 'revealed', winner: 'a' });
+    await putSetting(env.DB, 'screen', JSON.stringify({ mode: 'winner', moment: 'aisle' }));
+    expect(aisle(await contest()).winner).toMatchObject({ id: 'a', guest: 'Guest a', moment: 'Here comes the bride' });
+    let body = await (await call(req('GET', '/screen'), svc)).json();
+    expect(body.mode).toBe('winner');
+    expect(body.moment.winner).toMatchObject({ id: 'a', guest: 'Guest a' });
+    await markRemoved(env.DB, 'a', NOW);
+    expect(aisle(await contest()).winner).toBeNull();
+    body = await (await call(req('GET', '/screen'), svc)).json();
+    expect(body.moment.winner).toBeNull();
+  });
+
+  it('a directly awarded winner that is hidden, or only a pending reveal, is null', async () => {
+    await mk('a');
+    await updateMoment(env.DB, 'aisle', { phase: 'closed', winner: 'a' });
+    expect(aisle(await contest()).winner).toBeNull();
+    await updateMoment(env.DB, 'aisle', { phase: 'revealed' });
+    await setOperator(env.DB, 'a', 'hidden');
+    expect(aisle(await contest()).winner).toBeNull();
+  });
+
   it('screen wall lists only onWall entries, newest first, max 40', async () => {
     for (let i = 0; i < 45; i++) await mk('w' + String(i).padStart(2, '0'), { moment: i === 44 ? null : 'aisle' });
     await mk('held', { check_state: 'held', created_at: NOW });

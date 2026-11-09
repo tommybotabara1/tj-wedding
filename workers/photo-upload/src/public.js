@@ -41,11 +41,15 @@ export async function liveShortlist(svc, moment) {
   return { live, gone };
 }
 
-// A removed or hidden winner reads as no winner, the same as 'none'.
-export async function winnerItem(env, moment, live, origin, now) {
+// A removed or hidden winner reads as no winner, the same as 'none'. A winner
+// awarded directly (never on a shortlist) is returned without a number.
+export async function winnerItem(env, svc, moment, live, origin, now) {
   if (moment.phase !== 'revealed' || !moment.winner || moment.winner === 'none') return null;
   const hit = live.find((x) => x.entry.id === moment.winner);
-  return hit ? toItem(hit.entry, moment, origin, env, now, hit.n) : null;
+  if (hit) return toItem(hit.entry, moment, origin, env, now, hit.n);
+  if (moment.shortlist.includes(moment.winner)) return null; // it was shortlisted, and has since gone
+  const e = (await entriesByIds(svc.db, [moment.winner]))[0];
+  return isLive(e) ? toItem(e, moment, origin, env, now) : null;
 }
 
 export async function contest(request, env, svc) {
@@ -63,7 +67,7 @@ export async function contest(request, env, svc) {
     const out = { id: m.id, title: m.title, hint: m.hint, phase: m.phase, accepting: open && m.phase === 'entries' };
     if (m.phase !== 'entries') out.shortlist = await Promise.all(live.map((x) => toItem(x.entry, m, origin, env, now, x.n)));
     out.myVote = live.some((x) => x.entry.id === mine[m.id]) ? mine[m.id] : null;
-    out.winner = await winnerItem(env, m, live, origin, now);
+    out.winner = await winnerItem(env, svc, m, live, origin, now);
     moments.push(out);
   }
   return { open, practice: settings.practice, opensAt: env.CONTEST_OPENS_AT, moments };
@@ -104,7 +108,7 @@ export async function screen(request, env, svc) {
       title: m.title,
       shortlist: await Promise.all(live.map((x) => toItem(x.entry, m, origin, env, now, x.n))),
       votes: total,
-      winner: await winnerItem(env, m, live, origin, now),
+      winner: await winnerItem(env, svc, m, live, origin, now),
     };
   }
 

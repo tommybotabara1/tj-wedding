@@ -1,6 +1,6 @@
 /* The Everything tab: every control in one place, for when the run sheet is
    not enough, and the view Tommy watches while someone else runs the night. */
-import { esc, btn, act, ago, clock, thumb, who, ownEntries, PHASE, shortlistRows } from './common.js';
+import { esc, btn, act, ago, clock, thumb, who, ownEntries, PHASE, shortlistRows, tiePanel, winnerLine } from './common.js';
 import { renderReview } from './runsheet.js';
 
 const sec = (title, inner, extra) => '<section class="card"><h2>' + esc(title) + '</h2>' + (extra || '') + inner + '</section>';
@@ -16,20 +16,21 @@ function screenSection(s) {
 
 function momentCard(s, ui, m) {
   const own = ownEntries(m);
+  const count = m.entryCount;
   let ctl = '';
   if (m.phase === 'entries') {
     ctl = btn('Open voting', { do: 'review', arg: m.id, kind: 'primary', k: 'ev-open:' + m.id }) +
-      (own.length === 1 ? btn('Award directly', { do: 'win', arg: m.id + '|' + own[0].id, k: 'ev-aw:' + m.id }) : '') +
-      (own.length === 0 ? btn('No winner', { do: 'win', arg: m.id + '|none', k: 'ev-nw:' + m.id }) : '');
+      (count === 1 && own.length ? btn('Award directly', { do: 'win', arg: m.id + '|' + own[0].id, k: 'ev-aw:' + m.id }) : '') +
+      (count === 0 ? btn('No winner', { do: 'win', arg: m.id + '|none', k: 'ev-nw:' + m.id }) : '');
   } else if (m.phase === 'voting') {
     ctl = btn('Close voting', { do: 'act', arg: act({ action: 'close-voting', moment: m.id }), kind: 'primary', k: 'ev-cv:' + m.id });
   } else if (m.phase === 'closed') {
     ctl = btn('Reveal winner', { do: 'reveal', arg: m.id, kind: 'primary', k: 'ev-rv:' + m.id });
   }
-  const win = m.phase === 'revealed' ? '<p class="ok">' + (m.winner ? 'Winner: ' + esc(m.winner.guest || 'A guest') + ' (#' + m.winner.n + ')' : 'No winner on screen.') + '</p>' : '';
+  const win = m.phase === 'revealed' ? '<p class="ok">' + winnerLine(m) + '</p>' : '';
   return '<article class="moment"><div class="head static"><span class="t">' + esc(m.title) + '</span><span class="pill">' + PHASE[m.phase] + '</span></div><div class="in">' +
-    '<p class="muted">' + own.length + (own.length === 1 ? ' entry sent' : ' entries sent') + (m.phase === 'voting' || m.phase === 'closed' ? ' · ' + m.tally.total + ' votes' : '') + '</p>' +
-    shortlistRows(m) + win + (ui.review === m.id ? renderReview(s, ui, [m.id]) : '<div class="btns">' + ctl + '</div>') + '</div></article>';
+    '<p class="muted">' + count + (count === 1 ? ' entry sent' : ' entries sent') + (m.phase === 'voting' || m.phase === 'closed' ? ' · ' + m.tally.total + ' votes' : '') + '</p>' +
+    shortlistRows(m) + win + (m.phase === 'closed' && ui.tie[m.id] ? tiePanel(m, ui.tie[m.id]) : '') + (ui.review === m.id ? renderReview(s, ui, [m.id]) : '<div class="btns">' + ctl + '</div>') + '</div></article>';
 }
 
 function momentsSection(s, ui) {

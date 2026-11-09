@@ -165,6 +165,12 @@ export function momentEntries(db, momentId) {
   return all(db, 'SELECT * FROM entries WHERE moment = ? ORDER BY created_at, id', momentId);
 }
 
+// {momentId: n} of entries that count as sent for a moment: not removed, original landed.
+export async function momentEntryCounts(db) {
+  const rows = await all(db, 'SELECT moment, COUNT(*) AS n FROM entries WHERE moment IS NOT NULL AND removed_at IS NULL AND drive_id IS NOT NULL GROUP BY moment');
+  return Object.fromEntries(rows.map((r) => [r.moment, r.n]));
+}
+
 export function pendingChecks(db, before, limit) {
   return all(
     db,

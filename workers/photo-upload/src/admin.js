@@ -8,7 +8,7 @@ import { contestOpen, onWall, rankShortlist, tally, assertPhase } from './contes
 import { trashEntry } from './entries.js';
 import {
   listMoments, getMoment, updateMoment, getSettings, putSetting, setOperator, voteCounts, addLog, recentLog,
-  practiceEntries, deletePractice, deleteEntry, updateMomentIf, recentEntries, momentEntries, entriesByIds, getEntry,
+  practiceEntries, deletePractice, momentEntryCounts, deleteEntry, updateMomentIf, recentEntries, momentEntries, entriesByIds, getEntry,
 } from './store.js';
 
 const SCAN = 1000;           // newest entries to look through
@@ -40,6 +40,7 @@ export async function state(env, svc, origin) {
   };
   const extra = async (e, more) => ({ ...(await item(e)), ...more });
 
+  const counts = await momentEntryCounts(db);
   const out = [];
   for (const m of moments) {
     const { live, gone } = await liveShortlist(svc, m);
@@ -51,7 +52,12 @@ export async function state(env, svc, origin) {
     const byId = new Map(rows.map((e) => [e.id, e]));
     const order = ranked.filter((id) => byId.has(id));
     const seen = new Set(order);
-    for (const e of rows) if (!seen.has(e.id) && order.length < CANDIDATES) order.push(e.id);
+    // This moment's own entries first, so the one entry of a quiet moment is never crowded out.
+    for (const mine of [true, false]) {
+      for (const e of rows) {
+        if (!seen.has(e.id) && (e.moment === m.id) === mine && order.length < CANDIDATES) { order.push(e.id); seen.add(e.id); }
+      }
+    }
     const candidates = [];
     for (const id of order.slice(0, CANDIDATES)) {
       const e = byId.get(id);
@@ -59,8 +65,8 @@ export async function state(env, svc, origin) {
     }
 
     out.push({
-      id: m.id, title: m.title, phase: m.phase, shortlist, candidates, tally: t,
-      winner: await winnerItem(env, m, live, origin, now),
+      id: m.id, title: m.title, phase: m.phase, entryCount: counts[m.id] || 0, shortlist, candidates, tally: t,
+      winner: await winnerItem(env, svc, m, live, origin, now),
     });
   }
 

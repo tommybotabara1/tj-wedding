@@ -100,17 +100,29 @@ const reveal = (moment, winner) => exclusive(async () => {
   await failed(r);
 });
 
+// Opens each moment that has picks and carries on past the ones that can't open.
+// A moment with one entry is awarded directly; one with none gets "No winner".
 const openVoting = (ids) => exclusive(async () => {
+  const opened = [], direct = [], none = [], unready = [], refused = [];
   for (const id of ids) {
     const m = S.moments.find((x) => x.id === id);
     if (!m || m.phase !== 'entries') continue;
-    const r = await post({ action: 'open-voting', moment: id, shortlist: picksFor(ui, m) });
-    if (!r.ok) { await failed(r); return; }
-    delete ui.picks[id];
+    const picks = picksFor(ui, m);
+    if (!picks.length) { (m.entryCount === 0 ? none : m.entryCount === 1 ? direct : unready).push(m.title); continue; }
+    const r = await post({ action: 'open-voting', moment: id, shortlist: picks });
+    if (r.ok) { opened.push(m.title); delete ui.picks[id]; continue; }
+    if (r.status === 0 || r.status === 403) { await failed(r); return; }
+    refused.push(m.title);
   }
-  if (ui.review) ui.review = null;
+  if (ids.length > 1 || ui.review !== 'all') ui.review = null;
   ui.addFor = null;
-  note('');
+  const bits = [];
+  if (opened.length) bits.push('Voting open for ' + opened.length + (opened.length === 1 ? ' moment.' : ' moments.'));
+  if (direct.length) bits.push('Award directly: ' + direct.join(', ') + '.');
+  if (none.length) bits.push('No entries: ' + none.join(', ') + '.');
+  if (unready.length) bits.push('Needs picks: ' + unready.join(', ') + '.');
+  if (refused.length) { bits.push('Someone already changed: ' + refused.join(', ') + '.'); await refresh(); }
+  note(bits.join(' '));
 });
 
 // Clearing runs in passes. Keep going while the count drops; stop if it stalls.

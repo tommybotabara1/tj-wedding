@@ -56,3 +56,18 @@ export function shortlistRows(m) {
     '<li>' + thumb(x) + '<span class="who"><span class="n">#' + x.n + '</span> ' + who(x) + '</span><span class="votes">' +
     x.votes + (x.votes === 1 ? ' vote' : ' votes') + '</span></li>').join('') + '</ul>';
 }
+
+/* The tie panel: when a reveal needs a choice (a tie, or nobody voted), the
+   entries to pick from, each with a Winner button. Used on both tabs. */
+export function tiePanel(m, leaders) {
+  const hit = m.shortlist.filter((x) => leaders.includes(x.id));
+  const none = m.tally.total === 0;
+  return '<div class="tie" role="group" aria-label="Pick the winner"><p><b>' +
+    (none ? 'Nobody voted. Tap the winner.' : "It's a tie. Tap the winner.") + '</b></p><ul class="rows">' +
+    hit.map((x) => '<li>' + thumb(x) + '<span class="who"><span class="n">#' + x.n + '</span> ' + who(x) + '</span>' +
+      btn('Winner', { do: 'win', arg: m.id + '|' + x.id, kind: 'primary', k: 'win:' + x.id }) + '</li>').join('') + '</ul>' +
+    (none ? btn('No winner', { do: 'win', arg: m.id + '|none' }) : '') + '</div>';
+}
+
+// "(#2)" after a winner's name, unless it was awarded directly and has no number.
+export const winnerLine = (m) => m.winner ? 'Winner: ' + esc(m.winner.guest || 'A guest') + (m.winner.n ? ' (#' + m.winner.n + ')' : '') : 'No winner on screen.';

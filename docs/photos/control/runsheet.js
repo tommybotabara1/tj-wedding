@@ -1,15 +1,16 @@
 /* The Run sheet: the night's steps in order, the next one highlighted, and the
    shortlist review that sits inside step 2. Pure functions from state to HTML. */
-import { esc, btn, act, thumb, who, ownEntries, proposal, PHASE, shortlistRows } from './common.js';
+import { esc, btn, act, thumb, who, ownEntries, proposal, PHASE, shortlistRows, tiePanel, winnerLine } from './common.js';
 
 /* Which steps are finished, worked out from the phases and the screen. */
 export function progress(s) {
   const M = s.moments;
   const started = M.some((m) => m.phase !== 'entries');
-  const voteable = (m) => m.phase === 'entries' && proposal(m).length >= 2;
-  const opened = started && !M.some(voteable);
   const revealed = M.every((m) => m.phase === 'revealed');
-  const done = [started, opened, revealed, revealed && s.screen.mode === 'wall'];
+  const needsVote = (m) => m.phase === 'entries' && m.entryCount >= 2;
+  const opened = (started || revealed) && !M.some(needsVote);
+  const onWall = s.screen.mode === 'wall';
+  const done = [onWall, opened, revealed, revealed && onWall];
   return { done, next: done.indexOf(false) };
 }
 
@@ -29,7 +30,7 @@ export function renderReview(s, ui, ids) {
   const cards = ms.map((m) => {
     const picks = picksFor(ui, m);
     const by = new Map(m.candidates.map((c) => [c.id, c]));
-    const own = ownEntries(m).length;
+    const own = m.entryCount;
     const note = own === 0 ? 'No entries yet. It can get "No winner" later.'
       : own === 1 ? 'Only one entry. Award it directly later, or add more here.'
       : proposal(m).length < 2 ? 'Fewer than two good-enough entries. Add more to hold a vote.' : '';
@@ -58,24 +59,14 @@ export function renderReview(s, ui, ids) {
 
 /* ---------- step 3: one moment ---------- */
 
-function tiePanel(m, leaders) {
-  const hit = m.shortlist.filter((x) => leaders.includes(x.id));
-  const none = m.tally.total === 0;
-  return '<div class="tie" role="group" aria-label="Pick the winner"><p><b>' +
-    (none ? 'Nobody voted. Tap the winner.' : 'It\'s a tie. Tap the winner.') + '</b></p><ul class="rows">' +
-    hit.map((x) => '<li>' + thumb(x) + '<span class="who"><span class="n">#' + x.n + '</span> ' + who(x) + '</span>' +
-      btn('Winner', { do: 'win', arg: m.id + '|' + x.id, kind: 'primary', k: 'win:' + x.id }) + '</li>').join('') + '</ul>' +
-    (none ? btn('No winner', { do: 'win', arg: m.id + '|none' }) : '') + '</div>';
-}
-
 function momentBody(s, ui, m) {
-  const own = ownEntries(m).length;
+  const own = m.entryCount;
   const onShortlist = s.screen.mode === 'shortlist' && s.screen.moment === m.id;
   if (m.phase === 'revealed') {
-    return '<p class="ok">' + (m.winner ? 'Winner: ' + esc(m.winner.guest || 'A guest') + ' (#' + m.winner.n + ')' : 'No winner on screen.') + '</p>';
+    return '<p class="ok">' + winnerLine(m) + '</p>';
   }
   if (m.phase === 'entries') {
-    if (own === 1) return '<p class="muted">One entry, so there is nothing to vote on.</p><div class="btns">' + btn('Award directly', { do: 'win', arg: m.id + '|' + ownEntries(m)[0].id, kind: 'primary' }) + '</div>';
+    if (own === 1 && ownEntries(m).length) return '<p class="muted">One entry, so there is nothing to vote on.</p><div class="btns">' + btn('Award directly', { do: 'win', arg: m.id + '|' + ownEntries(m)[0].id, kind: 'primary' }) + '</div>';
     if (own === 0) return '<p class="muted">No entries for this one.</p><div class="btns">' + btn('No winner', { do: 'win', arg: m.id + '|none', kind: 'primary' }) + '</div>';
     return '<p class="muted">Voting isn\'t open for this moment. Open it in step 2.</p>';
   }

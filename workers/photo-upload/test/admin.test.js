@@ -178,6 +178,17 @@ describe('control-page API', () => {
     expect(await getMoment(env.DB, 'aisle')).toMatchObject({ phase: 'revealed', winner: 'none' });
   });
 
+  it('each moment reports entryCount: sent, original landed, not removed', async () => {
+    await mk('a');
+    await mk('b');
+    await mk('gone', { removed_at: NOW });
+    await mk('early', { drive_id: null });
+    await mk('other', { moment: 'entrance' });
+    const st = await state();
+    const n = Object.fromEntries(st.moments.map((m) => [m.id, m.entryCount]));
+    expect(n).toEqual({ aisle: 2, entrance: 1, 'first-dance': 0, 'happy-tears': 0, showstopper: 0, groufie: 0 });
+  });
+
   it('reveal from entries can award an entry directly', async () => {
     await mk('a');
     expect((await act({ action: 'reveal', moment: 'aisle', winner: 'a' })).status).toBe(200);
