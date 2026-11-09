@@ -33,6 +33,8 @@ import { Fail, corsHeaders, json, secretMatches } from './http.js';
 import { makeGoogle, configured } from './google.js';
 import * as upload from './upload.js';
 import * as entries from './entries.js';
+import * as pub from './public.js';
+import { serveMedia } from './media.js';
 import { makeGemini } from './gemini.js';
 import { runCron } from './checks.js';
 
@@ -54,6 +56,9 @@ export async function handle(request, env, ctx, svc) {
   }
 
   try {
+    // Signed media links carry their own proof, so they skip the password.
+    if (path.startsWith('/m/') && request.method === 'GET') return await serveMedia(request, env, svc, ctx);
+
     if (!(await secretMatches(request.headers.get('X-Photo-Password'), env.PHOTO_PASSWORD))) {
       throw new Fail(403, 'password');
     }
@@ -72,6 +77,10 @@ export async function handle(request, env, ctx, svc) {
 
     if (path === '/copy' && request.method === 'POST') return json(await entries.saveCopy(request, env, ctx, svc), 200, origin);
     if (path === '/remove' && request.method === 'POST') return json(await entries.removeEntry(request, env, svc), 200, origin);
+
+    if (path === '/contest' && request.method === 'GET') return json(await pub.contest(request, env, svc), 200, origin);
+    if (path === '/vote' && request.method === 'POST') return json(await pub.vote(request, env, svc), 200, origin);
+    if (path === '/screen' && request.method === 'GET') return json(await pub.screen(request, env, svc), 200, origin);
 
     throw new Fail(404, 'not-found');
   } catch (err) {
