@@ -12,6 +12,7 @@
 import { call } from './lib/api.js';
 import { loadSent, saveSent, upsertSent, markRemoved } from './lib/sent.js';
 import { makeSmallCopy } from './lib/shrink.js';
+import { actionsKey } from './lib/actions.js';
 
 const CHUNK = 8 * 1024 * 1024; // a multiple of 256 KB, as Drive requires
 const MAX_COPY = 1.5 * 1024 * 1024; // the Worker refuses a bigger small copy
@@ -99,9 +100,7 @@ export function createUploader(env) {
     li.setAttribute('data-state', state);
     li.querySelector('.nm').textContent = (it.kind === 'video' ? 'Video' : 'Photo') + (it.size ? ' · ' + mb(it.size) : '');
     li.querySelector('.st').textContent = lineFor(it);
-    const inEl = li.querySelector('.in');
-    inEl.textContent = it.state === 'sent' && it.moment ? 'In the contest: ' + env.titleOf(it.moment) : '';
-    inEl.hidden = !inEl.textContent;
+    updateIn(it, li);
     if (r && r.frac != null) li.querySelector('.bar i').style.width = Math.round(r.frac * 100) + '%';
 
     const thumb = li.querySelector('.thumb');
@@ -117,8 +116,28 @@ export function createUploader(env) {
       thumb.innerHTML = it.kind === 'video' ? ICON_VIDEO : ICON_PHOTO;
     }
 
-    renderActions(it, li);
+    // Rebuild the buttons only when they would change, and never under an open
+    // confirm or a remove in flight: progress events and polls come often.
+    const akey = actionsKey(it, !!(r && r.retryable));
+    if (li.getAttribute('data-akey') !== akey && !li.querySelector('.ask') && !li.hasAttribute('data-removing')) {
+      li.setAttribute('data-akey', akey);
+      renderActions(it, li);
+    }
     env.section.hidden = false;
+  }
+
+  function updateIn(it, li) {
+    const inEl = li.querySelector('.in');
+    inEl.textContent = it.state === 'sent' && it.moment ? 'In the contest: ' + env.titleOf(it.moment) : '';
+    inEl.hidden = !inEl.textContent;
+  }
+
+  // Drop an open confirm and the cached signature so the next render rebuilds the buttons.
+  function resetActions(li) {
+    const box = li.querySelector('.ask');
+    if (box) box.remove();
+    li.removeAttribute('data-removing');
+    li.removeAttribute('data-akey');
   }
 
   function button(cls, text, onClick) {
@@ -165,8 +184,8 @@ export function createUploader(env) {
     msg.textContent = 'Remove this? It comes off the screen and out of the contest.';
     const yes = button('mini danger', 'Remove', () => removeItem(it.local, li));
     const keep = button('mini', 'Keep', () => {
-      box.remove();
-      renderActions(find(it.local), li);
+      resetActions(li);
+      render(find(it.local));
       const again = li.querySelector('.act .mini');
       if (again) again.focus();
     });
@@ -189,12 +208,14 @@ export function createUploader(env) {
     }
     const box0 = li.querySelector('.ask');
     if (box0) box0.querySelector('span').textContent = 'Removing…';
+    li.setAttribute('data-removing', '1');
     call(base, 'POST', '/remove', { json: { entry: it.entry, key: it.key }, password: env.getPassword() })
       .then((res) => {
         if (res.ok) {
           items = markRemoved(items, it.entry);
           persist();
           const cur = find(local);
+          resetActions(li);
           render(cur);
           li.focus();
           say('Removed.');
@@ -210,6 +231,7 @@ export function createUploader(env) {
               cur = setItem(cur, { state: 'failed' });
             }
           }
+          resetActions(li);
           render(cur);
           ask(cur, li);
           li.querySelector('.ask span').textContent = "Couldn't remove it. Check your signal and try again. " +
@@ -275,6 +297,13 @@ export function createUploader(env) {
         if (!res.ok) return res;
         r.session = res.body.session;
         r.next = 0;
+        // A restart (Drive closed the session) gets a fresh entry: the small
+        // copy must go to it, and the old one is taken back, best effort.
+        const old = get();
+        if (old && old.entry && old.key) {
+          call(base, 'POST', '/remove', { json: { entry: old.entry, key: old.key }, password: env.getPassword() }).catch(() => {});
+        }
+        r.copyStarted = false;
         update({ entry: res.body.entry || null, key: res.body.key || null, moment: res.body.moment || null });
         persist();
         if (r.cancelled) return { ok: false, cancelled: true, body: {} };
@@ -383,7 +412,12 @@ export function createUploader(env) {
   }
 
   /* The contest's titles can change what a card says once they load. */
-  function refreshTitles() { items.forEach(render); }
+  function refreshTitles() {
+    items.forEach((it) => {
+      const li = list.querySelector('[data-local="' + it.local + '"]');
+      if (li) updateIn(it, li);
+    });
+  }
 
   return { add, restore, refreshTitles, isBusy: () => running || queue.length > 0 };
 }
