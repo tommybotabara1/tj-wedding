@@ -1,0 +1,17 @@
+# Local run only. Copy to .dev.vars (gitignored) and `npm run dev`; the real
+# secrets live in Worker secrets and the main checkout's .env, never here.
+PHOTO_PASSWORD=ToMyJeyan
+ADMIN_PASSWORD=local-admin-password
+MEDIA_KEY=local-media-signing-key
+GOOGLE_CLIENT_ID=standin-client-id
+GOOGLE_CLIENT_SECRET=standin-client-secret
+GOOGLE_REFRESH_TOKEN=standin-refresh-token
+DRIVE_FOLDER_ID=standin-originals-folder
+COPIES_FOLDER_ID=standin-copies-folder
+GEMINI_API_KEY=standin-gemini-key
+
+# Point the Worker at test/standin.mjs instead of Google and Gemini.
+GOOGLE_TOKEN_URL=http://127.0.0.1:8788/token
+GOOGLE_UPLOAD_BASE=http://127.0.0.1:8788/upload
+GOOGLE_API_BASE=http://127.0.0.1:8788
+GEMINI_BASE=http://127.0.0.1:8788

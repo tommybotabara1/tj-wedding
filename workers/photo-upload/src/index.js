@@ -6,23 +6,37 @@
  * The page talks only to this Worker; the Worker holds the couple's Google
  * permission and passes each file on to Drive in pieces.
  *
- *   GET  /ping                       → {ok, drive}          password + config check
- *   POST /start  {name,type,size,guest} → {session}         opens a Drive upload
- *   PUT  /chunk  Content-Range, bytes → {next} | {done,file} one piece of it
- *   POST /copy   X-Entry, X-Entry-Key, jpeg → {ok}          the small copy of an entry
- *   POST /remove {entry,key}          → {ok}             take an entry back
- *   GET  /admin/state, POST /admin/act   X-Admin-Password   the control page
- *   GET  /status?size=N  (X-Upload-Session) → {next} | {done,file}  where it got to
+ *   GET  /ping                          → {ok, drive}            password + config check
+ *   POST /start  {name,type,size,guest,device,moment} → {session, entry, key, moment}  opens a Drive upload
+ *   PUT  /chunk  Content-Range, bytes   → {next} | {done,file}   one piece of it
+ *   GET  /status?size=N (X-Upload-Session) → {next} | {done,file}  where it got to
+ *   POST /copy   X-Entry, X-Entry-Key, jpeg → {ok}               the small copy of an entry
+ *   POST /remove {entry,key}            → {ok}                   take an entry back
+ *   GET  /contest?device=               → moments, phases, shortlists, winners, my votes
+ *   POST /vote   {device,moment,entry}  → {ok, myVote}
+ *   GET  /screen                        → {mode, moment, wall}   the big screen's feed
+ *   GET  /m/<id>/<copy|orig>?e=&s=      signed media link (no password header)
+ *   GET  /admin/state, POST /admin/act  X-Admin-Password         the control page
  *
- * Every call carries the guests' password in X-Photo-Password, checked against
- * the secret PHOTO_PASSWORD with the same forgiving match as the page
- * (capitals, spaces and a leading # don't matter).
+ * Every guest call carries the guests' password in X-Photo-Password, checked
+ * against the secret PHOTO_PASSWORD with the same forgiving match as the page
+ * (capitals, spaces and a leading # don't matter). /m/ uses its signature and
+ * /admin/ uses ADMIN_PASSWORD instead. A cron runs the Gemini checker every minute.
  *
- * Secrets, all set by tools/photo_drive_setup.py (or by hand with
- * `npx wrangler secret put NAME`):
+ * Secrets, set by tools/photo_drive_setup.py / tools/photo_contest_setup.py (or
+ * by hand with `npx wrangler secret put NAME`):
  *   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN
- *   DRIVE_FOLDER_ID   the folder uploads go into (kept out of the public repo)
- *   PHOTO_PASSWORD    what guests type, e.g. ToMyJeyan
+ *   DRIVE_FOLDER_ID    the folder originals go into (kept out of the public repo)
+ *   COPIES_FOLDER_ID   the folder for the small copies the contest shows
+ *   PHOTO_PASSWORD     what guests type, e.g. ToMyJeyan
+ *   ADMIN_PASSWORD     the control page's own password
+ *   MEDIA_KEY          signs the /m/ links
+ *   GEMINI_API_KEY     the photo check
+ * Vars (wrangler.toml):
+ *   GEMINI_MODEL       default gemini-3.1-flash-lite
+ *   CONTEST_OPENS_AT   2026-12-26T16:00:00Z (00:00 Dec 27 in the Philippines)
+ * Local runs only: GOOGLE_TOKEN_URL, GOOGLE_UPLOAD_BASE, GOOGLE_API_BASE and
+ * GEMINI_BASE point at test/standin.mjs (see .dev.vars.example).
  *
  * The code is split by job: http.js (CORS, errors, helpers), google.js (all
  * Drive calls), upload.js (the three upload endpoints). This file is the
