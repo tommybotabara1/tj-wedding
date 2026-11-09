@@ -8,7 +8,7 @@ import { contestOpen, onWall, rankShortlist, tally, assertPhase } from './contes
 import { trashEntry } from './entries.js';
 import {
   listMoments, getMoment, updateMoment, getSettings, putSetting, setOperator, voteCounts, addLog, recentLog,
-  practiceEntries, deletePractice, recentEntries, momentEntries, entriesByIds, getEntry,
+  practiceEntries, deletePractice, deleteEntry, updateMomentIf, recentEntries, momentEntries, entriesByIds, getEntry,
 } from './store.js';
 
 const SCAN = 1000;           // newest entries to look through
@@ -132,6 +132,13 @@ async function revealFromEntries(svc, winner) {
   return winner;
 }
 
+// The write that counts: refuses (409) if another call already moved the phase.
+async function guarded(svc, m, allowed, fields) {
+  if (!(await updateMomentIf(svc.db, m.id, allowed, fields))) throw new Fail(409, 'wrong-phase');
+}
+
+const CLEAR_BATCH = 12; // practice rows per call, to stay under the subrequest cap
+
 const ACTIONS = {
   async screen({ svc, body }) {
     const mode = body.mode;
@@ -153,14 +160,14 @@ const ACTIONS = {
     if (!ids.every((id) => typeof id === 'string')) throw bad();
     const rows = await entriesByIds(svc.db, ids);
     if (rows.length !== ids.length || !rows.every(usable)) throw bad();
-    await updateMoment(svc.db, m.id, { phase: 'voting', shortlist: ids });
+    await guarded(svc, m, ['entries', 'closed'], { phase: 'voting', shortlist: ids });
     return 'Open voting: ' + m.title;
   },
 
   async 'close-voting'({ svc, body }) {
     const m = await momentOf(svc.db, body);
     assertPhase(m, ['voting']);
-    await updateMoment(svc.db, m.id, { phase: 'closed' });
+    await guarded(svc, m, ['voting'], { phase: 'closed' });
     return 'Close voting: ' + m.title;
   },
 
@@ -168,7 +175,7 @@ const ACTIONS = {
     const m = await momentOf(svc.db, body);
     assertPhase(m, ['entries', 'closed']);
     const winner = m.phase === 'closed' ? await revealFromClosed(svc, m, body.winner) : await revealFromEntries(svc, body.winner);
-    await updateMoment(svc.db, m.id, { phase: 'revealed', winner });
+    await guarded(svc, m, ['entries', 'closed'], { phase: 'revealed', winner });
     await putScreen(svc.db, 'winner', m.id);
     return 'Reveal: ' + m.title;
   },
@@ -213,12 +220,21 @@ const ACTIONS = {
     return 'Practice started';
   },
 
-  async 'practice-clear'({ svc }) {
+  // Works in bounded passes. A row goes only once its files are in the bin, so
+  // a failed trash is retried by the next pass instead of being orphaned.
+  async 'practice-clear'({ svc, out }) {
     const s = await getSettings(svc.db);
     if (!s.practice) throw new Fail(409, 'wrong-phase');
     const now = svc.now();
-    for (const e of await practiceEntries(svc.db)) if (!e.removed_at) await trashEntry(svc, e, now);
-    await deletePractice(svc.db);
+    for (const e of await practiceEntries(svc.db, CLEAR_BATCH)) {
+      if ((await trashEntry(svc, e, now)).ok) await deleteEntry(svc.db, e.id);
+    }
+    const remaining = (await practiceEntries(svc.db)).length;
+    if (remaining) {
+      out.clearing = { remaining };
+      return 'Practice clearing: ' + remaining + ' left';
+    }
+    await deletePractice(svc.db); // practice votes on real entries
 
     let snap = null;
     try { snap = JSON.parse(s.snapshot); } catch { /* no snapshot: reset below */ }
@@ -240,7 +256,8 @@ export async function act(request, env, svc, origin) {
   if (!body || typeof body !== 'object') throw bad();
   const fn = Object.hasOwn(ACTIONS, body.action) ? ACTIONS[body.action] : null;
   if (!fn) throw bad();
-  const what = await fn({ svc, env, body });
+  const out = {}; // extra fields for the reply (practice-clear's `clearing`)
+  const what = await fn({ svc, env, body, out });
   await addLog(svc.db, clean(body.by, 30) || 'someone', what, svc.now());
-  return state(env, svc, origin);
+  return { ...(await state(env, svc, origin)), ...out };
 }

@@ -261,6 +261,64 @@ describe('control-page API', () => {
     expect((await act({ action: 'practice-clear' })).status).toBe(409);
   });
 
+  it('practice-clear works in passes of 12 and finishes on the next call', async () => {
+    await act({ action: 'practice-start' });
+    for (let i = 0; i < 15; i++) await mk('q' + i, { practice: 1, moment: 'groufie' });
+    const first = await (await act({ action: 'practice-clear' })).json();
+    expect(first.clearing).toEqual({ remaining: 3 });
+    expect(first.settings.practice).toBe(true);
+    const second = await (await act({ action: 'practice-clear' })).json();
+    expect(second.clearing).toBeUndefined();
+    expect(second.settings.practice).toBe(false);
+    for (let i = 0; i < 15; i++) {
+      expect(await getEntry(env.DB, 'q' + i)).toBeNull();
+      expect(google.calls).toContainEqual({ fn: 'trash', id: 'drive-q' + i });
+      expect(google.calls).toContainEqual({ fn: 'trash', id: 'copy-q' + i });
+    }
+  });
+
+  it('a practice entry whose trash fails stays until a later pass works', async () => {
+    await act({ action: 'practice-start' });
+    await mk('ok1', { practice: 1 });
+    await mk('stuck', { practice: 1 });
+    const realTrash = google.trash;
+    google.trash = async (id) => { if (id === 'drive-stuck') throw new Error('drive down'); return realTrash(id); };
+    const first = await (await act({ action: 'practice-clear' })).json();
+    expect(first.clearing).toEqual({ remaining: 1 });
+    expect(first.settings.practice).toBe(true);
+    expect(await getEntry(env.DB, 'ok1')).toBeNull();
+    expect(await getEntry(env.DB, 'stuck')).not.toBeNull();
+    google.trash = realTrash;
+    const second = await (await act({ action: 'practice-clear' })).json();
+    expect(second.settings.practice).toBe(false);
+    expect(await getEntry(env.DB, 'stuck')).toBeNull();
+    expect(google.calls).toContainEqual({ fn: 'trash', id: 'drive-stuck' });
+  });
+
+  it('two open-voting calls at once: one wins, one gets 409', async () => {
+    await mk('a'); await mk('b'); await mk('c');
+    const [r1, r2] = await Promise.all([
+      act({ action: 'open-voting', moment: 'aisle', shortlist: ['a', 'b'] }),
+      act({ action: 'open-voting', moment: 'aisle', shortlist: ['c'] }),
+    ]);
+    expect([r1.status, r2.status].sort()).toEqual([200, 409]);
+    const winning = r1.status === 200 ? ['a', 'b'] : ['c'];
+    expect((await getMoment(env.DB, 'aisle')).shortlist).toEqual(winning);
+  });
+
+  it('two tie reveals at once: one wins, one gets 409', async () => {
+    await voting(['a', 'b']);
+    await vote('d1', 'a'); await vote('d2', 'b');
+    await act({ action: 'close-voting', moment: 'aisle' });
+    const [r1, r2] = await Promise.all([
+      act({ action: 'reveal', moment: 'aisle', winner: 'a' }),
+      act({ action: 'reveal', moment: 'aisle', winner: 'b' }),
+    ]);
+    expect([r1.status, r2.status].sort()).toEqual([200, 409]);
+    expect((await getMoment(env.DB, 'aisle')).winner).toBe(r1.status === 200 ? 'a' : 'b');
+    expect(await recentLog(env.DB, 20)).toHaveLength(3); // open, close, one reveal
+  });
+
   it('every action writes a log line with by', async () => {
     await mk('a');
     await act({ action: 'screen', mode: 'shortlist', moment: 'happy-tears', by: 'Maya' });

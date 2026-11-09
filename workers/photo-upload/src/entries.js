@@ -54,12 +54,16 @@ export async function startEntry(env, svc, body, sessionUrl) {
 
 // Mark an entry removed (which also drops its votes) FIRST, so it is gone from
 // the contest whatever Drive does, then bin each file best-effort.
+// Returns {ok}: true only if every trash it tried worked (callers that can
+// retry, like practice-clear, use it; the others ignore it).
 export async function trashEntry(svc, entry, now) {
   await markRemoved(svc.db, entry.id, now);
+  let ok = true;
   for (const id of [entry.drive_id, entry.copy_id]) {
     if (!id) continue;
-    try { await svc.google.trash(id); } catch (e) { console.log('trash-failed'); }
+    try { await svc.google.trash(id); } catch (e) { ok = false; console.log('trash-failed'); }
   }
+  return { ok };
 }
 
 // The last piece of an original has landed. Never throws.

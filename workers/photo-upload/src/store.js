@@ -73,14 +73,31 @@ export async function getMoment(db, id) {
   return momentRow(await one(db, 'SELECT * FROM moments WHERE id = ?', id));
 }
 
-export async function updateMoment(db, id, { phase, shortlist, winner } = {}) {
+function momentSets({ phase, shortlist, winner }) {
   const sets = [];
   const args = [];
   if (phase !== undefined) { sets.push('phase = ?'); args.push(phase); }
   if (shortlist !== undefined) { sets.push('shortlist = ?'); args.push(JSON.stringify(shortlist)); }
   if (winner !== undefined) { sets.push('winner = ?'); args.push(winner); }
+  return { sets, args };
+}
+
+export async function updateMoment(db, id, fields = {}) {
+  const { sets, args } = momentSets(fields);
   if (!sets.length) return;
   await run(db, 'UPDATE moments SET ' + sets.join(', ') + ' WHERE id = ?', ...args, id);
+}
+
+// Compare-and-set: writes only while the moment is still in one of `allowed`
+// phases. Returns true if it wrote, false if another call got there first.
+export async function updateMomentIf(db, id, allowed, fields) {
+  const { sets, args } = momentSets(fields);
+  const r = await run(
+    db,
+    'UPDATE moments SET ' + sets.join(', ') + ' WHERE id = ? AND phase IN (' + allowed.map(() => '?').join(', ') + ')',
+    ...args, id, ...allowed,
+  );
+  return r.meta.changes > 0;
 }
 
 /* ---------- entries ---------- */
@@ -168,8 +185,16 @@ export function missingCopies(db, before, limit) {
   );
 }
 
-export function practiceEntries(db) {
-  return all(db, 'SELECT * FROM entries WHERE practice = 1 ORDER BY created_at');
+export function practiceEntries(db, limit = -1) {
+  return all(db, 'SELECT * FROM entries WHERE practice = 1 ORDER BY created_at, id LIMIT ?', limit);
+}
+
+// One entry and its votes, gone in a single batch.
+export async function deleteEntry(db, id) {
+  await db.batch([
+    db.prepare('DELETE FROM votes WHERE entry = ?').bind(id),
+    db.prepare('DELETE FROM entries WHERE id = ?').bind(id),
+  ]);
 }
 
 export async function deletePractice(db) {
