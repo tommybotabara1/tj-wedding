@@ -16,3 +16,21 @@ routes = [
 #
 # Tests only: GOOGLE_TOKEN_URL and GOOGLE_UPLOAD_BASE point the Worker at a
 # stand-in Google. Never set them in production.
+
+compatibility_flags = ["nodejs_compat"]
+
+# The contest's database (entries, votes, settings). The id is a placeholder
+# until `wrangler d1 create` is run for real.
+[[d1_databases]]
+binding = "DB"
+database_name = "tj-photo-contest"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+# Runs the checker every minute.
+[triggers]
+crons = ["* * * * *"]
+
+[vars]
+GEMINI_MODEL = "gemini-3.1-flash-lite"
+CONTEST_OPENS_AT = "2026-12-26T16:00:00Z"
