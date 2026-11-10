@@ -159,10 +159,10 @@ function modeOf(s) {
 
 /* What must change for the stage to differ. Signed URLs are left out, so a
    fresh signature alone never redraws the screen. */
-function keyOf(s) {
+function keyOf(s, withVotes = true) {
   const m = s.moment;
   const mode = modeOf(s);
-  if (mode === 'shortlist') return ['s', m.id, m.votes, m.shortlist.map((x) => x.id).join(',')].join('|');
+  if (mode === 'shortlist') return ['s', m.id, withVotes ? m.votes : '', m.shortlist.map((x) => x.id).join(',')].join('|');
   if (mode === 'winner') return ['w', m.id, m.winner ? m.winner.id : 'none'].join('|');
   return ['a', (s.wall || []).map((x) => x.id).join(',')].join('|');
 }
@@ -183,11 +183,14 @@ async function draw() {
   const mode = modeOf(s);
   const key = keyOf(s) + (mode === 'wall' ? '#' + rotateIdx : '');
   if (key === shownKey) { drawing++; drawingKey = ''; return; } // what's up is already right: drop any older draw
-  // The same draw is already loading. Starting it again would cancel it every
-  // poll, and a slow photo would then keep the screen from ever changing.
-  if (key === drawingKey) return;
+  // The same photos are already loading. Starting again would cancel that load
+  // every poll, and one slow photo would then keep the screen from ever changing.
+  // The vote count and the wall's rotation don't change which photos load, so
+  // they're left out here; the renderers read the latest state when it lands.
+  const loadKey = keyOf(s, false);
+  if (loadKey === drawingKey) return;
   const ticket = ++drawing;
-  drawingKey = key;
+  drawingKey = loadKey;
   await preload(urlsOf(s).map(src));
   if (ticket !== drawing) return;
   drawingKey = '';

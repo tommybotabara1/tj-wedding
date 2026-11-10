@@ -38,6 +38,32 @@ describe('checks', () => {
     expect(gemini.calls[0].jpeg.byteLength).toBe(2);
   });
 
+  it('stops calling Gemini once the daily cap is used, and starts again the next day', async () => {
+    const ids = [];
+    for (const n of [1, 2, 3]) ids.push(await withCopy(google, { id: 'cap' + n }));
+    const gemini = fakeGemini(() => GOOD);
+    const capped = { ...env, GEMINI_DAILY_CAP: '2' };
+    const svc = svcFor({ google, gemini, now: NOW });
+    expect(await runCheck(capped, svc, ids[0])).toBe('shown');
+    expect(await runCheck(capped, svc, ids[1])).toBe('shown');
+    expect(await runCheck(capped, svc, ids[2])).toBe('capped');
+    expect(gemini.calls.length).toBe(2);
+    const row = await getEntry(env.DB, ids[2]);
+    expect(row.check_state).toBe('pending');
+    expect(row.check_tries).toBe(0);
+    expect((await getSettings(env.DB)).geminiErr).toBe(NOW);
+    const tomorrow = svcFor({ google, gemini, now: NOW + 24 * 3600_000 });
+    expect(await runCheck(capped, tomorrow, ids[2])).toBe('shown');
+    expect(gemini.calls.length).toBe(3);
+  });
+
+  it('a cap of 0 turns Gemini off', async () => {
+    const id = await withCopy(google);
+    const gemini = fakeGemini(() => GOOD);
+    expect(await runCheck({ ...env, GEMINI_DAILY_CAP: '0' }, svcFor({ google, gemini, now: NOW }), id)).toBe('capped');
+    expect(gemini.calls.length).toBe(0);
+  });
+
   it('runCheck holds an entry that is not wall-safe', async () => {
     const id = await withCopy(google);
     const svc = svcFor({ google, gemini: fakeGemini(() => ({ ...GOOD, wallOk: false })), now: NOW });

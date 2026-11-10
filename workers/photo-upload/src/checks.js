@@ -3,13 +3,30 @@
 
 import { Fail } from './http.js';
 import {
-  getEntry, getMoment, setCheck, bumpTries, putSetting, pendingChecks, missingCopies, setCopy,
+  getEntry, getMoment, setCheck, bumpTries, putSetting, pendingChecks, missingCopies, setCopy, takeGeminiSlot,
 } from './store.js';
+
+/* A hard ceiling on paid Gemini checks per UTC day (the wedding night falls in
+   one). Past it, photos wait in the control page's "Waiting for a check" list
+   for a person to Show them, and checking resumes the next day. About
+   US$0.002 a check, so 3000 caps a day at roughly US$6. */
+const DAILY_CAP = 3000;
+export function dailyCap(env) {
+  const n = Number(env.GEMINI_DAILY_CAP);
+  return Number.isFinite(n) && n >= 0 ? n : DAILY_CAP;
+}
 
 // Checks one entry. jpeg is the copy's bytes when the caller already has them.
 export async function runCheck(env, svc, entryId, jpeg) {
   const entry = await getEntry(svc.db, entryId);
   if (!entry || entry.removed_at || !entry.copy_id) return 'skipped';
+  const day = new Date(svc.now()).toISOString().slice(0, 10);
+  if (!(await takeGeminiSlot(svc.db, day, dailyCap(env)))) {
+    // Over the day's cap: leave it pending (no try used) for a person, or tomorrow.
+    console.log('check-capped');
+    await putSetting(svc.db, 'gemini_err', String(svc.now()));
+    return 'capped';
+  }
   try {
     let bytes;
     if (jpeg) {

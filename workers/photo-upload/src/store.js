@@ -56,6 +56,22 @@ export async function putSetting(db, key, value) {
   await run(db, 'INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value', key, String(value));
 }
 
+/* One Gemini check out of the day's allowance: true if it fits under cap, and
+   counts it; false once the day (UTC) has used them all. A single statement, so
+   two checks at once can't both take the last one. */
+export async function takeGeminiSlot(db, day, cap) {
+  if (!(cap > 0)) return false;
+  const row = await one(
+    db,
+    `INSERT INTO settings (key, value) VALUES (?, '1')
+     ON CONFLICT(key) DO UPDATE SET value = CAST(value AS INTEGER) + 1
+       WHERE CAST(value AS INTEGER) < ?
+     RETURNING value`,
+    'gemini_count:' + day, cap,
+  );
+  return Boolean(row);
+}
+
 /* ---------- moments ---------- */
 
 function momentRow(r) {
@@ -181,7 +197,10 @@ export async function momentEntryCounts(db) {
 export function pendingChecks(db, before, limit) {
   return all(
     db,
-    `SELECT * FROM entries WHERE copy_id IS NOT NULL AND removed_at IS NULL
+    // INDEXED BY: SQLite's planner otherwise prefers entries_removed_created and
+    // walks every live row each minute (0002's partial index is only used if named).
+    `SELECT * FROM entries INDEXED BY entries_to_check
+     WHERE copy_id IS NOT NULL AND removed_at IS NULL
        AND check_state IN ('pending', 'error') AND check_tries < 3 AND created_at < ?
      ORDER BY created_at LIMIT ?`,
     before, limit,
@@ -192,7 +211,8 @@ export function pendingChecks(db, before, limit) {
 export function missingCopies(db, now, limit) {
   return all(
     db,
-    `SELECT * FROM entries WHERE drive_id IS NOT NULL AND copy_id IS NULL AND removed_at IS NULL
+    `SELECT * FROM entries INDEXED BY entries_need_copy
+     WHERE drive_id IS NOT NULL AND copy_id IS NULL AND removed_at IS NULL
        AND copy_tries < 3
        AND created_at < ? - CASE copy_tries WHEN 0 THEN 120000 WHEN 1 THEN 360000 ELSE 900000 END
      ORDER BY created_at LIMIT ?`,
