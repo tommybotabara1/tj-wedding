@@ -54,7 +54,7 @@ async function call(method, route, { headers = {}, body, admin } = {}) {
   const h = { ...headers };
   if (admin) h['X-Admin-Password'] = pw.admin; else h['X-Photo-Password'] = pw.guest;
   if (body !== undefined && !(body instanceof Uint8Array)) { h['Content-Type'] = 'application/json'; body = JSON.stringify(body); }
-  const r = await fetch(API + route, { method, headers: h, body });
+  const r = await fetch(API + route, { method, headers: h, body, signal: AbortSignal.timeout(20000) });
   let j = null;
   try { j = await r.json(); } catch { /* not JSON */ }
   if (!r.ok) throw new Error(`${method} ${route.split('?')[0]} answered ${r.status} ${(j && j.error) || ''}`.trim());
@@ -78,8 +78,8 @@ try {
   const jpeg = fixture();
 
   step = '1 practice-start';
+  practiceOn = true; // before the call, so a half-done start is still cleared below
   await act({ action: 'practice-start', by: 'smoke' });
-  practiceOn = true;
 
   step = '2 /start';
   const s = await call('POST', '/start', { body: { name: 'smoke.jpg', type: 'image/jpeg', size: jpeg.length, guest: 'Smoke', device, moment: MOMENT } });
@@ -99,7 +99,16 @@ try {
 
   step = '6 /screen lists the entry';
   await act({ action: 'screen', mode: 'wall', by: 'smoke' });
-  check(ids(await screen()).includes(entry), 'the entry is not on the wall');
+  const onWall = (await screen()).wall.find((x) => x.id === entry);
+  check(onWall, 'the entry is not on the wall');
+
+  step = '6b the entry\'s copy link serves a JPEG';
+  // wrangler dev signs links with the route's host, so point it back at the API we are testing.
+  const link = new URL(onWall.copy);
+  const img = await fetch(API + link.pathname + link.search, { signal: AbortSignal.timeout(20000) });
+  check(img.status === 200, 'the copy link answered ' + img.status);
+  check((img.headers.get('content-type') || '').startsWith('image/jpeg'), 'the copy is ' + img.headers.get('content-type'));
+  check((await img.arrayBuffer()).byteLength > 0, 'the copy is empty');
 
   step = '7 open-voting';
   await act({ action: 'open-voting', moment: MOMENT, shortlist: [entry], by: 'smoke' });
@@ -138,6 +147,9 @@ if (practiceOn) {
       calls++;
     } while (r.clearing && calls < 20);
     if (r.clearing) throw new Error('still clearing after 20 calls');
+    check(r.settings.practice === false, 'practice is still on after clearing');
+    check(r.settings.contest === 'auto', 'the contest switch is ' + r.settings.contest + ', not auto');
+    check(r.settings.skipCheck === false, 'skip-check is still on after clearing');
   } catch (e) {
     failed = failed || `${step}: ${e.message}`;
   }

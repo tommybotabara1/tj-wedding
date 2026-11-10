@@ -17,13 +17,34 @@ import { makeGemini } from '../src/gemini.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
+/* The moments as the Worker has them. Titles, hints and the Gemini briefs are
+   copied verbatim from migrations/0001_contest.sql, so this checks the same
+   prompt the Worker sends on the night. Keep them in step with that file. */
 const MOMENTS = {
-  aisle: { title: 'Here comes the bride', hint: "Jeyan's walk down the church aisle." },
-  entrance: { title: 'The grand entrance', hint: "Tommy and Jeyan's entrance to \"I See the Light.\"" },
-  'first-dance': { title: 'The first dance', hint: "\"I Was Made for Lovin' You.\"" },
-  'happy-tears': { title: 'Happy tears', hint: "The parents' dances, the speeches, the toast and the family messages." },
-  showstopper: { title: 'Showstopper', hint: 'The production number, the musical numbers, the Botabara Cousins and the TJR surprise.' },
-  groufie: { title: 'Groufie with the newlyweds', hint: "Your table's group selfie with Tommy and Jeyan." },
+  aisle: {
+    title: 'Here comes the bride', hint: "Jeyan's walk down the church aisle.",
+    brief: 'The bride, Jeyan, walking down the church aisle in her wedding gown, often escorted; guests in pews, church interior.',
+  },
+  entrance: {
+    title: 'The grand entrance', hint: "Tommy and Jeyan's entrance to \"I See the Light.\"",
+    brief: 'The newlyweds Tommy and Jeyan making their grand entrance into the reception hall together.',
+  },
+  'first-dance': {
+    title: 'The first dance', hint: "\"I Was Made for Lovin' You.\"",
+    brief: 'The newlyweds dancing together on the reception floor.',
+  },
+  'happy-tears': {
+    title: 'Happy tears', hint: "The parents' dances, the speeches, the toast and the family messages.",
+    brief: "An emotional moment: tears, hugs or laughter during the parents' dances, speeches, a toast or family messages.",
+  },
+  showstopper: {
+    title: 'Showstopper', hint: 'The production number, the musical numbers, the Botabara Cousins and the TJR surprise.',
+    brief: 'A stage performance at the reception: a production number, singers, musicians, dancers or a surprise act.',
+  },
+  groufie: {
+    title: 'Groufie with the newlyweds', hint: "Your table's group selfie with Tommy and Jeyan.",
+    brief: 'A group selfie of guests together with the bride (wedding gown) and groom (formal wear).',
+  },
 };
 
 function parseEnv(file) {
