@@ -18,7 +18,9 @@ export function norm(s) {
   return (t.normalize ? t.normalize('NFKC') : t).toLowerCase().replace(/\s+/g, '').replace(/^#+/, '');
 }
 
-/* opts: {json, body, headers, progress(loaded), password, admin, handle}
+/* opts: {json, body, headers, progress(loaded), password, admin, handle, timeout}
+   `timeout` is in ms (default 120000, enough for one 8 MB piece on a slow
+   connection); polls pass a short one so a hung request can't stall them.
    `handle` is an object that gets an abort() method while the request is in
    flight; an aborted call resolves with {ok:false, status:0, aborted:true}. */
 export function call(base, method, path, opts) {
@@ -42,7 +44,7 @@ export function call(base, method, path, opts) {
     };
     xhr.onabort = () => resolve({ ok: false, status: 0, body: {}, aborted });
     xhr.onerror = xhr.ontimeout = () => resolve({ ok: false, status: 0, body: {} });
-    xhr.timeout = 120000; // one 8 MB piece on a slow connection
+    xhr.timeout = opts.timeout || 120000;
     if (opts.json) {
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.send(JSON.stringify(opts.json));

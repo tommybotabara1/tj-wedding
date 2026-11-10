@@ -59,6 +59,11 @@ p{ margin:8px 0; }
 .tabs{ display:flex; gap:8px; }
 .tab{ flex:1; min-height:52px; border-radius:12px; border:2px solid var(--gold-light); background:transparent; color:var(--moon); font:600 16px var(--sans); cursor:pointer; }
 .tab[aria-selected="true"]{ background:var(--moon); border-color:var(--moon); color:var(--night-deep); }
+.switches{ display:flex; flex-wrap:wrap; gap:4px 16px; margin:0 0 12px; padding:8px 12px; border-radius:10px; background:var(--dusk); border:1px solid rgba(216,188,130,.22); font-size:14px; color:var(--moon-soft); }
+.switches b{ color:var(--moon); }
+.switches.odd{ border:2px solid var(--lan-mid); color:var(--lan-core); }
+.switches.odd b{ color:var(--lan-core); }
+.flag{ color:var(--lan-mid); font-weight:600; }
 .last{ margin:0 0 12px; font-size:14px; color:var(--moon-dim); }
 .off{ margin:8px 0 0; font-size:14px; color:var(--lan-mid); font-weight:600; }
 

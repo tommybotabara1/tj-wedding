@@ -1,6 +1,6 @@
 /* The Run sheet: the night's steps in order, the next one highlighted, and the
    shortlist review that sits inside step 2. Pure functions from state to HTML. */
-import { esc, btn, act, thumb, who, ownEntries, proposal, PHASE, shortlistRows, tiePanel, winnerLine } from './common.js';
+import { esc, btn, act, thumb, who, flag, proposal, directAward, revealControl, PHASE, shortlistRows, tiePanel, winnerLine } from './common.js';
 
 /* Which steps are finished, worked out from the phases and the screen. */
 export function progress(s) {
@@ -16,10 +16,11 @@ export function progress(s) {
 
 /* ---------- step 2: review each moment's proposed shortlist ---------- */
 
-// Picks start as the proposal, but only when there is a real contest (2+).
+// Picks start as the Worker's proposed list, but only when there is a real contest (2+).
 export function picksFor(ui, m) {
   const have = new Set(m.candidates.map((c) => c.id));
-  if (!ui.picks[m.id]) ui.picks[m.id] = proposal(m).length >= 2 ? proposal(m).map((c) => c.id) : [];
+  const proposed = proposal(m);
+  if (!ui.picks[m.id]) ui.picks[m.id] = proposed.length >= 2 ? proposed.map((c) => c.id) : [];
   ui.picks[m.id] = ui.picks[m.id].filter((id) => have.has(id));
   return ui.picks[m.id];
 }
@@ -43,7 +44,8 @@ export function renderReview(s, ui, ids) {
     const adding = ui.addFor === m.id;
     const more = m.candidates.filter((c) => !picks.includes(c.id));
     const addList = adding ? '<ul class="rows add">' + (more.length ? more.map((c) =>
-      '<li>' + thumb(c) + '<span class="who">' + who(c) + '</span>' + btn('Add', { do: 'rv-add', arg: m.id + '|' + c.id, k: 'rv-add:' + c.id }) + '</li>').join('')
+      '<li>' + thumb(c) + '<span class="who">' + who(c) + flag(c) + '</span>' +
+      (c.hidden ? '' : btn('Add', { do: 'rv-add', arg: m.id + '|' + c.id, k: 'rv-add:' + c.id })) + '</li>').join('')
       : '<li class="muted">No other photos to add.</li>') + '</ul>' : '';
     return '<section class="review"><h3>' + esc(m.title) + '</h3>' + (note ? '<p class="muted">' + esc(note) + '</p>' : '') +
       (rows ? '<ul class="rows">' + rows + '</ul>' : '') +
@@ -66,7 +68,7 @@ function momentBody(s, ui, m) {
     return '<p class="ok">' + winnerLine(m) + '</p>';
   }
   if (m.phase === 'entries') {
-    if (own === 1 && ownEntries(m).length) return '<p class="muted">One entry, so there is nothing to vote on.</p><div class="btns">' + btn('Award directly', { do: 'win', arg: m.id + '|' + ownEntries(m)[0].id, kind: 'primary' }) + '</div>';
+    if (own === 1) return '<p class="muted">One entry, so there is nothing to vote on.</p>' + directAward(m, 'rs-');
     if (own === 0) return '<p class="muted">No entries for this one.</p><div class="btns">' + btn('No winner', { do: 'win', arg: m.id + '|none', kind: 'primary' }) + '</div>';
     return '<p class="muted">Voting isn\'t open for this moment. Open it in step 2.</p>';
   }
@@ -78,7 +80,7 @@ function momentBody(s, ui, m) {
       btn('Close voting', { do: 'act', arg: act({ action: 'close-voting', moment: m.id }), kind: showDone ? 'primary' : 'quiet', k: 'cv:' + m.id }) + '</div>';
   }
   return '<p>Voting closed · ' + m.tally.total + ' votes</p>' + rows + (ui.tie[m.id] ? tiePanel(m, ui.tie[m.id]) : '') +
-    '<div class="btns">' + btn('Reveal winner', { do: 'reveal', arg: m.id, kind: 'primary', k: 'rv:' + m.id }) + '</div>';
+    '<div class="btns">' + revealControl(ui, m, 'rv:' + m.id) + '</div>';
 }
 
 /* ---------- the sheet ---------- */
@@ -87,6 +89,14 @@ function step(n, p, title, what, inner) {
   const cls = 'step' + (p.done[n - 1] ? ' done' : '') + (p.next === n - 1 ? ' next' : '');
   return '<section class="' + cls + '"' + (p.next === n - 1 ? ' aria-current="step"' : '') + '><div class="mark" aria-hidden="true">' +
     (p.done[n - 1] ? '✓' : n) + '</div><div class="body"><h2>' + esc(title) + '</h2><p class="what">' + esc(what) + '</p>' + inner + '</div></section>';
+}
+
+/* The two switches that outlast a rehearsal, always in view so one left wrong is seen. */
+function switchesLine(s) {
+  const c = s.settings;
+  const odd = c.contest !== 'auto' || c.skipCheck;
+  return '<p class="switches' + (odd ? ' odd' : '') + '" role="status"><span>Contest: <b>' + { auto: 'Auto', open: 'Open', closed: 'Closed' }[c.contest] +
+    '</b></span><span>Show new photos without checking: <b>' + (c.skipCheck ? 'On' : 'Off') + '</b></span></p>';
 }
 
 export function renderRunSheet(s, ui) {
@@ -108,7 +118,7 @@ export function renderRunSheet(s, ui) {
       (open ? '<div class="in">' + momentBody(s, ui, m) + '</div>' : '') + '</article>';
   }).join('') + '</div>';
 
-  return step(1, p, 'Before the program: the wall is on', 'Tap this before guests arrive, so the big screen shows photos as they come in.', wallBtn('Show the wall', 'wall1', onWall)) +
+  return switchesLine(s) + step(1, p, 'Before the program: the wall is on', 'Tap this before guests arrive, so the big screen shows photos as they come in.', wallBtn('Show the wall', 'wall1', onWall)) +
     step(2, p, 'When the host announces voting', 'Tap Open voting, check each moment\'s shortlist, then confirm. Guests can then vote from their phones.', s2) +
     step(3, p, 'At the awarding, one moment at a time', 'For each moment: show its shortlist, close voting, then reveal the winner.', s3) +
     step(4, p, 'After the awarding', 'Tap this once the last winner has been shown.', wallBtn('Back to the wall', 'wall4', onWall && p.done[2]));

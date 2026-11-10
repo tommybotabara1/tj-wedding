@@ -35,9 +35,10 @@ export function createContest(env) {
     li.className = 'moment';
     li.setAttribute('data-id', m.id);
     const inputId = 'moment-' + m.id;
-    li.innerHTML = '<div class="mhead"><h3 class="mt"></h3><span class="mstate"></span></div><p class="mhint"></p>' +
-      '<input class="pick" type="file" accept="image/*,video/*" id="' + inputId + '" />' +
-      '<label class="btn" for="' + inputId + '">Send a shot for this moment</label>';
+    const titleId = inputId + '-t';
+    li.innerHTML = '<div class="mhead"><h3 class="mt" id="' + titleId + '"></h3><span class="mstate"></span></div><p class="mhint"></p>' +
+      '<input class="pick" type="file" accept="image/*,video/*" id="' + inputId + '" aria-describedby="' + titleId + '" />' +
+      '<label class="btn" for="' + inputId + '" aria-describedby="' + titleId + '">Send a shot for this moment</label>';
     li.querySelector('.mt').textContent = m.title;
     li.querySelector('.mhint').textContent = m.hint;
     const input = li.querySelector('input');
@@ -229,7 +230,7 @@ export function createContest(env) {
   function refresh() {
     if (loading) return Promise.resolve();
     loading = true;
-    return call(env.base, 'GET', '/contest?device=' + encodeURIComponent(env.device), { password: env.getPassword() }).then((r) => {
+    return call(env.base, 'GET', '/contest?device=' + encodeURIComponent(env.device), { password: env.getPassword(), timeout: 8000 }).then((r) => {
       loading = false;
       if (r.ok && r.body && Array.isArray(r.body.moments)) {
         data = r.body;

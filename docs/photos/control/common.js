@@ -43,9 +43,49 @@ export function who(item) {
 /* Entries sent for this moment, best first (candidates are ranked). */
 export const ownEntries = (m) => m.candidates.filter((c) => c.moment === m.title);
 
-/* What we'd propose for the shortlist: this moment's entries that Gemini rated
-   good enough, top five. */
-export const proposal = (m) => ownEntries(m).filter((c) => (c.fit || 0) >= 5).slice(0, 5);
+/* What we'd propose for the shortlist: the Worker's own pick (m.proposed, up to
+   five ids: eligible, rated good enough, one per phone), never recomputed here,
+   so a held or hidden photo can't slip in. */
+export function proposal(m) {
+  const by = new Map(m.candidates.map((c) => [c.id, c]));
+  return (m.proposed || []).map((id) => by.get(id)).filter(Boolean);
+}
+
+/* Whether the Worker will accept this candidate on a shortlist or as a direct
+   award: checked fine (or shown by the operator) and not hidden. */
+export const eligible = (c) => !c.hidden && (c.state === 'shown' || !!c.shown);
+
+/* The one-word flag the Add list puts on a candidate that isn't ready. */
+export function flag(c) {
+  const w = c.hidden ? 'hidden' : c.shown || c.state === 'shown' ? '' : c.state === 'held' ? 'held' : 'not checked yet';
+  return w ? '<small class="flag">' + w + '</small>' : '';
+}
+
+const STATE_TEXT = { shown: 'Checked, fine', held: 'Held back by the check', pending: 'Not checked yet', error: 'Not checked yet' };
+
+/* A moment with one entry: its thumbnail and state beside Award directly, and
+   No winner always offered next to it. k is a prefix that keeps focus on redraw. */
+export function directAward(m, k) {
+  const e = ownEntries(m)[0];
+  const none = btn('No winner', { do: 'win', arg: m.id + '|none', k: k + 'nw:' + m.id });
+  if (!e) return '<div class="btns">' + none + '</div>';
+  const ok = eligible(e);
+  const why = e.hidden ? "Hidden, so it can't be awarded."
+    : ok ? '' : 'Not cleared yet. Show it under "Waiting for a check" first, or give No winner.';
+  const text = e.hidden ? 'Hidden' : e.shown ? 'Shown by you' : STATE_TEXT[e.state] || '';
+  return '<ul class="rows"><li>' + thumb(e) + '<span class="who">' + who(e) + '<small>' + esc(text) + '</small></span></li></ul>' +
+    (why ? '<p class="muted">' + esc(why) + '</p>' : '') +
+    '<div class="btns">' + btn('Award directly', { do: 'win', arg: m.id + '|' + e.id, kind: 'primary', disabled: !ok, k: k + 'aw:' + m.id }) + none + '</div>';
+}
+
+/* Reveal winner, with its inline "are you sure" (never confirm()). */
+export function revealControl(ui, m, k) {
+  if (ui.confirm === 'rv:' + m.id) {
+    return '<span class="ask" role="alert">Put the winner on the big screen?</span>' +
+      btn('Reveal', { do: 'reveal-go', arg: m.id, kind: 'primary', k: 'rvgo:' + m.id }) + btn('Cancel', { do: 'confirm', arg: '', k: 'rvno:' + m.id });
+  }
+  return btn('Reveal winner', { do: 'confirm', arg: 'rv:' + m.id, kind: 'primary', k });
+}
 
 export const PHASE = { entries: 'Not opened', voting: 'Voting now', closed: 'Voting closed', revealed: 'Winner revealed' };
 

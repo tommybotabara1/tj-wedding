@@ -109,16 +109,26 @@ inputs.forEach((inp) => {
 
 /* Is sending open? Until the Worker is set up (or if it can't reach Drive),
    the buttons rest as placeholders and say when to come back. */
+let pingTimer = 0;
+let pingFailed = false;
 function checkOpen() {
-  return call(base, 'GET', '/ping', { password }).then((r) => {
+  clearTimeout(pingTimer);
+  return call(base, 'GET', '/ping', { password, timeout: 8000 }).then((r) => {
     const open = r.ok && r.body.drive === true;
     shoot.classList.toggle('closed', !open);
     inputs.forEach((inp) => { inp.disabled = !open; });
     upSoon.hidden = open;
     tip.hidden = !open;
     contest.setDriveOpen(open);
+    // A failed ping (no signal at unlock, the Worker restarting) must not leave
+    // the buttons dead for the whole night: ask again every 15 s while visible.
+    pingFailed = !r.ok && r.status !== 403;
+    if (pingFailed && !document.hidden) pingTimer = setTimeout(checkOpen, 15000);
   });
 }
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && pingFailed && password) checkOpen();
+});
 
 function show(pw) {
   password = norm(pw);
@@ -149,7 +159,7 @@ form.addEventListener('submit', (e) => {
     btn.textContent = 'Unlock';
     input.setAttribute('aria-invalid', 'true');
     err.textContent = x && x.message === 'unsupported'
-      ? "This browser can't open the album. Try Chrome or Safari, or message us on our socials."
+      ? "This browser can't check the password. Try Chrome or Safari."
       : "That's not quite it. Check the photo card at your table and try again.";
     input.select();
   });

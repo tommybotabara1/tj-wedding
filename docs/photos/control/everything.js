@@ -1,6 +1,6 @@
 /* The Everything tab: every control in one place, for when the run sheet is
    not enough, and the view Tommy watches while someone else runs the night. */
-import { esc, btn, act, ago, clock, thumb, who, ownEntries, PHASE, shortlistRows, tiePanel, winnerLine } from './common.js';
+import { esc, btn, act, ago, clock, thumb, who, directAward, revealControl, PHASE, shortlistRows, tiePanel, winnerLine } from './common.js';
 import { renderReview } from './runsheet.js';
 
 const sec = (title, inner, extra) => '<section class="card"><h2>' + esc(title) + '</h2>' + (extra || '') + inner + '</section>';
@@ -15,22 +15,22 @@ function screenSection(s) {
 }
 
 function momentCard(s, ui, m) {
-  const own = ownEntries(m);
   const count = m.entryCount;
   let ctl = '';
+  let direct = '';
   if (m.phase === 'entries') {
-    ctl = btn('Open voting', { do: 'review', arg: m.id, kind: 'primary', k: 'ev-open:' + m.id }) +
-      (count === 1 && own.length ? btn('Award directly', { do: 'win', arg: m.id + '|' + own[0].id, k: 'ev-aw:' + m.id }) : '') +
-      (count === 0 ? btn('No winner', { do: 'win', arg: m.id + '|none', k: 'ev-nw:' + m.id }) : '');
+    ctl = btn('Open voting', { do: 'review', arg: m.id, kind: 'primary', k: 'ev-open:' + m.id });
+    if (count === 1) direct = directAward(m, 'ev-');
+    else if (count === 0) ctl += btn('No winner', { do: 'win', arg: m.id + '|none', k: 'ev-nw:' + m.id });
   } else if (m.phase === 'voting') {
     ctl = btn('Close voting', { do: 'act', arg: act({ action: 'close-voting', moment: m.id }), kind: 'primary', k: 'ev-cv:' + m.id });
   } else if (m.phase === 'closed') {
-    ctl = btn('Reveal winner', { do: 'reveal', arg: m.id, kind: 'primary', k: 'ev-rv:' + m.id });
+    ctl = revealControl(ui, m, 'ev-rv:' + m.id);
   }
   const win = m.phase === 'revealed' ? '<p class="ok">' + winnerLine(m) + '</p>' : '';
   return '<article class="moment"><div class="head static"><span class="t">' + esc(m.title) + '</span><span class="pill">' + PHASE[m.phase] + '</span></div><div class="in">' +
     '<p class="muted">' + count + (count === 1 ? ' entry sent' : ' entries sent') + (m.phase === 'voting' || m.phase === 'closed' ? ' · ' + m.tally.total + ' votes' : '') + '</p>' +
-    shortlistRows(m) + win + (m.phase === 'closed' && ui.tie[m.id] ? tiePanel(m, ui.tie[m.id]) : '') + (ui.review === m.id ? renderReview(s, ui, [m.id]) : '<div class="btns">' + ctl + '</div>') + '</div></article>';
+    shortlistRows(m) + win + (m.phase === 'closed' && ui.tie[m.id] ? tiePanel(m, ui.tie[m.id]) : '') + (ui.review === m.id ? renderReview(s, ui, [m.id]) : direct + '<div class="btns">' + ctl + '</div>') + '</div></article>';
 }
 
 function momentsSection(s, ui) {
@@ -83,11 +83,14 @@ function healthSection(s, now) {
   return sec('Health', '<p>' + esc(line) + '</p><p class="muted">' + n.sent + ' sent · ' + n.onWall + ' on the wall · ' + n.waiting + ' waiting</p>');
 }
 
-function practiceSection(s) {
-  return sec('Practice', s.settings.practice
-    ? '<p class="muted">Practice is on. Use Clear practice at the top when you\'re done.</p>'
-    : '<p class="muted">For a rehearsal. Everything made while it\'s on is marked practice and cleared in one tap.</p><div class="btns">' +
-      btn('Start practice', { do: 'act', arg: act({ action: 'practice-start' }), kind: 'primary', k: 'pstart' }) + '</div>');
+function practiceSection(s, ui) {
+  if (s.settings.practice) return sec('Practice', '<p class="muted">Practice is on. Use Clear practice at the top when you\'re done.</p>');
+  const asking = ui.confirm === 'pstart';
+  return sec('Practice', '<p class="muted">For a rehearsal. Everything made while it\'s on is marked practice and cleared in one tap. Practice is off-limits on the wedding day.</p>' +
+    (asking
+      ? '<div class="btns"><span class="ask" role="alert">Start practice? Everything sent until you clear it is treated as practice.</span>' +
+        btn('Start', { do: 'act', arg: act({ action: 'practice-start' }), kind: 'primary', k: 'pgo' }) + btn('Cancel', { do: 'confirm', arg: '', k: 'pno' }) + '</div>'
+      : '<div class="btns">' + btn('Start practice', { do: 'confirm', arg: 'pstart', kind: 'primary', k: 'pstart' }) + '</div>'));
 }
 
 function logSection(s) {
@@ -97,5 +100,5 @@ function logSection(s) {
 
 export function renderEverything(s, ui, now) {
   return screenSection(s) + momentsSection(s, ui) + waitingSection(s) + wallSection(s, ui) + switchesSection(s) +
-    healthSection(s, now) + practiceSection(s) + logSection(s);
+    healthSection(s, now) + practiceSection(s, ui) + logSection(s);
 }

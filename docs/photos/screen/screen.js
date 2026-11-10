@@ -130,7 +130,7 @@ function renderShortlist() {
   foot.appendChild(qrBox('qr'));
   const txt = el('div');
   txt.appendChild(el('p', 'vote', 'Vote now at tomyjeyan.com/photos'));
-  txt.appendChild(el('p', 'count', m.votes + ' votes so far'));
+  txt.appendChild(el('p', 'count', m.votes === 1 ? '1 vote so far' : m.votes + ' votes so far'));
   foot.appendChild(txt);
   root.appendChild(foot);
   return root;
@@ -176,15 +176,21 @@ function urlsOf(s) {
 }
 
 let drawing = 0;
+let drawingKey = ''; // the key being preloaded right now, if any
 async function draw() {
   const s = state;
   if (!s) return;
   const mode = modeOf(s);
   const key = keyOf(s) + (mode === 'wall' ? '#' + rotateIdx : '');
-  if (key === shownKey) return;
+  if (key === shownKey) { drawing++; drawingKey = ''; return; } // what's up is already right: drop any older draw
+  // The same draw is already loading. Starting it again would cancel it every
+  // poll, and a slow photo would then keep the screen from ever changing.
+  if (key === drawingKey) return;
   const ticket = ++drawing;
+  drawingKey = key;
   await preload(urlsOf(s).map(src));
   if (ticket !== drawing) return;
+  drawingKey = '';
   const node = mode === 'shortlist' ? renderShortlist() : mode === 'winner' ? renderWinner() : renderWall();
   stage.replaceChildren(node);
   shownKey = key;
@@ -213,7 +219,7 @@ function showGate(msg) {
 async function poll() {
   if (polling) return;
   polling = true;
-  const r = await call(BASE, 'GET', '/screen', { password });
+  const r = await call(BASE, 'GET', '/screen', { password, timeout: 8000 });
   polling = false;
   if (r.status === 403) {
     store.del();

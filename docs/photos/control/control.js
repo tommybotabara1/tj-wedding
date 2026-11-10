@@ -34,7 +34,7 @@ let noteTimer = 0;
 // View state. Everything the screen shows is state + ui, so a redraw loses nothing.
 const ui = { tab: 'run', confirm: null, review: null, addFor: null, picks: {}, open: {}, tie: {}, clearing: null, clearFail: false };
 
-const api = (method, path, json) => call(BASE, method, path, { admin, json });
+const api = (method, path, json) => call(BASE, method, path, { admin, json, timeout: method === 'GET' ? 8000 : 0 });
 
 function note(msg) {
   const n = $('note');
@@ -80,6 +80,7 @@ async function exclusive(fn) {
 // Says what went wrong in plain words and refreshes, so the phone is never left stale.
 async function failed(r) {
   if (r.status === 403) return lock("That password didn't work.");
+  if (r.status === 409 && r.body && r.body.error === 'wedding-day') { ui.confirm = null; note('Practice is off-limits on the wedding day.'); return; }
   if (r.status === 409) note('Someone already did that. Updated.');
   else if (r.status === 0) { note("Couldn't reach the server. Try again."); return; }
   else note("That didn't work. Updated.");
@@ -103,7 +104,7 @@ const reveal = (moment, winner) => exclusive(async () => {
 // Opens each moment that has picks and carries on past the ones that can't open.
 // A moment with one entry is awarded directly; one with none gets "No winner".
 const openVoting = (ids) => exclusive(async () => {
-  const opened = [], direct = [], none = [], unready = [], refused = [];
+  const opened = [], direct = [], none = [], unready = [], refused = [], blocked = [];
   for (const id of ids) {
     const m = S.moments.find((x) => x.id === id);
     if (!m || m.phase !== 'entries') continue;
@@ -112,15 +113,21 @@ const openVoting = (ids) => exclusive(async () => {
     const r = await post({ action: 'open-voting', moment: id, shortlist: picks });
     if (r.ok) { opened.push(m.title); delete ui.picks[id]; continue; }
     if (r.status === 0 || r.status === 403) { await failed(r); return; }
+    const why = r.body && r.body.error;
+    if (r.status === 400 && (why === 'not-eligible' || why === 'one-per-phone')) {
+      blocked.push(m.title + (why === 'one-per-phone' ? ' (two photos from one phone)' : ' (a held, unchecked or hidden photo)'));
+      continue;
+    }
     refused.push(m.title);
   }
-  if (ids.length > 1 || ui.review !== 'all') ui.review = null;
+  if (!blocked.length && (ids.length > 1 || ui.review !== 'all')) ui.review = null; // stay in the review to fix a refused pick
   ui.addFor = null;
   const bits = [];
   if (opened.length) bits.push('Voting open for ' + opened.length + (opened.length === 1 ? ' moment.' : ' moments.'));
   if (direct.length) bits.push('Award directly: ' + direct.join(', ') + '.');
   if (none.length) bits.push('No entries: ' + none.join(', ') + '.');
   if (unready.length) bits.push('Needs picks: ' + unready.join(', ') + '.');
+  if (blocked.length) bits.push("Can't open yet: " + blocked.join(', ') + '. Take the photo out, or Show it first.');
   if (refused.length) { bits.push('Someone already changed: ' + refused.join(', ') + '.'); await refresh(); }
   note(bits.join(' '));
 });
@@ -147,7 +154,7 @@ const clearPractice = () => exclusive(async () => {
 const HANDLERS = {
   tab: (a) => { ui.tab = a; },
   act: (a) => act(JSON.parse(a)),
-  reveal: (a) => reveal(a),
+  'reveal-go': (a) => { ui.confirm = null; return reveal(a); },
   win: (a) => { const [m, w] = a.split('|'); return reveal(m, w); },
   review: (a) => { ui.review = a || null; ui.addFor = null; if (a === 'all') ui.tab = 'run'; },
   'open-all-review': () => { ui.review = 'all'; ui.tab = 'run'; },

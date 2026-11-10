@@ -19,3 +19,23 @@ test('mediaUrl re-points /m/ links at the base and leaves others alone', () => {
   assert.equal(mediaUrl('https://upload.tomyjeyan.com', 'https://upload.tomyjeyan.com/m/abc/orig?e=1&s=2'), 'https://upload.tomyjeyan.com/m/abc/orig?e=1&s=2');
   assert.equal(mediaUrl('http://x', 'https://other.example/pic.jpg'), 'https://other.example/pic.jpg');
 });
+
+/* call() takes XMLHttpRequest from the page; a stand-in is enough to see the timeout it sets. */
+function withFakeXhr(fn) {
+  const made = [];
+  globalThis.XMLHttpRequest = class {
+    constructor() { this.upload = {}; made.push(this); }
+    open() {}
+    setRequestHeader() {}
+    send() { this.status = 200; this.responseText = '{}'; this.onload(); }
+  };
+  return fn(made).finally(() => { delete globalThis.XMLHttpRequest; });
+}
+test('call keeps the 120 s timeout unless a poll asks for a shorter one', async () => {
+  const { call } = await import('../../docs/photos/lib/api.js');
+  await withFakeXhr(async (made) => {
+    await call('http://x', 'PUT', '/chunk', {});
+    await call('http://x', 'GET', '/screen', { timeout: 8000 });
+    assert.deepEqual(made.map((x) => x.timeout), [120000, 8000]);
+  });
+});
