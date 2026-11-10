@@ -21,12 +21,14 @@ routes = [
 
 compatibility_flags = ["nodejs_compat"]
 
-# The contest's database (entries, votes, settings). The id is a placeholder
-# until `wrangler d1 create` is run for real.
+# The contest's database (entries, votes, settings), created 2026-11-10 with
+# --location apac so it sits near the guests (the Worker makes several queries
+# per request). The id is not a secret. Migrations: `npx wrangler d1 migrations
+# apply DB --remote` (or --local for wrangler dev).
 [[d1_databases]]
 binding = "DB"
-database_name = "tj-photo-contest"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_name = "tj-photo-contest-ph"
+database_id = "f142afb5-d595-42cd-b0fa-c5b609c75b0a"
 migrations_dir = "migrations"
 
 # Runs the checker every minute.
