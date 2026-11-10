@@ -161,8 +161,15 @@ export function recentEntries(db, limit) {
   );
 }
 
-export function momentEntries(db, momentId) {
-  return all(db, 'SELECT * FROM entries WHERE moment = ? ORDER BY created_at, id', momentId);
+// A moment's best-scored sent entries (not removed, original landed), the
+// operator's candidates for a shortlist. Capped: a busy moment has hundreds.
+export function momentEntries(db, momentId, limit = 60) {
+  return all(
+    db,
+    `SELECT * FROM entries WHERE moment = ? AND removed_at IS NULL AND drive_id IS NOT NULL
+     ORDER BY COALESCE(fit, 0) + COALESCE(quality, 0) DESC, created_at, id LIMIT ?`,
+    momentId, limit,
+  );
 }
 
 // {momentId: n} of entries that count as sent for a moment: not removed, original landed.
@@ -181,13 +188,15 @@ export function pendingChecks(db, before, limit) {
   );
 }
 
-export function missingCopies(db, before, limit) {
+// Entries still without a small copy. Each failed try waits longer: 2, 6, then 15 minutes.
+export function missingCopies(db, now, limit) {
   return all(
     db,
     `SELECT * FROM entries WHERE drive_id IS NOT NULL AND copy_id IS NULL AND removed_at IS NULL
-       AND copy_tries < 3 AND created_at < ?
+       AND copy_tries < 3
+       AND created_at < ? - CASE copy_tries WHEN 0 THEN 120000 WHEN 1 THEN 360000 ELSE 900000 END
      ORDER BY created_at LIMIT ?`,
-    before, limit,
+    now, limit,
   );
 }
 

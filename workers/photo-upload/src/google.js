@@ -195,7 +195,9 @@ export function makeGoogle(env, fetchImpl = fetch) {
     if (!meta.ok) return null;
     const { thumbnailLink } = await meta.json();
     if (!thumbnailLink) return null;
-    const img = await toDrive(thumbnailLink, { headers: { 'Authorization': 'Bearer ' + t } });
+    // Drive's link is a small size (=s220); ask for 1600 px so Gemini can see.
+    const big = /=s\d+$/.test(thumbnailLink) ? thumbnailLink.replace(/=s\d+$/, '=s1600') : thumbnailLink + '=s1600';
+    const img = await toDrive(big, { headers: { 'Authorization': 'Bearer ' + t } });
     if (!img.ok) return null;
     return new Uint8Array(await img.arrayBuffer());
   }

@@ -50,6 +50,35 @@ describe('gemini', () => {
     expect(parseVerdict({ candidates: [{ finishReason: 'SAFETY' }] }, true).wallOk).toBe(false);
   });
 
+  it('any other refusal is blocked too, not an error to retry', async () => {
+    for (const finishReason of ['IMAGE_SAFETY', 'PROHIBITED_CONTENT', 'OTHER', 'BLOCKLIST', 'RECITATION']) {
+      const f = fakeFetch(200, { candidates: [{ finishReason }] });
+      expect(await makeGemini(ENV, f).check({ jpeg: JPEG, moment: MOMENT })).toEqual({
+        wallOk: false, fit: 0, quality: 0, note: 'blocked by Gemini',
+      });
+    }
+    expect(parseVerdict({ candidates: [{ finishReason: 'OTHER', content: { parts: [{ text: '' }] } }] }, true).wallOk).toBe(false);
+    expect(parseVerdict({ candidates: [{ finishReason: 'STOP', content: { parts: [] } }] }, true).note).toBe('blocked by Gemini');
+    expect(parseVerdict({ candidates: [] }, true).wallOk).toBe(false);
+  });
+
+  it('a cut-off answer is used if it is whole JSON, blocked if not', () => {
+    const whole = JSON.stringify({ wedding: true, screen_ok: true, fit: 6, quality: 6, note: 'x' });
+    expect(parseVerdict({ candidates: [{ finishReason: 'MAX_TOKENS', content: { parts: [{ text: whole }] } }] }, true).wallOk).toBe(true);
+    expect(parseVerdict({ candidates: [{ finishReason: 'MAX_TOKENS', content: { parts: [{ text: '{"wedding": tr' }] } }] }, true).wallOk).toBe(false);
+  });
+
+  it('unparsable text with a normal STOP is still an error', () => {
+    expect(() => parseVerdict({ candidates: [{ finishReason: 'STOP', content: { parts: [{ text: 'not json' }] } }] }, true))
+      .toThrowError(expect.objectContaining({ code: 'gemini', status: 502 }));
+  });
+
+  it('the model has a fallback', async () => {
+    const f = fakeFetch(200, answer({ wedding: true, screen_ok: true, fit: 7, quality: 8, note: 'n' }));
+    await makeGemini({ GEMINI_API_KEY: 'k' }, f).check({ jpeg: JPEG, moment: MOMENT });
+    expect(f.calls[0].url).toContain('/models/gemini-3.1-flash-lite:generateContent');
+  });
+
   it('HTTP 429 throws Fail gemini', async () => {
     const f = fakeFetch(429, { error: { message: 'quota' } });
     await expect(makeGemini(ENV, f).check({ jpeg: JPEG, moment: MOMENT })).rejects.toMatchObject({ status: 502, code: 'gemini' });

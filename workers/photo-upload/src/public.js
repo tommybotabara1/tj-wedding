@@ -4,11 +4,11 @@
 
 import { Fail, clean } from './http.js';
 import { mediaUrl } from './media.js';
-import { contestOpen, onWall, tally } from './contest.js';
+import { contestOpen, onWall, tally, opensAt } from './contest.js';
 import { listMoments, getMoment, entriesByIds, recentEntries, voteCounts, myVotes, castVote, getSettings } from './store.js';
 
 const WALL_SIZE = 40;
-const WALL_SCAN = 400; // newest rows to look through; some will be held or hidden
+const WALL_SCAN = 120; // newest rows to look through; some will be held or hidden
 
 // Item: {id, n?, kind, guest, moment: title|null, copy, orig}.
 // moment may be a moment row, a title string, or null (a plain share).
@@ -20,7 +20,8 @@ export async function toItem(entry, moment, origin, env, nowMs, n) {
   item.guest = entry.guest;
   item.moment = title || null;
   item.copy = await mediaUrl(origin, env.MEDIA_KEY, entry.id, 'copy', nowMs);
-  item.orig = await mediaUrl(origin, env.MEDIA_KEY, entry.id, 'orig', nowMs);
+  // Only a video needs its original (to play it); a photo is shown from its copy.
+  item.orig = entry.kind === 'video' ? await mediaUrl(origin, env.MEDIA_KEY, entry.id, 'orig', nowMs) : null;
   return item;
 }
 
@@ -58,7 +59,7 @@ export async function contest(request, env, svc) {
   const device = clean(url.searchParams.get('device'), 64);
   const now = svc.now();
   const settings = await getSettings(svc.db);
-  const open = contestOpen(settings, now, env.CONTEST_OPENS_AT);
+  const open = contestOpen(settings, now, opensAt(env));
   const mine = device ? await myVotes(svc.db, device) : {};
 
   const moments = [];
@@ -70,7 +71,7 @@ export async function contest(request, env, svc) {
     out.winner = await winnerItem(env, svc, m, live, origin, now);
     moments.push(out);
   }
-  return { open, practice: settings.practice, opensAt: env.CONTEST_OPENS_AT, moments };
+  return { open, practice: settings.practice, opensAt: opensAt(env), moments };
 }
 
 export async function vote(request, env, svc) {

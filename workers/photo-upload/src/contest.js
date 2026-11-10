@@ -2,6 +2,10 @@
 
 import { Fail } from './http.js';
 
+// Midnight at the start of Dec 27 in the Philippines; the wrangler.toml var overrides it.
+export const OPENS_AT = '2026-12-26T16:00:00Z';
+export const opensAt = (env) => env.CONTEST_OPENS_AT || OPENS_AT;
+
 // settings is the camelCase shape from getSettings().
 export function contestOpen(settings, nowMs, opensAtIso) {
   if (settings.practice) return true;
@@ -23,6 +27,13 @@ export function onWall(entry, settings) {
   if (entry.check_state === 'shown') return true;
   if (settings.skipCheck && entry.check_state !== 'held') return true;
   return false;
+}
+
+// Whether the operator may put an entry in front of guests (a shortlist, a
+// direct award): checked as fine or shown by the operator, and not hidden.
+export function eligible(entry) {
+  if (entry.removed_at || entry.operator === 'hidden') return false;
+  return entry.check_state === 'shown' || entry.operator === 'shown';
 }
 
 /* Up to n entry ids for a vote: fit >= fitMin, not removed, hidden or held

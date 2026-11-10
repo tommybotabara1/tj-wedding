@@ -9,10 +9,12 @@ routes = [
   { pattern = "upload.tomyjeyan.com", custom_domain = true }
 ]
 
-# Secrets, not vars (the repo is public). tools/photo_drive_setup.py --push
-# sets all five; by hand it's `npx wrangler secret put NAME` for each:
+# Secrets, not vars (the repo is public). tools/photo_drive_setup.py and
+# tools/photo_contest_setup.py --push set them; by hand it's
+# `npx wrangler secret put NAME` for each:
 #   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN,
-#   DRIVE_FOLDER_ID, PHOTO_PASSWORD
+#   DRIVE_FOLDER_ID, COPIES_FOLDER_ID, PHOTO_PASSWORD, ADMIN_PASSWORD,
+#   MEDIA_KEY, GEMINI_API_KEY
 #
 # Tests only: GOOGLE_TOKEN_URL and GOOGLE_UPLOAD_BASE point the Worker at a
 # stand-in Google. Never set them in production.

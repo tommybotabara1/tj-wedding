@@ -4,7 +4,7 @@ import { resetDb } from './helpers.js';
 import {
   DEFAULT_SETTINGS, getSettings, putSetting, listMoments, getMoment, updateMoment,
   createEntry, getEntry, attachOriginal, setCopy, bumpTries, castVote, voteCounts, myVotes,
-  markRemoved, recentEntries, pendingChecks, missingCopies, deletePractice, addLog, recentLog,
+  markRemoved, recentEntries, pendingChecks, missingCopies, deletePractice, addLog, recentLog, momentEntries,
 } from '../src/store.js';
 
 const db = env.DB;
@@ -14,6 +14,37 @@ const entry = (o = {}) => ({
 });
 
 beforeEach(async () => { await resetDb(); });
+
+describe('momentEntries', () => {
+  it('gives the best-scored sent entries first and honours the limit', async () => {
+    const rows = [['lo', 1, 1, 'dl'], ['hi', 9, 9, 'dh'], ['mid', 5, 5, 'dm'], ['nodrive', 10, 10, null], ['gone', 10, 10, 'dg']];
+    let t = 1;
+    for (const [id, fit, quality, drive_id] of rows) {
+      await createEntry(db, entry({ id, session_key: id, fit, quality, drive_id, created_at: t++, removed_at: id === 'gone' ? 5 : undefined }));
+    }
+    expect((await momentEntries(db, 'aisle')).map((e) => e.id)).toEqual(['hi', 'mid', 'lo']);
+    expect((await momentEntries(db, 'aisle', 2)).map((e) => e.id)).toEqual(['hi', 'mid']);
+  });
+});
+
+describe('missingCopies backoff', () => {
+  it('waits 2, 6 then 15 minutes by copy_tries', async () => {
+    const MIN = 60_000;
+    await createEntry(db, entry({ id: 'a', session_key: 'a', created_at: 1_000_000 }));
+    await attachOriginal(db, 'a', 'da');
+    const ids = async (now) => (await missingCopies(db, now, 10)).map((e) => e.id);
+    expect(await ids(1_000_000 + 2 * MIN - 1)).toEqual([]);
+    expect(await ids(1_000_000 + 2 * MIN + 1)).toEqual(['a']);
+    await bumpTries(db, 'a', 'copy_tries');
+    expect(await ids(1_000_000 + 6 * MIN - 1)).toEqual([]);
+    expect(await ids(1_000_000 + 6 * MIN + 1)).toEqual(['a']);
+    await bumpTries(db, 'a', 'copy_tries');
+    expect(await ids(1_000_000 + 15 * MIN - 1)).toEqual([]);
+    expect(await ids(1_000_000 + 15 * MIN + 1)).toEqual(['a']);
+    await bumpTries(db, 'a', 'copy_tries');
+    expect(await ids(1_000_000 + 60 * MIN)).toEqual([]);
+  });
+});
 
 describe('migrations', () => {
   it('seed exactly the six moments, in order', async () => {
@@ -71,7 +102,7 @@ describe('entries', () => {
     await createEntry(db, entry({ id: 'b', session_key: 'b', created_at: 2 }));
     await attachOriginal(db, 'a', 'da');
     await attachOriginal(db, 'b', 'db');
-    expect((await missingCopies(db, 99, 10)).map((e) => e.id).sort()).toEqual(['a', 'b']);
+    expect((await missingCopies(db, 999999, 10)).map((e) => e.id).sort()).toEqual(['a', 'b']);
     expect((await recentEntries(db, 10)).map((e) => e.id)).toEqual(['b', 'a']);
     expect(await pendingChecks(db, 99, 10)).toEqual([]);
     await setCopy(db, 'a', 'ca');
@@ -79,7 +110,7 @@ describe('entries', () => {
     expect(await pendingChecks(db, 1, 10)).toEqual([]);
     for (let i = 0; i < 3; i++) await bumpTries(db, 'a', 'check_tries');
     expect(await pendingChecks(db, 99, 10)).toEqual([]);
-    expect((await missingCopies(db, 99, 10)).map((e) => e.id)).toEqual(['b']);
+    expect((await missingCopies(db, 999999, 10)).map((e) => e.id)).toEqual(['b']);
   });
 });
 

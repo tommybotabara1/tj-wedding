@@ -25,18 +25,36 @@ export function buildPrompt(moment) {
 
 const clamp = (n) => Math.max(0, Math.min(10, Math.round(Number(n) || 0)));
 
-export function parseVerdict(api, hasMoment) {
-  const cand = api && api.candidates && api.candidates[0];
-  if ((api && api.promptFeedback && api.promptFeedback.blockReason) || (cand && cand.finishReason === 'SAFETY')) {
-    return { wallOk: false, fit: 0, quality: 0, note: 'blocked by Gemini' };
-  }
-  let v;
+const BLOCKED = { wallOk: false, fit: 0, quality: 0, note: 'blocked by Gemini' };
+
+const parseJson = (text) => {
   try {
-    v = JSON.parse(cand.content.parts.map((p) => p.text || '').join(''));
-  } catch (e) {
-    throw new Fail(502, 'gemini', 'unparsable answer');
+    const v = JSON.parse(text);
+    return v && typeof v === 'object' ? v : null;
+  } catch (e) { return null; }
+};
+
+/* A photo Gemini won't judge (SAFETY, IMAGE_SAFETY, PROHIBITED_CONTENT, OTHER,
+   a prompt block, an answer with nothing in it) is held, not retried: asking
+   again only gets the same refusal. Only a normal finish with text that is
+   not JSON is an error worth a retry. */
+export function parseVerdict(api, hasMoment) {
+  if (api && api.promptFeedback && api.promptFeedback.blockReason) return BLOCKED;
+  const cand = api && api.candidates && api.candidates[0];
+  if (!cand) return BLOCKED;
+  const parts = (cand.content && cand.content.parts) || [];
+  const text = parts.map((p) => p.text || '').join('').trim();
+  const reason = cand.finishReason;
+  let v;
+  if (reason && reason !== 'STOP') {
+    // Cut off at the token limit is fine if what came before is a whole answer.
+    v = reason === 'MAX_TOKENS' ? parseJson(text) : null;
+    if (!v) return BLOCKED;
+  } else {
+    if (!text) return BLOCKED;
+    v = parseJson(text);
+    if (!v) throw new Fail(502, 'gemini', 'unparsable answer');
   }
-  if (!v || typeof v !== 'object') throw new Fail(502, 'gemini', 'unparsable answer');
   return {
     wallOk: v.wedding === true && v.screen_ok === true,
     fit: hasMoment ? clamp(v.fit) : null,
@@ -47,7 +65,7 @@ export function parseVerdict(api, hasMoment) {
 
 export function makeGemini(env, fetchImpl = fetch) {
   async function check({ jpeg, moment }) {
-    const url = (env.GEMINI_BASE || BASE) + '/v1beta/models/' + env.GEMINI_MODEL + ':generateContent';
+    const url = (env.GEMINI_BASE || BASE) + '/v1beta/models/' + (env.GEMINI_MODEL || 'gemini-3.1-flash-lite') + ':generateContent';
     const body = {
       contents: [{
         parts: [

@@ -4,16 +4,19 @@
 
 import { Fail, clean, secretMatches } from './http.js';
 import { toItem, liveShortlist, winnerItem } from './public.js';
-import { contestOpen, onWall, rankShortlist, tally, assertPhase } from './contest.js';
+import { contestOpen, opensAt, onWall, eligible, rankShortlist, tally, assertPhase } from './contest.js';
 import { trashEntry } from './entries.js';
 import {
   listMoments, getMoment, updateMoment, getSettings, putSetting, setOperator, voteCounts, addLog, recentLog,
   practiceEntries, deletePractice, momentEntryCounts, deleteEntry, updateMomentIf, recentEntries, momentEntries, entriesByIds, getEntry,
 } from './store.js';
 
-const SCAN = 1000;           // newest entries to look through
+const SCAN = 300;            // newest entries to look through
 const WALL_SIZE = 30;
 const CANDIDATES = 30;
+const WAITING_SHOWN = 30;    // the true total is in counts.waiting
+const PRACTICE_BEFORE = 6 * 3600_000;   // practice is refused from here...
+const PRACTICE_AFTER = 30 * 3600_000;   // ...until here, around the opening time
 const PENDING_MS = 5 * 60 * 1000;
 const bad = () => new Fail(400, 'bad-request');
 
@@ -48,8 +51,12 @@ export async function state(env, svc, origin) {
     const shortlist = [];
     for (const x of live) shortlist.push({ ...(await item(x.entry)), n: x.n, votes: t.counts[x.entry.id] || 0 });
 
-    const ranked = rankShortlist((await momentEntries(db, m.id)).filter((e) => e.drive_id), CANDIDATES);
+    // The server's own pick: eligible entries only, one per phone, best first.
+    const mine = await momentEntries(db, m.id);
+    const ranked = rankShortlist(mine, CANDIDATES);
+    const proposed = ranked.slice(0, 5);
     const byId = new Map(rows.map((e) => [e.id, e]));
+    for (const e of mine) if (!byId.has(e.id)) byId.set(e.id, e);
     const order = ranked.filter((id) => byId.has(id));
     const seen = new Set(order);
     // This moment's own entries first, so the one entry of a quiet moment is never crowded out.
@@ -61,11 +68,13 @@ export async function state(env, svc, origin) {
     const candidates = [];
     for (const id of order.slice(0, CANDIDATES)) {
       const e = byId.get(id);
-      candidates.push(await extra(e, { fit: e.fit, quality: e.quality, note: e.note }));
+      candidates.push(await extra(e, {
+        fit: e.fit, quality: e.quality, note: e.note, state: e.check_state, hidden: e.operator === 'hidden',
+      }));
     }
 
     out.push({
-      id: m.id, title: m.title, phase: m.phase, entryCount: counts[m.id] || 0, shortlist, candidates, tally: t,
+      id: m.id, title: m.title, phase: m.phase, entryCount: counts[m.id] || 0, shortlist, proposed, candidates, tally: t,
       winner: await winnerItem(env, svc, m, live, origin, now),
     });
   }
@@ -74,7 +83,7 @@ export async function state(env, svc, origin) {
     e.operator !== 'hidden' && e.operator !== 'shown' &&
     (e.check_state === 'held' || e.check_state === 'error' || (e.check_state === 'pending' && e.created_at < now - PENDING_MS)));
   const waiting = [];
-  for (const e of waitingRows) waiting.push(await extra(e, { state: e.check_state, note: e.note }));
+  for (const e of waitingRows.slice(0, WAITING_SHOWN)) waiting.push(await extra(e, { state: e.check_state, note: e.note }));
 
   const onWallRows = rows.filter((e) => onWall(e, settings));
   const wall = [];
@@ -83,7 +92,7 @@ export async function state(env, svc, origin) {
   return {
     settings: {
       contest: settings.contest,
-      open: contestOpen(settings, now, env.CONTEST_OPENS_AT),
+      open: contestOpen(settings, now, opensAt(env)),
       skipCheck: settings.skipCheck,
       practice: settings.practice,
     },
@@ -91,7 +100,7 @@ export async function state(env, svc, origin) {
     moments: out,
     waiting,
     wall,
-    counts: { sent: rows.length, onWall: onWallRows.length, waiting: waiting.length },
+    counts: { sent: rows.length, onWall: onWallRows.length, waiting: waitingRows.length },
     gemini: { lastOk: settings.geminiOk, lastError: settings.geminiErr },
     log: await recentLog(db, 10),
   };
@@ -134,7 +143,8 @@ async function revealFromEntries(svc, winner) {
   if (winner === 'none') return 'none';
   if (typeof winner !== 'string') throw bad();
   const e = (await entriesByIds(svc.db, [winner]))[0];
-  if (!usable(e) || e.operator === 'hidden') throw bad();
+  if (!usable(e)) throw bad();
+  if (!e.copy_id || !eligible(e)) throw new Fail(400, 'not-eligible'); // never crown a held, unchecked or copy-less photo
   return winner;
 }
 
@@ -166,6 +176,9 @@ const ACTIONS = {
     if (!ids.every((id) => typeof id === 'string')) throw bad();
     const rows = await entriesByIds(svc.db, ids);
     if (rows.length !== ids.length || !rows.every(usable)) throw bad();
+    // Held, unchecked or hidden photos stay off the shortlist unless the operator Showed them first.
+    if (!rows.every(eligible)) throw new Fail(400, 'not-eligible');
+    if (new Set(rows.map((e) => e.device)).size !== rows.length) throw new Fail(400, 'one-per-phone');
     await guarded(svc, m, ['entries', 'closed'], { phase: 'voting', shortlist: ids });
     return 'Open voting: ' + m.title;
   },
@@ -217,11 +230,15 @@ const ACTIONS = {
     return 'Settings: ' + (said.join(', ') || 'no change');
   },
 
-  async 'practice-start'({ svc }) {
+  async 'practice-start'({ svc, env, body }) {
     const s = await getSettings(svc.db);
     if (s.practice) throw new Fail(409, 'wrong-phase');
+    // Practice on the wedding day would put practice rows among real ones.
+    const opens = Date.parse(opensAt(env));
+    const now = svc.now();
+    if (body.force !== true && now >= opens - PRACTICE_BEFORE && now < opens + PRACTICE_AFTER) throw new Fail(409, 'wedding-day');
     const moments = (await listMoments(svc.db)).map((m) => ({ id: m.id, phase: m.phase, shortlist: m.shortlist, winner: m.winner }));
-    await putSetting(svc.db, 'snapshot', JSON.stringify({ moments, screen: s.screen }));
+    await putSetting(svc.db, 'snapshot', JSON.stringify({ moments, screen: s.screen, contest: s.contest, skipCheck: s.skipCheck }));
     await putSetting(svc.db, 'practice', '1');
     return 'Practice started';
   },
@@ -250,6 +267,9 @@ const ACTIONS = {
       await updateMoment(svc.db, m.id, { phase: was.phase || 'entries', shortlist: was.shortlist || [], winner: was.winner ?? null });
     }
     await putSetting(svc.db, 'screen', JSON.stringify((snap && snap.screen) || { mode: 'wall' }));
+    // Switches changed during practice (say, contest closed) go back as they were.
+    if (snap && ['auto', 'open', 'closed'].includes(snap.contest)) await putSetting(svc.db, 'contest', snap.contest);
+    if (snap && typeof snap.skipCheck === 'boolean') await putSetting(svc.db, 'skip_check', snap.skipCheck ? '1' : '0');
     await putSetting(svc.db, 'practice', '0');
     await putSetting(svc.db, 'snapshot', '');
     return 'Practice cleared';

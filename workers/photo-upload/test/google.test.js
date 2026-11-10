@@ -94,6 +94,21 @@ describe('google', () => {
     expect(call.init.headers.Range).toBe('bytes=0-1');
   });
 
+  it('thumbnail asks Drive for 1600 px, replacing or adding the size', async () => {
+    for (const [link, want] of [
+      ['https://lh3.test/abc=s220', 'https://lh3.test/abc=s1600'],
+      ['https://lh3.test/abc=s1600', 'https://lh3.test/abc=s1600'],
+      ['https://lh3.test/abc', 'https://lh3.test/abc=s1600'],
+    ]) {
+      const f = fakeFetch((url) => (url.includes('fields=thumbnailLink')
+        ? new Response(JSON.stringify({ thumbnailLink: link }), { status: 200 })
+        : new Response(new Uint8Array([1, 2]), { status: 200 })));
+      const out = await makeGoogle(ENV, f).thumbnail('abc');
+      expect(Array.from(out)).toEqual([1, 2]);
+      expect(f.calls.at(-1).url).toBe(want);
+    }
+  });
+
   it('thumbnail returns null when thumbnailLink is missing', async () => {
     const f = fakeFetch(() => new Response(JSON.stringify({}), { status: 200 }));
     const g = makeGoogle(ENV, f);

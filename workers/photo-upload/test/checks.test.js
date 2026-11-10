@@ -98,6 +98,29 @@ describe('checks', () => {
     expect(gemini.calls).toHaveLength(1);
   });
 
+  it('a cron run takes at most 5 checks and 2 small copies', async () => {
+    for (let i = 0; i < 8; i++) await withCopy(google, { id: 'c' + i, created_at: NOW - 5 * 60_000 + i });
+    for (let i = 0; i < 4; i++) {
+      await createEntry(env.DB, entry({ id: 'm' + i, drive_id: 'f' + i, created_at: NOW - 600_000 + i }));
+      google.files.set('f' + i, { name: 'o', parents: [], bytes: new Uint8Array(1), trashed: false, thumbnail: new Uint8Array([1]) });
+    }
+    const out = await runCron(env, svcFor({ google, gemini: fakeGemini(() => GOOD), now: NOW }));
+    expect(out.thumbs).toBe(2);
+    expect(out.checked).toBe(5);
+  });
+
+  it('a failed small copy waits longer before the next try', async () => {
+    await createEntry(env.DB, entry({ id: 'slow', drive_id: 'file-s', created_at: NOW - 5 * 60_000 }));
+    google.files.set('file-s', { name: 'o', parents: [], bytes: new Uint8Array(1), trashed: false });
+    const thumbCalls = () => google.calls.filter((c) => c.fn === 'thumbnail').length;
+    await runCron(env, svcFor({ google, now: NOW }));                   // try 1 fails
+    expect(thumbCalls()).toBe(1);
+    await runCron(env, svcFor({ google, now: NOW + 60_000 }));          // 6 min after sending: under the 6 min wait
+    expect(thumbCalls()).toBe(1);
+    await runCron(env, svcFor({ google, now: NOW + 2 * 60_000 }));      // 7 min: past it
+    expect(thumbCalls()).toBe(2);
+  });
+
   it('cron counts a try when Drive has no thumbnail yet', async () => {
     await createEntry(env.DB, entry({ id: 'nothumb', drive_id: 'file-x', created_at: NOW - 180_000 }));
     google.files.set('file-x', { name: 'o', parents: [], bytes: new Uint8Array(1), trashed: false });

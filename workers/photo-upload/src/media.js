@@ -16,8 +16,19 @@ function b64url(buf) {
   return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+// One imported key per key string, for the life of the isolate: importing it
+// for every link of every poll was a visible share of the CPU budget.
+const keys = new Map();
+function hmacKey(key) {
+  const k = String(key);
+  if (!keys.has(k)) {
+    keys.set(k, crypto.subtle.importKey('raw', new TextEncoder().encode(k), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']));
+  }
+  return keys.get(k);
+}
+
 async function sign(key, id, kind, exp) {
-  const k = await crypto.subtle.importKey('raw', new TextEncoder().encode(String(key)), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const k = await hmacKey(key);
   const mac = await crypto.subtle.sign('HMAC', k, new TextEncoder().encode(`${id}.${kind}.${exp}`));
   return b64url(mac).slice(0, 22);
 }

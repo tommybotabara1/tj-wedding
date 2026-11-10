@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { env } from 'cloudflare:workers';
 import { createExecutionContext, waitOnExecutionContext } from 'cloudflare:test';
 import { handle } from '../src/index.js';
@@ -19,6 +19,16 @@ async function call(request, svc) {
 
 // A GET for a signed link, with no password, as an <img> would send it.
 const getLink = (link, headers) => req('GET', link.slice(ORIGIN.length), { password: null, headers });
+
+describe('signing keys', () => {
+  it('imports each key once, however many links it signs', async () => {
+    const spy = vi.spyOn(crypto.subtle, 'importKey');
+    try {
+      for (let i = 0; i < 5; i++) await mediaUrl(ORIGIN, 'memo-test-key', 'e' + i, 'copy', NOW);
+      expect(spy).toHaveBeenCalledTimes(1);
+    } finally { spy.mockRestore(); }
+  });
+});
 
 describe('signed media links', () => {
   let google, svc;

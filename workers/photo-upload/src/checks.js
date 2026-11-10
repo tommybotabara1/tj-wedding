@@ -46,12 +46,12 @@ export async function runCron(env, svc) {
   let checked = 0;
   let thumbs = 0;
 
-  for (const e of await pendingChecks(svc.db, now - 60_000, 8)) {
+  for (const e of await pendingChecks(svc.db, now - 60_000, 5)) {
     await safely(() => runCheck(env, svc, e.id));
     checked++;
   }
 
-  for (const e of await missingCopies(svc.db, now - 120_000, 4)) {
+  for (const e of await missingCopies(svc.db, now, 2)) {
     const done = await safely(async () => {
       const bytes = await svc.google.thumbnail(e.drive_id);
       if (!bytes) return false;

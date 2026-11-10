@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { env } from 'cloudflare:workers';
 import { createExecutionContext, waitOnExecutionContext } from 'cloudflare:test';
 import { handle } from '../src/index.js';
-import { createEntry, updateMoment, putSetting, castVote, voteCounts, setOperator, markRemoved } from '../src/store.js';
+import { getEntry, createEntry, updateMoment, putSetting, castVote, voteCounts, setOperator, markRemoved } from '../src/store.js';
 import { toItem } from '../src/public.js';
 import { fakeGoogle, svcFor, req, resetDb } from './helpers.js';
 
@@ -67,8 +67,15 @@ describe('contest status, voting and the screen feed', () => {
     expect(m.shortlist.map((i) => [i.id, i.n])).toEqual([['c', 1], ['a', 2], ['b', 3]]);
     expect(m.shortlist[0]).toMatchObject({ kind: 'photo', guest: 'Guest c', moment: 'Here comes the bride' });
     expect(m.shortlist[0].copy).toMatch(/^https:\/\/upload\.test\/m\/c\/copy\?e=\d+&s=/);
-    expect(m.shortlist[0].orig).toMatch(/^https:\/\/upload\.test\/m\/c\/orig\?e=\d+&s=/);
+    expect(m.shortlist[0].orig).toBeNull(); // a photo is shown from its copy
     expect(JSON.stringify(m)).not.toMatch(/"votes"|"count"/);
+  });
+
+  it('only a video carries an orig link', async () => {
+    await mk('v', { kind: 'video', mime: 'video/mp4' });
+    const e = await getEntry(env.DB, 'v');
+    const item = await toItem(e, 'Here comes the bride', 'https://upload.test', env, NOW);
+    expect(item.orig).toMatch(/^https:\/\/upload\.test\/m\/v\/orig\?e=\d+&s=/);
   });
 
   it('myVote reflects this device only', async () => {

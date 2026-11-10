@@ -3,7 +3,7 @@ import { env } from 'cloudflare:workers';
 import { createExecutionContext, waitOnExecutionContext } from 'cloudflare:test';
 import { handle } from '../src/index.js';
 import { putSetting, updateMoment, getEntry, castVote, voteCounts, createEntry } from '../src/store.js';
-import { trashEntry } from '../src/entries.js';
+import { trashEntry, startEntry, onOriginalDone } from '../src/entries.js';
 import { fakeGoogle, svcFor, req, resetDb } from './helpers.js';
 
 const OPEN_DAY = Date.UTC(2026, 11, 27, 10, 0, 0);
@@ -29,6 +29,15 @@ describe('contest entries', () => {
     await resetDb();
     google = fakeGoogle();
     svc = svcFor({ google, now: OPEN_DAY });
+  });
+
+  it('the session is hashed the same way at /start and when the last piece lands', async () => {
+    const spelled = 'HTTPS://Fake-Google.test:443/upload/drive/v3/files?upload_id=77';
+    const normal = new URL(spelled).toString();
+    expect(normal).not.toBe(spelled);
+    const made = await startEntry(env, svc, { type: 'image/jpeg', size: 4, device: 'd' }, spelled);
+    await onOriginalDone(svc, normal, 'drive-77');
+    expect((await getEntry(env.DB, made.entry)).drive_id).toBe('drive-77');
   });
 
   it('start with an open moment returns entry, key and moment', async () => {

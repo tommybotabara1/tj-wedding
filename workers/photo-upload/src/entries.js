@@ -4,12 +4,15 @@
 
 import { Fail, clean, randomId, sha256hex } from './http.js';
 import { createEntry, attachOriginal, getEntry, setCopy, markRemoved, getSettings, getMoment } from './store.js';
-import { contestOpen, acceptingEntries } from './contest.js';
+import { contestOpen, acceptingEntries, opensAt } from './contest.js';
 import { runCheck } from './checks.js';
 
 const MAX_COPY = 1.5 * 1024 ** 2;
 
 const empty = () => ({ entry: null, key: null, moment: null });
+
+// /start and /chunk must hash the very same string, so both go through URL's own spelling.
+const sessionKey = (url) => sha256hex(new URL(url).toString());
 
 function keyHex() {
   return [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -28,7 +31,7 @@ export async function startEntry(env, svc, body, sessionUrl) {
     const asked = clean(body.moment, 40);
     if (asked) {
       const m = await getMoment(svc.db, asked);
-      if (m && acceptingEntries(m, contestOpen(settings, now, env.CONTEST_OPENS_AT))) moment = m.id;
+      if (m && acceptingEntries(m, contestOpen(settings, now, opensAt(env)))) moment = m.id;
     }
     const device = String(body.device || '').replace(/[^A-Za-z0-9-]/g, '').slice(0, 40) || 'anon-' + id;
 
@@ -40,7 +43,7 @@ export async function startEntry(env, svc, body, sessionUrl) {
       kind: type.startsWith('video/') ? 'video' : 'photo',
       mime: type,
       size: Number(body.size),
-      session_key: await sha256hex(sessionUrl),
+      session_key: await sessionKey(sessionUrl),
       token_hash: await sha256hex(key),
       practice: settings.practice ? 1 : 0,
       created_at: now,
@@ -69,7 +72,7 @@ export async function trashEntry(svc, entry, now) {
 // The last piece of an original has landed. Never throws.
 export async function onOriginalDone(svc, sessionUrl, fileId) {
   try {
-    const entry = await attachOriginal(svc.db, await sha256hex(sessionUrl), fileId);
+    const entry = await attachOriginal(svc.db, await sessionKey(sessionUrl), fileId);
     if (entry && entry.removed_at) await svc.google.trash(fileId);
   } catch (e) {
     console.log('contest-store');

@@ -241,8 +241,8 @@ describe('control-page API', () => {
     await updateMoment(env.DB, 'aisle', { phase: 'revealed', shortlist: ['real'], winner: 'real' });
     await putSetting(env.DB, 'screen', JSON.stringify({ mode: 'winner', moment: 'aisle' }));
 
-    expect((await (await act({ action: 'practice-start' })).json()).settings.practice).toBe(true);
-    expect((await act({ action: 'practice-start' })).status).toBe(409);
+    expect((await (await act({ action: 'practice-start', force: true })).json()).settings.practice).toBe(true);
+    expect((await act({ action: 'practice-start', force: true })).status).toBe(409);
 
     await mk('p1', { practice: 1, moment: 'groufie' });
     await mk('p2', { practice: 1, moment: 'groufie' });
@@ -273,7 +273,7 @@ describe('control-page API', () => {
   });
 
   it('practice-clear works in passes of 6 and finishes on the third call', async () => {
-    await act({ action: 'practice-start' });
+    await act({ action: 'practice-start', force: true });
     for (let i = 0; i < 15; i++) await mk('q' + i, { practice: 1, moment: 'groufie' });
     const first = await (await act({ action: 'practice-clear' })).json();
     expect(first.clearing).toEqual({ remaining: 9 });
@@ -292,7 +292,7 @@ describe('control-page API', () => {
   });
 
   it('a practice entry whose trash fails stays until a later pass works', async () => {
-    await act({ action: 'practice-start' });
+    await act({ action: 'practice-start', force: true });
     await mk('ok1', { practice: 1 });
     await mk('stuck', { practice: 1 });
     const realTrash = google.trash;
@@ -338,7 +338,7 @@ describe('control-page API', () => {
     await act({ action: 'screen', mode: 'shortlist', moment: 'happy-tears', by: 'Maya' });
     await act({ action: 'open-voting', moment: 'groufie', shortlist: ['a'], by: 'Maya' });
     await act({ action: 'hide', entry: 'a', by: 'Maya' });
-    await act({ action: 'practice-start', by: '  ' });
+    await act({ action: 'practice-start', force: true, by: '  ' });
     await act({ action: 'practice-clear', by: 'x'.repeat(50) });
     const log = await recentLog(env.DB, 10);
     expect(log.map((l) => l.what)).toEqual([
@@ -372,6 +372,119 @@ describe('control-page API', () => {
     expect(ids).not.toContain('gone');
     expect(cands[0]).toMatchObject({ fit: 9, quality: 9, id: 'best' });
     expect(mom(st, 'groufie').candidates.map((c) => c.id)).toContain('plain');
+  });
+
+  describe('who may be shortlisted or crowned (C1, I5)', () => {
+    it('proposed leaves out held entries and a second shot from the same phone', async () => {
+      await mk('best', { fit: 8, quality: 8, device: 'p1' });
+      await mk('second', { fit: 7, quality: 7, device: 'p1' });   // same phone as best
+      await mk('held', { fit: 9, quality: 9, check_state: 'held' });
+      await mk('low', { fit: 3, quality: 9 });
+      await mk('ok', { fit: 6, quality: 6 });
+      const m = mom(await state(), 'aisle');
+      expect(m.proposed).toEqual(['best', 'ok']);
+      const held = m.candidates.find((c) => c.id === 'held');
+      expect(held).toMatchObject({ state: 'held', hidden: false });
+      expect(m.candidates.find((c) => c.id === 'ok')).toMatchObject({ state: 'shown', hidden: false });
+    });
+
+    it('a hidden entry is a hidden candidate and is never proposed', async () => {
+      await mk('h', { fit: 9, quality: 9, operator: 'hidden' });
+      await mk('ok');
+      const m = mom(await state(), 'aisle');
+      expect(m.proposed).toEqual(['ok']);
+      expect(m.candidates.find((c) => c.id === 'h')).toMatchObject({ hidden: true });
+    });
+
+    it('proposed keeps to five and includes an operator-shown held entry', async () => {
+      for (let i = 0; i < 6; i++) await mk('s' + i, { fit: 8, quality: 5 + i });
+      await mk('shown-held', { fit: 10, quality: 10, check_state: 'held', operator: 'shown' });
+      const m = mom(await state(), 'aisle');
+      expect(m.proposed).toHaveLength(5);
+      expect(m.proposed[0]).toBe('shown-held');
+    });
+
+    it('open-voting refuses held, unchecked and hidden entries with not-eligible', async () => {
+      await mk('ok'); await mk('held', { check_state: 'held' }); await mk('wait', { check_state: 'pending' });
+      await mk('hid', { operator: 'hidden' });
+      for (const id of ['held', 'wait', 'hid']) {
+        const res = await act({ action: 'open-voting', moment: 'aisle', shortlist: ['ok', id] });
+        expect(res.status).toBe(400);
+        expect(await res.json()).toEqual({ ok: false, error: 'not-eligible' });
+      }
+      expect((await getMoment(env.DB, 'aisle')).phase).toBe('entries');
+    });
+
+    it('open-voting accepts a held entry once the operator has shown it', async () => {
+      await mk('ok'); await mk('held', { check_state: 'held' });
+      await act({ action: 'show', entry: 'held' });
+      expect((await act({ action: 'open-voting', moment: 'aisle', shortlist: ['ok', 'held'] })).status).toBe(200);
+    });
+
+    it('open-voting refuses two entries from one phone with one-per-phone', async () => {
+      await mk('a', { device: 'same' }); await mk('b', { device: 'same' });
+      const res = await act({ action: 'open-voting', moment: 'aisle', shortlist: ['a', 'b'] });
+      expect(res.status).toBe(400);
+      expect(await res.json()).toEqual({ ok: false, error: 'one-per-phone' });
+    });
+
+    it('a direct award needs a checked or operator-shown entry with a copy', async () => {
+      await mk('held', { check_state: 'held' });
+      await mk('wait', { check_state: 'pending' });
+      await mk('nocopy', { copy_id: null });
+      await mk('hid', { operator: 'hidden' });
+      for (const id of ['held', 'wait', 'nocopy', 'hid']) {
+        const res = await act({ action: 'reveal', moment: 'aisle', winner: id });
+        expect(res.status).toBe(400);
+        expect(await res.json()).toEqual({ ok: false, error: 'not-eligible' });
+      }
+      expect((await getMoment(env.DB, 'aisle')).phase).toBe('entries');
+      await act({ action: 'show', entry: 'held' });
+      expect((await act({ action: 'reveal', moment: 'aisle', winner: 'held' })).status).toBe(200);
+      expect((await getMoment(env.DB, 'aisle')).winner).toBe('held');
+    });
+  });
+
+  it('waiting shows at most 30 but counts them all', async () => {
+    for (let i = 0; i < 35; i++) await mk('w' + i, { check_state: 'held' });
+    const st = await state();
+    expect(st.waiting).toHaveLength(30);
+    expect(st.counts.waiting).toBe(35);
+  });
+
+  describe('practice (I6, I7)', () => {
+    it('clear puts back the contest switch and skip-check', async () => {
+      await act({ action: 'settings', contest: 'open', skipCheck: false });
+      await act({ action: 'practice-start', force: true });
+      await act({ action: 'settings', contest: 'closed', skipCheck: true });
+      const st = await (await act({ action: 'practice-clear' })).json();
+      expect(st.settings).toMatchObject({ practice: false, contest: 'open', skipCheck: false });
+      const s = await getSettings(env.DB);
+      expect(s.contest).toBe('open');
+      expect(s.skipCheck).toBe(false);
+    });
+
+    const opens = Date.parse('2026-12-26T16:00:00Z');
+    const H = 3600_000;
+    const at = (now, body = {}) =>
+      call(req('POST', '/admin/act', { json: { by: 'Maya', action: 'practice-start', ...body }, admin: ADMIN, password: null }), svcFor({ google, now }));
+
+    it('is refused on the wedding day, from 6 h before opening to 30 h after', async () => {
+      for (const now of [opens - 6 * H, opens, opens + 30 * H - 1]) {
+        const res = await at(now);
+        expect(res.status).toBe(409);
+        expect(await res.json()).toEqual({ ok: false, error: 'wedding-day' });
+      }
+      expect((await getSettings(env.DB)).practice).toBe(false);
+    });
+
+    it('is allowed outside that window, and with force inside it', async () => {
+      expect((await at(opens - 6 * H - 1)).status).toBe(200);
+      await act({ action: 'practice-clear' });
+      expect((await at(opens + 30 * H)).status).toBe(200);
+      await act({ action: 'practice-clear' });
+      expect((await at(opens + H, { force: true })).status).toBe(200);
+    });
   });
 
   it('moment state carries votes, tally and winner', async () => {
