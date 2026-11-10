@@ -198,7 +198,7 @@ The rules haven't changed: the repo is public, and secrets live only in the main
 - **Dates:** today is 2026-11-09 and the wedding is 2026-12-27, about seven weeks away.
 - **The live uploader must keep working throughout.** Work happens on a branch and is tested locally (`npx wrangler dev`; the page accepts `?api=http://127.0.0.1:8787` from localhost). It goes to `master` only once it works. GitHub Pages deploys `master` `/docs` in about a minute.
 - **Plans:**
-  - Cloudflare is on the free plan today: 100,000 Worker requests per day and **10 ms of CPU time per request**. Tommy will move to Workers Paid for December, but the build must still fit the free plan.
+  - Cloudflare is on the free plan today: 100,000 Worker requests per day and **10 ms of CPU time per request**. **Workers Paid is required for the wedding night** (amended 2026-11-10, see section 10). Plain uploading still works on the free plan.
   - Gemini runs on the paid tier, so guest photos aren't used to improve Google's products. The free tier would have used them and has low per-minute limits.
 - **No secrets** in commits, logs or the chat.
 - **WAT framework:** repeatable steps become tools in `tools/`. Workflows are only added or changed with Tommy's OK. Paid API calls need Tommy's OK before reruns.
@@ -266,4 +266,6 @@ The reviewer check (2026-11-09) left two questions that only Tommy can answer:
    - The key is created in that project.
 2. **Workers Paid for December.**
    - Tommy upgrades the Cloudflare account himself before the Dec 13 rehearsal, and can cancel in January.
-   - **Build it to fit the free plan anyway,** using light polling and small requests. Paid is the insurance, not a requirement, so nothing breaks if the upgrade is late.
+   - ~~Build it to fit the free plan anyway.~~ **Amended 2026-11-10 after the final review:** the free plan can't carry the night. Measured on a local D1, the control page and screen polling every 5 s, plus phones and the cron, read about 15 million database rows in one night. The free D1 limit is 5 million a day. Past that limit, the contest, screen and control page stop working mid-awarding, while uploads carry on as plain shares.
+     - **Workers Paid is a hard prerequisite, and Task 12 checks the account is on it before go-live.**
+     - The obvious waste was cut anyway with indexes and smaller scans, so plain uploading and quiet days still fit the free plan.
