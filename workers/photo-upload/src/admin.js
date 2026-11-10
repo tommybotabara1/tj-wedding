@@ -69,7 +69,7 @@ export async function state(env, svc, origin) {
     for (const id of order.slice(0, CANDIDATES)) {
       const e = byId.get(id);
       candidates.push(await extra(e, {
-        fit: e.fit, quality: e.quality, note: e.note, state: e.check_state, hidden: e.operator === 'hidden',
+        fit: e.fit, quality: e.quality, note: e.note, state: e.check_state, hidden: e.operator === 'hidden', shown: e.operator === 'shown',
       }));
     }
 
