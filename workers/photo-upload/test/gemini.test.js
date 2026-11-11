@@ -89,6 +89,15 @@ describe('gemini', () => {
     await expect(makeGemini(ENV, f).check({ jpeg: JPEG, moment: null })).rejects.toMatchObject({ code: 'gemini' });
   });
 
+  it('holds a "wedding photo" Gemini rates under quality 3 (the black frame and receipt from the paid sample)', () => {
+    const black = answer({ wedding: true, screen_ok: true, fit: 0, quality: 2, note: 'A very dark, underexposed photo of a wedding reception.' });
+    const receipt = answer({ wedding: true, screen_ok: true, fit: 0, quality: 2, note: 'A receipt for the event venue services.' });
+    expect(parseVerdict(black, false)).toMatchObject({ wallOk: false, quality: 2 });
+    expect(parseVerdict(receipt, false).wallOk).toBe(false);
+    expect(parseVerdict(answer({ wedding: true, screen_ok: true, fit: 0, quality: 3, note: 'dim' }), false).wallOk).toBe(true);
+    expect(parseVerdict(answer({ wedding: true, screen_ok: true, fit: 0, quality: '2.6', note: 'x' }), false).wallOk).toBe(true);
+  });
+
   it('no moment gives fit null', async () => {
     const f = fakeFetch(200, answer({ wedding: true, screen_ok: false, fit: 9, quality: 14, note: 'x' }));
     const v = await makeGemini(ENV, f).check({ jpeg: JPEG, moment: null });

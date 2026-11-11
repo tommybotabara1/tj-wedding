@@ -152,7 +152,7 @@ The current upload endpoints keep working exactly as they do now. Contest parts 
   - for contest entries, how well it fits the moment (0–10) and its quality (0–10);
   - a few words of reason, for the operator only.
 
-  Anything Gemini refuses or blocks is treated as "keep off the wall." The shortlist is the top 5 that fit the moment, ranked by fit plus quality, one per phone.
+  Anything Gemini refuses or blocks is treated as "keep off the wall." So is anything it rates below 3 for quality: in the paid sample check (Nov 11) it called an all-black frame and a receipt "wedding photos" but rated both 2. The shortlist is the top 5 that fit the moment, ranked by fit plus quality, one per phone.
 
 ### 5.3 The big screen (`docs/photos/screen/`)
 

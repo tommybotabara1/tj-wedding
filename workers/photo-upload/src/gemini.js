@@ -25,6 +25,12 @@ export function buildPrompt(moment) {
 
 const clamp = (n) => Math.max(0, Math.min(10, Math.round(Number(n) || 0)));
 
+/* In the paid sample check Gemini let an all-black frame ("a very dark photo
+   of a wedding reception") and a venue receipt onto the screen, but rated both
+   quality 2. Every real photo it passed rated 6 or more. So anything under 3
+   is held too: the coordinator can still Show it. */
+export const MIN_QUALITY = 3;
+
 const BLOCKED = { wallOk: false, fit: 0, quality: 0, note: 'blocked by Gemini' };
 
 const parseJson = (text) => {
@@ -55,10 +61,11 @@ export function parseVerdict(api, hasMoment) {
     v = parseJson(text);
     if (!v) throw new Fail(502, 'gemini', 'unparsable answer');
   }
+  const quality = clamp(v.quality);
   return {
-    wallOk: v.wedding === true && v.screen_ok === true,
+    wallOk: v.wedding === true && v.screen_ok === true && quality >= MIN_QUALITY,
     fit: hasMoment ? clamp(v.fit) : null,
-    quality: clamp(v.quality),
+    quality,
     note: clean(v.note, 120),
   };
 }
