@@ -217,15 +217,17 @@ def push(env):
         print("  x npx not found. Install Node.js, or set the secrets by hand")
         return 1
     print("  .. wrangler secret bulk (values go over stdin)")
+    # utf-8 + replace: wrangler prints emoji and box lines; Windows' default
+    # cp1252 can't read them and Python reports a (harmless) traceback.
     r = subprocess.run([npx, "wrangler", "secret", "bulk"], input=json.dumps(wanted), text=True,
-                       cwd=WORKER_DIR, capture_output=True)
+                       cwd=WORKER_DIR, capture_output=True, encoding="utf-8", errors="replace")
     if r.returncode == 0:
         print("  ok secrets set on the Worker: " + ", ".join(wanted))
         return 0
     print(f"  .. bulk didn't work (exit {r.returncode}); setting them one at a time over stdin")
     for name, value in wanted.items():
         p = subprocess.run([npx, "wrangler", "secret", "put", name], input=value + "\n", text=True,
-                           cwd=WORKER_DIR, capture_output=True)
+                           cwd=WORKER_DIR, capture_output=True, encoding="utf-8", errors="replace")
         if p.returncode != 0:
             print(f"  x wrangler secret put {name} failed (exit {p.returncode})")
             return 1
