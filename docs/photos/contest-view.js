@@ -1,14 +1,18 @@
-/* The contest on the page: the six moment cards, the Vote section and the
+/* The contest on the page: the six moment tiles, the Vote section and the
    full-screen viewer, all built from the Worker's GET /contest and refreshed by
    polling (60 s, or 20 s while any moment is being voted on, and only while the
    page is visible). */
 
 import { call, mediaUrl } from './lib/api.js';
-import { momentLabel, pollDelay } from './lib/contest-ui.js';
+import { tileChip, detailPlace, pollDelay } from './lib/contest-ui.js';
+import { momentIcon, ICON_INFO } from './lib/moment-icons.js';
 
 const ICON_PLAY = '<svg class="play" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>';
+const DETAIL_ID = 'moment-detail';
+const LEDE_OPEN = 'Tap a moment to send your best shot of it. The top five go up on the big screen for a vote.';
+const LEDE_SOON = 'Open on our wedding night, <b>December 27</b>. Tap <b>i</b> to see what each one is.';
 
-/* env: {base, section, momentsEl, voteSection, voteBody, viewer, viewerTitle, viewerStage,
+/* env: {base, section, ledeEl, momentsEl, voteSection, voteBody, viewer, viewerTitle, viewerStage,
          viewerVote, viewerClose, getPassword(), getGuest(), device, onPick(file, momentId),
          needName(), onData()} */
 export function createContest(env) {
@@ -18,7 +22,9 @@ export function createContest(env) {
   let loading = false;
   let started = false;
   let voteKey = '';
-  const cards = new Map();  // moment id → {li, state, btn, input}
+  const cards = new Map();  // moment id → {li, chip, info, input}
+  let detail = null;        // the info strip under a row of tiles
+  let infoFor = null;       // the moment id whose info strip is open
   const status = new Map(); // moment id → the line under its thumbnails
   let viewing = null;       // {moment, item, n}
 
@@ -28,20 +34,35 @@ export function createContest(env) {
     return m ? m.title : 'a moment';
   };
 
-  /* ---------- the six cards ---------- */
+  /* ---------- the six tiles ----------
+     A 3 x 2 grid. Tapping a tile opens the camera or gallery for that moment
+     (its label is for a hidden file input). While a moment can't take a shot,
+     tapping it shows what it is instead, or goes to its vote. The i button
+     always shows what it is: a strip under the tile's row. */
 
-  function buildCard(m) {
+  function buildCard(m, i) {
     const li = document.createElement('li');
-    li.className = 'moment';
+    li.className = 'tile';
     li.setAttribute('data-id', m.id);
+    li.style.order = String(i * 2);
     const inputId = 'moment-' + m.id;
-    const titleId = inputId + '-t';
-    li.innerHTML = '<div class="mhead"><h3 class="mt" id="' + titleId + '"></h3><span class="mstate"></span></div><p class="mhint"></p>' +
-      '<input class="pick" type="file" accept="image/*,video/*" id="' + inputId + '" aria-describedby="' + titleId + '" />' +
-      '<label class="btn" for="' + inputId + '" aria-describedby="' + titleId + '">Send a shot for this moment</label>';
-    li.querySelector('.mt').textContent = m.title;
-    li.querySelector('.mhint').textContent = m.hint;
+    li.innerHTML =
+      '<input class="pick" type="file" accept="image/*,video/*" id="' + inputId + '" />' +
+      '<label class="face" for="' + inputId + '"><span class="ico">' + momentIcon(m.id) + '</span>' +
+      '<span class="tt"></span><span class="chip" hidden></span></label>' +
+      '<button class="info" type="button" aria-controls="' + DETAIL_ID + '" aria-expanded="false">' + ICON_INFO + '</button>';
+    li.querySelector('.tt').textContent = m.title;
+    const info = li.querySelector('.info');
+    info.setAttribute('aria-label', 'What is ' + m.title + '?');
+    info.addEventListener('click', () => toggleInfo(m.id));
     const input = li.querySelector('input');
+    li.querySelector('.face').addEventListener('click', (e) => {
+      if (!input.disabled) return; // open: the label opens the picker
+      e.preventDefault();
+      const cur = moments().find((x) => x.id === m.id);
+      if (cur && cur.phase === 'voting' && goVote(m.id)) return;
+      toggleInfo(m.id);
+    });
     // No name, no picker: a win needs a name on it.
     input.addEventListener('click', (e) => {
       if (!env.getGuest()) { e.preventDefault(); env.needName(); }
@@ -50,7 +71,42 @@ export function createContest(env) {
       Array.prototype.slice.call(input.files || []).forEach((f) => env.onPick(f, m.id));
       input.value = ''; // so the same photo can be picked again
     });
-    return { li, state: li.querySelector('.mstate'), label: li.querySelector('label'), input };
+    return { li, chip: li.querySelector('.chip'), info, input };
+  }
+
+  function toggleInfo(id) {
+    infoFor = infoFor === id ? null : id;
+    renderDetail();
+  }
+
+  function renderDetail() {
+    const list = moments();
+    const at = list.findIndex((x) => x.id === infoFor);
+    if (at < 0) infoFor = null;
+    cards.forEach((c, id) => {
+      c.info.setAttribute('aria-expanded', id === infoFor ? 'true' : 'false');
+      c.li.classList.toggle('on', id === infoFor);
+    });
+    if (!detail) return;
+    detail.hidden = !infoFor;
+    if (!infoFor) return;
+    const m = list[at];
+    const place = detailPlace(at, list.length);
+    detail.style.order = String(place.order);
+    detail.style.setProperty('--caret', place.caret + '%');
+    detail.querySelector('b').textContent = m.title;
+    detail.querySelector('span').textContent = m.hint;
+  }
+
+  // A tile being voted on takes you to its vote. False if there's nothing to go to.
+  function goVote(id) {
+    const g = env.voteBody.querySelector('.vgroup[data-id="' + id + '"]');
+    if (!g || env.voteSection.hidden) return false;
+    const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    g.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+    const first = g.querySelector('.vthumb');
+    if (first) first.focus({ preventScroll: true });
+    return true;
   }
 
   function renderCards() {
@@ -58,22 +114,31 @@ export function createContest(env) {
     if (ids !== env.momentsEl.getAttribute('data-ids')) {
       env.momentsEl.innerHTML = '';
       cards.clear();
-      moments().forEach((m) => {
-        const c = buildCard(m);
+      moments().forEach((m, i) => {
+        const c = buildCard(m, i);
         cards.set(m.id, c);
         env.momentsEl.appendChild(c.li);
       });
+      detail = document.createElement('li');
+      detail.className = 'detail';
+      detail.id = DETAIL_ID;
+      detail.hidden = true;
+      detail.innerHTML = '<b></b><span></span>';
+      env.momentsEl.appendChild(detail);
       env.momentsEl.setAttribute('data-ids', ids);
     }
     moments().forEach((m) => {
       const c = cards.get(m.id);
       const can = !!m.accepting && driveOpen;
-      c.state.textContent = momentLabel(m, data.open);
+      const chip = tileChip(m);
+      c.chip.textContent = chip;
+      c.chip.hidden = !chip;
       c.li.setAttribute('data-phase', m.phase);
       c.li.setAttribute('data-open', can ? 'yes' : 'no');
       c.input.disabled = !can;
-      c.label.classList.toggle('closed', !can);
     });
+    renderDetail();
+    if (env.ledeEl) env.ledeEl.innerHTML = data.open ? LEDE_OPEN : LEDE_SOON;
     env.section.hidden = moments().length === 0;
   }
 

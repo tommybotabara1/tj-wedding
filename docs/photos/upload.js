@@ -13,6 +13,7 @@ import { call } from './lib/api.js';
 import { loadSent, saveSent, upsertSent, markRemoved } from './lib/sent.js';
 import { makeSmallCopy } from './lib/shrink.js';
 import { actionsKey } from './lib/actions.js';
+import { momentIcon } from './lib/moment-icons.js';
 
 const CHUNK = 8 * 1024 * 1024; // a multiple of 256 KB, as Drive requires
 const MAX_COPY = 1.5 * 1024 * 1024; // the Worker refuses a bigger small copy
@@ -88,8 +89,9 @@ export function createUploader(env) {
       li.className = 'item';
       li.setAttribute('data-local', it.local);
       li.tabIndex = -1;
-      li.innerHTML = '<span class="thumb"></span><span class="what"><span class="nm"></span>' +
-        '<span class="st"></span><span class="in"></span><span class="bar"><i></i></span></span><span class="act"></span>';
+      li.innerHTML = '<span class="tw"><span class="thumb"></span><span class="mbadge" hidden></span></span>' +
+        '<span class="what"><span class="nm"></span><span class="st"></span><span class="bar"><i></i></span></span>' +
+        '<span class="act"></span><span class="mchip" hidden></span>';
       // keep the list newest first
       const at = items.findIndex((x) => x.local === it.local);
       const after = items.slice(at + 1).map((x) => list.querySelector('[data-local="' + x.local + '"]')).find(Boolean);
@@ -126,10 +128,22 @@ export function createUploader(env) {
     env.section.hidden = false;
   }
 
+  /* A sent contest entry: a rose card, its moment's icon on the thumbnail and
+     "Entered in <moment>" across the bottom. Rebuilt only when it changes:
+     render runs on every progress event. */
   function updateIn(it, li) {
-    const inEl = li.querySelector('.in');
-    inEl.textContent = it.state === 'sent' && it.moment ? 'In the contest: ' + env.titleOf(it.moment) : '';
-    inEl.hidden = !inEl.textContent;
+    const id = it.state === 'sent' && it.moment ? it.moment : '';
+    const title = id ? env.titleOf(id) : '';
+    li.classList.toggle('entry', !!id);
+    const badge = li.querySelector('.mbadge');
+    const chip = li.querySelector('.mchip');
+    badge.hidden = chip.hidden = !id;
+    const key = id + '|' + title;
+    if (!id || chip.getAttribute('data-key') === key) return;
+    chip.setAttribute('data-key', key);
+    badge.innerHTML = momentIcon(id);
+    chip.innerHTML = momentIcon(id) + '<span>Entered in <b></b></span>';
+    chip.querySelector('b').textContent = title;
   }
 
   // Drop an open confirm and the cached signature so the next render rebuilds the buttons.

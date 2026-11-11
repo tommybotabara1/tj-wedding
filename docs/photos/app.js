@@ -86,7 +86,7 @@ const getGuest = () => guest.value.trim();
 
 const contest = createContest({
   base, device, getPassword, getGuest, needName,
-  section: $('contest'), momentsEl: $('moments'),
+  section: $('contest'), ledeEl: $('contest-lede'), momentsEl: $('moments'),
   voteSection: $('vote'), voteBody: $('vote-body'),
   viewer: $('viewer'), viewerTitle: $('viewer-t'), viewerStage: $('viewer-stage'),
   viewerVote: $('viewer-vote'), viewerClose: $('viewer-close'),
@@ -153,7 +153,9 @@ form.addEventListener('submit', (e) => {
   open(pw).then(() => {
     try { localStorage.setItem(KEY, norm(pw)); } catch (x) { /* no storage */ }
     show(pw);
-    guest.focus({ preventScroll: true });
+    // Onto the share buttons, not the name box: a name is only needed for the
+    // contest, and focusing it would pop the keyboard over the buttons.
+    unlocked.focus({ preventScroll: true });
   }, (x) => {
     btn.disabled = false;
     btn.textContent = 'Unlock';

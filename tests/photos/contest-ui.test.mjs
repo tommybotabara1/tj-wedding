@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { momentLabel, pollDelay, deviceId } from '../../docs/photos/lib/contest-ui.js';
+import { readFileSync } from 'node:fs';
+import { tileChip, detailPlace, pollDelay, deviceId } from '../../docs/photos/lib/contest-ui.js';
+import { MOMENT_ICONS, momentIcon } from '../../docs/photos/lib/moment-icons.js';
 
 function fakeStorage() {
   const m = new Map();
@@ -8,21 +10,33 @@ function fakeStorage() {
 }
 const mo = (phase) => ({ id: 'x', phase });
 
-test('momentLabel when the contest is not open', () => {
-  assert.equal(momentLabel(mo('entries'), false), 'Opens December 27');
+test('tileChip: nothing while taking entries, Vote now, Closed', () => {
+  assert.equal(tileChip(mo('entries')), '');
+  assert.equal(tileChip(mo('voting')), 'Vote now');
+  assert.equal(tileChip(mo('closed')), 'Closed');
+  assert.equal(tileChip(mo('revealed')), 'Closed');
 });
-test('momentLabel when open', () => {
-  assert.equal(momentLabel(mo('entries'), true), 'Open');
+
+test('detailPlace: after the last tile of the row, arrow under the tile', () => {
+  assert.deepEqual(detailPlace(0, 6), { order: 5, caret: 16.67 });
+  assert.deepEqual(detailPlace(1, 6), { order: 5, caret: 50 });
+  assert.deepEqual(detailPlace(2, 6), { order: 5, caret: 83.33 });
+  assert.deepEqual(detailPlace(3, 6), { order: 11, caret: 16.67 });
+  assert.deepEqual(detailPlace(5, 6), { order: 11, caret: 83.33 });
 });
-test('momentLabel in voting, open or not', () => {
-  assert.equal(momentLabel(mo('voting'), true), 'Voting now');
-  assert.equal(momentLabel(mo('voting'), false), 'Voting now');
+test('detailPlace: a short last row ends at the last tile', () => {
+  assert.equal(detailPlace(3, 5).order, 9);
+  assert.equal(detailPlace(4, 5).order, 9);
+  assert.equal(detailPlace(0, 2, 3).order, 3);
 });
-test('closed and revealed both read Closed', () => {
-  for (const open of [true, false]) {
-    assert.equal(momentLabel(mo('closed'), open), 'Closed');
-    assert.equal(momentLabel(mo('revealed'), open), 'Closed');
-  }
+
+test('every moment in the Worker has its own icon; others get the sparkles', () => {
+  const sql = readFileSync(new URL('../../workers/photo-upload/migrations/0001_contest.sql', import.meta.url), 'utf8');
+  const ids = [...sql.matchAll(/\('([a-z-]+)',\s*\d+\s*,/g)].map((m) => m[1]);
+  assert.deepEqual(ids.sort(), Object.keys(MOMENT_ICONS).sort());
+  for (const id of ids) assert.match(momentIcon(id), /^<svg [^>]*aria-hidden="true"/);
+  assert.equal(momentIcon('nope'), MOMENT_ICONS.entrance);
+  assert.equal(momentIcon('__proto__'), MOMENT_ICONS.entrance);
 });
 
 test('pollDelay: 60 s, 20 s while voting, null when hidden', () => {
