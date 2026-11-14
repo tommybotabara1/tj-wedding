@@ -43,6 +43,13 @@ from reconcile_rsvps import load_rsvps, normalize, best_match, MATCH_STRONG  # n
 
 load_dotenv()
 
+# RSVP names that can't be fuzzy-matched but are known to be a specific guest
+# (a married/alternate surname, or a first name only). Keys are normalized.
+NAME_ALIASES = {
+    "ann jaymee hinampas": "Ann Jaymee Esparagoza",
+    "jephonie":            "Jephonie G. Lumansoy",
+}
+
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -134,6 +141,9 @@ def plan_changes(guests, rsvps):
     latest, fuzzy = {}, []
     for rv in rsvps:   # the sheet is in reply order, so a later row wins
         guess, sc = best_match(rv["name"], index)
+        alias = NAME_ALIASES.get(normalize(rv["name"]))
+        if alias in by_name:
+            guess, sc = alias, 1.0
         if sc >= MATCH_STRONG:
             latest[guess] = rv
         else:
