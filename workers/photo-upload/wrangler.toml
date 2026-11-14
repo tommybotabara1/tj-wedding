@@ -9,10 +9,34 @@ routes = [
   { pattern = "upload.tomyjeyan.com", custom_domain = true }
 ]
 
-# Secrets, not vars (the repo is public). tools/photo_drive_setup.py --push
-# sets all five; by hand it's `npx wrangler secret put NAME` for each:
+# Secrets, not vars (the repo is public). tools/photo_drive_setup.py and
+# tools/photo_contest_setup.py --push set them; by hand it's
+# `npx wrangler secret put NAME` for each:
 #   GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN,
-#   DRIVE_FOLDER_ID, PHOTO_PASSWORD
+#   DRIVE_FOLDER_ID, COPIES_FOLDER_ID, PHOTO_PASSWORD, ADMIN_PASSWORD,
+#   MEDIA_KEY, GEMINI_API_KEY
 #
 # Tests only: GOOGLE_TOKEN_URL and GOOGLE_UPLOAD_BASE point the Worker at a
 # stand-in Google. Never set them in production.
+
+compatibility_flags = ["nodejs_compat"]
+
+# The contest's database (entries, votes, settings), created 2026-11-10 with
+# --location apac so it sits near the guests (the Worker makes several queries
+# per request). The id is not a secret. Migrations: `npx wrangler d1 migrations
+# apply DB --remote` (or --local for wrangler dev).
+[[d1_databases]]
+binding = "DB"
+database_name = "tj-photo-contest-ph"
+database_id = "f142afb5-d595-42cd-b0fa-c5b609c75b0a"
+migrations_dir = "migrations"
+
+# Runs the checker every minute.
+[triggers]
+crons = ["* * * * *"]
+
+[vars]
+GEMINI_MODEL = "gemini-3.1-flash-lite"
+# Paid Gemini checks allowed per UTC day; past it photos wait for a person to Show them.
+GEMINI_DAILY_CAP = "3000"
+CONTEST_OPENS_AT = "2026-12-26T16:00:00Z"
