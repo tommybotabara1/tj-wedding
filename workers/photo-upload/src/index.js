@@ -102,6 +102,7 @@ export async function handle(request, env, ctx, svc) {
 
     if (path === '/copy' && request.method === 'POST') return json(await entries.saveCopy(request, env, ctx, svc), 200, origin);
     if (path === '/remove' && request.method === 'POST') return json(await entries.removeEntry(request, env, svc), 200, origin);
+    if (path === '/mine' && request.method === 'POST') return json(await entries.checkMine(request, env, svc), 200, origin);
 
     if (path === '/contest' && request.method === 'GET') return json(await pub.contest(request, env, svc), 200, origin);
     if (path === '/vote' && request.method === 'POST') return json(await pub.vote(request, env, svc), 200, origin);

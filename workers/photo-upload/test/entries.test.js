@@ -174,6 +174,39 @@ describe('contest entries', () => {
     expect(await again.json()).toEqual({ ok: true });
   });
 
+  const mineReq = (items) => req('POST', '/mine', { json: { items } });
+
+  it('/mine: a live entry is neither, a removed one is removed, a deleted one or a wrong key is gone', async () => {
+    const live = await finishedEntry();
+    const off = await finishedEntry();
+    await call(removeReq(off.entry, off.key), svc);
+    const res = await call(mineReq([
+      { entry: live.entry, key: live.key },
+      { entry: off.entry, key: off.key },
+      { entry: 'cleared00001', key: live.key },
+      { entry: live.entry + 'x', key: live.key },
+    ]), svc);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ gone: ['cleared00001', live.entry + 'x'], removed: [off.entry] });
+    const wrong = await call(mineReq([{ entry: live.entry, key: WRONG_KEY }]), svc);
+    expect(await wrong.json()).toEqual({ gone: [live.entry], removed: [] });
+  });
+
+  it('/mine answers an empty list, and refuses a bad body or more than 100', async () => {
+    expect(await (await call(mineReq([]), svc)).json()).toEqual({ gone: [], removed: [] });
+    expect((await call(req('POST', '/mine', { json: { items: 'x' } }), svc)).status).toBe(400);
+    expect((await call(mineReq([{ entry: 'a1' }]), svc)).status).toBe(400);
+    expect((await call(mineReq([{ entry: 'a1', key: 'k'.repeat(101) }]), svc)).status).toBe(400);
+    const many = Array.from({ length: 101 }, (_, i) => ({ entry: 'e' + i, key: 'k' }));
+    expect((await call(mineReq(many), svc)).status).toBe(400);
+    expect((await call(mineReq(many.slice(0, 100)), svc)).status).toBe(200);
+  });
+
+  it('/mine needs the photo password', async () => {
+    const res = await call(req('POST', '/mine', { json: { items: [] }, password: 'nope' }), svc);
+    expect(res.status).toBe(403);
+  });
+
   it('a failing trash still leaves the entry removed', async () => {
     await createEntry(env.DB, { id: 'tr1', device: 'd', kind: 'photo', drive_id: 'f1', copy_id: 'f2', created_at: 1 });
     const bad = { ...google, trash: async () => { throw new Error('drive down'); } };

@@ -10,7 +10,7 @@
    goes and the Worker falls back to Drive's own thumbnail. */
 
 import { call } from './lib/api.js';
-import { loadSent, saveSent, upsertSent, markRemoved } from './lib/sent.js';
+import { loadSent, saveSent, upsertSent, markRemoved, mineAsk, dropEntries } from './lib/sent.js';
 import { makeSmallCopy } from './lib/shrink.js';
 import { actionsKey } from './lib/actions.js';
 import { momentIcon } from './lib/moment-icons.js';
@@ -423,6 +423,32 @@ export function createUploader(env) {
     items = items.map((it) => (it.state === 'sending' ? { ...it, state: 'failed' } : it));
     items.slice().reverse().forEach(render);
     env.section.hidden = items.length === 0;
+    reconcile();
+  }
+
+  /* The list lives on this phone, but the Worker may have dropped some of it
+     since: practice-clear deletes what was sent during practice, and the
+     coordinator can take one off. Ask once per unlock, quietly: no answer (no
+     signal, an older Worker) leaves the list as it was. */
+  function reconcile() {
+    const ask = mineAsk(items);
+    if (!ask.length) return;
+    call(base, 'POST', '/mine', { json: { items: ask }, password: env.getPassword(), timeout: 8000 }).then((r) => {
+      if (!r.ok || !r.body || !Array.isArray(r.body.gone) || !Array.isArray(r.body.removed)) return;
+      if (!r.body.gone.length && !r.body.removed.length) return;
+      const gone = new Set(r.body.gone);
+      items.forEach((it) => {
+        if (!it.entry || !gone.has(it.entry)) return;
+        const li = list.querySelector('[data-local="' + it.local + '"]');
+        if (li) li.remove();
+      });
+      items = dropEntries(items, r.body.gone);
+      const off = r.body.removed.filter((id) => items.some((it) => it.entry === id && it.state !== 'removed'));
+      off.forEach((id) => { items = markRemoved(items, id); });
+      persist();
+      items.forEach((it) => { if (off.indexOf(it.entry) >= 0) render(it); });
+      env.section.hidden = items.length === 0;
+    });
   }
 
   /* The contest's titles can change what a card says once they load. */

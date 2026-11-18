@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { SENT_KEY, loadSent, saveSent, upsertSent, markRemoved } from '../../docs/photos/lib/sent.js';
+import { SENT_KEY, loadSent, saveSent, upsertSent, markRemoved, mineAsk, dropEntries } from '../../docs/photos/lib/sent.js';
 
 function fakeStorage(init = {}) {
   const m = new Map(Object.entries(init));
@@ -72,4 +72,23 @@ test('a storage that throws gives [] and does not throw on save', () => {
   const bad = { getItem() { throw new Error('x'); }, setItem() { throw new Error('x'); } };
   assert.deepEqual(loadSent(bad), []);
   assert.doesNotThrow(() => saveSent(bad, [item(1)]));
+});
+
+test('mineAsk: entries with a key (removed ones too), newest first, capped', () => {
+  const list = [
+    { local: 'a', entry: 'e1', key: 'k1', state: 'sent' },
+    { local: 'b', entry: null, key: null, state: 'failed' },
+    { local: 'c', entry: 'e3', key: 'k3', state: 'removed' },
+    { local: 'd', entry: 'e4', key: 'k4', state: 'failed' },
+    { local: 'e', entry: 'e5', key: '', state: 'sent' },
+  ];
+  assert.deepEqual(mineAsk(list), [{ entry: 'e1', key: 'k1' }, { entry: 'e3', key: 'k3' }, { entry: 'e4', key: 'k4' }]);
+  assert.deepEqual(mineAsk(list, 1), [{ entry: 'e1', key: 'k1' }]);
+  assert.deepEqual(mineAsk([]), []);
+});
+
+test('dropEntries forgets only the named entries and keeps items without one', () => {
+  const list = [{ local: 'a', entry: 'e1' }, { local: 'b', entry: null }, { local: 'c', entry: 'e3' }];
+  assert.deepEqual(dropEntries(list, ['e3', 'nope']).map((x) => x.local), ['a', 'b']);
+  assert.deepEqual(dropEntries(list, []).map((x) => x.local), ['a', 'b', 'c']);
 });

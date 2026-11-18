@@ -3,7 +3,7 @@
    down: the guest's upload must never fail because the contest side did. */
 
 import { Fail, clean, randomId, sha256hex } from './http.js';
-import { createEntry, attachOriginal, getEntry, setCopy, markRemoved, getSettings, getMoment } from './store.js';
+import { createEntry, attachOriginal, getEntry, setCopy, markRemoved, getSettings, getMoment, entriesByIds } from './store.js';
 import { contestOpen, acceptingEntries, opensAt } from './contest.js';
 import { runCheck } from './checks.js';
 
@@ -110,4 +110,34 @@ export async function removeEntry(request, env, svc) {
   const entry = await ownEntry(svc, clean(body.entry, 40), String(body.key || ''));
   if (!entry.removed_at) await trashEntry(svc, entry, svc.now());
   return { ok: true };
+}
+
+/* Which of a phone's sent items are still here. The phone keeps its own "Sent
+   from this phone" list, but only the Worker knows when practice-clear deleted
+   a row or the coordinator took one off. An item counts only with its key, so
+   no one can ask about someone else's entries: a wrong key reads as gone.
+   At most 100 per ask, as D1 binds at most 100 values in one query. */
+const MINE_MAX = 100;
+
+export async function checkMine(request, env, svc) {
+  let body;
+  try { body = await request.json(); } catch (e) { throw new Fail(400, 'bad-request'); }
+  const list = body && Array.isArray(body.items) ? body.items : null;
+  if (!list || list.length > MINE_MAX) throw new Fail(400, 'bad-request');
+  const asked = new Map(); // entry id → key
+  for (const x of list) {
+    const id = x && typeof x.entry === 'string' ? clean(x.entry, 40) : '';
+    const key = x && typeof x.key === 'string' ? x.key : '';
+    if (!id || !key || key.length > 100) throw new Fail(400, 'bad-request');
+    asked.set(id, key);
+  }
+  const rows = new Map((await entriesByIds(svc.db, [...asked.keys()])).map((r) => [r.id, r]));
+  const gone = [];
+  const removed = [];
+  for (const [id, key] of asked) {
+    const row = rows.get(id);
+    if (!row || (await sha256hex(key)) !== row.token_hash) gone.push(id);
+    else if (row.removed_at) removed.push(id);
+  }
+  return { gone, removed };
 }

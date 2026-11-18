@@ -34,3 +34,17 @@ export function upsertSent(items, item) {
 export function markRemoved(items, entry) {
   return items.map((x) => (x.entry === entry ? { ...x, state: 'removed' } : x));
 }
+
+/* What to ask the Worker's /mine about: the newest items that reached it (they
+   have an entry and its key), at most `max`. Removed ones too, so a row that
+   is gone altogether drops off the list rather than reading "Removed" forever. */
+export function mineAsk(items, max = 100) {
+  return items.filter((x) => x.entry && x.key).slice(0, max)
+    .map((x) => ({ entry: x.entry, key: x.key }));
+}
+
+/* Forget the items whose entries the Worker no longer has (practice-clear). */
+export function dropEntries(items, ids) {
+  const gone = new Set(ids);
+  return items.filter((x) => !x.entry || !gone.has(x.entry));
+}
