@@ -156,10 +156,49 @@ enough) with the service account:
 
 **Run:**
 ```
-python tools/reconcile_rsvps.py
+py tools/reconcile_rsvps.py
 ```
-The RSVP Sheet ID defaults to the live sheet; override with `RSVP_SHEET_ID` in
-`.env` if it ever changes.
+Use `py`, not `python`: bare `python` resolves to a venv without openpyxl.
+The RSVP Sheet ID comes from `RSVP_SHEET_ID` in `.env`.
+
+---
+
+## Syncing RSVP answers onto the Guest List
+
+`tools/sync_rsvp_status.py` writes the RSVP answers into the planner's
+`Guest List` tab so its Status column (and the totals built on it) match who
+has replied:
+
+- **yes** → Status `Attending`
+- **no** → the sheet's can't-join convention: Status `Not joining`, Role
+  prefixed `[CANT JOIN] `, Table Number cleared, and the row moved into the
+  can't-join block at the bottom. Clearing the table matters: the Table PAX
+  column is `SUMIF` on Table Number, so a decline left seated still takes a seat.
+- a decline who later says yes is flipped back and listed under "needs a table".
+
+Only confident name matches are written (the reconcile matcher, ≥ 0.86);
+fuzzy ones are listed and skipped. Guests already `Attending` without an RSVP
+on file are listed but never downgraded, since the couple marks some by hand.
+
+**Run** (dry run first, then apply):
+```
+py tools/sync_rsvp_status.py
+py tools/sync_rsvp_status.py --apply
+```
+The apply step re-reads the sheet afterwards and fails if any change didn't
+stick. It edits cells through the Sheets API: since Oct 2026 the planner
+workbook is a native Google Sheet and the service account has Editor, so the
+old xlsx round-trip problem (openpyxl dropping embedded drawings) doesn't
+apply to it.
+
+**Gotchas (Oct 2026):**
+- The Guest List header for the seat column is now `Table Number`, and the
+  summary block to its right has its own `Table` column. Read headers only up
+  to the first blank header cell or `Table` resolves to the summary column.
+- Row moves can shrink the sheet's filter range when a row lands on its last
+  line; the tool puts the original filter range back in the same batch.
+- In a git worktree, `credentials.json` lives only in the main checkout.
+  Copy it in for the run and delete it after (it's gitignored).
 
 ---
 
